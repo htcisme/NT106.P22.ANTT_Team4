@@ -1,0 +1,6 @@
+@DoanKhoaServer_HostAddress = http://localhost:5299
+
+GET {{DoanKhoaServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

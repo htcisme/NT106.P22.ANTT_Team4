@@ -1,0 +1,45 @@
+# Build Results
+bin/
+obj/
+out/
+*.exe
+*.dll
+
+# VS Code files
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
+
+# Other
+Thumbs.db
+Desktop.ini
+
+# Publish folder
+publish/
+
+# Secrets
+appsettings.Development.json
+secrets.json
+
+# node_modules if any frontend
+node_modules/
+
+# OS files
+.DS_Store
