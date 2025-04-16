@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Setting-icon.png" />
+    <None Remove="Views\Settings-icon.jpg" />
+    <None Remove="Views\Settings-icon.png" />
+    <None Remove="Views\Settings-icon.svg" />
+    <None Remove="Views\User-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
@@ -18,6 +26,14 @@
     <Folder Include="Models\" />
     <Folder Include="Resources\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\Setting-icon.png" />
+    <Resource Include="Views\Settings-icon.jpg" />
+    <Resource Include="Views\Settings-icon.png" />
+    <Resource Include="Views\Settings-icon.svg" />
+    <Resource Include="Views\User-icon.png" />
   </ItemGroup>
 
 </Project>
