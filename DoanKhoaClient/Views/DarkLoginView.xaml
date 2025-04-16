@@ -12,8 +12,8 @@
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+                <GradientStop Offset="0.67" Color="#042354" />
+                <GradientStop Offset="1" Color="#597CA2" />
             </LinearGradientBrush>
         </Grid.Background>
         <!--  Grid chính để căn giữa nội dung  -->
@@ -39,7 +39,7 @@
                     <TextBlock
                         FontSize="16"
                         FontWeight="Bold"
-                        Foreground="#FF042354"
+                        Foreground="#FFFFFFFF"
                         Text="Họ và tên:" />
                     <Grid Margin="5,10,5,10">
                         <Border
@@ -70,7 +70,7 @@
                         Margin="0,10,0,0"
                         FontSize="16"
                         FontWeight="Bold"
-                        Foreground="#FF042354"
+                        Foreground="#FFFFFFFF"
                         Text="Mật khẩu:" />
                     <Grid Margin="5,10,5,10">
                         <Border
@@ -99,7 +99,7 @@
                     </Grid>
                     <Border
                         Margin="0,25,0,25"
-                        Background="#FF042354"
+                        Background="#FFFFFFFF"
                         BorderBrush="#FFCBCDD2"
                         BorderThickness="1"
                         CornerRadius="8">
@@ -109,7 +109,7 @@
                             Content="Đăng nhập"
                             FontSize="16"
                             FontWeight="Bold"
-                            Foreground="White">
+                            Foreground="#042354">
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
                                     <Setter Property="Background" Value="Transparent" />
@@ -152,7 +152,7 @@
                             Cursor="Hand"
                             FontSize="16"
                             FontStyle="Italic"
-                            Foreground="#FF042354"
+                            Foreground="#FFFFFFFF"
                             Text="Quên mật khẩu?" />
                         <TextBlock
                             Grid.Column="1"
@@ -160,7 +160,7 @@
                             Cursor="Hand"
                             FontSize="16"
                             FontStyle="Italic"
-                            Foreground="#FF042354"
+                            Foreground="#FFFFFFFF"
                             Text="Đăng ký" />
                     </Grid>
                 </StackPanel>
