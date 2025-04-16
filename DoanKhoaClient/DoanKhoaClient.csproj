@@ -9,11 +9,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\active-home.png" />
+    <None Remove="Views\active-tasks.png" />
+    <None Remove="Views\activities.png" />
+    <None Remove="Views\calendar-tasks.png" />
+    <None Remove="Views\calendar.png" />
+    <None Remove="Views\chat_bubble.png" />
+    <None Remove="Views\dark-down-list.png" />
+    <None Remove="Views\dark-notifications.png" />
+    <None Remove="Views\dark-up-list.png" />
     <None Remove="Views\dark.png" />
+    <None Remove="Views\facebook.png" />
     <None Remove="Views\generic avatar.png" />
     <None Remove="Views\header.png" />
+    <None Remove="Views\home.png" />
+    <None Remove="Views\instagram.png" />
+    <None Remove="Views\light-down-list.png" />
+    <None Remove="Views\light-notifications.png" />
+    <None Remove="Views\light-up-list.png" />
+    <None Remove="Views\light.png" />
+    <None Remove="Views\members.png" />
     <None Remove="Views\notifications.png" />
     <None Remove="Views\search.png" />
+    <None Remove="Views\tasks.png" />
+    <None Remove="Views\youtube.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,11 +48,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Views\active-home.png" />
+    <Resource Include="Views\active-tasks.png" />
+    <Resource Include="Views\activities.png" />
+    <Resource Include="Views\calendar-tasks.png" />
+    <Resource Include="Views\chat_bubble.png" />
+    <Resource Include="Views\dark-down-list.png" />
+    <Resource Include="Views\dark-notifications.png" />
+    <Resource Include="Views\dark-up-list.png" />
     <Resource Include="Views\dark.png" />
+    <Resource Include="Views\facebook.png" />
     <Resource Include="Views\generic avatar.png" />
     <Resource Include="Views\header.png" />
-    <Resource Include="Views\notifications.png" />
+    <Resource Include="Views\home.png" />
+    <Resource Include="Views\instagram.png" />
+    <Resource Include="Views\light-down-list.png" />
+    <Resource Include="Views\light-notifications.png" />
+    <Resource Include="Views\light-up-list.png" />
+    <Resource Include="Views\light.png" />
+    <Resource Include="Views\members.png" />
     <Resource Include="Views\search.png" />
+    <Resource Include="Views\tasks.png" />
+    <Resource Include="Views\youtube.png" />
   </ItemGroup>
 
 </Project>
