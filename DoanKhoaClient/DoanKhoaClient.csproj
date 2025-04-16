@@ -28,12 +28,4 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Views\Setting-icon.png" />
-    <Resource Include="Views\Settings-icon.jpg" />
-    <Resource Include="Views\Settings-icon.png" />
-    <Resource Include="Views\Settings-icon.svg" />
-    <Resource Include="Views\User-icon.png" />
-  </ItemGroup>
-
 </Project>
