@@ -180,8 +180,8 @@
                         Width="836"
                         Height="942"
                         RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="\Views\Images\user-hero.png"
-                        Stretch="UniformToFill" />
+                        Source="/Views/Images/user-hero.png"
+                        Stretch="UniformToFill" Cursor="Help" />
                     <!--  Logo  -->
                     <Image
                         x:Name="LightHeader"

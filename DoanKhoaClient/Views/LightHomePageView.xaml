@@ -26,26 +26,26 @@
         <Border BorderBrush="Black" HorizontalAlignment="Left" Height="222" Margin="370,120,0,0" VerticalAlignment="Top" Width="1028" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Grid.ColumnSpan="2"/>
         <Border BorderBrush="Black" HorizontalAlignment="Left" Height="611" Margin="370,372,0,0" VerticalAlignment="Top" Width="691" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Grid.ColumnSpan="2"/>
         <Border BorderBrush="Black" Height="611" Margin="1099,372,44,0" VerticalAlignment="Top" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Grid.Column="1" Width="299"/>
-        <Image x:Name="LightHomePage_iUsers" Grid.Column="1" HorizontalAlignment="Left" Height="40" Margin="1358,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/generic avatar.png"/>
-        <Image x:Name="LightHomePage_iNotifications" HorizontalAlignment="Left" Height="40" Margin="1297,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/light-notifications.png"/>
-        <Image x:Name="LightHomePage_iDark" HorizontalAlignment="Left" Height="40" Margin="1236,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/dark.png"/>
-        <Image x:Name="LightHomePage_iSearch" HorizontalAlignment="Left" Height="40" Margin="628,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/search.png"/>
-        <Image x:Name="LightHomePage_iLogo" HorizontalAlignment="Left" Height="40" Margin="131,71,0,0" VerticalAlignment="Top" Width="112.38" Source="/Views/header.png"/>
+        <Image x:Name="LightHomePage_iUsers" Grid.Column="1" HorizontalAlignment="Left" Height="40" Margin="1358,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/Images/generic avatar.png"/>
+        <Image x:Name="LightHomePage_iNotifications" HorizontalAlignment="Left" Height="40" Margin="1297,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/Images/light-notifications.png"/>
+        <Image x:Name="LightHomePage_iDark" HorizontalAlignment="Left" Height="40" Margin="1236,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/Images//dark.png"/>
+        <Image x:Name="LightHomePage_iSearch" HorizontalAlignment="Left" Height="40" Margin="628,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/Images//search.png"/>
+        <Image x:Name="LightHomePage_iLogo" HorizontalAlignment="Left" Height="40" Margin="131,71,0,0" VerticalAlignment="Top" Width="112.38" Source="/Views/Images//header.png"/>
         <Label x:Name="LightHomePage_lbFaculty" Content="TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN - ĐHQG-HCM" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Height="38" Margin="557,199,0,0" VerticalAlignment="Top" Width="686.59" FontSize="22.5" VerticalContentAlignment="Center" Foreground = "#042354"/>
         <Label x:Name="LightHomePage_lbYouthUnion" Content="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Height="38" Margin="561.67,225,0,0" VerticalAlignment="Top" Width="677.26" FontSize="24" Foreground = "#042354" FontWeight="Bold"/>
-        <Image x:Name="LightHomePage_iHome" HorizontalAlignment="Left" Height="30" Margin="102,203,0,0" VerticalAlignment="Top" Width="30" Source="/Views/active-home.png"/>
-        <Image x:Name="LightHomePage_iChat" HorizontalAlignment="Left" Height="30" Margin="102,279,0,0" VerticalAlignment="Top" Width="30" Source="/Views/chat_bubble.png"/>
-        <Image x:Name="LightHomePage_iActivities" HorizontalAlignment="Left" Height="30" Margin="102,354,0,0" VerticalAlignment="Top" Width="30" Source="/Views/activities.png"/>
-        <Image x:Name="LightHomePage_Task_iMembers" HorizontalAlignment="Left" Height="30" Margin="102,432,0,0" VerticalAlignment="Top" Width="30" Source="/Views/members.png"/>
-        <Image x:Name="LightHomePage_iTasks" HorizontalAlignment="Left" Height="30" Margin="102,510,0,0" VerticalAlignment="Top" Width="30" Source="/Views/tasks.png"/>
+        <Image x:Name="LightHomePage_iHome" HorizontalAlignment="Left" Height="30" Margin="102,203,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images//active-home.png"/>
+        <Image x:Name="LightHomePage_iChat" HorizontalAlignment="Left" Height="30" Margin="102,279,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images//chat_bubble.png"/>
+        <Image x:Name="LightHomePage_iActivities" HorizontalAlignment="Left" Height="30" Margin="102,354,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images//activities.png"/>
+        <Image x:Name="LightHomePage_Task_iMembers" HorizontalAlignment="Left" Height="30" Margin="102,432,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images//members.png"/>
+        <Image x:Name="LightHomePage_iTasks" HorizontalAlignment="Left" Height="30" Margin="102,510,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images//tasks.png"/>
         <Label x:Name="LightHomePage_lbHome" Content="Home" HorizontalAlignment="Left" Height="30" Margin="165,203,0,0" VerticalAlignment="Top" Width="108" FontFamily="Segoe UI" FontSize="20" FontWeight="Bold" Padding="0,0,0,0" Foreground="#597CA2"/>
         <Label x:Name="LightHomePage_lbChat" Content="Chat" HorizontalAlignment="Left" Height="30" Margin="165,279,0,0" VerticalAlignment="Top" Width="108" FontFamily="Segoe UI" FontSize="20" FontWeight="Bold" Padding="0,0,0,0"/>
         <Label x:Name="LightHomePage_lbActivities" Content="Activities" HorizontalAlignment="Left" Height="30" Margin="165,354,0,0" VerticalAlignment="Top" Width="108" FontFamily="Segoe UI" FontSize="20" FontWeight="Bold" Padding="0,0,0,0"/>
         <Label x:Name="LightHomePage_lbMembers" Content="Members" HorizontalAlignment="Left" Height="30" Margin="165,432,0,0" VerticalAlignment="Top" Width="108" FontFamily="Segoe UI" FontSize="20" FontWeight="Bold" Padding="0,0,0,0"/>
         <Label x:Name="LightHomePage_lbTasks" Content="Tasks" HorizontalAlignment="Left" Height="30" Margin="165,510,0,0" VerticalAlignment="Top" Width="108" FontFamily="Segoe UI" FontSize="20" FontWeight="Bold" Padding="0,0,0,0" RenderTransformOrigin="0.527,3.278"/>
-        <Image x:Name="LightHomePage_iFacebook" HorizontalAlignment="Left" Height="24" Margin="175,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/facebook.png"/>
-        <Image x:Name="LightHomePage_iInstagram" HorizontalAlignment="Left" Height="24" Margin="135,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/instagram.png"/>
-        <Image x:Name="LightHomePage_iYoutube" HorizontalAlignment="Left" Height="24" Margin="215,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/youtube.png"/>
+        <Image x:Name="LightHomePage_iFacebook" HorizontalAlignment="Left" Height="24" Margin="175,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/Images//facebook.png"/>
+        <Image x:Name="LightHomePage_iInstagram" HorizontalAlignment="Left" Height="24" Margin="135,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/Images//instagram.png"/>
+        <Image x:Name="LightHomePage_iYoutube" HorizontalAlignment="Left" Height="24" Margin="215,926,0,0" VerticalAlignment="Top" Width="24" Source="/Views/Images//youtube.png"/>
 
     </Grid>
 </Window>
