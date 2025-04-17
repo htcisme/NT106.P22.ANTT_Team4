@@ -9,18 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-    <Compile Remove="Resources\**" />
-    <Compile Remove="Services\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Models\**" />
-    <None Remove="Resources\**" />
-    <None Remove="Services\**" />
-    <Page Remove="Models\**" />
-    <Page Remove="Resources\**" />
-    <Page Remove="Services\**" />
+    <Resource Include="Montserrat-Italic-VariableFont_wght.ttf" />
+    <Resource Include="Montserrat-VariableFont_wght.ttf" />
   </ItemGroup>
  
   <ItemGroup>
@@ -54,12 +44,6 @@
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
