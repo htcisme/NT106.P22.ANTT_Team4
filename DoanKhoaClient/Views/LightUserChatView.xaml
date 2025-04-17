@@ -22,6 +22,13 @@
                     <GradientStop Color="#FFDBF3FF" Offset="0.46"/>
                 </LinearGradientBrush>
             </Border.Background>
+            <Grid HorizontalAlignment="Center" Height="101" VerticalAlignment="Top" Width="288">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="49*"/>
+                    <RowDefinition Height="58*"/>
+                </Grid.RowDefinitions>
+                <Image Source="/Views/Images/header.png" Margin="0,30,94,0" Height="38" VerticalAlignment="Top" Grid.RowSpan="2" HorizontalAlignment="Right" Width="100"/>
+            </Grid>
         </Border>
         <Border BorderBrush="Black" HorizontalAlignment="Left" Height="864"  VerticalAlignment="Top" Width="365" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Margin="378,120,0,0"/>
         <Border BorderBrush="Black" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="301" CornerRadius="10,10,10,10" Background="#FFDBF3FF" Margin="378,40,0,0"/>
