@@ -9,18 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-    <Compile Remove="Resources\**" />
-    <Compile Remove="Services\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Models\**" />
-    <None Remove="Resources\**" />
-    <None Remove="Services\**" />
-    <Page Remove="Models\**" />
-    <Page Remove="Resources\**" />
-    <Page Remove="Services\**" />
+    <Resource Include="Fonts/Montserrat-Italic-VariableFont_wght.ttf" />
+    <Resource Include="Fonts/Montserrat-VariableFont_wght.ttf" />
   </ItemGroup>
  
   <ItemGroup>
