@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:DoanKhoaClient"
              StartupUri="Views/LightLoginView.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="MontserratFont">pack://application:,,,/static/#Montserrat</FontFamily>
     </Application.Resources>
 </Application>

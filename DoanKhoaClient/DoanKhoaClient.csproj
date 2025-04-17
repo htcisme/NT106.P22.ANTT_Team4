@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+   <Resource Include="Montserrat-Italic-VariableFont_wght.ttf" />
+    <Resource Include="Montserrat-VariableFont_wght.ttf" />
+ </ItemGroup>
+ 
+  <ItemGroup>
     <None Remove="Views\active-home.png" />
     <None Remove="Views\active-tasks.png" />
     <None Remove="Views\activities.png" />

@@ -44,6 +44,13 @@
                 </Border>
             </Border>
         </Border>
+        <Grid HorizontalAlignment="Left" Height="496" Margin="45,204,0,0" VerticalAlignment="Top" Width="288">
+            <Image HorizontalAlignment="Left" Height="42" Margin="25,62,0,0" VerticalAlignment="Top" Width="35" Source="/Views/Images/active-home.png"/>
+            <Image HorizontalAlignment="Left" Height="59" Margin="22,134,0,0" VerticalAlignment="Top" Width="42" Source="/Views/Images/active-chat_bubble.png"/>
+            <Image HorizontalAlignment="Left" Height="51" VerticalAlignment="Top" Width="50" Source="/Views/Images/active-activities.png" Margin="18,197,0,0" />
+            <Image HorizontalAlignment="Left" Height="55" Margin="15,268,0,0" VerticalAlignment="Top" Width="60" Source="/Views/Images/active-members.png" RenderTransformOrigin="0.911,0.043" />
+            <Image HorizontalAlignment="Left" Height="55" Margin="16,341,0,0" VerticalAlignment="Top" Width="60" Source="/Views/Images/active-tasks.png" RenderTransformOrigin="0.911,0.043" />
+        </Grid>
 
     </Grid>
 </Window>
