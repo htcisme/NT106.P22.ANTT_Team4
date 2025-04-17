@@ -190,7 +190,7 @@
                         Margin="0,10,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/Images/Images/Images/Fulllogo.png"
+                        Source="/Views/Images/Fulllogo.png"
                         Stretch="Fill">
 
                         <Image.Effect>
