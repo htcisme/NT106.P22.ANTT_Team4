@@ -9,23 +9,51 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\Setting-icon.png" />
-    <None Remove="Views\Settings-icon.jpg" />
-    <None Remove="Views\Settings-icon.png" />
-    <None Remove="Views\Settings-icon.svg" />
-    <None Remove="Views\User-icon.png" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Models\**" />
+    <None Remove="Resources\**" />
+    <None Remove="Services\**" />
+    <Page Remove="Models\**" />
+    <Page Remove="Resources\**" />
+    <Page Remove="Services\**" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <None Remove="Views\active-home.png" />
+    <None Remove="Views\active-tasks.png" />
+    <None Remove="Views\activities.png" />
+    <None Remove="Views\calendar-tasks.png" />
+    <None Remove="Views\calendar.png" />
+    <None Remove="Views\chat_bubble.png" />
+    <None Remove="Views\dark-down-list.png" />
+    <None Remove="Views\dark-notifications.png" />
+    <None Remove="Views\dark-up-list.png" />
+    <None Remove="Views\dark.png" />
+    <None Remove="Views\facebook.png" />
+    <None Remove="Views\generic avatar.png" />
+    <None Remove="Views\header.png" />
+    <None Remove="Views\home.png" />
+    <None Remove="Views\instagram.png" />
+    <None Remove="Views\light-down-list.png" />
+    <None Remove="Views\light-notifications.png" />
+    <None Remove="Views\light-up-list.png" />
+    <None Remove="Views\light.png" />
+    <None Remove="Views\members.png" />
+    <None Remove="Views\notifications.png" />
+    <None Remove="Views\search.png" />
+    <None Remove="Views\tasks.png" />
+    <None Remove="Views\youtube.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
