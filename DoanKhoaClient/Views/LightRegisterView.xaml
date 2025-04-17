@@ -265,7 +265,7 @@
                         Stretch="UniformToFill" />
                     <!--  Logo  -->
                     <Image
-                        x:Name="light-header"
+                        x:Name="lightHeader"
                         Width="272"
                         Height="71"
                         Margin="0,10,0,0"
