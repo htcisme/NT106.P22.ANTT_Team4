@@ -180,17 +180,17 @@
                         Width="836"
                         Height="942"
                         RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="\Views\Images\Hero.png"
+                        Source="\Views\Images\user-hero.png"
                         Stretch="UniformToFill" />
                     <!--  Logo  -->
                     <Image
-                        x:Name="Fulllogo"
+                        x:Name="LightHeader"
                         Width="272"
                         Height="71"
                         Margin="0,10,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/Fulllogo.png"
+                        Source="/Views/Images/light-header.png"
                         Stretch="Fill">
 
                         <Image.Effect>
