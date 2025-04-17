@@ -9,9 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-   <Resource Include="Montserrat-Italic-VariableFont_wght.ttf" />
-    <Resource Include="Montserrat-VariableFont_wght.ttf" />
- </ItemGroup>
+    <Compile Remove="Models\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Models\**" />
+    <None Remove="Resources\**" />
+    <None Remove="Services\**" />
+    <Page Remove="Models\**" />
+    <Page Remove="Resources\**" />
+    <Page Remove="Services\**" />
+  </ItemGroup>
  
   <ItemGroup>
     <None Remove="Views\active-home.png" />
@@ -44,37 +54,6 @@
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Views\active-home.png" />
-    <Resource Include="Views\active-tasks.png" />
-    <Resource Include="Views\activities.png" />
-    <Resource Include="Views\calendar-tasks.png" />
-    <Resource Include="Views\chat_bubble.png" />
-    <Resource Include="Views\dark-down-list.png" />
-    <Resource Include="Views\dark-notifications.png" />
-    <Resource Include="Views\dark-up-list.png" />
-    <Resource Include="Views\dark.png" />
-    <Resource Include="Views\facebook.png" />
-    <Resource Include="Views\generic avatar.png" />
-    <Resource Include="Views\header.png" />
-    <Resource Include="Views\home.png" />
-    <Resource Include="Views\instagram.png" />
-    <Resource Include="Views\light-down-list.png" />
-    <Resource Include="Views\light-notifications.png" />
-    <Resource Include="Views\light-up-list.png" />
-    <Resource Include="Views\light.png" />
-    <Resource Include="Views\members.png" />
-    <Resource Include="Views\search.png" />
-    <Resource Include="Views\tasks.png" />
-    <Resource Include="Views\youtube.png" />
   </ItemGroup>
 
 </Project>
