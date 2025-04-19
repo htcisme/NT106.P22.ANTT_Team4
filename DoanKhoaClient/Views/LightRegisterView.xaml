@@ -4,11 +4,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
+    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="LightRegisterView"
+    Title="Đăng ký tài khoản"
     Width="1440"
     Height="1024"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <vm:LightRegisterViewModel x:Key="ViewModel"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <Window.DataContext>
+        <StaticResource ResourceKey="ViewModel"/>
+    </Window.DataContext>
+
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -38,7 +50,7 @@
                 CornerRadius="100">
                 <StackPanel Margin="-10,-10,-10,-20" VerticalAlignment="Center">
 
-                    <!--  Tên đăng nhập  -->
+                    <!--  Họ và tên  -->
                     <TextBlock
                         FontSize="16"
                         FontWeight="Bold"
@@ -57,7 +69,8 @@
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                FontSize="16" />
+                                FontSize="16"
+                                Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
 
                         <TextBlock
@@ -67,7 +80,8 @@
                             FontSize="16"
                             Foreground="Gray"
                             IsHitTestVisible="False"
-                            Text="Nhập tên" />
+                            Text="Nhập tên"
+                            Visibility="{Binding FullNamePlaceholderVisibility}" />
                     </Grid>
 
                     <!--  Email  -->
@@ -90,7 +104,8 @@
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                FontSize="16" />
+                                FontSize="16"
+                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
                         </Border>
 
                         <TextBlock
@@ -100,7 +115,8 @@
                             FontSize="16"
                             Foreground="Gray"
                             IsHitTestVisible="False"
-                            Text="Nhập email" />
+                            Text="Nhập email"
+                            Visibility="{Binding EmailPlaceholderVisibility}" />
                     </Grid>
 
                     <!--  Mật khẩu  -->
@@ -123,7 +139,14 @@
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                FontSize="16" />
+                                FontSize="16">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PasswordChanged">
+                                        <i:InvokeCommandAction Command="{Binding PasswordChangedCommand}" 
+                                                            CommandParameter="{Binding ElementName=PasswordBox}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </PasswordBox>
                         </Border>
 
                         <TextBlock
@@ -133,7 +156,8 @@
                             FontSize="16"
                             Foreground="Gray"
                             IsHitTestVisible="False"
-                            Text="Nhập mật khẩu" />
+                            Text="Nhập mật khẩu"
+                            Visibility="{Binding PasswordPlaceholderVisibility}" />
                     </Grid>
 
                     <!--  Mật khẩu xác nhận  -->
@@ -156,7 +180,14 @@
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                FontSize="16" />
+                                FontSize="16">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PasswordChanged">
+                                        <i:InvokeCommandAction Command="{Binding ConfirmPasswordChangedCommand}" 
+                                                            CommandParameter="{Binding ElementName=ConfirmPasswordBox}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </PasswordBox>
                         </Border>
 
                         <TextBlock
@@ -166,8 +197,17 @@
                             FontSize="16"
                             Foreground="Gray"
                             IsHitTestVisible="False"
-                            Text="Xác nhận mật khẩu" />
+                            Text="Xác nhận mật khẩu"
+                            Visibility="{Binding ConfirmPasswordPlaceholderVisibility}" />
                     </Grid>
+
+                    <!-- Error Message -->
+                    <TextBlock 
+                        Foreground="Red"
+                        Margin="5,10,5,10"
+                        Text="{Binding ErrorMessage}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
 
                     <!--  Nút đăng ký  -->
                     <Border
@@ -177,6 +217,7 @@
                         BorderThickness="1"
                         CornerRadius="8">
                         <Button
+                            Command="{Binding RegisterCommand}"
                             Height="46"
                             BorderThickness="0"
                             Content="Đăng ký"
@@ -230,17 +271,31 @@
                     <Grid Margin="10,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <TextBlock
                             Grid.Column="0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Center"
                             Cursor="Hand"
                             FontSize="16"
                             FontStyle="Italic"
                             Foreground="#FF042354"
-                            Text="Đã có tài khoản? Đăng nhập" />
+                            Text="Đã có tài khoản? Đăng nhập">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="TextDecorations" Value="Underline" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding NavigateToLoginCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
                     </Grid>
 
                 </StackPanel>
@@ -257,7 +312,6 @@
                 <Grid>
                     <!--  Hình ảnh nền  -->
                     <Image
-                        x:Name="HeroImage"
                         Width="836"
                         Height="942"
                         RenderOptions.BitmapScalingMode="HighQuality"
@@ -265,7 +319,6 @@
                         Stretch="UniformToFill" />
                     <!--  Logo  -->
                     <Image
-                        x:Name="lightHeader"
                         Width="272"
                         Height="71"
                         Margin="0,10,0,0"
