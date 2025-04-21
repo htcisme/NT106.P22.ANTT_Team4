@@ -8,9 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup>
-   <Resource Include="Montserrat-Italic-VariableFont_wght.ttf" />
-    <Resource Include="Montserrat-VariableFont_wght.ttf" />
+    <ItemGroup>
+   <Resource Include="Fonts/Montserrat-Italic-VariableFont_wght.ttf" />
+    <Resource Include="Fonts/Montserrat-VariableFont_wght.ttf" />
  </ItemGroup>
  
   <ItemGroup>
@@ -28,6 +28,35 @@
     <None Remove="Views\generic avatar.png" />
     <None Remove="Views\header.png" />
     <None Remove="Views\home.png" />
+    <None Remove="Views\Images\active-activities.png" />
+    <None Remove="Views\Images\active-chat_bubble.png" />
+    <None Remove="Views\Images\active-home.png" />
+    <None Remove="Views\Images\active-members.png" />
+    <None Remove="Views\Images\active-tasks.png" />
+    <None Remove="Views\Images\activities.png" />
+    <None Remove="Views\Images\calendar-tasks.png" />
+    <None Remove="Views\Images\chat_bubble.png" />
+    <None Remove="Views\Images\dark-down-list.png" />
+    <None Remove="Views\Images\dark-notifications.png" />
+    <None Remove="Views\Images\dark-up-list.png" />
+    <None Remove="Views\Images\dark.png" />
+    <None Remove="Views\Images\facebook.png" />
+    <None Remove="Views\Images\generic avatar.png" />
+    <None Remove="Views\Images\header.png" />
+    <None Remove="Views\Images\home.png" />
+    <None Remove="Views\Images\instagram.png" />
+    <None Remove="Views\Images\light-down-list.png" />
+    <None Remove="Views\Images\light-header.png" />
+    <None Remove="Views\Images\light-notifications.png" />
+    <None Remove="Views\Images\light-up-list.png" />
+    <None Remove="Views\Images\light.png" />
+    <None Remove="Views\Images\members.png" />
+    <None Remove="Views\Images\search.png" />
+    <None Remove="Views\Images\Settings-icon.png" />
+    <None Remove="Views\Images\tasks.png" />
+    <None Remove="Views\Images\user-hero.png" />
+    <None Remove="Views\Images\User-icon.png" />
+    <None Remove="Views\Images\youtube.png" />
     <None Remove="Views\instagram.png" />
     <None Remove="Views\light-down-list.png" />
     <None Remove="Views\light-notifications.png" />
@@ -47,9 +76,93 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
+    <Resource Include="Views\Images\active-activities.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\active-chat_bubble.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\active-home.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\active-members.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\active-tasks.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\activities.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\calendar-tasks.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\chat_bubble.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\dark-down-list.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\dark-notifications.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\dark-up-list.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\dark.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\facebook.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\generic avatar.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\header.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\home.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\instagram.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\light-down-list.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\light-header.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\light-notifications.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\light-up-list.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\light.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\members.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\search.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\Settings-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\tasks.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\user-hero.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\User-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Views\Images\youtube.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>
