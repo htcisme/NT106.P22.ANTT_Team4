@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -21,7 +21,6 @@
     <None Remove="Views\calendar.png" />
     <None Remove="Views\chat_bubble.png" />
     <None Remove="Views\dark-down-list.png" />
-    <None Remove="Views\dark-notifications.png" />
     <None Remove="Views\dark-up-list.png" />
     <None Remove="Views\dark.png" />
     <None Remove="Views\facebook.png" />
@@ -61,7 +60,6 @@
     <None Remove="Views\light-down-list.png" />
     <None Remove="Views\light-notifications.png" />
     <None Remove="Views\light-up-list.png" />
-    <None Remove="Views\light.png" />
     <None Remove="Views\members.png" />
     <None Remove="Views\notifications.png" />
     <None Remove="Views\search.png" />
