@@ -14,43 +14,312 @@
                 <GradientStop Color="#FFDBF3FF" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Border BorderBrush="Black" HorizontalAlignment="Left" Height="944" VerticalAlignment="Top" Width="288" CornerRadius="10,10,10,10" Margin="45,40,0,0">
+        <TextBox x:Name="LightUserChat_tbSearch1"
+            HorizontalAlignment="Left"
+            Margin="370,41,0,0"
+            TextWrapping="Wrap"
+            Text=""
+            VerticalAlignment="Top"
+            Width="307"
+            Height="50"
+            Background="#FFDBF3FF"
+            BorderBrush="{x:Null}"/>
+        <Border x:Name="LightUserChat_Dashboard1"
+            BorderBrush="Black"
+            HorizontalAlignment="Left"
+            Height="942"
+            Margin="43,40,0,0"
+            VerticalAlignment="Top"
+            Width="288"
+            CornerRadius="10,10,10,10">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1"
+                    StartPoint="0.5,0">
+                    <GradientStop Color="#FFF6FCFF"
+                        Offset="0.04"/>
+                    <GradientStop Color="#FFDBF3FF"
+                        Offset="0.46"/>
+                    <GradientStop Color="#FF87ACCD"
+                        Offset="0.937"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Image x:Name="LightUserChat_iUsers1"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="1358,46,0,0"
+            VerticalAlignment="Top"
+            Width="40"
+            Source="/Views/Images/generic avatar.png"/>
+        <Image x:Name="LightUserChat_iNotifications1"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="1297,46,0,0"
+            VerticalAlignment="Top"
+            Width="40"
+            Source="/Views/Images/light-notifications.png"/>
+        <Image x:Name="LightUserChat_iDark1"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="1236,46,0,0"
+            VerticalAlignment="Top"
+            Width="40"
+            Source="/Views/Images/dark.png"/>
+        <Image x:Name="LightUserChat_iSearch1"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="628,46,0,0"
+            VerticalAlignment="Top"
+            Width="40"
+            Source="/Views/Images/search.png"/>
+        <Image x:Name="LightUserChat_iLogo1"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="131,71,0,0"
+            VerticalAlignment="Top"
+            Width="112.38"
+            Source="/Views/Images/header.png"/>
+        <Image x:Name="LightUserChat_iHome1"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,203,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/home.png"/>
+        <Image x:Name="LightUserChat_iChat1"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,279,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/active-chat_bubble.png"/>
+        <Image x:Name="LightUserChat_iActivities1"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,354,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/activities.png"/>
+        <Image x:Name="LightUserChat_iMembers1"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,432,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/members.png"/>
+        <Image x:Name="LightUserChat_iTasks1"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,510,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/tasks.png"/>
+        <Label x:Name="LightUserChat_lbHome1"
+            Content="Home"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,203,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightUserChat_lbChat1"
+            Content="Chat"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,279,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0" Foreground="#FF597CA2"/>
+        <Label x:Name="LightUserChat_lbActivities1"
+            Content="Activities"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,354,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightUserChat_lbMembers1"
+            Content="Members"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,432,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightUserChat_lbTasks1"
+            Content="Tasks"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,510,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"
+            RenderTransformOrigin="0.527,3.278"/>
+        <Image x:Name="LightUserChat_iFacebook1"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="175,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/facebook.png"/>
+        <Image x:Name="LightUserChat_iInstagram1"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="135,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/instagram.png"/>
+        <Image x:Name="LightUserChat_iYoutube1"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="215,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/youtube.png"/>
+        <Border x:Name="LightUserChat_bConservations" HorizontalAlignment="Left"
+            Height="864"
+            Margin="370,119,0,0"
+            VerticalAlignment="Top"
+            Width="358"
+            Background="#FFD9D9D9"
+            CornerRadius="10,10,10,10"/>
+        <Border x:Name="LightUserChat_bChatBox" HorizontalAlignment="Left"
+            Height="864"
+            Margin="764,119,0,0"
+            VerticalAlignment="Top"
+            Width="634"
+            CornerRadius="10,10,10,10">
             <Border.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF87ACCD" Offset="1"/>
-                    <GradientStop Color="#FFF6FCFF" Offset="0.04"/>
                     <GradientStop Color="#FFDBF3FF" Offset="0.46"/>
+                    <GradientStop Color="#FFDBF3FF" Offset="0.54"/>
+                    <GradientStop Color="#FF87ACCD" Offset="0"/>
                 </LinearGradientBrush>
             </Border.Background>
-            <Grid HorizontalAlignment="Center" Height="101" VerticalAlignment="Top" Width="288">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="49*"/>
-                    <RowDefinition Height="58*"/>
-                </Grid.RowDefinitions>
-                <Image Source="/Views/Images/header.png" Margin="0,30,94,0" Height="38" VerticalAlignment="Top" Grid.RowSpan="2" HorizontalAlignment="Right" Width="100"/>
-            </Grid>
         </Border>
-        <Border BorderBrush="Black" HorizontalAlignment="Left" Height="864"  VerticalAlignment="Top" Width="365" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Margin="378,120,0,0"/>
-        <Border BorderBrush="Black" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="301" CornerRadius="10,10,10,10" Background="#FFDBF3FF" Margin="378,40,0,0"/>
-        <Border BorderBrush="Black" HorizontalAlignment="Left" Height="864"  VerticalAlignment="Top" Width="629" CornerRadius="10,10,10,10" Background="#FFD9D9D9" Margin="778,120,0,0">
-            <Border BorderBrush="White" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Height="831" VerticalAlignment="Center" Width="596" CornerRadius="15,15,15,15" Background="White">
-
-                <Border BorderBrush="White" BorderThickness="1" HorizontalAlignment="Center" Height="55" Margin="0,-1,0,0" VerticalAlignment="Top" Width="597" CornerRadius="15,15,0,0" Background="#FFF3EEEE">
-                    <Grid>
-                        <Image Margin="533,-1,0,-1" Source="/Views/Images/Settings-icon.png" IsEnabled="False"/>
-                        <Label Content="Name" Margin="52,6,356,11" FontSize="22"/>
-                        <Image HorizontalAlignment="Left" Height="53" Margin="5,0,0,0" VerticalAlignment="Center" Width="54" Source="/Views/Images/User-icon.png"/>
-                    </Grid>
-                </Border>
-            </Border>
+        <Border x:Name="LightUserChat_bChatBoxBackground" HorizontalAlignment="Left"
+            Height="816"
+            Margin="793,143,0,0"
+            VerticalAlignment="Top"
+            Width="576"
+            Background="White"
+            CornerRadius="20,20,20,20"/>
+        <Border HorizontalAlignment="Left"
+            Height="56"
+            Margin="793,143,0,0"
+            VerticalAlignment="Top"
+            Width="576"
+            Background="#FFDAE9F6"
+            CornerRadius="20,20,0,0"/>
+        <Image HorizontalAlignment="Left" Height="30" Margin="819,156,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images/account_circle.png"/>
+        <Image x:Name="LightTask_iChat"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,279,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/active-chat_bubble.png"/>
+        <Image HorizontalAlignment="Left" Height="30" Margin="1307,156,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images/Settings-icon.png"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="30" Margin="862,156,0,0" VerticalAlignment="Top" Width="192" FontSize="15"/>
+        <Border HorizontalAlignment="Left"
+            Height="56"
+            Margin="874,888,0,0"
+            VerticalAlignment="Top"
+            Width="479"
+            Background="#FFDAE9F6"
+            CornerRadius="20,20,20,20"/>
+        <Image HorizontalAlignment="Left" Height="24" Margin="1317,904,0,0" VerticalAlignment="Top" Width="19" Source="/Views/Images/micro-icon.png"/>
+        <Image HorizontalAlignment="Left" Height="22" Margin="891,906,0,0" VerticalAlignment="Top" Width="21" Source="/Views/Images/Icon.png"/>
+        <Image HorizontalAlignment="Left" Height="22" Margin="808,906,0,0" VerticalAlignment="Top" Width="22" Source="/Views/Images/add_circle.png"/>
+        <Image HorizontalAlignment="Left" Height="22" Margin="839,906,0,0" VerticalAlignment="Top" Width="22" Source="/Views/Images/mood.png"/>
+        <Image x:Name="LightTask_iTasks"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,510,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/tasks.png"/>
+        <Border HorizontalAlignment="Left"
+            Height="44"
+            Margin="862,694,0,0"
+            VerticalAlignment="Top"
+            Width="275"
+            Background="#FFB9D4EB"
+            CornerRadius="20,20,20,5"/>
+        <Border HorizontalAlignment="Left"
+            Height="44"
+            Margin="862,645,0,0"
+            VerticalAlignment="Top"
+            Width="275"
+            Background="#FFB9D4EB"
+            CornerRadius="20,20,20,5"/>
+        <Border HorizontalAlignment="Left"
+            Height="44"
+            Margin="1098,793,0,0"
+            VerticalAlignment="Top"
+            Width="255"
+            Background="#FFD5E0E9"
+            CornerRadius="20,20,5,20"/>
+        <Image HorizontalAlignment="Left" Height="44" Margin="813,694,0,0" VerticalAlignment="Top" Width="44" Source="/Views/Images/account_circle.png"/>
+        <Border HorizontalAlignment="Left"
+            Height="44"
+            Margin="1098,551,0,0"
+            VerticalAlignment="Top"
+            Width="255"
+            Background="#FFD5E0E9"
+            CornerRadius="20,20,5,20"/>
+        <Border HorizontalAlignment="Left"
+            Height="70"
+            Margin="381,205,0,0"
+            VerticalAlignment="Top"
+            Width="336"
+            Background="#FFDAE9F6"
+            CornerRadius="10,10,10,10">
+            <Image HorizontalAlignment="Left" Height="44" VerticalAlignment="Center" Width="44" Source="/Views/Images/account_circle.png" Margin="10,0,0,0"/>
         </Border>
-        <Grid HorizontalAlignment="Left" Height="496" Margin="45,204,0,0" VerticalAlignment="Top" Width="288">
-            <Image HorizontalAlignment="Left" Height="42" Margin="25,62,0,0" VerticalAlignment="Top" Width="35" Source="/Views/Images/active-home.png"/>
-            <Image HorizontalAlignment="Left" Height="59" Margin="22,134,0,0" VerticalAlignment="Top" Width="42" Source="/Views/Images/active-chat_bubble.png"/>
-            <Image HorizontalAlignment="Left" Height="51" VerticalAlignment="Top" Width="50" Source="/Views/Images/active-activities.png" Margin="18,197,0,0" />
-            <Image HorizontalAlignment="Left" Height="55" Margin="15,268,0,0" VerticalAlignment="Top" Width="60" Source="/Views/Images/active-members.png" RenderTransformOrigin="0.911,0.043" />
-            <Image HorizontalAlignment="Left" Height="55" Margin="16,341,0,0" VerticalAlignment="Top" Width="60" Source="/Views/Images/active-tasks.png" RenderTransformOrigin="0.911,0.043" />
-        </Grid>
-
+        <Label Content="Conservations" HorizontalAlignment="Left" Height="30" Margin="381,135,0,0" VerticalAlignment="Top" Width="192" FontSize="15"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,216,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,238,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,229,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
+        <Border HorizontalAlignment="Left"
+            Height="70"
+            Margin="381,285,0,0"
+            VerticalAlignment="Top"
+            Width="336"
+            Background="#FFDAE9F6"
+            CornerRadius="10,10,10,10">
+            <Image HorizontalAlignment="Left" Height="44" VerticalAlignment="Center" Width="44" Source="/Views/Images/account_circle.png" Margin="10,0,0,0"/>
+        </Border>
+        <Border HorizontalAlignment="Left"
+            Height="70"
+            Margin="381,365,0,0"
+            VerticalAlignment="Top"
+            Width="336"
+            Background="#FFDAE9F6"
+            CornerRadius="10,10,10,10">
+            <Image HorizontalAlignment="Left" Height="44" VerticalAlignment="Center" Width="44" Source="/Views/Images/account_circle.png" Margin="10,0,0,0"/>
+        </Border>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,296,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,318,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,309,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,376,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,398,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,389,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
     </Grid>
 </Window>
