@@ -326,7 +326,7 @@
                 FontSize="16"
                 Padding="0,0,0,0"
                 Foreground="#042354"/>
-        <Button Content="Hoàn thành"
+        <Button x:Name="Admin_LightGroupTask_Design_btFinish" Content="Hoàn thành"
                 HorizontalAlignment="Left"
                 Height="35"
                 Margin="1168,566,0,0"
@@ -403,5 +403,17 @@
                 FontSize="16"
                 Padding="0,0,0,0"
                 Foreground="#042354"/>
+        <Button x:Name="Admin_LightGroupTask_Design_btEdit" Content="Chỉnh sửa"
+            HorizontalAlignment="Left"
+            Height="35"
+            Margin="1168,311,0,0"
+            VerticalAlignment="Top"
+            Width="147"
+            Background="#FF042354"
+            FontFamily="Segoe UI"
+            FontSize="16"
+            Padding="0,0,0,0"
+            Foreground="#FFFFFF"
+            FontWeight="Bold"/>
     </Grid>
 </Window>
