@@ -1,4 +1,6 @@
-﻿using DoanKhoaClient.Views;
+﻿using DoanKhoaClient.Models;
+using DoanKhoaClient.Services;
+using DoanKhoaClient.Views;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -11,12 +13,17 @@ namespace DoanKhoaClient.ViewModels
     public partial class LightLoginViewModel : INotifyPropertyChanged
     {
         #region Private Fields
+        private readonly AuthService _authService;
         private string _username;
         private string _password;
         private string _errorMessage;
+        private string _otpCode;
+        private string _userId;
         private bool _isLoading;
+        private bool _showOtpInput = false;
         private Visibility _usernamePlaceholderVisibility = Visibility.Visible;
         private Visibility _passwordPlaceholderVisibility = Visibility.Visible;
+        private Visibility _otpPlaceholderVisibility = Visibility.Visible;
         #endregion
 
         #region Properties
@@ -51,6 +58,23 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
+        public string OtpCode
+        {
+            get => _otpCode;
+            set
+            {
+                if (_otpCode != value)
+                {
+                    _otpCode = value;
+                    OnPropertyChanged();
+                    OtpPlaceholderVisibility = string.IsNullOrWhiteSpace(value)
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                    ValidateCanVerifyOtp();
+                }
+            }
+        }
+
         public string ErrorMessage
         {
             get => _errorMessage;
@@ -77,6 +101,20 @@ namespace DoanKhoaClient.ViewModels
                     _isLoading = value;
                     OnPropertyChanged();
                     (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                    (VerifyOtpCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public bool ShowOtpInput
+        {
+            get => _showOtpInput;
+            set
+            {
+                if (_showOtpInput != value)
+                {
+                    _showOtpInput = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -106,10 +144,24 @@ namespace DoanKhoaClient.ViewModels
                 }
             }
         }
+
+        public Visibility OtpPlaceholderVisibility
+        {
+            get => _otpPlaceholderVisibility;
+            set
+            {
+                if (_otpPlaceholderVisibility != value)
+                {
+                    _otpPlaceholderVisibility = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         #region Commands
         public ICommand LoginCommand { get; private set; }
+        public ICommand VerifyOtpCommand { get; private set; }
         public ICommand NavigateToRegisterCommand { get; private set; }
         public ICommand ForgotPasswordCommand { get; private set; }
         public ICommand PasswordChangedCommand { get; private set; }
@@ -118,8 +170,11 @@ namespace DoanKhoaClient.ViewModels
         #region Constructor
         public LightLoginViewModel()
         {
+            _authService = new AuthService();
+
             // Initialize commands
             LoginCommand = new RelayCommand(ExecuteLogin, CanExecuteLogin);
+            VerifyOtpCommand = new RelayCommand(ExecuteVerifyOtp, CanVerifyOtp);
             NavigateToRegisterCommand = new RelayCommand(ExecuteNavigateToRegister);
             ForgotPasswordCommand = new RelayCommand(ExecuteForgotPassword);
             PasswordChangedCommand = new RelayCommand(ExecutePasswordChanged);
@@ -134,41 +189,82 @@ namespace DoanKhoaClient.ViewModels
                   !string.IsNullOrWhiteSpace(Password);
         }
 
+        private bool CanVerifyOtp(object parameter)
+        {
+            return !IsLoading &&
+                  !string.IsNullOrWhiteSpace(OtpCode);
+        }
+
         private void ValidateCanLogin()
         {
             (LoginCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
 
-        private void ExecuteLogin(object parameter)
+        private void ValidateCanVerifyOtp()
+        {
+            (VerifyOtpCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+
+        private async void ExecuteLogin(object parameter)
         {
             try
             {
                 IsLoading = true;
                 ErrorMessage = string.Empty;
 
-                // Authenticate user (replace with your actual authentication logic)
-                bool isAuthenticated = AuthenticateUser(Username, Password);
-
-                if (isAuthenticated)
+                var request = new LoginRequest
                 {
-                    MessageBox.Show("Đăng nhập thành công!");
+                    Username = Username,
+                    Password = Password
+                };
 
-                    // Navigate to dashboard (add your navigation logic here)
-                    // Example:
-                    // var dashboardWindow = new LightDashboardView();
-                    // dashboardWindow.Show();
-                    // Window.GetWindow(this)?.Close();
+                var response = await _authService.LoginAsync(request);
+
+                if (response.RequiresTwoFactor)
+                {
+                    // Lưu user ID để sử dụng trong xác thực OTP
+                    _userId = response.Id;
+                    ShowOtpInput = true;
+                    MessageBox.Show(response.Message, "Xác thực hai bước", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (!string.IsNullOrEmpty(response.Id))
+                {
+                    // Đăng nhập thành công, lưu thông tin user và chuyển đến màn hình chính
+                    App.Current.Properties["CurrentUser"] = new User
+                    {
+                        Id = response.Id,
+                        Username = response.Username,
+                        DisplayName = response.DisplayName,
+                        Email = response.Email,
+                        AvatarUrl = response.AvatarUrl,
+                    };
+
+                    MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Chuyển đến màn hình chính
+                    var chatWindow = new LightUserChatView();
+                    chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    chatWindow.Show();
+
+                    // Đóng cửa sổ đăng nhập hiện tại
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window is LightLoginView)
+                        {
+                            window.Close();
+                            break;
+                        }
+                    }
                 }
                 else
                 {
-                    ErrorMessage = "Tên đăng nhập hoặc mật khẩu sai.";
-                    MessageBox.Show(ErrorMessage);
+                    // Hiển thị thông báo lỗi
+                    ErrorMessage = response.Message;
                 }
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"Lỗi đăng nhập: {ex.Message}";
-                MessageBox.Show(ErrorMessage);
             }
             finally
             {
@@ -176,13 +272,64 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        private bool AuthenticateUser(string username, string password)
+        private async void ExecuteVerifyOtp(object parameter)
         {
-            // TODO: Implement actual authentication
-            // Example: return UserManager.Login(username, password);
+            try
+            {
+                IsLoading = true;
+                ErrorMessage = string.Empty;
 
-            // For testing purposes - replace with your authentication logic
-            return (username == "admin" && password == "admin");
+                var request = new VerifyOtpRequest
+                {
+                    UserId = _userId,
+                    Otp = OtpCode
+                };
+
+                var response = await _authService.VerifyOtpAsync(request);
+
+                if (!string.IsNullOrEmpty(response.Id))
+                {
+                    // Đăng nhập thành công, lưu thông tin user và chuyển đến màn hình chính
+                    App.Current.Properties["CurrentUser"] = new User
+                    {
+                        Id = response.Id,
+                        Username = response.Username,
+                        DisplayName = response.DisplayName,
+                        Email = response.Email,
+                        AvatarUrl = response.AvatarUrl,
+                    };
+
+                    MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Chuyển đến màn hình chính
+                    var chatWindow = new LightUserChatView();
+                    chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    chatWindow.Show();
+
+                    // Đóng cửa sổ đăng nhập hiện tại
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window is LightLoginView)
+                        {
+                            window.Close();
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // Hiển thị thông báo lỗi
+                    ErrorMessage = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Lỗi xác thực OTP: {ex.Message}";
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private void ExecuteNavigateToRegister(object parameter)
@@ -198,23 +345,20 @@ namespace DoanKhoaClient.ViewModels
                 // Hiển thị cửa sổ mới
                 registerWindow.Show();
 
-                // Tìm cửa sổ hiện tại bằng cách liệt kê tất cả cửa sổ - KHÔNG sử dụng parameter
+                // Tìm cửa sổ hiện tại
                 Window currentWindow = null;
-
                 foreach (Window window in Application.Current.Windows)
                 {
-                    // Tìm cửa sổ đăng nhập (không phải cửa sổ đăng ký vừa tạo)
-                    if (window != registerWindow && window is LightLoginView)
+                    if (window is LightLoginView)
                     {
                         currentWindow = window;
                         break;
                     }
                 }
 
-                // Nếu tìm thấy cửa sổ đăng nhập, đóng lại
+                // Đóng cửa sổ đăng nhập hiện tại
                 if (currentWindow != null)
                 {
-                    System.Diagnostics.Debug.WriteLine("Đóng cửa sổ đăng nhập hiện tại");
                     currentWindow.Close();
                 }
             }
@@ -224,10 +368,10 @@ namespace DoanKhoaClient.ViewModels
                 MessageBox.Show($"Lỗi khi chuyển trang: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void ExecuteForgotPassword(object parameter)
         {
-            MessageBox.Show("Đi tới trang quên mật khẩu.");
-            // Implement navigation to forgot password page
+            MessageBox.Show("Tính năng quên mật khẩu sẽ được triển khai trong phiên bản sau.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ExecutePasswordChanged(object parameter)
