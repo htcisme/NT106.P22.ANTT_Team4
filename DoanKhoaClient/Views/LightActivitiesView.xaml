@@ -461,14 +461,14 @@
 
                         <StackPanel Grid.Column="1" Margin="15,0,0,0">
                             <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
+                                FontSize="18"
+                                FontWeight="Bold"
                                 Foreground="#FF12305E"
                                 Text="Chiến dịch Ngọn Đuốc Xanh 2025 thông báo mở form đăng ký chiến sĩ"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Margin="0,5,0,0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="#6c757d"
                                 Text="Thứ Sáu - 14/02/2025" />
                         </StackPanel>
@@ -483,6 +483,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="8,000" />
                             </StackPanel>
                             <StackPanel Margin="10,0">
@@ -494,6 +495,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="50" />
                             </StackPanel>
                         </StackPanel>
@@ -501,11 +503,7 @@
                 </Border>
 
                 <!--  Hoạt động 2  -->
-                <Border
-                    Margin="0,0,0,10"
-                    Padding="15"
-                    Background="#f0f8ff"
-                    CornerRadius="8">
+                <Border Margin="0,0,0,10" Padding="15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70" />
@@ -522,13 +520,14 @@
 
                         <StackPanel Grid.Column="1" Margin="15,0,0,0">
                             <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E"
                                 Text="Đoàn khoa Mạng máy tính và Truyền thông công bố chuỗi Truyền thông 'Tân Tỵ Đón Tết' chào mừng Xuân Ất Tỵ 2025"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Margin="0,5,0,0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="#6c757d"
                                 Text="Thứ Sáu - 14/02/2025" />
                         </StackPanel>
@@ -543,6 +542,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="8,000" />
                             </StackPanel>
                             <StackPanel Margin="10,0">
@@ -554,6 +554,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="50" />
                             </StackPanel>
                         </StackPanel>
@@ -561,11 +562,7 @@
                 </Border>
 
                 <!--  Hoạt động 3  -->
-                <Border
-                    Margin="0,0,0,10"
-                    Padding="15"
-                    Background="#f0f8ff"
-                    CornerRadius="8">
+                <Border Margin="0,0,0,10" Padding="15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70" />
@@ -582,13 +579,14 @@
 
                         <StackPanel Grid.Column="1" Margin="15,0,0,0">
                             <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E"
                                 Text="Công bố chuỗi hoạt động 'NC Sharing'"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Margin="0,5,0,0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="#6c757d"
                                 Text="Thứ Sáu - 14/02/2025" />
                         </StackPanel>
@@ -603,6 +601,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="8,000" />
                             </StackPanel>
                             <StackPanel Margin="10,0">
@@ -614,6 +613,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="50" />
                             </StackPanel>
                         </StackPanel>
@@ -621,11 +621,7 @@
                 </Border>
 
                 <!--  Hoạt động 4  -->
-                <Border
-                    Margin="0,0,0,10"
-                    Padding="15"
-                    Background="#f0f8ff"
-                    CornerRadius="8">
+                <Border Margin="0,0,0,10" Padding="15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70" />
@@ -642,13 +638,14 @@
 
                         <StackPanel Grid.Column="1" Margin="15,0,0,0">
                             <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E"
                                 Text="Đoàn khoa Mạng máy tính và Truyền thông công bố chuỗi Truyền thông 'Tân Tỵ Đón Tết' chào mừng Xuân Ất Tỵ 2025"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Margin="0,5,0,0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="#6c757d"
                                 Text="Thứ Sáu - 14/02/2025" />
                         </StackPanel>
@@ -663,6 +660,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="8,000" />
                             </StackPanel>
                             <StackPanel Margin="10,0">
@@ -674,6 +672,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="50" />
                             </StackPanel>
                         </StackPanel>
@@ -681,11 +680,7 @@
                 </Border>
 
                 <!--  Hoạt động 5  -->
-                <Border
-                    Margin="0,0,0,10"
-                    Padding="15"
-                    Background="#f0f8ff"
-                    CornerRadius="8">
+                <Border Margin="0,0,0,10" Padding="15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70" />
@@ -702,13 +697,14 @@
 
                         <StackPanel Grid.Column="1" Margin="15,0,0,0">
                             <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E"
                                 Text="Công bố chuỗi hoạt động 'NC Sharing'"
                                 TextWrapping="Wrap" />
                             <TextBlock
                                 Margin="0,5,0,0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="#6c757d"
                                 Text="Thứ Sáu - 14/02/2025" />
                         </StackPanel>
@@ -723,6 +719,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="8,000" />
                             </StackPanel>
                             <StackPanel Margin="10,0">
@@ -734,6 +731,7 @@
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     FontWeight="Bold"
+                                    Foreground="#FF12305E"
                                     Text="50" />
                             </StackPanel>
                         </StackPanel>
