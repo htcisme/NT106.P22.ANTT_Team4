@@ -1,17 +1,17 @@
 <Window
-    x:Class="DoanKhoaClient.Views.AdminLightActivitiesView"
+    x:Class="DoanKhoaClient.Views.AdminLightActivitiesPostView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="Admin_Light_ActivitiesView"
-    Title="Admin_LightActivitiesView"
+    x:Name="Admin_Light_ActivitiesPostView"
+    Title="AdminLightActivitiesPostView"
     Width="1440"
     Height="1036"
     mc:Ignorable="d">
     <Grid
-        x:Name="Admin_LightActivities_Background"
+        x:Name="Admin_LightActivitiesPost_Background"
         Width="1440"
         Height="1022.8">
         <Grid.Background>
@@ -21,7 +21,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
-            x:Name="Admin_LightActivities_tbSearch"
+            x:Name="Admin_LightActivitiesPost_tbSearch"
             Width="307"
             Height="50"
             Margin="370,41,0,0"
@@ -32,7 +32,7 @@
             Text=""
             TextWrapping="Wrap" />
         <Border
-            x:Name="Admin_LightActivities_Dashboard"
+            x:Name="Admin_LightActivitiesPost_Dashboard"
             Width="288"
             Height="942"
             Margin="43,0,0,0"
@@ -47,23 +47,6 @@
                     <GradientStop Offset="0.937" Color="#FF87ACCD" />
                 </LinearGradientBrush>
             </Border.Background>
-        </Border>
-        <Border
-            Width="1028"
-            Height="611"
-            Margin="370,372,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FFDBF3FF"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10">
-            <Rectangle
-                Width="988"
-                Height="2"
-                Margin="0,56,0,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Stroke="#FF12305E" />
         </Border>
         <Image
             x:Name="LightHomePage_iUsers"
@@ -233,511 +216,230 @@
             VerticalAlignment="Top"
             Source="/Views/Images/youtube.png" />
 
-        <!--  Phần thẻ thống kê - Thêm vào phần giao diện mới  -->
-        <Grid
-            Height="220"
-            Margin="370,120,42,0"
-            VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Events Card  -->
-            <Border
-                Grid.Column="0"
-                Margin="0,0,10,0"
-                Padding="20"
-                Background="#FFDBF3FF"
-                CornerRadius="10">
-                <StackPanel>
-                    <TextBlock
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        FontSize="28"
-                        Foreground="#FF12305E"
-                        Text="📅" />
-                    <TextBlock
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="Events" />
-                    <TextBlock
-                        Margin="0,15,0,5"
-                        FontSize="30"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="80" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#FF12305E"
-                        Text="+5 90 ngày qua" />
-                </StackPanel>
-            </Border>
-
-            <!--  People Reached Card  -->
-            <Border
-                Grid.Column="1"
-                Margin="10,0,10,0"
-                Padding="20"
-                Background="#FFDBF3FF"
-                CornerRadius="10">
-                <StackPanel>
-                    <TextBlock
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        FontSize="30"
-                        Foreground="#FF12305E"
-                        Text="👥" />
-                    <TextBlock
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="People Reached" />
-                    <TextBlock
-                        Margin="0,15,0,5"
-                        FontSize="30"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="100" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#FF12305E"
-                        Text="+5 90 ngày qua" />
-                </StackPanel>
-            </Border>
-
-            <!--  Reacts Card  -->
-            <Border
-                Grid.Column="2"
-                Margin="10,0,10,0"
-                Padding="20,5,20,20"
-                Background="#FFDBF3FF"
-                CornerRadius="10">
-                <StackPanel>
-
-                    <TextBlock
-                        Height="51"
-                        HorizontalAlignment="Left"
-                        FontSize="50"
-                        Foreground="#FF12305E"
-                        Text="⭐️" />
-                    <TextBlock
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="Reacts" />
-                    <TextBlock
-                        Margin="0,15,0,5"
-                        FontSize="30"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="345" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#FF12305E"
-                        Text="+5 90 ngày qua" />
-                </StackPanel>
-            </Border>
-
-            <!--  Comments Card  -->
-            <Border
-                Grid.Column="3"
-                Margin="10,0,0,0"
-                Padding="20"
-                Background="#FFDBF3FF"
-                CornerRadius="10">
-                <StackPanel>
-
-                    <TextBlock
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        FontSize="28"
-                        Foreground="#FF12305E"
-                        Text="💬" />
-                    <TextBlock
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="Comments" />
-                    <TextBlock
-                        Margin="0,15,0,5"
-                        FontSize="30"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="123" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#FF12305E"
-                        Text="+5 90 ngày qua" />
-                </StackPanel>
-            </Border>
-        </Grid>
-
-        <!--  Thanh điều khiển Tab và Lọc  -->
-        <StackPanel
-            Margin="390,385,0,0"
+        <!--  Nội dung bài đăng (Phần mới thêm)  -->
+        <Border
+            Width="1028"
+            Height="850"
+            Margin="370,125,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Orientation="Horizontal">
-            <TextBlock
-                FontSize="26"
-                FontWeight="Bold"
-                Foreground="#FF12305E"
-                Text="Nội dung" />
+            Background="#FFDBF3FF"
+            BorderBrush="{x:Null}"
+            CornerRadius="10">
+            <Grid>
+                <!--  Tiêu đề bài đăng  -->
+                <TextBlock
+                    Width="644"
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Foreground="#12305E"
+                    Text="Chiến dịch Ngọn Đuốc Xanh 2025 thông báo mở form đăng ký chiến sĩ"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
 
-        </StackPanel>
+                <!--  Ngày đăng  -->
+                <TextBlock
+                    Margin="20,100,20,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    FontSize="14"
+                    Foreground="#6c757d"
+                    Text="Thứ Sáu - 14/02/2025" />
 
-        <StackPanel
-            Margin="0,385,62,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Orientation="Horizontal">
-            <Button
-                Margin="0,0,20,0"
-                Padding="15,8"
-                Background="#042354"
-                BorderThickness="0"
-                Content="Tạo sự kiện"
-                FontWeight="Bold"
-                Foreground="White">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-            <Button
-                x:Name="timeFilterButton"
-                Margin="0,0,20,0"
-                Padding="15,8"
-                Background="#597CA2"
-                BorderThickness="0"
-                Content="90 ngày qua"
-                FontWeight="Bold"
-                Foreground="#ffffff">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-            <Button
-                x:Name="sortByButton"
-                Padding="15,8"
-                Background="#597CA2"
-                BorderThickness="0"
-                Content="Sắp xếp theo: Ngày"
-                FontWeight="Bold"
-                Foreground="#ffffff">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5" />
-                    </Style>
-                </Button.Resources>
-            </Button>
-        </StackPanel>
+                <!--  Ảnh minh họa  -->
+                <Border
+                    Width="500"
+                    Height="256"
+                    Margin="0,137,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Background="#E6E6E6"
+                    CornerRadius="8" />
 
-        <!--  Danh sách hoạt động  -->
-        <ScrollViewer Margin="390,452,62,60" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <!--  Hoạt động 1  -->
-                <Border Margin="0,0,0,10" Padding="15">
-                    <Grid>
+                <!--  Nút Chỉnh sửa  -->
+                <Button
+                    Margin="0,30,20,0"
+                    Padding="15,8"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="#FF042354"
+                    BorderThickness="0"
+                    Content="Chỉnh sửa"
+                    FontWeight="Bold"
+                    Foreground="White">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5" />
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <!--  Nội dung bài viết  -->
+                <TextBlock
+                    Margin="50,420,50,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="#12305E"
+                    Text="NGỌN ĐUỐC XANH 2025 | CHÍNH THỨC MỞ FORM TUYỂN CHIẾN SĨ" />
+
+                <TextBlock
+                    Margin="50,450,50,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontSize="14"
+                    LineHeight="24"
+                    Text="Như câu nói &quot;Sống là cho đâu chỉ nhận riêng mình.&quot; của Tố Hữu, cho đi không phải là sự mất mát, mà là một cách để lan tỏa yêu thương và nghĩa trong cuộc sống. Một nụ cười, một bàn tay giúp đỡ hay một hành động nhỏ bé cũng có thể mang lại niềm vui và hy vọng cho những mảnh đời kém may mắn. Ngọn Đuốc Xanh chính là cơ hội để mỗi chúng ta viết tiếp câu chuyện của lòng nhân ái, cùng nhau lan tỏa ánh sáng của sự sẻ chia và tinh thần tình nguyện đến khắp mọi nơi."
+                    TextWrapping="Wrap" />
+
+                <!--  Separator  -->
+                <Rectangle
+                    Height="1"
+                    Margin="20,580,20,0"
+                    VerticalAlignment="Top"
+                    Fill="#FF042354" />
+
+                <!--  Like section  -->
+                <StackPanel
+                    Margin="50,600,0,0"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Button
+                        Padding="15,5"
+                        Background="#FF042354"
+                        BorderThickness="0"
+                        Content="Thích"
+                        FontWeight="Bold"
+                        Foreground="White">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Foreground="#FF042354"
+                        Text="42" />
+
+                    <!--  Bình luận  -->
+                    <TextBlock
+                        Margin="750,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="1 Bình luận" />
+                </StackPanel>
+
+                <!--  Comment section  -->
+                <StackPanel Margin="50,650,50,0" VerticalAlignment="Top">
+                    <!--  Comment 1  -->
+                    <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
+                        <!--  Avatar  -->
                         <Border
                             Grid.Column="0"
-                            Width="60"
-                            Height="60"
-                            Background="#e6e6e6"
-                            CornerRadius="8" />
+                            Width="40"
+                            Height="40"
+                            Background="#E6E6E6"
+                            CornerRadius="20" />
 
-                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                        <!--  Comment content  -->
+                        <Border
+                            Grid.Column="1"
+                            Margin="10,0,00,0"
+                            Padding="15,10"
+                            Background="#EAF6FF"
+                            CornerRadius="8">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,5"
+                                    FontWeight="SemiBold"
+                                    Foreground="#FF042354"
+                                    Text="Đỗ Quang Trung" />
+                                <TextBlock Margin="0,0,0,5" Text="Cmt đầu" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Cursor="Hand"
+                                        Foreground="#0E4C92"
+                                        Text="Thích" />
+                                    <TextBlock
+                                        Margin="15,0,0,0"
+                                        Cursor="Hand"
+                                        Foreground="#0E4C92"
+                                        Text="Phản hồi" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Options  -->
+                        <StackPanel
+                            Grid.Column="2"
+                            Margin="10,0,0,0"
+                            Orientation="Horizontal">
                             <TextBlock
-                                FontSize="18"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                FontSize="20"
                                 FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Chiến dịch Ngọn Đuốc Xanh 2025 thông báo mở form đăng ký chiến sĩ"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                FontSize="14"
-                                Foreground="#6c757d"
-                                Text="Thứ Sáu - 14/02/2025" />
-                        </StackPanel>
+                                Text="..." />
 
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt xem" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="8,000" />
-                            </StackPanel>
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt tương tác" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="50" />
-                            </StackPanel>
+                            <!--  Dropdown menu  -->
+                            <Border
+                                Margin="15,0,0,0"
+                                Padding="10,5"
+                                Background="#EAF6FF"
+                                CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock Margin="0,0,0,5" Text="Xoá" />
+                                    <TextBlock Margin="0,0,0,5" Text="Ẩn bình luận" />
+                                    <TextBlock Text="Báo cáo" />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Grid>
-                </Border>
 
-                <!--  Hoạt động 2  -->
-                <Border Margin="0,0,0,10" Padding="15">
-                    <Grid>
+                    <!--  Comment input  -->
+                    <Grid Margin="0,20,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
+                        <!--  Avatar  -->
                         <Border
                             Grid.Column="0"
-                            Width="60"
-                            Height="60"
-                            Background="#e6e6e6"
-                            CornerRadius="8" />
+                            Width="40"
+                            Height="40"
+                            Background="#E6E6E6"
+                            CornerRadius="20" />
 
-                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Đoàn khoa Mạng máy tính và Truyền thông công bố chuỗi Truyền thông 'Tân Tỵ Đón Tết' chào mừng Xuân Ất Tỵ 2025"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                FontSize="14"
-                                Foreground="#6c757d"
-                                Text="Thứ Sáu - 14/02/2025" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt xem" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="8,000" />
-                            </StackPanel>
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt tương tác" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="50" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!--  Hoạt động 3  -->
-                <Border Margin="0,0,0,10" Padding="15">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
+                        <!--  Input field  -->
                         <Border
-                            Grid.Column="0"
-                            Width="60"
-                            Height="60"
-                            Background="#e6e6e6"
-                            CornerRadius="8" />
-
-                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Padding="15,10"
+                            Background="#EAF6FF"
+                            CornerRadius="8">
                             <TextBlock
-                                FontSize="18"
-                                FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Công bố chuỗi hoạt động 'NC Sharing'"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                FontSize="14"
+                                VerticalAlignment="Center"
                                 Foreground="#6c757d"
-                                Text="Thứ Sáu - 14/02/2025" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt xem" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="8,000" />
-                            </StackPanel>
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt tương tác" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="50" />
-                            </StackPanel>
-                        </StackPanel>
+                                Text="Bình luận dưới tên..." />
+                        </Border>
                     </Grid>
-                </Border>
-
-                <!--  Hoạt động 4  -->
-                <Border Margin="0,0,0,10" Padding="15">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border
-                            Grid.Column="0"
-                            Width="60"
-                            Height="60"
-                            Background="#e6e6e6"
-                            CornerRadius="8" />
-
-                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Đoàn khoa Mạng máy tính và Truyền thông công bố chuỗi Truyền thông 'Tân Tỵ Đón Tết' chào mừng Xuân Ất Tỵ 2025"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                FontSize="14"
-                                Foreground="#6c757d"
-                                Text="Thứ Sáu - 14/02/2025" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt xem" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="8,000" />
-                            </StackPanel>
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt tương tác" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="50" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!--  Hoạt động 5  -->
-                <Border Margin="0,0,0,10" Padding="15">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border
-                            Grid.Column="0"
-                            Width="60"
-                            Height="60"
-                            Background="#e6e6e6"
-                            CornerRadius="8" />
-
-                        <StackPanel Grid.Column="1" Margin="15,0,0,0">
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Công bố chuỗi hoạt động 'NC Sharing'"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                FontSize="14"
-                                Foreground="#6c757d"
-                                Text="Thứ Sáu - 14/02/2025" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt xem" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="8,000" />
-                            </StackPanel>
-                            <StackPanel Margin="10,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="#6c757d"
-                                    Text="Lượt tương tác" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="50" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
