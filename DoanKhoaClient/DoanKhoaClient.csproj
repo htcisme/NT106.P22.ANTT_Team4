@@ -27,6 +27,7 @@
     <None Remove="Views\generic avatar.png" />
     <None Remove="Views\header.png" />
     <None Remove="Views\home.png" />
+    <None Remove="Views\Images\account_circle.png" />
     <None Remove="Views\Images\active-activities.png" />
     <None Remove="Views\Images\active-chat_bubble.png" />
     <None Remove="Views\Images\active-home.png" />
@@ -70,9 +71,13 @@
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
+    <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Views\Images\account_circle.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Views\Images\active-activities.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

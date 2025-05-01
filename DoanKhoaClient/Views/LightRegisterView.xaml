@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
     Title="Đăng ký tài khoản"
     Width="1440"
     Height="1024"
@@ -15,6 +16,7 @@
     <Window.Resources>
         <vm:LightRegisterViewModel x:Key="ViewModel"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
     </Window.Resources>
 
     <Window.DataContext>
@@ -43,19 +45,59 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Width="527"
-                Height="592"
-                Margin="25,0,0,0"
+                Margin="25,10,0,119"
                 Padding="20"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Left"
                 CornerRadius="100">
                 <StackPanel Margin="-10,-10,-10,-20" VerticalAlignment="Center">
+                    <!--  Tên đăng nhập  -->
+                    <TextBlock
+    FontSize="16"
+    FontWeight="Bold"
+    Foreground="#FF042354"
+    Text="Tên đăng nhập:" />
+                    <TextBlock Text="{Binding UsernameError}" 
+           Foreground="Red" 
+           FontSize="12" 
+           Margin="10,0,0,5"
+           Visibility="{Binding UsernameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+                    <Grid Margin="5,10,5,10">
+                        <Border
+        Background="#FFFFFFFF"
+        BorderBrush="#FFCBCDD2"
+        BorderThickness="1"
+        CornerRadius="8">
+                            <TextBox
+            Height="35"
+            Margin="15,5"
+            VerticalContentAlignment="Center"
+            Background="Transparent"
+            BorderThickness="0"
+            FontSize="16"
+            Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+                        </Border>
 
+                        <TextBlock
+        Margin="20,5"
+        VerticalAlignment="Center"
+        FontSize="16"
+        Foreground="Gray"
+        IsHitTestVisible="False"
+        Text="Nhập tên đăng nhập"
+        Visibility="{Binding UsernamePlaceholderVisibility}" />
+                    </Grid>
                     <!--  Họ và tên  -->
                     <TextBlock
                         FontSize="16"
                         FontWeight="Bold"
                         Foreground="#FF042354"
                         Text="Họ và tên:" />
+                    <TextBlock Text="{Binding FullNameError}" 
+           Foreground="Red" 
+           FontSize="12" 
+           Margin="10,0,0,5"
+           Visibility="{Binding FullNameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
                     <Grid Margin="5,10,5,10">
                         <Border
                             Background="#FFFFFFFF"
@@ -91,6 +133,12 @@
                         FontWeight="Bold"
                         Foreground="#FF042354"
                         Text="Email:" />
+                    <TextBlock Text="{Binding EmailError}" 
+           Foreground="Red" 
+           FontSize="12" 
+           Margin="10,0,0,5"
+           Visibility="{Binding EmailError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
                     <Grid Margin="5,10,5,10">
                         <Border
                             Background="#FFFFFFFF"
@@ -117,6 +165,7 @@
                             IsHitTestVisible="False"
                             Text="Nhập email"
                             Visibility="{Binding EmailPlaceholderVisibility}" />
+                        
                     </Grid>
 
                     <!--  Mật khẩu  -->
@@ -126,6 +175,12 @@
                         FontWeight="Bold"
                         Foreground="#FF042354"
                         Text="Mật khẩu:" />
+                    <TextBlock Text="{Binding PasswordError}" 
+           Foreground="Red" 
+           FontSize="12" 
+           Margin="10,0,0,5"
+           Visibility="{Binding PasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
                     <Grid Margin="5,10,5,10">
                         <Border
                             Background="White"
@@ -167,6 +222,11 @@
                         FontWeight="Bold"
                         Foreground="#FF042354"
                         Text="Xác nhận mật khẩu:" />
+                    <TextBlock Text="{Binding ConfirmPasswordError}" 
+           Foreground="Red" 
+           FontSize="12" 
+           Margin="10,0,0,5"
+           Visibility="{Binding ConfirmPasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
                     <Grid Margin="5,10,5,10">
                         <Border
                             Background="White"
