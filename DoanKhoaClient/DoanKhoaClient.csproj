@@ -63,7 +63,6 @@
     <None Remove="Views\members.png" />
     <None Remove="Views\notifications.png" />
     <None Remove="Views\search.png" />
-    <None Remove="Views\tasks.png" />
     <None Remove="Views\youtube.png" />
   </ItemGroup>
 
