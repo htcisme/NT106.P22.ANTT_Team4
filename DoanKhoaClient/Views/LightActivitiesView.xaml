@@ -216,22 +216,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Source="/Views/Images/youtube.png" />
-        <Image
-            x:Name="LightHomePage_iTwitter"
-            Width="24"
-            Height="24"
-            Margin="95,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/twitter.png" />
-        <Image
-            x:Name="LightHomePage_iLinkedin"
-            Width="24"
-            Height="24"
-            Margin="255,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/linkedin.png" />
+
 
         <!--  Main Content Area  -->
         <TextBlock
