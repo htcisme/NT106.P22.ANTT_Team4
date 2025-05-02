@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using DoanKhoaClient.Views;
+using DoanKhoaClient.Services;
 namespace DoanKhoaClient.ViewModels
 {
     public class LightUserChatViewModel : INotifyPropertyChanged
@@ -144,6 +145,8 @@ namespace DoanKhoaClient.ViewModels
         public ICommand CreateGroupCommand { get; private set; }
         public ICommand ShowAttachmentsPanelCommand { get; private set; }
 
+        private ICommand _searchFriendsCommand;
+        public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
         public LightUserChatViewModel()
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
@@ -155,9 +158,8 @@ namespace DoanKhoaClient.ViewModels
             RemoveAttachmentCommand = new RelayCommand(RemoveAttachment);
             CreateGroupCommand = new RelayCommand(CreateGroup);
             ShowAttachmentsPanelCommand = new RelayCommand(_ => IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen);
-
-            // Demo data cho đến khi kết nối với backend
-            LoadDemoData();
+            
+            LoadRealData();
 
             // Kết nối SignalR
             ConnectToHub();
@@ -258,7 +260,52 @@ namespace DoanKhoaClient.ViewModels
 
             Users = new ObservableCollection<User>(users);
         }
+        private async Task LoadRealData()
+        {
+            try
+            {
+                // Get the current user from Properties which was set during login
+                if (App.Current.Properties.Contains("CurrentUser"))
+                {
+                    CurrentUser = (User)App.Current.Properties["CurrentUser"];
 
+                    // Get token (in a real application, you'd store and retrieve this properly)
+                    string token = CurrentUser.Id; // Using ID as token for simplicity
+
+                    // Initialize UserService
+                    var userService = new UserService();
+
+                    // Update current user with fresh data from server
+                    try
+                    {
+                        var updatedUser = await userService.GetCurrentUserAsync(token);
+                        if (updatedUser != null)
+                        {
+                            CurrentUser = updatedUser;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error refreshing user data: {ex.Message}");
+                        // Continue with existing user data
+                    }
+
+                    // Load the user's conversations
+                    await LoadConversations();
+                }
+                else
+                {
+                    // Fallback to demo data if no user is logged in
+                    LoadDemoData();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading real data: {ex.Message}");
+                // Fallback to demo data
+                LoadDemoData();
+            }
+        }
         private async Task InitializeAsync()
         {
             try
@@ -568,6 +615,7 @@ namespace DoanKhoaClient.ViewModels
                         }
                     };
 
+                    // FIX: Change "messages" to "demoMessages"
                     Messages = new ObservableCollection<Message>(demoMessages);
                 }
             }
@@ -684,7 +732,46 @@ namespace DoanKhoaClient.ViewModels
                 MessageBox.Show($"Lỗi gửi tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private async void SearchFriends(object parameter)
+        {
+            if (CurrentUser == null)
+            {
+                MessageBox.Show("Vui lòng đăng nhập để sử dụng tính năng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
 
+            try
+            {
+                var searchDialog = new FriendSearchDialog(CurrentUser);
+                var result = searchDialog.ShowDialog();
+
+                if (result == true && searchDialog.DialogConfirmed && searchDialog.SelectedUser != null)
+                {
+                    // Create a new conversation with the selected user
+                    var userService = new UserService();
+                    var newConversation = await userService.CreatePrivateConversationAsync(searchDialog.SelectedUser.Id);
+
+                    if (newConversation != null)
+                    {
+                        // Add to conversations collection if not already there
+                        if (!Conversations.Any(c => c.Id == newConversation.Id))
+                        {
+                            Conversations.Add(newConversation);
+                        }
+
+                        // Select the new conversation
+                        SelectedConversation = Conversations.First(c => c.Id == newConversation.Id);
+
+                        // Sort conversations by last activity
+                        SortConversations();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void SearchConversations()
         {
             // Lọc cuộc hội thoại dựa trên từ khóa tìm kiếm

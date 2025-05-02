@@ -1,6 +1,7 @@
 ﻿using DoanKhoaServer.Models;
 using DoanKhoaServer.Settings;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -205,6 +206,35 @@ namespace DoanKhoaServer.Services
         public async Task UpdateUserAsync(User user)
         {
             await _usersCollection.ReplaceOneAsync(x => x.Id == user.Id, user);
+        }
+        public async Task<List<User>> SearchUsersAsync(string searchTerm)
+        {
+            var filter = Builders<User>.Filter.Or(
+                Builders<User>.Filter.Regex(u => u.Username, new BsonRegularExpression(searchTerm, "i")),
+                Builders<User>.Filter.Regex(u => u.DisplayName, new BsonRegularExpression(searchTerm, "i")),
+                Builders<User>.Filter.Regex(u => u.Email, new BsonRegularExpression(searchTerm, "i"))
+            );
+
+            return await _usersCollection.Find(filter)
+                .Limit(20) // Limit số lượng kết quả trả về
+                .ToListAsync();
+        }
+
+        public async Task<Conversation> GetPrivateConversationAsync(string userId1, string userId2)
+        {
+            var filter = Builders<Conversation>.Filter.And(
+                Builders<Conversation>.Filter.Eq(c => c.IsGroup, false),
+                Builders<Conversation>.Filter.All(c => c.ParticipantIds, new[] { userId1, userId2 }),
+                Builders<Conversation>.Filter.Size(c => c.ParticipantIds, 2)
+            );
+
+            return await _conversationsCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task AddConversationToUserAsync(string userId, string conversationId)
+        {
+            var update = Builders<User>.Update.AddToSet(u => u.Conversations, conversationId);
+            await _usersCollection.UpdateOneAsync(u => u.Id == userId, update);
         }
     }
 }

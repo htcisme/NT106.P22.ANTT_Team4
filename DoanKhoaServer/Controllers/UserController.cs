@@ -12,10 +12,12 @@ namespace DoanKhoaServer.Controllers
     public class UserController : ControllerBase
     {
         private readonly AuthService _authService;
+        private readonly MongoDBService _mongoDBService; // Add this field
 
-        public UserController(AuthService authService)
+        public UserController(AuthService authService, MongoDBService mongoDBService)
         {
             _authService = authService;
+            _mongoDBService = mongoDBService; // Initialize the field
         }
 
         [HttpPost("register")]
@@ -139,5 +141,76 @@ namespace DoanKhoaServer.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message}");
             }
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers(string query)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+                {
+                    return BadRequest("Từ khóa tìm kiếm phải có ít nhất 2 ký tự.");
+                }
+
+                // Lấy danh sách người dùng từ MongoDB service
+                var users = await _mongoDBService.SearchUsersAsync(query);
+
+                // Loại bỏ thông tin nhạy cảm trước khi trả về
+                var userDtos = users.Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.DisplayName,
+                    u.Email,
+                    u.AvatarUrl,
+                    u.LastSeen
+                }).ToList();
+
+                return Ok(userDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrentUser([FromHeader(Name = "Authorization")] string authHeader)
+        {
+            try
+            {
+                // Extract user ID from token (simplified for demo)
+                // In a real application, you would use proper JWT token validation
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized("Invalid authentication token");
+                }
+
+                string token = authHeader.Substring("Bearer ".Length);
+                string userId = token; // In real app, decode JWT token to get user ID
+
+                var user = await _mongoDBService.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Return user without sensitive info
+                return Ok(new
+                {
+                    user.Id,
+                    user.Username,
+                    user.DisplayName,
+                    user.Email,
+                    user.AvatarUrl,
+                    user.LastSeen,
+                    user.Conversations
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
+   
     }
 }
