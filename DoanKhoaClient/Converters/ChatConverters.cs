@@ -11,11 +11,16 @@ namespace DoanKhoaClient.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Lấy ID của người dùng hiện tại - "1" là ID mẫu trong demo data
-            string currentUserId = "1";
+            if (value is string senderId &&
+                Application.Current.Properties.Contains("CurrentUser") &&
+                Application.Current.Properties["CurrentUser"] is User currentUser)
+            {
+                // Debug line to help troubleshoot
+                System.Diagnostics.Debug.WriteLine($"CurrentUserConverter: Message sender={senderId}, CurrentUser={currentUser.Id}, IsMatch={senderId == currentUser.Id}");
 
-            bool isCurrentUser = value?.ToString() == currentUserId;
-            return isCurrentUser ? Visibility.Visible : Visibility.Collapsed;
+                return senderId == currentUser.Id ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -28,11 +33,13 @@ namespace DoanKhoaClient.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Lấy ID của người dùng hiện tại - "1" là ID mẫu trong demo data
-            string currentUserId = "1";
-
-            bool isCurrentUser = value?.ToString() == currentUserId;
-            return isCurrentUser ? Visibility.Collapsed : Visibility.Visible;
+            if (value is string senderId &&
+                Application.Current.Properties.Contains("CurrentUser") &&
+                Application.Current.Properties["CurrentUser"] is User currentUser)
+            {
+                return senderId != currentUser.Id ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

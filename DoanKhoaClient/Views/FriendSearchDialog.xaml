@@ -1,0 +1,81 @@
+﻿<Window x:Class="DoanKhoaClient.Views.FriendSearchDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DoanKhoaClient.Views"
+        xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
+        mc:Ignorable="d"
+        Title="Tìm bạn bè" Height="400" Width="500" 
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <converters:InitialConverter x:Key="InitialConverter"/>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search area -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Nhập tên người dùng, tên hiển thị hoặc email:" 
+                       Margin="0,0,0,5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" 
+                         Padding="5" KeyDown="SearchBox_KeyDown"/>
+                <Button Grid.Column="1" Content="Tìm kiếm" Command="{Binding SearchCommand}" 
+                        Padding="15,5" Margin="5,0,0,0" Background="#87ACCD" Foreground="White" BorderThickness="0"/>
+            </Grid>
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,5,0,0" Foreground="#FF666666"/>
+        </StackPanel>
+
+        <!-- Results list -->
+        <ListView Grid.Row="1" ItemsSource="{Binding SearchResults}" 
+                  SelectedItem="{Binding SelectedUser}" BorderThickness="1" BorderBrush="#FFCCCCCC">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="40" Height="40" 
+                                Background="#FFE0E0E0" CornerRadius="20">
+                            <TextBlock Text="{Binding DisplayName, Converter={StaticResource InitialConverter}}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       FontWeight="Bold" FontSize="16"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Username}" Foreground="#FF666666" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1" Content="Bắt đầu trò chuyện" Command="{Binding StartChatCommand}"
+                    IsEnabled="{Binding IsUserSelected}"
+                    Padding="15,5" Margin="0,0,5,0"/>
+
+            <Button Grid.Column="2" Content="Đóng" Click="CloseButton_Click"
+                    Padding="15,5"/>
+        </Grid>
+    </Grid>
+</Window>
