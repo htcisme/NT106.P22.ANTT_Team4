@@ -1,5 +1,6 @@
-﻿using System.Windows;
+using System.Windows;
 using DoanKhoaClient.Helpers;
+
 
 namespace DoanKhoaClient.Views
 {
@@ -17,3 +18,4 @@ namespace DoanKhoaClient.Views
         }
     }
 }
+
