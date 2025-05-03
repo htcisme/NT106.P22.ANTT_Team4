@@ -66,13 +66,14 @@
                        VerticalAlignment="Top"
                        Width="40"
                        Source="/Views/Images/light-notifications.png"/>
-                <Image x:Name="LightTask_iDark"
+                <Image x:Name="ThemeToggleButton"
                        HorizontalAlignment="Left"
                        Height="40"
                        Margin="1236,46,0,0"
                        VerticalAlignment="Top"
                        Width="40"
-                       Source="/Views/Images/dark.png"/>
+                       Source="/Views/Images/dark.png"
+                       MouseDown="ThemeToggleButton_MouseDown"/>
                 <Image x:Name="LightTask_iSearch"
                        HorizontalAlignment="Left"
                        Height="40"
