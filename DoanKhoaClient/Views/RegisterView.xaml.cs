@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 namespace DoanKhoaClient.Views
 {
-    public partial class LightRegisterView : Window
+    public partial class RegisterView : Window
     {
-        public LightRegisterView() {
+        public RegisterView() {
             InitializeComponent();
         }
     }
