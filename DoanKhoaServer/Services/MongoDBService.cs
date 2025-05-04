@@ -124,68 +124,32 @@ namespace DoanKhoaServer.Services
 
         public async Task<Conversation> CreateGroupConversationAsync(Conversation conversation)
         {
+            // Ensure it's marked as a group
+            conversation.IsGroup = true;
+            conversation.LastActivity = DateTime.UtcNow;
+
+            // Generate ID if not provided
+            if (string.IsNullOrEmpty(conversation.Id))
+            {
+                conversation.Id = ObjectId.GenerateNewId().ToString();
+            }
+
+            // Add to database
             await _conversationsCollection.InsertOneAsync(conversation);
 
-            // Cập nhật danh sách conversations của mỗi thành viên
-            foreach (var userId in conversation.ParticipantIds)
+            // Add this conversation to each participant's list
+            foreach (var participantId in conversation.ParticipantIds)
             {
-                var update = Builders<User>.Update.AddToSet(u => u.Conversations, conversation.Id);
-                await _usersCollection.UpdateOneAsync(u => u.Id == userId, update);
+                await AddConversationToUserAsync(participantId, conversation.Id);
             }
 
             return conversation;
         }
 
-        public async Task<bool> AddUserToGroupAsync(string conversationId, string userId, GroupRole role = GroupRole.Member)
+        public async Task AddConversationToUserAsync(string userId, string conversationId)
         {
-            // Kiểm tra conversation có tồn tại và là group không
-            var conversation = await _conversationsCollection.Find(c => c.Id == conversationId && c.IsGroup).FirstOrDefaultAsync();
-            if (conversation == null)
-                return false;
-
-            // Thêm người dùng vào nhóm
-            var updateConv = Builders<Conversation>.Update
-                .AddToSet(c => c.ParticipantIds, userId)
-                .AddToSet(c => c.GroupMembers, new GroupMember
-                {
-                    UserId = userId,
-                    Role = role,
-                    JoinedAt = DateTime.UtcNow
-                });
-
-            var resultConv = await _conversationsCollection.UpdateOneAsync(c => c.Id == conversationId, updateConv);
-
-            // Thêm conversation vào danh sách của người dùng
-            var updateUser = Builders<User>.Update.AddToSet(u => u.Conversations, conversationId);
-            var resultUser = await _usersCollection.UpdateOneAsync(u => u.Id == userId, updateUser);
-
-            return resultConv.ModifiedCount > 0 && resultUser.ModifiedCount > 0;
-        }
-
-        public async Task<bool> RemoveUserFromGroupAsync(string conversationId, string userId)
-        {
-            // Kiểm tra không cho phép xóa owner
-            var conversation = await _conversationsCollection.Find(
-                c => c.Id == conversationId &&
-                c.IsGroup &&
-                !c.GroupMembers.Any(m => m.UserId == userId && m.Role == GroupRole.Owner)
-            ).FirstOrDefaultAsync();
-
-            if (conversation == null)
-                return false;
-
-            // Xóa người dùng khỏi nhóm
-            var updateConv = Builders<Conversation>.Update
-                .Pull(c => c.ParticipantIds, userId)
-                .PullFilter(c => c.GroupMembers, m => m.UserId == userId);
-
-            var resultConv = await _conversationsCollection.UpdateOneAsync(c => c.Id == conversationId, updateConv);
-
-            // Xóa conversation khỏi danh sách của người dùng
-            var updateUser = Builders<User>.Update.Pull(u => u.Conversations, conversationId);
-            var resultUser = await _usersCollection.UpdateOneAsync(u => u.Id == userId, updateUser);
-
-            return resultConv.ModifiedCount > 0;
+            var update = Builders<User>.Update.AddToSet(u => u.Conversations, conversationId);
+            await _usersCollection.UpdateOneAsync(u => u.Id == userId, update);
         }
         public async Task<Attachment> GetAttachmentAsync(string id)
         {
@@ -231,10 +195,56 @@ namespace DoanKhoaServer.Services
             return await _conversationsCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task AddConversationToUserAsync(string userId, string conversationId)
+
+        public async Task<Message> GetMessageByIdAsync(string id)
         {
-            var update = Builders<User>.Update.AddToSet(u => u.Conversations, conversationId);
-            await _usersCollection.UpdateOneAsync(u => u.Id == userId, update);
+            return await _messagesCollection.Find(m => m.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<bool> AddUserToGroupAsync(string conversationId, string userId, GroupRole role = GroupRole.Member)
+        {
+            try
+            {
+                // Check if conversation exists and is a group
+                var conversation = await _conversationsCollection.Find(c => c.Id == conversationId && c.IsGroup).FirstOrDefaultAsync();
+                if (conversation == null)
+                {
+                    return false;
+                }
+
+                // Check if user is already in the group
+                if (conversation.ParticipantIds.Contains(userId))
+                {
+                    return false; // User is already in the group
+                }
+
+                // Add user to ParticipantIds
+                var updateParticipants = Builders<Conversation>.Update.AddToSet(c => c.ParticipantIds, userId);
+                await _conversationsCollection.UpdateOneAsync(c => c.Id == conversationId, updateParticipants);
+
+                // Add GroupMember entry
+                var groupMember = new GroupMember
+                {
+                    UserId = userId,
+                    Role = role,
+                    JoinedAt = DateTime.UtcNow
+                };
+
+                var updateGroupMembers = Builders<Conversation>.Update.AddToSet(c => c.GroupMembers, groupMember);
+                await _conversationsCollection.UpdateOneAsync(c => c.Id == conversationId, updateGroupMembers);
+
+                // Add conversation to user's conversation list
+                await AddConversationToUserAsync(userId, conversationId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding user to group: {ex.Message}");
+                return false;
+            }
+        }
+
+
     }
 }

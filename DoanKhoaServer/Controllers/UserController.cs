@@ -211,6 +211,59 @@ namespace DoanKhoaServer.Controllers
                 return StatusCode(500, $"Server error: {ex.Message}");
             }
         }
-   
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            try
+            {
+                var user = await _mongoDBService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Return user without sensitive info
+                return Ok(new
+                {
+                    user.Id,
+                    user.Username,
+                    user.DisplayName,
+                    user.Email,
+                    user.AvatarUrl,
+                    user.LastSeen
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _mongoDBService.GetAllUsersAsync();
+
+                // Return users without sensitive information
+                var usersDto = users.Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.DisplayName,
+                    u.Email,
+                    u.AvatarUrl,
+                    u.LastSeen
+                }).ToList();
+
+                return Ok(usersDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
     }
 }

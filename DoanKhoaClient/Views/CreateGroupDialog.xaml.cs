@@ -1,7 +1,6 @@
 ﻿using DoanKhoaClient.Models;
-using DoanKhoaClient.ViewModels;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -15,13 +14,13 @@ namespace DoanKhoaClient.Views
         private readonly HttpClient _httpClient;
         public string GroupName { get; private set; }
         public List<User> SelectedUsers { get; private set; }
+        public bool DialogConfirmed { get; private set; }
 
         public CreateGroupDialog()
         {
             InitializeComponent();
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
             SelectedUsers = new List<User>();
-
             Loaded += CreateGroupDialog_Loaded;
         }
 
@@ -34,46 +33,37 @@ namespace DoanKhoaClient.Views
         {
             try
             {
-                var response = await _httpClient.GetAsync("users");
+                // Get the current user
+                var currentUser = App.Current.Properties["CurrentUser"] as User;
+                if (currentUser == null)
+                {
+                    MessageBox.Show("Không thể lấy thông tin người dùng.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Get all users from server
+                var response = await _httpClient.GetAsync("user/all");
                 if (response.IsSuccessStatusCode)
                 {
                     var users = await response.Content.ReadFromJsonAsync<List<User>>();
 
-                    // Filter out current user
-                    var currentViewModel = (Application.Current.MainWindow.DataContext as LightUserChatViewModel);
-                    var currentUserId = currentViewModel?.CurrentUser?.Id;
+                    // Remove current user from the list
+                    users = users.Where(u => u.Id != currentUser.Id).ToList();
 
-                    if (!string.IsNullOrEmpty(currentUserId))
-                    {
-                        users = users.Where(u => u.Id != currentUserId).ToList();
-                    }
-
+                    // Bind to the ListView
                     UsersListView.ItemsSource = users;
                 }
                 else
                 {
-                    // Load demo users if API call fails
-                    var demoUsers = new List<User>
-                    {
-                        new User { Id = "2", DisplayName = "Nguyen Van A" },
-                        new User { Id = "3", DisplayName = "Tran Thi B" },
-                        new User { Id = "4", DisplayName = "Le Van C" }
-                    };
-
-                    UsersListView.ItemsSource = demoUsers;
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Không thể tải danh sách người dùng: {errorContent}",
+                                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Load demo users if exception occurs
-                var demoUsers = new List<User>
-                {
-                    new User { Id = "2", DisplayName = "Nguyen Van A" },
-                    new User { Id = "3", DisplayName = "Tran Thi B" },
-                    new User { Id = "4", DisplayName = "Le Van C" }
-                };
-
-                UsersListView.ItemsSource = demoUsers;
+                MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}",
+                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -93,12 +83,14 @@ namespace DoanKhoaClient.Views
 
             GroupName = GroupNameTextBox.Text;
             SelectedUsers = UsersListView.SelectedItems.Cast<User>().ToList();
+            DialogConfirmed = true;
             DialogResult = true;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
+            Close();
         }
     }
 }
