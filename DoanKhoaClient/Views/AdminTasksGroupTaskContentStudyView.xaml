@@ -12,12 +12,12 @@
         <Grid x:Name="Admin_GroupTask_Content_Study_Background"
               Width="1440"
               Height="1022.8">
-                <Grid.Background>
-                        <LinearGradientBrush EndPoint="0.5,1"
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1"
                                              StartPoint="0.5,0">
-                                <GradientStop Color="#FFF6FCFF"
+                <GradientStop Color="#FFF6FCFF"
                                               Offset="0.596"/>
-                                <GradientStop Color="#FFDBF3FF"
+                <GradientStop Color="#FFDBF3FF"
                                               Offset="1"/>
                         </LinearGradientBrush>
                 </Grid.Background>
@@ -39,14 +39,14 @@
                         VerticalAlignment="Center"
                         Width="288"
                         CornerRadius="10,10,10,10">
-                        <Border.Background>
-                                <LinearGradientBrush EndPoint="0.5,1"
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1"
                                                      StartPoint="0.5,0">
-                                        <GradientStop Color="#FFF6FCFF"
+                    <GradientStop Color="#FFF6FCFF"
                                                       Offset="0.04"/>
-                                        <GradientStop Color="#FFDBF3FF"
+                    <GradientStop Color="#FFDBF3FF"
                                                       Offset="0.46"/>
-                                        <GradientStop Color="#FF87ACCD"
+                    <GradientStop Color="#FF87ACCD"
                                                       Offset="0.937"/>
                                 </LinearGradientBrush>
                         </Border.Background>
@@ -213,23 +213,23 @@
                        Foreground="#042354"
                        FontWeight="Bold"
                        Padding="0,0,0,0"/>
-                <Rectangle HorizontalAlignment="Left"
+        <Rectangle HorizontalAlignment="Left"
                            Height="1"
                            Margin="365,250,0,0"
                            Stroke="Black"
                            VerticalAlignment="Top"
                            Width="1020"
                            RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                                <TransformGroup>
-                                        <ScaleTransform ScaleY="-1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                </TransformGroup>
-                        </Rectangle.RenderTransform>
-                </Rectangle>
-                <Label Content="Manager:"
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+        <Label Content="Manager:"
                        HorizontalAlignment="Left"
                        Height="30"
                        Margin="365,199,0,0"
@@ -263,7 +263,7 @@
                        Foreground="#042354"
                        FontWeight="Bold"
                        Padding="0,0,0,0"/>
-                <Border HorizontalAlignment="Left"
+        <Border HorizontalAlignment="Left"
                         Height="183"
                         Margin="443,365,0,0"
                         VerticalAlignment="Top"
@@ -352,7 +352,7 @@
                        Foreground="#042354"
                        FontWeight="Bold"
                        Padding="0,0,0,0"/>
-                <Border HorizontalAlignment="Left"
+        <Border HorizontalAlignment="Left"
                         Height="114"
                         Margin="448,693,0,0"
                         VerticalAlignment="Top"
@@ -418,5 +418,5 @@
                         Padding="0,0,0,0"
                         Foreground="#FFFFFF"
                         FontWeight="Bold"/>
-        </Grid>
+    </Grid>
 </Window>

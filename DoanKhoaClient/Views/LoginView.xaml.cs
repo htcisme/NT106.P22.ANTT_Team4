@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 namespace DoanKhoaClient.Views
 {
-    public partial class LightLoginView:Window
+    public partial class LoginView : Window
     {
-        public LightLoginView()
+        public LoginView()
         {
             InitializeComponent();
         }

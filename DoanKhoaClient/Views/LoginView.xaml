@@ -8,13 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
-    Title="LightLoginView"
+    Title="Login"
     Width="1440"
     Height="1024"
     mc:Ignorable="d">
 
     <Window.Resources>
-        <vm:LightLoginViewModel x:Key="ViewModel" />
+        <vm:LoginViewModel x:Key="ViewModel" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
 
