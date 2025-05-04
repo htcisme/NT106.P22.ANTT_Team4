@@ -2,9 +2,9 @@
 
 namespace DoanKhoaClient.Views
 {
-    public partial class LightUserChatView : Window
+    public partial class UserChatView : Window
     {
-        public LightUserChatView()
+        public UserChatView()
         {
             InitializeComponent();
         }

@@ -13,67 +13,6 @@
     <Resource Include="Fonts/Montserrat-VariableFont_wght.ttf" />
  </ItemGroup>
  
-  <ItemGroup>
-    <None Remove="Views\active-home.png" />
-    <None Remove="Views\active-tasks.png" />
-    <None Remove="Views\activities.png" />
-    <None Remove="Views\calendar-tasks.png" />
-    <None Remove="Views\calendar.png" />
-    <None Remove="Views\chat_bubble.png" />
-    <None Remove="Views\dark-down-list.png" />
-    <None Remove="Views\dark-up-list.png" />
-    <None Remove="Views\dark.png" />
-    <None Remove="Views\facebook.png" />
-    <None Remove="Views\generic avatar.png" />
-    <None Remove="Views\header.png" />
-    <None Remove="Views\home.png" />
-    <None Remove="Views\Images\account_circle.png" />
-    <None Remove="Views\Images\active-activities.png" />
-    <None Remove="Views\Images\active-chat_bubble.png" />
-    <None Remove="Views\Images\active-home.png" />
-    <None Remove="Views\Images\active-members.png" />
-    <None Remove="Views\Images\active-tasks.png" />
-    <None Remove="Views\Images\activities.png" />
-    <None Remove="Views\Images\attachment.png" />
-    <None Remove="Views\Images\calendar-tasks.png" />
-    <None Remove="Views\Images\chat_bubble.png" />
-    <None Remove="Views\Images\dark-down-list.png" />
-    <None Remove="Views\Images\dark-notifications.png" />
-    <None Remove="Views\Images\dark-up-list.png" />
-    <None Remove="Views\Images\dark.png" />
-    <None Remove="Views\Images\facebook.png" />
-    <None Remove="Views\Images\generic avatar.png" />
-    <None Remove="Views\Images\header.png" />
-    <None Remove="Views\Images\home.png" />
-    <None Remove="Views\Images\instagram.png" />
-    <None Remove="Views\Images\light-down-list.png" />
-    <None Remove="Views\Images\light-header.png" />
-    <None Remove="Views\Images\light-notifications.png" />
-    <None Remove="Views\Images\light-up-list.png" />
-    <None Remove="Views\Images\light.png" />
-    <None Remove="Views\Images\members.png" />
-    <None Remove="Views\Images\search.png" />
-    <None Remove="Views\Images\send.png" />
-    <None Remove="Views\Images\Settings-icon.png" />
-    <None Remove="Views\Images\tasks.png" />
-    <None Remove="Views\Images\user-hero.png" />
-    <None Remove="Views\Images\User-icon.png" />
-    <None Remove="Views\Images\youtube.png" />
-    <None Remove="Views\instagram.png" />
-    <None Remove="Views\light-down-list.png" />
-    <None Remove="Views\light-notifications.png" />
-    <None Remove="Views\light-up-list.png" />
-    <None Remove="Views\members.png" />
-    <None Remove="Views\notifications.png" />
-    <None Remove="Views\search.png" />
-    <None Remove="Views\youtube.png" />
-  </ItemGroup>
- 
-  <ItemGroup>
-    <Resource Include="Views\Images\send.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
@@ -82,8 +21,18 @@
     <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
   </ItemGroup>
 
+  <!-- Improved image resource handling -->
   <ItemGroup>
-    <Resource Include="Views/Images/*.png" />
+    <!-- Replace wildcard with explicit includes -->
+    <Resource Include="Views\Images\**\*.png" />
+    <Resource Include="Views\Images\**\*.jpg" />
+    <Resource Include="Views\Images\**\*.jpeg" />
   </ItemGroup>
 
+  <!-- Prevent conflicts by excluding from compile -->
+  <ItemGroup>
+    <None Remove="Views\Images\**\*.png" />
+    <None Remove="Views\Images\**\*.jpg" />
+    <None Remove="Views\Images\**\*.jpeg" />
+  </ItemGroup>
 </Project>

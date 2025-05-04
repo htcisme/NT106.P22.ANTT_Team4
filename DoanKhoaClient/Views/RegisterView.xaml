@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <vm:LightRegisterViewModel x:Key="ViewModel"/>
+        <vm:RegisterViewModel x:Key="ViewModel"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
     </Window.Resources>
