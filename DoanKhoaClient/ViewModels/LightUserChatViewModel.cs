@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Input;
 using DoanKhoaClient.Views;
 using DoanKhoaClient.Services;
+using MongoDB.Bson;
 namespace DoanKhoaClient.ViewModels
 {
     public class LightUserChatViewModel : INotifyPropertyChanged
@@ -448,74 +449,7 @@ namespace DoanKhoaClient.ViewModels
         // Phương thức gửi tin nhắn có đính kèm
 
 
-        // Phương thức tạo nhóm chat mới
-        private async void CreateGroup(object parameter)
-        {
-            // Tạo dialog để nhập tên nhóm và chọn thành viên
-            var dialog = new CreateGroupDialog();
-
-            if (dialog.ShowDialog() == true)
-            {
-                try
-                {
-                    var newGroup = new Conversation
-                    {
-                        Title = dialog.GroupName,
-                        IsGroup = true,
-                        CreatorId = CurrentUser.Id,
-                        ParticipantIds = new List<string>(dialog.SelectedUsers.Select(u => u.Id)),
-                        LastActivity = DateTime.Now
-                    };
-
-                    // Thêm người tạo nhóm vào danh sách thành viên
-                    if (!newGroup.ParticipantIds.Contains(CurrentUser.Id))
-                        newGroup.ParticipantIds.Add(CurrentUser.Id);
-
-                    // Thêm creator vào nhóm với vai trò Owner
-                    newGroup.GroupMembers.Add(new GroupMember
-                    {
-                        UserId = CurrentUser.Id,
-                        Role = GroupRole.Owner,
-                        JoinedAt = DateTime.Now
-                    });
-
-                    // Thêm các thành viên khác
-                    foreach (var userId in newGroup.ParticipantIds.Where(id => id != CurrentUser.Id))
-                    {
-                        newGroup.GroupMembers.Add(new GroupMember
-                        {
-                            UserId = userId,
-                            Role = GroupRole.Member,
-                            JoinedAt = DateTime.Now
-                        });
-                    }
-
-                    if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
-                    {
-                        await _hubConnection.InvokeAsync("CreateGroupConversation", newGroup);
-                    }
-                    else
-                    {
-                        // Fallback nếu không có kết nối SignalR
-                        var response = await _httpClient.PostAsJsonAsync("conversations", newGroup);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var createdGroup = await response.Content.ReadFromJsonAsync<Conversation>();
-                            Conversations.Add(createdGroup);
-                            SelectedConversation = createdGroup;
-                        }
-                        else
-                        {
-                            MessageBox.Show($"Không thể tạo nhóm chat: {response.StatusCode}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi tạo nhóm chat: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+        
 
         // Helper method để lấy MIME type từ extension
         private string GetMimeType(string extension)
@@ -544,15 +478,62 @@ namespace DoanKhoaClient.ViewModels
                 if (response.IsSuccessStatusCode)
                 {
                     var conversations = await response.Content.ReadFromJsonAsync<List<Conversation>>();
-                    Conversations = new ObservableCollection<Conversation>(conversations);
+                    if (conversations != null)
+                    {
+                        // For each conversation, fetch user details
+                        foreach (var conversation in conversations)
+                        {
+                            conversation.Participants = await GetParticipantsForConversation(conversation);
+                        }
+
+                        Conversations = new ObservableCollection<Conversation>(conversations);
+
+                        // Select the first conversation if any
+                        if (Conversations.Count > 0 && SelectedConversation == null)
+                        {
+                            SelectedConversation = Conversations[0];
+                        }
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to load conversations: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi
-                MessageBox.Show($"Lỗi tải danh sách hội thoại: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"Error loading conversations: {ex.Message}");
+                MessageBox.Show($"Lỗi tải cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private async Task<List<User>> GetParticipantsForConversation(Conversation conversation)
+        {
+            var participants = new List<User>();
+
+            foreach (var userId in conversation.ParticipantIds)
+            {
+                try
+                {
+                    var response = await _httpClient.GetAsync($"user/{userId}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var user = await response.Content.ReadFromJsonAsync<User>();
+                        if (user != null)
+                        {
+                            participants.Add(user);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error fetching user {userId}: {ex.Message}");
+                }
+            }
+
+            return participants;
+        }
+
         private bool CanSendMessage(object parameter)
         {
             return ((!string.IsNullOrWhiteSpace(CurrentMessage) || SelectedAttachments.Count > 0) &&
@@ -577,47 +558,44 @@ namespace DoanKhoaClient.ViewModels
 
                 Messages.Clear();
 
-                // Gọi API để lấy lịch sử tin nhắn
-                var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}");
-                if (response.IsSuccessStatusCode)
-                {
-                    var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
-                    Messages = new ObservableCollection<Message>(messages);
-                }
-                else
-                {
-                    // Tạo dữ liệu mẫu cho demo
-                    var demoMessages = new[]
-                    {
-                        new Message
-                        {
-                            Id = "1",
-                            ConversationId = conversationId,
-                            SenderId = "2", // Other user
-                            Content = "Chào bạn!",
-                            Timestamp = DateTime.Now.AddMinutes(-15)
-                        },
-                        new Message
-                        {
-                            Id = "2",
-                            ConversationId = conversationId,
-                            SenderId = CurrentUser.Id, // Current user
-                            Content = "Xin chào! Bạn khỏe không?",
-                            Timestamp = DateTime.Now.AddMinutes(-14)
-                        },
-                        new Message
-                        {
-                            Id = "3",
-                            ConversationId = conversationId,
-                            SenderId = "2", // Other user
-                            Content = "Mình khỏe, cảm ơn bạn đã hỏi thăm!",
-                            Timestamp = DateTime.Now.AddMinutes(-10)
-                        }
-                    };
+                // Add debugging to see what's happening
+                System.Diagnostics.Debug.WriteLine($"Loading messages for conversation: {conversationId}");
 
-                    // FIX: Change "messages" to "demoMessages"
-                    Messages = new ObservableCollection<Message>(demoMessages);
+                // Use try-catch specifically for the API call to better handle errors
+                try
+                {
+                    var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}");
+                    System.Diagnostics.Debug.WriteLine($"API response status: {response.StatusCode}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
+                        System.Diagnostics.Debug.WriteLine($"Retrieved {messages.Count} messages");
+
+                        if (messages != null && messages.Count > 0)
+                        {
+                            Messages = new ObservableCollection<Message>(messages);
+                            return; // Successfully loaded messages, exit method
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("Retrieved empty message list");
+                        }
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        System.Diagnostics.Debug.WriteLine($"API error: {errorContent}");
+                    }
                 }
+                catch (Exception apiEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"API exception: {apiEx.Message}");
+                    // Don't show message box here, just log the error and continue with fallback
+                }
+
+                // Only reach here if API call failed or returned no messages
+                // In production, you might want to show empty message list instead of demo data
             }
             catch (Exception ex)
             {
@@ -772,6 +750,101 @@ namespace DoanKhoaClient.ViewModels
                 MessageBox.Show($"Lỗi khi tạo cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private async void CreateGroup(object parameter)
+        {
+            try
+            {
+                // Show the CreateGroupDialog
+                var createGroupDialog = new CreateGroupDialog();
+                var result = createGroupDialog.ShowDialog();
+
+                if (result == true)
+                {
+                    string groupName = createGroupDialog.GroupName;
+                    List<User> selectedUsers = createGroupDialog.SelectedUsers;
+
+                    // Create the participant list starting with current user
+                    List<string> participantIds = new List<string> { CurrentUser.Id };
+
+                    // Add selected users
+                    participantIds.AddRange(selectedUsers.Select(u => u.Id));
+
+                    // Create the group members list with current user as owner
+                    List<GroupMember> groupMembers = new List<GroupMember>
+            {
+                new GroupMember
+                {
+                    UserId = CurrentUser.Id,
+                    Role = GroupRole.Owner,
+                    JoinedAt = DateTime.Now
+                }
+            };
+
+                    // Add selected users as members
+                    foreach (var user in selectedUsers)
+                    {
+                        groupMembers.Add(new GroupMember
+                        {
+                            UserId = user.Id,
+                            Role = GroupRole.Member,
+                            JoinedAt = DateTime.Now
+                        });
+                    }
+
+                    // Generate a new ID here instead of letting the server do it
+                    string newGroupId = ObjectId.GenerateNewId().ToString();
+
+                    // Create new group conversation with the required fields
+                    var newGroup = new Conversation
+                    {
+                        Id = newGroupId,                  // Set Id explicitly
+                        Title = groupName,
+                        IsGroup = true,
+                        CreatorId = CurrentUser.Id,
+                        ParticipantIds = participantIds,
+                        LastActivity = DateTime.Now,
+                        LastMessageId = "",               // Provide empty but not null
+                        GroupMembers = groupMembers
+                    };
+
+                    // Send request to server
+                    var response = await _httpClient.PostAsJsonAsync("conversations/group", newGroup);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var createdGroup = await response.Content.ReadFromJsonAsync<Conversation>();
+
+                        // Add to local collection and select it
+                        if (createdGroup != null)
+                        {
+                            // Get participants to add to the conversation object
+                            createdGroup.Participants = await GetParticipantsForConversation(createdGroup);
+
+                            Conversations.Add(createdGroup);
+                            SelectedConversation = createdGroup;
+
+                            // Sort conversations by last activity
+                            SortConversations();
+
+                            // Show success message
+                            MessageBox.Show($"Nhóm '{groupName}' đã được tạo thành công với {selectedUsers.Count} thành viên.",
+                                            "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"Máy chủ trả về lỗi: {errorContent}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Không thể tạo nhóm: {ex.Message}",
+                              "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void SearchConversations()
         {
             // Lọc cuộc hội thoại dựa trên từ khóa tìm kiếm

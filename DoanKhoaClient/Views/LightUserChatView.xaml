@@ -19,6 +19,7 @@
         <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter" />
         <converters:FileIconConverter x:Key="FileIconConverter" />
         <converters:FileSizeConverter x:Key="FileSizeConverter" />
+        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
     </Window.Resources>
 
     <Window.DataContext>
@@ -166,8 +167,10 @@
                                         <Image Height="44" Width="44" Margin="10,0,0,0" 
                                                HorizontalAlignment="Left" VerticalAlignment="Center" 
                                                Source="/Views/Images/account_circle.png"/>
-                                        <Label Content="{Binding Title}" Margin="60,10,0,0" 
-                                               HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        <Label Content="{Binding Converter={StaticResource ConversationTitleConverter}}" 
+       Margin="60,10,0,0" 
+       HorizontalAlignment="Left" 
+       VerticalAlignment="Top"/>
                                         <Label Content="{Binding LastActivity, StringFormat='{}{0:HH:mm}'}" 
                                                Margin="0,10,10,0" FontSize="10"
                                                HorizontalAlignment="Right" VerticalAlignment="Top"/>
@@ -211,14 +214,15 @@
 
                         <!-- Header -->
                         <Border Grid.Row="0"
-                            Height="56"
-                            Background="#FFDAE9F6"
-                            CornerRadius="20,20,0,0">
+    Height="56"
+    Background="#FFDAE9F6"
+    CornerRadius="20,20,0,0">
                             <Grid>
                                 <Image HorizontalAlignment="Left" Height="30" Margin="26,13,0,0" 
-                                       VerticalAlignment="Center" Width="30" Source="/Views/Images/account_circle.png"/>
-                                <Label Content="{Binding SelectedConversation.Title}" Margin="69,0,0,0" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15"/>
+               VerticalAlignment="Center" Width="30" Source="/Views/Images/account_circle.png"/>
+                                <!-- Change this line to use the converter -->
+                                <Label Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}" 
+               Margin="69,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15"/>
                             </Grid>
                         </Border>
 

@@ -1,6 +1,7 @@
 ﻿using DoanKhoaServer.Models;
 using DoanKhoaServer.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -94,6 +95,59 @@ namespace DoanKhoaServer.Controllers
             {
                 var messages = await _mongoDBService.GetMessagesByConversationIdAsync(conversationId);
                 return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
+
+
+        [HttpPost("group")]
+        public async Task<IActionResult> CreateGroupConversation([FromBody] Conversation conversation)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(conversation.Title))
+                {
+                    return BadRequest("Group name is required");
+                }
+
+                if (string.IsNullOrEmpty(conversation.CreatorId))
+                {
+                    return BadRequest("Creator ID is required");
+                }
+
+                if (conversation.ParticipantIds == null || conversation.ParticipantIds.Count < 2)
+                {
+                    return BadRequest("At least 2 participants are required");
+                }
+
+                // Set required fields if they're missing
+                if (string.IsNullOrEmpty(conversation.Id))
+                {
+                    conversation.Id = ObjectId.GenerateNewId().ToString();
+                }
+
+                conversation.LastMessageId = conversation.LastMessageId ?? string.Empty;
+
+                // Create the conversation
+                var createdConversation = await _mongoDBService.CreateGroupConversationAsync(conversation);
+
+                // Create a system message indicating group creation
+                var systemMessage = new Message
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ConversationId = createdConversation.Id,
+                    SenderId = conversation.CreatorId,
+                    Content = $"Group '{conversation.Title}' has been created",
+                    Timestamp = DateTime.UtcNow,
+                    Type = MessageType.System
+                };
+
+                await _mongoDBService.CreateMessageAsync(systemMessage);
+
+                return Ok(createdConversation);
             }
             catch (Exception ex)
             {
