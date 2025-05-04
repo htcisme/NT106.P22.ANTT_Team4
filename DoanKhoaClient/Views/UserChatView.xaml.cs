@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using DoanKhoaClient.Helpers;
 
-
 namespace DoanKhoaClient.Views
 {
     public partial class UserChatView : Window
@@ -18,4 +17,3 @@ namespace DoanKhoaClient.Views
         }
     }
 }
-

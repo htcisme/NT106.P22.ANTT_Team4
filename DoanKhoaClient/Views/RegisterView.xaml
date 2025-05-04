@@ -261,6 +261,48 @@
                             Visibility="{Binding ConfirmPasswordPlaceholderVisibility}" />
                     </Grid>
 
+                    <Grid Margin="5,10,5,10">
+                        <CheckBox 
+                            Content="Đăng ký với quyền Admin"
+                            IsChecked="{Binding IsAdmin}"
+                            Foreground="#FF042354"
+                            FontSize="14" />
+                    </Grid>
+                    <Grid Margin="5,10,5,10" Visibility="{Binding ShowAdminCode, Converter={StaticResource BoolToVis}}">
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="#FF042354"
+                            Text="Mã xác thực Admin:" />
+                        <TextBlock 
+                            Text="{Binding AdminCodeError}" 
+                            Foreground="Red" 
+                            FontSize="12" 
+                            Margin="10,25,0,5"
+                            Visibility="{Binding AdminCodeError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+                        <Border
+                            Margin="0,30,0,0"
+                            Background="White"
+                            BorderBrush="#FFCBCDD2"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                            <PasswordBox
+                                x:Name="AdminCodeBox"
+                                Height="35"
+                                Margin="15,5"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontSize="16">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PasswordChanged">
+                                        <i:InvokeCommandAction Command="{Binding AdminCodeChangedCommand}" 
+                                                            CommandParameter="{Binding ElementName=AdminCodeBox}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </PasswordBox>
+                        </Border>
+                    </Grid>
                     <!-- Error Message -->
                     <TextBlock 
                         Foreground="Red"

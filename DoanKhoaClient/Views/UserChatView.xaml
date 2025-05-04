@@ -11,6 +11,7 @@
         Height="1024"
         Width="1440">
 
+
     <!-- Khai báo Converters -->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>

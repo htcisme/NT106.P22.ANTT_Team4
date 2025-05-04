@@ -25,8 +25,12 @@ namespace DoanKhoaClient.ViewModels
         private string _fullNameError;
         private string _confirmPasswordError;
         private string _errorMessage;
+        private bool _isAdmin;
         private bool _isLoading;
         private bool _enableTwoFactorAuth;
+        private string _adminCode;
+        private bool _showAdminCode = false;
+        private string _adminCodeError;
         private Visibility _fullNamePlaceholderVisibility = Visibility.Visible;
         private Visibility _emailPlaceholderVisibility = Visibility.Visible;
         private Visibility _usernamePlaceholderVisibility = Visibility.Visible;
@@ -286,7 +290,67 @@ namespace DoanKhoaClient.ViewModels
                 }
             }
         }
+        public string AdminCode
+        {
+            get => _adminCode;
+            set
+            {
+                if (_adminCode != value)
+                {
+                    _adminCode = value;
+                    OnPropertyChanged();
+                    ValidateCanRegister();
+                }
+            }
+        }
+
+        public bool ShowAdminCode
+        {
+            get => _showAdminCode;
+            set
+            {
+                if (_showAdminCode != value)
+                {
+                    _showAdminCode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string AdminCodeError
+        {
+            get => _adminCodeError;
+            set
+            {
+                if (_adminCodeError != value)
+                {
+                    _adminCodeError = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        // Update IsAdmin property to show/hide the admin code field
+        public bool IsAdmin
+        {
+            get => _isAdmin;
+            set
+            {
+                if (_isAdmin != value)
+                {
+                    _isAdmin = value;
+                    OnPropertyChanged();
+                    // Show or hide the admin code field when checkbox is toggled
+                    ShowAdminCode = value;
+                    // Reset admin code error when unchecking the box
+                    if (!value)
+                        AdminCodeError = string.Empty;
+                }
+            }
+        }
+
         #region Commands
+        public ICommand AdminCodeChangedCommand { get; private set; }
         public ICommand RegisterCommand { get; private set; }
         public ICommand NavigateToLoginCommand { get; private set; }
         public ICommand PasswordChangedCommand { get; private set; }
@@ -295,6 +359,7 @@ namespace DoanKhoaClient.ViewModels
         #endregion
 
         #region Constructor
+
         public RegisterViewModel()
         {
             _authService = new AuthService();
@@ -305,19 +370,33 @@ namespace DoanKhoaClient.ViewModels
             PasswordChangedCommand = new RelayCommand(ExecutePasswordChanged);
             ConfirmPasswordChangedCommand = new RelayCommand(ExecuteConfirmPasswordChanged);
             UsernameChangedCommand = new RelayCommand(ExecuteUsernameChanged);
+            AdminCodeChangedCommand = new RelayCommand(ExecuteAdminCodeChanged); // Add this line
         }
+
         #endregion
 
         #region Command Methods
         private bool CanExecuteRegister(object parameter)
         {
+            if (IsAdmin)
+            {
+                return !IsLoading &&
+                    !string.IsNullOrWhiteSpace(FullName) &&
+                    !string.IsNullOrWhiteSpace(Email) &&
+                    !string.IsNullOrWhiteSpace(Username) &&
+                    !string.IsNullOrWhiteSpace(Password) &&
+                    !string.IsNullOrWhiteSpace(ConfirmPassword) &&
+                    !string.IsNullOrWhiteSpace(AdminCode) && 
+                    Password == ConfirmPassword;
+            }
+            
             return !IsLoading &&
-                   !string.IsNullOrWhiteSpace(FullName) &&
-                   !string.IsNullOrWhiteSpace(Email) &&
-                   !string.IsNullOrWhiteSpace(Username) &&
-                   !string.IsNullOrWhiteSpace(Password) &&
-                   !string.IsNullOrWhiteSpace(ConfirmPassword) &&
-                   Password == ConfirmPassword;
+                !string.IsNullOrWhiteSpace(FullName) &&
+                !string.IsNullOrWhiteSpace(Email) &&
+                !string.IsNullOrWhiteSpace(Username) &&
+                !string.IsNullOrWhiteSpace(Password) &&
+                !string.IsNullOrWhiteSpace(ConfirmPassword) &&
+                Password == ConfirmPassword;
         }
         private void ResetErrors()
         {
@@ -326,6 +405,7 @@ namespace DoanKhoaClient.ViewModels
             EmailError = string.Empty;
             PasswordError = string.Empty;
             ConfirmPasswordError = string.Empty;
+            AdminCodeError = string.Empty;
             ErrorMessage = string.Empty;
         }
         private void ValidateCanRegister()
@@ -355,10 +435,19 @@ namespace DoanKhoaClient.ViewModels
             else if (Password != ConfirmPassword)
                 ConfirmPasswordError = "Mật khẩu xác nhận không khớp";
 
+            if (IsAdmin && string.IsNullOrWhiteSpace(AdminCode))
+                AdminCodeError = "Vui lòng nhập mã xác thực Admin";
+
             (RegisterCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
 
-
+        private void ExecuteAdminCodeChanged(object parameter)
+{
+            if (parameter is PasswordBox passwordBox)
+            {
+                AdminCode = passwordBox.Password;
+            }
+        }
         private async void ExecuteRegister(object parameter)
         {
             try
@@ -419,17 +508,30 @@ namespace DoanKhoaClient.ViewModels
                     ErrorMessage = "Vui lòng kiểm tra lại thông tin đăng ký.";
                     return;
                 }
+            // Admin code validation
+                if (IsAdmin && string.IsNullOrWhiteSpace(AdminCode))
+                {
+                    AdminCodeError = "Vui lòng nhập mã xác thực Admin";
+                    hasError = true;
+                }
 
-                // Tạo request để đăng ký
+                if (hasError)
+                {
+                    ErrorMessage = "Vui lòng kiểm tra lại thông tin đăng ký.";
+                    return;
+                }
+
+                // Create registration request
                 var request = new RegisterRequest
                 {
                     Username = Username,
                     DisplayName = FullName,
                     Email = Email,
                     Password = Password,
-                    EnableTwoFactorAuth = EnableTwoFactorAuth
+                    EnableTwoFactorAuth = EnableTwoFactorAuth,
+                    Role = IsAdmin ? UserRole.Admin : UserRole.User,
+                    AdminCode = IsAdmin ? AdminCode : null // Include admin code if registering as admin
                 };
-
                 System.Diagnostics.Debug.WriteLine($"Gửi request đăng ký: Username={Username}, Email={Email}");
 
                 // Gửi request đăng ký
