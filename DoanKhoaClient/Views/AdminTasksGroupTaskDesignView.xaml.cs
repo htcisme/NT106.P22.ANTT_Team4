@@ -4,17 +4,17 @@ using DoanKhoaClient.Helpers;
 
 namespace DoanKhoaClient.Views
 {
-    public partial class AdminLightTasksGroupTaskDesignView : Window
+    public partial class AdminTasksGroupTaskDesignView : Window
     {
-        public AdminLightTasksGroupTaskDesignView()
+        public AdminTasksGroupTaskDesignView()
         {
             InitializeComponent();
-            ThemeManager.ApplyTheme(Admin_LightGroupTask_Design_Background);
+            ThemeManager.ApplyTheme(Admin_GroupTask_Design_Background);
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ThemeManager.ToggleTheme(Admin_LightGroupTask_Design_Background);
+            ThemeManager.ToggleTheme(Admin_GroupTask_Design_Background);
         }
     }
 }
