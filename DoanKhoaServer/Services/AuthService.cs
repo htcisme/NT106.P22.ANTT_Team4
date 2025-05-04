@@ -16,7 +16,13 @@ namespace DoanKhoaServer.Services
             _mongoDBService = mongoDBService;
         }
 
-        public async Task<(User user, string message)> RegisterUser(string username, string displayName, string email, string password, bool enableTwoFactorAuth)
+        public async Task<(User user, string message)> RegisterUser(
+    string username, 
+    string displayName, 
+    string email, 
+    string password, 
+    bool enableTwoFactorAuth,
+    UserRole role = UserRole.User)
         {
             // Kiểm tra xem username đã tồn tại chưa
             var existingUser = await _mongoDBService.GetUserByUsernameAsync(username);
@@ -46,7 +52,8 @@ namespace DoanKhoaServer.Services
                 PasswordSalt = salt,
                 AvatarUrl = null,
                 LastSeen = DateTime.UtcNow,
-                TwoFactorEnabled = enableTwoFactorAuth
+                TwoFactorEnabled = enableTwoFactorAuth,
+                Role = role // Role is already validated in the controller
             };
 
             // Nếu bật xác thực 2 lớp, tạo secret key

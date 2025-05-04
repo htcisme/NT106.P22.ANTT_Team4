@@ -229,7 +229,6 @@ namespace DoanKhoaClient.ViewModels
                 }
                 else if (!string.IsNullOrEmpty(response.Id))
                 {
-                    // Đăng nhập thành công, lưu thông tin user và chuyển đến màn hình chính
                     App.Current.Properties["CurrentUser"] = new User
                     {
                         Id = response.Id,
@@ -237,6 +236,7 @@ namespace DoanKhoaClient.ViewModels
                         DisplayName = response.DisplayName,
                         Email = response.Email,
                         AvatarUrl = response.AvatarUrl,
+                        Role = response.Role // Save the role
                     };
 
                     MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
