@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace DoanKhoaClient.ViewModels
 {
-    public partial class LightLoginViewModel : INotifyPropertyChanged
+    public partial class LoginViewModel : INotifyPropertyChanged
     {
         #region Private Fields
         private readonly AuthService _authService;
@@ -168,7 +168,7 @@ namespace DoanKhoaClient.ViewModels
         #endregion
 
         #region Constructor
-        public LightLoginViewModel()
+        public LoginViewModel()
         {
             _authService = new AuthService();
 
@@ -242,14 +242,14 @@ namespace DoanKhoaClient.ViewModels
                     MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Chuyển đến màn hình chính
-                    var chatWindow = new LightUserChatView();
+                    var chatWindow = new UserChatView();
                     chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                     chatWindow.Show();
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)
                     {
-                        if (window is LightLoginView)
+                        if (window is LoginView)
                         {
                             window.Close();
                             break;
@@ -302,14 +302,14 @@ namespace DoanKhoaClient.ViewModels
                     MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Chuyển đến màn hình chính
-                    var chatWindow = new LightUserChatView();
+                    var chatWindow = new UserChatView();
                     chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                     chatWindow.Show();
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)
                     {
-                        if (window is LightLoginView)
+                        if (window is LoginView)
                         {
                             window.Close();
                             break;
@@ -339,7 +339,7 @@ namespace DoanKhoaClient.ViewModels
                 System.Diagnostics.Debug.WriteLine("Đang chuyển đến trang đăng ký...");
 
                 // Tạo window mới
-                var registerWindow = new LightRegisterView();
+                var registerWindow = new RegisterView();
                 registerWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
                 // Hiển thị cửa sổ mới
@@ -349,7 +349,7 @@ namespace DoanKhoaClient.ViewModels
                 Window currentWindow = null;
                 foreach (Window window in Application.Current.Windows)
                 {
-                    if (window is LightLoginView)
+                    if (window is LoginView)
                     {
                         currentWindow = window;
                         break;

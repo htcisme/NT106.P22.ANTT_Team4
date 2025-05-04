@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Text.RegularExpressions;
 namespace DoanKhoaClient.ViewModels
 {
-    public class LightRegisterViewModel : INotifyPropertyChanged
+    public class RegisterViewModel : INotifyPropertyChanged
     {
         #region Private Fields
         private readonly AuthService _authService;
@@ -295,7 +295,7 @@ namespace DoanKhoaClient.ViewModels
         #endregion
 
         #region Constructor
-        public LightRegisterViewModel()
+        public RegisterViewModel()
         {
             _authService = new AuthService();
 
@@ -468,13 +468,13 @@ namespace DoanKhoaClient.ViewModels
                 System.Diagnostics.Debug.WriteLine("Đang chuyển đến trang đăng nhập...");
 
                 // Tạo trang đăng nhập mới
-                var loginWindow = new LightLoginView();
+                var loginWindow = new LoginView();
                 loginWindow.Show();
 
                 // Tìm và đóng trang đăng ký hiện tại
                 foreach (Window window in Application.Current.Windows)
                 {
-                    if (window is LightRegisterView)
+                    if (window is RegisterView)
                     {
                         window.Close();
                         break;
@@ -498,7 +498,7 @@ namespace DoanKhoaClient.ViewModels
                 System.Diagnostics.Debug.WriteLine("Đang chuyển về trang đăng nhập...");
 
                 // Tạo và hiển thị cửa sổ đăng nhập
-                var loginWindow = new LightLoginView();
+                var loginWindow = new LoginView();
                 loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
                 // Hiển thị cửa sổ đăng nhập
@@ -511,7 +511,7 @@ namespace DoanKhoaClient.ViewModels
                 // Tìm và đóng cửa sổ đăng ký hiện tại
                 foreach (Window window in Application.Current.Windows)
                 {
-                    if (window != loginWindow && window is LightRegisterView)
+                    if (window != loginWindow && window is RegisterView)
                     {
                         System.Diagnostics.Debug.WriteLine("Đóng cửa sổ đăng ký");
                         window.Close();
