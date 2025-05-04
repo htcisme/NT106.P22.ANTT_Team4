@@ -1,4 +1,4 @@
-﻿<Window x:Name="Tasks_GroupTask_ContentDesignView"
+<Window x:Name="LightTasks_GroupTask_ContentDesignView"
         x:Class="DoanKhoaClient.Views.TasksGroupTaskContentDesignView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

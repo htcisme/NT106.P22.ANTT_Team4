@@ -1,19 +1,21 @@
-﻿using System.Windows;
+using System.Windows;
 using DoanKhoaClient.Helpers;
+
 
 namespace DoanKhoaClient.Views
 {
-    public partial class UserChatView : Window
+    public partial class AdminActivitiesView : Window
     {
-        public UserChatView()
+        public AdminActivitiesView()
         {
             InitializeComponent();
-            ThemeManager.ApplyTheme(UserChat_Background);
+            ThemeManager.ApplyTheme(Admin_Activities_Background);
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ThemeManager.ToggleTheme(UserChat_Background);
+            ThemeManager.ToggleTheme(Admin_Activities_Background);
         }
     }
 }
+

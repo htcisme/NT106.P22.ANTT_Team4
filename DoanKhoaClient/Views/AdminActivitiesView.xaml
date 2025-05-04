@@ -1,27 +1,27 @@
 <Window
-    x:Class="DoanKhoaClient.Views.AdminDarkActivitiesView"
+    x:Class="DoanKhoaClient.Views.AdminActivitiesView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="Admin_Dark_ActivitiesView"
-    Title="Admin_DarkActivitiesView"
+    x:Name="Admin_Light_ActivitiesView"
+    Title="AdminActivitiesView"
     Width="1440"
     Height="1036"
     mc:Ignorable="d">
     <Grid
-        x:Name="Admin_DarkActivities_Background"
+        x:Name="Admin_Activities_Background"
         Width="1440"
         Height="1022.8">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#042354" />
-                <GradientStop Offset="1" Color="#597CA2" />
+                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                <GradientStop Offset="1" Color="#FFDBF3FF" />
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
-            x:Name="Admin_DarkActivities_tbSearch"
+            x:Name="Admin_Activities_tbSearch"
             Width="307"
             Height="50"
             Margin="370,41,0,0"
@@ -32,7 +32,7 @@
             Text=""
             TextWrapping="Wrap" />
         <Border
-            x:Name="Admin_DarkActivities_Dashboard"
+            x:Name="Admin_Activities_Dashboard"
             Width="288"
             Height="942"
             Margin="43,0,0,0"
@@ -66,7 +66,7 @@
                 Stroke="#FF12305E" />
         </Border>
         <Image
-            x:Name="LightHomePage_iUsers"
+            x:Name="HomePage_iUsers"
             Grid.Column="1"
             Width="40"
             Height="40"
@@ -75,23 +75,24 @@
             VerticalAlignment="Top"
             Source="/Views/Images/generic avatar.png" />
         <Image
-            x:Name="DarkHomePage_iNotifications"
+            x:Name="HomePage_iNotifications"
             Width="40"
             Height="40"
             Margin="1297,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/dark-notifications.png" />
+            Source="/Views/Images/light-notifications.png" />
         <Image
-            x:Name="DarkHomePage_iLight"
+            x:Name="ThemeToggleButton"
             Width="40"
             Height="40"
             Margin="1236,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/light.png" />
+            Source="/Views/Images/dark.png" 
+            MouseDown="ThemeToggleButton_MouseDown"/>
         <Image
-            x:Name="LightHomePage_iSearch"
+            x:Name="HomePage_iSearch"
             Width="40"
             Height="40"
             Margin="628,46,0,0"
@@ -99,7 +100,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/search.png" />
         <Image
-            x:Name="LightHomePage_iLogo"
+            x:Name="HomePage_iLogo"
             Width="112.38"
             Height="40"
             Margin="131,71,0,0"
@@ -107,7 +108,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/header.png" />
         <Image
-            x:Name="LightHomePage_iHome"
+            x:Name="HomePage_iHome"
             Width="30"
             Height="30"
             Margin="102,203,0,0"
@@ -115,7 +116,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/home.png" />
         <Image
-            x:Name="LightHomePage_iChat"
+            x:Name="HomePage_iChat"
             Width="30"
             Height="30"
             Margin="102,279,0,0"
@@ -123,7 +124,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/chat_bubble.png" />
         <Image
-            x:Name="LightHomePage_iActivities"
+            x:Name="HomePage_iActivities"
             Width="30"
             Height="30"
             Margin="102,354,0,0"
@@ -131,7 +132,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/active-activities.png" />
         <Image
-            x:Name="LightHomePage_Task_iMembers"
+            x:Name="HomePage_Task_iMembers"
             Width="30"
             Height="30"
             Margin="102,432,0,0"
@@ -139,7 +140,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/members.png" />
         <Image
-            x:Name="LightHomePage_iTasks"
+            x:Name="HomePage_iTasks"
             Width="30"
             Height="30"
             Margin="102,510,0,0"
@@ -147,7 +148,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/tasks.png" />
         <Label
-            x:Name="LightHomePage_lbHome"
+            x:Name="HomePage_lbHome"
             Width="108"
             Height="30"
             Margin="165,203,0,0"
@@ -159,7 +160,7 @@
             FontSize="20"
             FontWeight="Bold" />
         <Label
-            x:Name="LightHomePage_lbChat"
+            x:Name="HomePage_lbChat"
             Width="108"
             Height="30"
             Margin="165,279,0,0"
@@ -171,7 +172,7 @@
             FontSize="20"
             FontWeight="Bold" />
         <Label
-            x:Name="LightHomePage_lbActivities"
+            x:Name="HomePage_lbActivities"
             Width="108"
             Height="30"
             Margin="165,354,0,0"
@@ -184,7 +185,7 @@
             FontWeight="Bold"
             Foreground="#597CA2" />
         <Label
-            x:Name="LightHomePage_lbMembers"
+            x:Name="HomePage_lbMembers"
             Width="108"
             Height="30"
             Margin="165,432,0,0"
@@ -196,7 +197,7 @@
             FontSize="20"
             FontWeight="Bold" />
         <Label
-            x:Name="LightHomePage_lbTasks"
+            x:Name="HomePage_lbTasks"
             Width="108"
             Height="30"
             Margin="165,510,0,0"
@@ -209,7 +210,7 @@
             FontWeight="Bold"
             RenderTransformOrigin="0.527,3.278" />
         <Image
-            x:Name="LightHomePage_iFacebook"
+            x:Name="HomePage_iFacebook"
             Width="24"
             Height="24"
             Margin="175,926,0,0"
@@ -217,7 +218,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/facebook.png" />
         <Image
-            x:Name="LightHomePage_iInstagram"
+            x:Name="HomePage_iInstagram"
             Width="24"
             Height="24"
             Margin="135,926,0,0"
@@ -225,7 +226,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/instagram.png" />
         <Image
-            x:Name="LightHomePage_iYoutube"
+            x:Name="HomePage_iYoutube"
             Width="24"
             Height="24"
             Margin="215,926,0,0"
