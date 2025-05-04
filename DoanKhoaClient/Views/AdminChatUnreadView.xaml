@@ -1,4 +1,4 @@
-﻿<Window x:Class="DoanKhoaClient.Views.AdminLightChatImportantView"
+﻿<Window x:Class="DoanKhoaClient.Views.AdminChatUnreadView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,15 +6,15 @@
         xmlns:local="clr-namespace:DoanKhoaClient.Views"
         xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
         mc:Ignorable="d"
-        Title="AdminLightChatImportantView" Height="1024" Width="1440">
-    <Grid>
+        Title="AdminChatUnreadView" Height="1024" Width="1440">
+    <Grid x:Name="Admin_ChatUnread_Background" >
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FFF6FCFF" Offset="0.67"/>
                 <GradientStop Color="#FFDBF3FF" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <TextBox x:Name="Admin_LightChatImportant_tbSearch1"
+        <TextBox x:Name="Admin_ChatUnread_tbSearch1"
             HorizontalAlignment="Left"
             Margin="370,41,0,0"
             TextWrapping="Wrap"
@@ -24,7 +24,7 @@
             Height="50"
             Background="#FFDBF3FF"
             BorderBrush="{x:Null}"/>
-        <Border x:Name="Admin_LightChatImportant_Dashboard1"
+        <Border x:Name="Admin_ChatUnread_Dashboard1"
             BorderBrush="Black"
             HorizontalAlignment="Left"
             Height="942"
@@ -44,77 +44,78 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <Image x:Name="Admin_LightChatImportant_iUsers1"
+        <Image x:Name="Admin_ChatUnread_iUsers1"
             HorizontalAlignment="Left"
             Height="40"
             Margin="1358,46,0,0"
             VerticalAlignment="Top"
             Width="40"
             Source="/Views/Images/generic avatar.png"/>
-        <Image x:Name="Admin_LightChatImportant_iNotifications1"
+        <Image x:Name="Admin_ChatUnread_iNotifications1"
             HorizontalAlignment="Left"
             Height="40"
             Margin="1297,46,0,0"
             VerticalAlignment="Top"
             Width="40"
             Source="/Views/Images/light-notifications.png"/>
-        <Image x:Name="Admin_LightChatImportant_iDark1"
+        <Image x:Name="ThemeToggleButton"
             HorizontalAlignment="Left"
             Height="40"
             Margin="1236,46,0,0"
             VerticalAlignment="Top"
             Width="40"
-            Source="/Views/Images/dark.png"/>
-        <Image x:Name="Admin_LightChatImportant_iSearch1"
+            Source="/Views/Images/dark.png"
+            MouseDown="ThemeToggleButton_MouseDown"/>
+        <Image x:Name="Admin_ChatUnread_iSearch1"
             HorizontalAlignment="Left"
             Height="40"
             Margin="628,46,0,0"
             VerticalAlignment="Top"
             Width="40"
             Source="/Views/Images/search.png"/>
-        <Image x:Name="Admin_LightChatImportant_iLogo1"
+        <Image x:Name="Admin_ChatUnread_iLogo1"
             HorizontalAlignment="Left"
             Height="40"
             Margin="131,71,0,0"
             VerticalAlignment="Top"
             Width="112.38"
             Source="/Views/Images/header.png"/>
-        <Image x:Name="Admin_LightChatImportant_iHome1"
+        <Image x:Name="Admin_ChatUnread_iHome1"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,203,0,0"
             VerticalAlignment="Top"
             Width="30"
             Source="/Views/Images/home.png"/>
-        <Image x:Name="Admin_LightChatImportant_iChat1"
+        <Image x:Name="Admin_ChatUnread_iChat1"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,279,0,0"
             VerticalAlignment="Top"
             Width="30"
             Source="/Views/active-chat_bubble.png"/>
-        <Image x:Name="Admin_LightChatImportant_iActivities1"
+        <Image x:Name="Admin_ChatUnread_iActivities1"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,354,0,0"
             VerticalAlignment="Top"
             Width="30"
             Source="/Views/Images/activities.png"/>
-        <Image x:Name="Admin_LightChatImportant_iMembers1"
+        <Image x:Name="Admin_ChatUnread_iMembers1"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,432,0,0"
             VerticalAlignment="Top"
             Width="30"
             Source="/Views/Images/members.png"/>
-        <Image x:Name="Admin_LightChatImportant_iTasks1"
+        <Image x:Name="Admin_ChatUnread_iTasks1"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,510,0,0"
             VerticalAlignment="Top"
             Width="30"
             Source="/Views/tasks.png"/>
-        <Label x:Name="Admin_LightChatImportant_lbHome1"
+        <Label x:Name="Admin_ChatUnread_lbHome1"
             Content="Home"
             HorizontalAlignment="Left"
             Height="30"
@@ -125,7 +126,7 @@
             FontSize="20"
             FontWeight="Bold"
             Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightChatImportant_lbChat1"
+        <Label x:Name="Admin_ChatUnread_lbChat1"
             Content="Chat"
             HorizontalAlignment="Left"
             Height="30"
@@ -136,7 +137,7 @@
             FontSize="20"
             FontWeight="Bold"
             Padding="0,0,0,0" Foreground="#FF597CA2"/>
-        <Label x:Name="Admin_LightChatImportant_lbActivities1"
+        <Label x:Name="Admin_ChatUnread_lbActivities1"
             Content="Activities"
             HorizontalAlignment="Left"
             Height="30"
@@ -147,7 +148,7 @@
             FontSize="20"
             FontWeight="Bold"
             Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightChatImportant_lbMembers1"
+        <Label x:Name="Admin_ChatUnread_lbMembers1"
             Content="Members"
             HorizontalAlignment="Left"
             Height="30"
@@ -158,7 +159,7 @@
             FontSize="20"
             FontWeight="Bold"
             Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightChatImportant_lbTasks1"
+        <Label x:Name="Admin_ChatUnread_lbTasks1"
             Content="Tasks"
             HorizontalAlignment="Left"
             Height="30"
@@ -170,35 +171,35 @@
             FontWeight="Bold"
             Padding="0,0,0,0"
             RenderTransformOrigin="0.527,3.278"/>
-        <Image x:Name="Admin_LightChatImportant_iFacebook1"
+        <Image x:Name="Admin_ChatUnread_iFacebook1"
             HorizontalAlignment="Left"
             Height="24"
             Margin="175,926,0,0"
             VerticalAlignment="Top"
             Width="24"
             Source="/Views/Images/facebook.png"/>
-        <Image x:Name="Admin_LightChatImportant_iInstagram1"
+        <Image x:Name="Admin_ChatUnread_iInstagram1"
             HorizontalAlignment="Left"
             Height="24"
             Margin="135,926,0,0"
             VerticalAlignment="Top"
             Width="24"
             Source="/Views/Images/instagram.png"/>
-        <Image x:Name="Admin_LightChatImportant_iYoutube1"
+        <Image x:Name="Admin_ChatUnread_iYoutube1"
             HorizontalAlignment="Left"
             Height="24"
             Margin="215,926,0,0"
             VerticalAlignment="Top"
             Width="24"
             Source="/Views/Images/youtube.png"/>
-        <Border x:Name="Admin_LightChatImportant_bImportants" HorizontalAlignment="Left"
+        <Border x:Name="Admin_ChatUnread_bUnreads" HorizontalAlignment="Left"
             Height="864"
             Margin="370,119,0,0"
             VerticalAlignment="Top"
             Width="358"
             Background="#FFD9D9D9"
             CornerRadius="10,10,10,10"/>
-        <Border x:Name="Admin_LightChatImportant_bChatBox" HorizontalAlignment="Left"
+        <Border x:Name="Admin_ChatUnread_bChatBox" HorizontalAlignment="Left"
             Height="864"
             Margin="764,119,0,0"
             VerticalAlignment="Top"
@@ -213,7 +214,7 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <Border x:Name="Admin_LightChatImportant_bChatBoxBackground" HorizontalAlignment="Left"
+        <Border x:Name="Admin_ChatUnread_bChatBoxBackground" HorizontalAlignment="Left"
             Height="816"
             Margin="793,143,0,0"
             VerticalAlignment="Top"
@@ -228,7 +229,7 @@
             Background="#FFDAE9F6"
             CornerRadius="20,20,0,0"/>
         <Image HorizontalAlignment="Left" Height="30" Margin="819,156,0,0" VerticalAlignment="Top" Width="30" Source="/Views/Images/account_circle.png"/>
-        <Image x:Name="LightTask_iChat"
+        <Image x:Name="Task_iChat"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,279,0,0"
@@ -248,7 +249,7 @@
         <Image HorizontalAlignment="Left" Height="22" Margin="891,906,0,0" VerticalAlignment="Top" Width="21" Source="/Views/Images/Icon.png"/>
         <Image HorizontalAlignment="Left" Height="22" Margin="808,906,0,0" VerticalAlignment="Top" Width="22" Source="/Views/Images/add_circle.png"/>
         <Image HorizontalAlignment="Left" Height="22" Margin="839,906,0,0" VerticalAlignment="Top" Width="22" Source="/Views/Images/mood.png"/>
-        <Image x:Name="LightTask_iTasks"
+        <Image x:Name="Task_iTasks"
             HorizontalAlignment="Left"
             Height="30"
             Margin="102,510,0,0"
@@ -286,20 +287,20 @@
             CornerRadius="20,20,5,20"/>
         <Border HorizontalAlignment="Left"
             Height="70"
-            Margin="383,247,0,0"
+            Margin="381,277,0,0"
             VerticalAlignment="Top"
             Width="336"
             Background="#FFDAE9F6"
             CornerRadius="10,10,10,10">
             <Image HorizontalAlignment="Left" Height="44" VerticalAlignment="Center" Width="44" Source="/Views/Images/account_circle.png" Margin="10,0,0,0"/>
         </Border>
-        <Label Content="Importants" HorizontalAlignment="Left" Height="30" Margin="383,201,0,0" VerticalAlignment="Top" Width="192" FontSize="15"/>
-        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="443,258,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="443,280,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="673,271,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
+        <Label Content="Conservations&#xD;&#xA;" HorizontalAlignment="Left" Height="30" Margin="381,231,0,0" VerticalAlignment="Top" Width="192" FontSize="15"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,288,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,310,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,301,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
         <Border HorizontalAlignment="Left"
             Height="70"
-            Margin="383,327,0,0"
+            Margin="381,357,0,0"
             VerticalAlignment="Top"
             Width="336"
             Background="#FFDAE9F6"
@@ -308,21 +309,21 @@
         </Border>
         <Border HorizontalAlignment="Left"
             Height="70"
-            Margin="383,407,0,0"
+            Margin="381,437,0,0"
             VerticalAlignment="Top"
             Width="336"
             Background="#FFDAE9F6"
             CornerRadius="10,10,10,10">
             <Image HorizontalAlignment="Left" Height="44" VerticalAlignment="Center" Width="44" Source="/Views/Images/account_circle.png" Margin="10,0,0,0"/>
         </Border>
-        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="443,338,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="443,360,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="673,351,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
-        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="443,418,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="443,440,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="673,431,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
-        <Label Content="Unread" HorizontalAlignment="Left" Height="30" Margin="446,135,0,0" VerticalAlignment="Top" Width="61" FontSize="15" Grid.RowSpan="1" Grid.ColumnSpan="1"/>
-        <Label Content="Important" HorizontalAlignment="Left" Height="30" Margin="512,135,0,0" VerticalAlignment="Top" Width="82" FontSize="15" FontWeight="Bold"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,368,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,390,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,381,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
+        <Label Content="Nguyen Dinh Khang" HorizontalAlignment="Left" Height="27" Margin="441,448,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="Nội dung 1" HorizontalAlignment="Left" Height="27" Margin="441,470,0,0" VerticalAlignment="Top" Width="192"/>
+        <Label Content="10 min" HorizontalAlignment="Left" Height="22" Margin="671,461,0,0" VerticalAlignment="Top" Width="34" FontSize="8"/>
+        <Label Content="Unread" HorizontalAlignment="Left" Height="30" Margin="446,135,0,0" VerticalAlignment="Top" Width="61" FontSize="15" Grid.RowSpan="1" Grid.ColumnSpan="1" FontWeight="Bold"/>
+        <Label Content="Important" HorizontalAlignment="Left" Height="30" Margin="512,135,0,0" VerticalAlignment="Top" Width="82" FontSize="15"/>
         <Label Content="Spam" HorizontalAlignment="Left" Height="30" Margin="599,135,0,0" VerticalAlignment="Top" Width="50" FontSize="15"/>
     </Grid>
 </Window>
