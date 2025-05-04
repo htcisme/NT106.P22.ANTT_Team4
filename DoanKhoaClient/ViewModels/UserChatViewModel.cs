@@ -16,7 +16,7 @@ using DoanKhoaClient.Services;
 using MongoDB.Bson;
 namespace DoanKhoaClient.ViewModels
 {
-    public class LightUserChatViewModel : INotifyPropertyChanged
+    public class UserChatViewModel : INotifyPropertyChanged
     {
         private readonly HttpClient _httpClient;
         private HubConnection _hubConnection;
@@ -148,7 +148,7 @@ namespace DoanKhoaClient.ViewModels
 
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
-        public LightUserChatViewModel()
+        public UserChatViewModel()
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
 
