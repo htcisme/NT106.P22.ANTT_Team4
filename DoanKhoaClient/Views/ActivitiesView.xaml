@@ -6,12 +6,12 @@
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Light_ActivitiesView"
-    Title="Light_ActivitiesView"
+    Title="ActivitiesView"
     Width="1440"
     Height="1036"
     mc:Ignorable="d">
     <Grid
-        x:Name="Light_Activities_Background"
+        x:Name="Activities_Background"
         Width="1440"
         Height="1022.8">
         <Grid.Background>
@@ -21,7 +21,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
-            x:Name="Light_Activities_tbSearch"
+            x:Name="Activities_tbSearch"
             Width="307"
             Height="50"
             Margin="370,41,0,0"
@@ -32,7 +32,7 @@
             Text=""
             TextWrapping="Wrap" />
         <Border
-            x:Name="Light_Activities_Dashboard"
+            x:Name="Activities_Dashboard"
             Width="288"
             Height="942"
             Margin="43,0,0,0"
@@ -67,13 +67,14 @@
             VerticalAlignment="Top"
             Source="/Views/Images/light-notifications.png" />
         <Image
-            x:Name="LightHomePage_iDark"
+            x:Name="ThemeToggleButton"
             Width="40"
             Height="40"
             Margin="1236,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/dark.png" />
+            Source="/Views/Images/dark.png"
+            MouseDown="ThemeToggleButton_MouseDown"/>
         <Image
             x:Name="LightHomePage_iSearch"
             Width="40"
