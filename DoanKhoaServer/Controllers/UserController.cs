@@ -25,20 +25,33 @@ namespace DoanKhoaServer.Controllers
         {
             try
             {
-                // Kiểm tra dữ liệu
+                // Basic validation
                 if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password) ||
                     string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.DisplayName))
                 {
                     return BadRequest("Vui lòng nhập đầy đủ thông tin.");
                 }
-
-                // Đăng ký người dùng
+                
+                // Admin validation
+                if (request.Role == UserRole.Admin)
+                {
+                    // Define your secret admin code - in a real app, this should be in a secure config
+                    const string ADMIN_SECRET_CODE = "DoankhoaMMT&TT";
+                    
+                    if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
+                    {
+                        return BadRequest("Mã xác thực Admin không hợp lệ.");
+                    }
+                }
+                
+                // Register user with validated role
                 var (user, message) = await _authService.RegisterUser(
                     request.Username,
                     request.DisplayName,
                     request.Email,
                     request.Password,
-                    request.EnableTwoFactorAuth
+                    request.EnableTwoFactorAuth,
+                    request.Role
                 );
 
                 if (user == null)
@@ -54,6 +67,7 @@ namespace DoanKhoaServer.Controllers
                     DisplayName = user.DisplayName,
                     Email = user.Email,
                     AvatarUrl = user.AvatarUrl,
+                    Role = user.Role, // Include role in response
                     Message = message
                 });
             }

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace DoanKhoaClient.Models
 {
+    public enum UserRole
+    {
+        User,
+        Admin
+    }
     public class RegisterRequest
     {
         public string Username { get; set; }
@@ -10,6 +15,8 @@ namespace DoanKhoaClient.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public bool EnableTwoFactorAuth { get; set; } = false;
+        public UserRole Role { get; set; } = UserRole.User;
+        public string AdminCode { get; set; } // Add this property
     }
 
     public class LoginRequest
@@ -32,7 +39,8 @@ namespace DoanKhoaClient.Models
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
         public bool RequiresTwoFactor { get; set; }
-        public string Message { get; set; } = ""; // Khởi tạo mặc định để tránh null
+        public UserRole Role { get; set; }
+        public string Message { get; set; }
     }
 
     public class User
@@ -45,5 +53,6 @@ namespace DoanKhoaClient.Models
         public DateTime LastSeen { get; set; }
         public List<string> Conversations { get; set; } = new List<string>();
         public bool TwoFactorEnabled { get; set; }
+        public UserRole Role { get; set; } = UserRole.User; // Default to regular user
     }
 }

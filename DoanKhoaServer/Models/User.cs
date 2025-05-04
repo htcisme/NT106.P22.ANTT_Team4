@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 namespace DoanKhoaServer.Models
 {
+    public enum UserRole
+    {
+        User,
+        Admin
+    }
     public class User
     {
         [BsonId]
@@ -19,8 +24,9 @@ namespace DoanKhoaServer.Models
         public string AvatarUrl { get; set; }
         public DateTime LastSeen { get; set; }
         public List<string> Conversations { get; set; } = new List<string>();
+        public UserRole Role { get; set; } = UserRole.User; // Default to regular user
 
-        // Xác thực 2 lớp
+        // Existing two-factor auth properties
         public bool TwoFactorEnabled { get; set; }
         public string TwoFactorSecret { get; set; }
         public DateTime? TwoFactorCodeExpiry { get; set; }
