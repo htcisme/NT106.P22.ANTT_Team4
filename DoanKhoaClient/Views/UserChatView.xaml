@@ -26,7 +26,7 @@
         <vm:LightUserChatViewModel/>
     </Window.DataContext>
 
-    <Grid>
+    <Grid x:Name="ChatBackGround">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FFF6FCFF" Offset="0.67"/>
@@ -112,7 +112,7 @@
 
         <!-- Top Icons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,46,40,0">
-            <Image Height="40" Width="40" Source="/Views/Images/dark.png" Margin="0,0,20,0"/>
+            <Image Height="40" Width="40" Source="/Views/Images/dark.png" Margin="0,0,20,0" MouseDown="ThemeToggleButton_MouseDown"/>
             <Image Height="40" Width="40" Source="/Views/Images/light-notifications.png" Margin="0,0,20,0"/>
             <Image Height="40" Width="40" Source="/Views/Images/generic avatar.png"/>
         </StackPanel>
