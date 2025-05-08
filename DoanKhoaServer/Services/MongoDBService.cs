@@ -16,6 +16,7 @@ namespace DoanKhoaServer.Services
         private readonly IMongoCollection<Message> _messagesCollection;
         private readonly IMongoCollection<Conversation> _conversationsCollection;
         private readonly IMongoCollection<Attachment> _attachmentsCollection;
+        private readonly IMongoCollection<Activity> _activitiesCollection;
 
         public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
         {
@@ -36,6 +37,9 @@ namespace DoanKhoaServer.Services
 
             _attachmentsCollection = mongoDatabase.GetCollection<Attachment>(
                 mongoDBSettings.Value.AttachmentsCollectionName);
+
+            _activitiesCollection = mongoDatabase.GetCollection<Activity>(
+                mongoDBSettings.Value.ActivitiesCollectionName);
         }
 
         // Users methods
@@ -245,6 +249,27 @@ namespace DoanKhoaServer.Services
             }
         }
 
+        //Activities method
+        public async Task<List<Activity>> GetActivitiesAsync()
+        {
+            return await _activitiesCollection.Find(_ => true).ToListAsync();
+        }
 
+        public async Task CreateActivityAsync(Activity activity)
+        {
+            await _activitiesCollection.InsertOneAsync(activity);
+        }
+
+        public async Task UpdateActivityAsync(string id, Activity activity)
+        {
+            activity.Id = id;
+            await _activitiesCollection.ReplaceOneAsync(x => x.Id == id, activity);
+        }
+
+
+        public async Task DeleteActivityAsync(string id)
+        {
+            await _activitiesCollection.DeleteOneAsync(x => x.Id == id);
+        }
     }
 }
