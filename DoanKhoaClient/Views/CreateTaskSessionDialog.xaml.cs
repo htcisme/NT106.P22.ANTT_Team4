@@ -31,7 +31,6 @@ namespace DoanKhoaClient.Views
             _ = LoadUsersAsync();
         }
 
-
         private async Task LoadUsersAsync()
         {
             try
@@ -86,6 +85,9 @@ namespace DoanKhoaClient.Views
                     TaskSession.Type = selectedType;
                 }
 
+                // Đảm bảo ID là null để server tự tạo
+                TaskSession.Id = null;
+
                 DialogResult = true;
                 Close();
             }
@@ -115,5 +117,7 @@ namespace DoanKhoaClient.Views
 
             return true;
         }
+        
+        // Xóa phương thức OkButton_Click ở đây vì nó gây xung đột và tham chiếu đến controls không tồn tại
     }
 }

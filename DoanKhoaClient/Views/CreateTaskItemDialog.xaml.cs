@@ -65,8 +65,7 @@ namespace DoanKhoaClient.Views
             if (ValidateInput())
             {
                 // Lưu trạng thái từ ComboBox
-                if (StatusComboBox.SelectedItem is TaskStatus selectedStatus)
-                {
+                if (StatusComboBox.SelectedItem is DoanKhoaClient.Models.TaskItemStatus selectedStatus)                {
                     TaskItem.Status = selectedStatus;
                 }
 

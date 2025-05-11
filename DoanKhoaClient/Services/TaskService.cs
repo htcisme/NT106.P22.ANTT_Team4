@@ -27,8 +27,14 @@ namespace DoanKhoaClient.Services
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("http://localhost:5299/api/")
+
             };
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
         }
+
+
 
         private void OnTaskSessionUpdated(TaskSession session)
         {
@@ -69,8 +75,21 @@ namespace DoanKhoaClient.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("tasksession", session);
-                response.EnsureSuccessStatusCode();
+                // Chuyển đổi TaskSession sang DTO (không có trường ID)
+                var dto = CreateTaskSessionDto.FromTaskSession(session);
+
+                // Ghi log để debug
+                Console.WriteLine($"Sending DTO: Name={dto.Name}, ManagerId={dto.ManagerId}, Type={dto.Type}");
+
+                // Gửi DTO thay vì gửi toàn bộ đối tượng session
+                var response = await _httpClient.PostAsJsonAsync("tasksession", dto);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Server response: {response.StatusCode}, Details: {errorContent}");
+                }
+
                 var result = await response.Content.ReadFromJsonAsync<TaskSession>();
                 OnTaskSessionUpdated(result);
                 return result;

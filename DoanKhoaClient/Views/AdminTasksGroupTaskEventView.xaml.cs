@@ -13,7 +13,7 @@ namespace DoanKhoaClient.Views
         public AdminTaskGroupTaskEventView(TaskSession session)
         {
             InitializeComponent();
-            
+
             _viewModel = new AdminTaskProgramsViewModel(session, ProgramType.Event);
             DataContext = _viewModel;
 
@@ -28,6 +28,22 @@ namespace DoanKhoaClient.Views
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void CreateProgramButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.CreateProgramCommand.CanExecute(null))
+            {
+                _viewModel.CreateProgramCommand.Execute(null);
+            }
+        }
+
+        private void EditProgramButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.EditProgramCommand.CanExecute(_viewModel.SelectedProgram))
+            {
+                _viewModel.EditProgramCommand.Execute(_viewModel.SelectedProgram);
+            }
         }
     }
 }

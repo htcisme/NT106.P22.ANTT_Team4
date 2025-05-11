@@ -1,7 +1,9 @@
 using DoanKhoaServer.Hubs;
 using DoanKhoaServer.Services;
 using DoanKhoaServer.Settings;
-using DoanKhoaServer.Helpers; // Thêm namespace này nếu cần
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +14,13 @@ builder.Services.AddSingleton<MongoDBService>();
 
 // Đăng ký AuthService
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddSingleton<OtpService>();
 
 // Add controllers and SignalR
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-// Configure CORS
+// Configure CORS (sử dụng một policy duy nhất)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
@@ -30,13 +33,26 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
 app.UseRouting();
 app.UseCors("CorsPolicy");
+
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
     endpoints.MapHub<ChatHub>("/chatHub");
 });
+
+// Add a simple health check endpoint
+app.MapGet("/api/health", () => "Server is running!");
+
+Console.WriteLine($"Server started at: {DateTime.Now}");
+Console.WriteLine($"Listening on: {string.Join(", ", builder.WebHost.GetSetting("urls") ?? "http://localhost:5299")}");
 
 app.Run();

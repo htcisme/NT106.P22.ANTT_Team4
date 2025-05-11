@@ -1,6 +1,7 @@
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Services;
 using DoanKhoaClient.Views;
+using DoanKhoaClient.Helpers; // Thêm dòng này
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -17,7 +19,7 @@ namespace DoanKhoaClient.ViewModels
         private ObservableCollection<TaskSession> _sessions;
         private TaskSession _selectedSession;
         private bool _isLoading;
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<TaskSession> Sessions
@@ -60,22 +62,87 @@ namespace DoanKhoaClient.ViewModels
         public ICommand DeleteSessionCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand ViewSessionDetailsCommand { get; }
+        public ICommand NavigateToHomeCommand { get; }
+        public ICommand NavigateToChatCommand { get; }
+        public ICommand NavigateToActivitiesCommand { get; }
+        public ICommand NavigateToMembersCommand { get; }
 
         public AdminTasksViewModel(TaskService taskService = null)
         {
             _taskService = taskService ?? new TaskService();
             Sessions = new ObservableCollection<TaskSession>();
 
-            // Khởi tạo các command
-            CreateSessionCommand = new RelayCommand(_ => ExecuteCreateSessionAsync(), _ => !IsLoading);
-            EditSessionCommand = new RelayCommand(ExecuteEditSession, CanExecuteSessionAction);
-            DeleteSessionCommand = new RelayCommand(ExecuteDeleteSessionAsync, CanExecuteSessionAction);
-            RefreshCommand = new RelayCommand(_ => LoadSessionsAsync(), _ => !IsLoading);
-            ViewSessionDetailsCommand = new RelayCommand(ExecuteViewSessionDetails, CanExecuteSessionAction);
+            // Khởi tạo các command hiện tại
+            CreateSessionCommand = new DoanKhoaClient.Helpers.RelayCommand(_ => ExecuteCreateSessionAsync(), _ => !IsLoading);
+            EditSessionCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteEditSession, CanExecuteSessionAction);
+            DeleteSessionCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteDeleteSessionAsync, CanExecuteSessionAction);
+            RefreshCommand = new DoanKhoaClient.Helpers.RelayCommand(_ => LoadSessionsAsync(), _ => !IsLoading);
+            ViewSessionDetailsCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteViewSessionDetails, CanExecuteSessionAction);
+
+            // Khởi tạo các navigation command mới
+            NavigateToHomeCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteNavigateToHome);
+            NavigateToChatCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteNavigateToChat);
+            NavigateToActivitiesCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteNavigateToActivities);
+            NavigateToMembersCommand = new DoanKhoaClient.Helpers.RelayCommand(ExecuteNavigateToMembers);
 
             // Tải dữ liệu
             LoadSessionsAsync();
         }
+
+        // Thực thi các navigation command
+        private void ExecuteNavigateToHome(object parameter)
+        {
+            // Mở trang chủ
+            var homeView = new HomePageView();
+            homeView.Show();
+
+            // Đóng trang hiện tại
+            CloseCurrentWindow();
+        }
+
+        private void ExecuteNavigateToChat(object parameter)
+        {
+            // Mở trang chat
+            var chatView = new UserChatView();
+            chatView.Show();
+
+            // Đóng trang hiện tại
+            CloseCurrentWindow();
+        }
+
+        private void ExecuteNavigateToActivities(object parameter)
+        {
+            // Mở trang hoạt động
+            var activitiesView = new AdminActivitiesView();
+            activitiesView.Show();
+
+            // Đóng trang hiện tại
+            CloseCurrentWindow();
+        }
+
+        private void ExecuteNavigateToMembers(object parameter)
+        {
+            // Mở trang thành viên
+            var membersView = new HomePageView();
+            membersView.Show();
+
+            // Đóng trang hiện tại
+            CloseCurrentWindow();
+        }
+
+        // Phương thức đóng cửa sổ hiện tại
+        private void CloseCurrentWindow()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is AdminTasksView)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        }
+
 
         private async Task LoadSessionsAsync()
         {
@@ -90,7 +157,7 @@ namespace DoanKhoaClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách phiên làm việc: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi tải danh sách phiên làm việc: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -112,17 +179,21 @@ namespace DoanKhoaClient.ViewModels
                 try
                 {
                     IsLoading = true;
+
+                    // Chuẩn bị object trước khi gửi
+                    dialog.TaskSession.PrepareForSending();
+
                     var newSession = await _taskService.CreateTaskSessionAsync(dialog.TaskSession);
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Sessions.Insert(0, newSession);
                     });
-                    MessageBox.Show("Phiên làm việc đã được tạo thành công.", 
+                    MessageBox.Show("Phiên làm việc đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi tạo phiên làm việc: {ex.Message}", 
+                    MessageBox.Show($"Lỗi khi tạo phiên làm việc: {ex.Message}",
                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 finally
@@ -150,7 +221,7 @@ namespace DoanKhoaClient.ViewModels
             {
                 IsLoading = true;
                 var result = await _taskService.UpdateTaskSessionAsync(updatedSession.Id, updatedSession);
-                
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var index = Sessions.IndexOf(Sessions.FirstOrDefault(s => s.Id == result.Id));
@@ -159,13 +230,13 @@ namespace DoanKhoaClient.ViewModels
                         Sessions[index] = result;
                     }
                 });
-                
-                MessageBox.Show("Phiên làm việc đã được cập nhật thành công.", 
+
+                MessageBox.Show("Phiên làm việc đã được cập nhật thành công.",
                     "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi cập nhật phiên làm việc: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi cập nhật phiên làm việc: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -191,18 +262,18 @@ namespace DoanKhoaClient.ViewModels
                     {
                         IsLoading = true;
                         await _taskService.DeleteTaskSessionAsync(session.Id);
-                        
+
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             Sessions.Remove(session);
                         });
-                        
-                        MessageBox.Show("Phiên làm việc đã được xóa thành công.", 
+
+                        MessageBox.Show("Phiên làm việc đã được xóa thành công.",
                             "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi khi xóa phiên làm việc: {ex.Message}", 
+                        MessageBox.Show($"Lỗi khi xóa phiên làm việc: {ex.Message}",
                             "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     finally
@@ -220,7 +291,7 @@ namespace DoanKhoaClient.ViewModels
                 try
                 {
                     Window programsView = null;
-                    
+
                     switch (session.Type)
                     {
                         case TaskSessionType.Event:
@@ -233,7 +304,7 @@ namespace DoanKhoaClient.ViewModels
                             programsView = new AdminTaskGroupTaskDesignView(session);
                             break;
                         default:
-                            MessageBox.Show($"Không hỗ trợ loại phiên làm việc: {session.Type}", 
+                            MessageBox.Show($"Không hỗ trợ loại phiên làm việc: {session.Type}",
                                 "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                     }
@@ -245,7 +316,7 @@ namespace DoanKhoaClient.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi mở trang chi tiết: {ex.Message}", 
+                    MessageBox.Show($"Lỗi khi mở trang chi tiết: {ex.Message}",
                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -254,34 +325,6 @@ namespace DoanKhoaClient.ViewModels
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
-
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute(parameter);
         }
     }
 }

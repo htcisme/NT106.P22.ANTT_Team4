@@ -40,6 +40,17 @@ namespace DoanKhoaServer.Services
 
             _activitiesCollection = mongoDatabase.GetCollection<Activity>(
                 mongoDBSettings.Value.ActivitiesCollectionName);
+
+            // Các dòng code hiện tại
+
+            _taskSessionsCollection = mongoDatabase.GetCollection<TaskSession>(
+                mongoDBSettings.Value.TaskSessionsCollectionName);
+
+            _taskProgramsCollection = mongoDatabase.GetCollection<TaskProgram>(
+                mongoDBSettings.Value.TaskProgramsCollectionName);
+
+            _taskItemsCollection = mongoDatabase.GetCollection<TaskItem>(
+                mongoDBSettings.Value.TaskItemsCollectionName);
         }
 
         // Users methods
@@ -271,5 +282,124 @@ namespace DoanKhoaServer.Services
         {
             await _activitiesCollection.DeleteOneAsync(x => x.Id == id);
         }
+
+        // Thêm các dòng sau vào MongoDBService.cs
+
+        private readonly IMongoCollection<TaskSession> _taskSessionsCollection;
+        private readonly IMongoCollection<TaskProgram> _taskProgramsCollection;
+        private readonly IMongoCollection<TaskItem> _taskItemsCollection;
+
+
+
+        // Task Session methods
+        public async Task<List<TaskSession>> GetAllTaskSessionsAsync() =>
+            await _taskSessionsCollection.Find(_ => true).ToListAsync();
+
+        public async Task<TaskSession> GetTaskSessionByIdAsync(string id) =>
+            await _taskSessionsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task<TaskSession> CreateTaskSessionAsync(TaskSession taskSession)
+        {
+            if (string.IsNullOrEmpty(taskSession.Id))
+                taskSession.Id = ObjectId.GenerateNewId().ToString();
+
+            taskSession.CreatedAt = DateTime.UtcNow;
+            taskSession.UpdatedAt = DateTime.UtcNow;
+
+            await _taskSessionsCollection.InsertOneAsync(taskSession);
+            return taskSession;
+        }
+
+        public async Task<TaskSession> UpdateTaskSessionAsync(string id, TaskSession updatedSession)
+        {
+            updatedSession.Id = id;
+            updatedSession.UpdatedAt = DateTime.UtcNow;
+
+            await _taskSessionsCollection.ReplaceOneAsync(x => x.Id == id, updatedSession);
+            return updatedSession;
+        }
+
+        public async Task DeleteTaskSessionAsync(string id) =>
+            await _taskSessionsCollection.DeleteOneAsync(x => x.Id == id);
+
+        // Task Program methods
+        public async Task<List<TaskProgram>> GetAllTaskProgramsAsync() =>
+            await _taskProgramsCollection.Find(_ => true).ToListAsync();
+
+        public async Task<List<TaskProgram>> GetTaskProgramsBySessionIdAsync(string sessionId) =>
+            await _taskProgramsCollection.Find(x => x.SessionId == sessionId).ToListAsync();
+
+        public async Task<TaskProgram> GetTaskProgramByIdAsync(string id) =>
+            await _taskProgramsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task<TaskProgram> CreateTaskProgramAsync(TaskProgram program)
+        {
+            if (string.IsNullOrEmpty(program.Id))
+                program.Id = ObjectId.GenerateNewId().ToString();
+
+            program.CreatedAt = DateTime.UtcNow;
+            program.UpdatedAt = DateTime.UtcNow;
+
+            await _taskProgramsCollection.InsertOneAsync(program);
+            return program;
+        }
+
+        public async Task<TaskProgram> UpdateTaskProgramAsync(string id, TaskProgram updatedProgram)
+        {
+            updatedProgram.Id = id;
+            updatedProgram.UpdatedAt = DateTime.UtcNow;
+
+            await _taskProgramsCollection.ReplaceOneAsync(x => x.Id == id, updatedProgram);
+            return updatedProgram;
+        }
+
+        public async Task DeleteTaskProgramAsync(string id) =>
+            await _taskProgramsCollection.DeleteOneAsync(x => x.Id == id);
+
+        // Task Item methods
+        public async Task<List<TaskItem>> GetAllTaskItemsAsync() =>
+            await _taskItemsCollection.Find(_ => true).ToListAsync();
+
+        public async Task<List<TaskItem>> GetTaskItemsByProgramIdAsync(string programId) =>
+            await _taskItemsCollection.Find(x => x.ProgramId == programId).ToListAsync();
+
+        public async Task<TaskItem> GetTaskItemByIdAsync(string id) =>
+            await _taskItemsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task<TaskItem> CreateTaskItemAsync(TaskItem item)
+        {
+            if (string.IsNullOrEmpty(item.Id))
+                item.Id = ObjectId.GenerateNewId().ToString();
+
+            item.CreatedAt = DateTime.UtcNow;
+            item.UpdatedAt = DateTime.UtcNow;
+
+            await _taskItemsCollection.InsertOneAsync(item);
+            return item;
+        }
+
+        public async Task<TaskItem> UpdateTaskItemAsync(string id, TaskItem updatedItem)
+        {
+            updatedItem.Id = id;
+            updatedItem.UpdatedAt = DateTime.UtcNow;
+
+            await _taskItemsCollection.ReplaceOneAsync(x => x.Id == id, updatedItem);
+            return updatedItem;
+        }
+
+        public async Task<TaskItem> CompleteTaskItemAsync(string id)
+        {
+            var item = await GetTaskItemByIdAsync(id);
+            if (item != null)
+            {
+                item.Status = TaskItemStatus.Completed;
+                item.UpdatedAt = DateTime.UtcNow;
+                await _taskItemsCollection.ReplaceOneAsync(x => x.Id == id, item);
+            }
+            return item;
+        }
+
+        public async Task DeleteTaskItemAsync(string id) =>
+            await _taskItemsCollection.DeleteOneAsync(x => x.Id == id);
     }
 }

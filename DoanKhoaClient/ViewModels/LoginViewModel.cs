@@ -242,9 +242,11 @@ namespace DoanKhoaClient.ViewModels
                     MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Chuyển đến màn hình chính
-                    var chatWindow = new UserChatView();
+                    var chatWindow = new AdminTasksView();
                     chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                     chatWindow.Show();
+
+                    
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)
