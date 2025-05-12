@@ -386,10 +386,10 @@ namespace DoanKhoaClient.ViewModels
                     !string.IsNullOrWhiteSpace(Username) &&
                     !string.IsNullOrWhiteSpace(Password) &&
                     !string.IsNullOrWhiteSpace(ConfirmPassword) &&
-                    !string.IsNullOrWhiteSpace(AdminCode) && 
+                    !string.IsNullOrWhiteSpace(AdminCode) &&
                     Password == ConfirmPassword;
             }
-            
+
             return !IsLoading &&
                 !string.IsNullOrWhiteSpace(FullName) &&
                 !string.IsNullOrWhiteSpace(Email) &&
@@ -442,7 +442,7 @@ namespace DoanKhoaClient.ViewModels
         }
 
         private void ExecuteAdminCodeChanged(object parameter)
-{
+        {
             if (parameter is PasswordBox passwordBox)
             {
                 AdminCode = passwordBox.Password;
@@ -508,7 +508,7 @@ namespace DoanKhoaClient.ViewModels
                     ErrorMessage = "Vui lòng kiểm tra lại thông tin đăng ký.";
                     return;
                 }
-            // Admin code validation
+                // Admin code validation
                 if (IsAdmin && string.IsNullOrWhiteSpace(AdminCode))
                 {
                     AdminCodeError = "Vui lòng nhập mã xác thực Admin";
@@ -530,7 +530,7 @@ namespace DoanKhoaClient.ViewModels
                     Password = Password,
                     EnableTwoFactorAuth = EnableTwoFactorAuth,
                     Role = IsAdmin ? UserRole.Admin : UserRole.User,
-                    AdminCode = IsAdmin ? AdminCode : null // Include admin code if registering as admin
+                    AdminCode = IsAdmin ? AdminCode : string.Empty // Include admin code if registering as admin
                 };
                 System.Diagnostics.Debug.WriteLine($"Gửi request đăng ký: Username={Username}, Email={Email}");
 

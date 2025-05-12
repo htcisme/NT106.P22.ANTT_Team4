@@ -14,7 +14,7 @@ namespace DoanKhoaClient.Views
         public LoginView()
         {
             InitializeComponent();
-            ThemeManager.ApplyTheme(Login_Background);
+
             this.SizeChanged += (sender, e) =>
             {
                 if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
@@ -26,7 +26,6 @@ namespace DoanKhoaClient.Views
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ThemeManager.ToggleTheme(Login_Background);
         }
     }
 }
