@@ -60,86 +60,6 @@
                 Margin="43,40,0,0"
                 VerticalAlignment="Top"
                 Width="288"
-                CornerRadius="10,10,10,10">
-            <Grid>
-                <Grid.Background>
-                    <LinearGradientBrush EndPoint="0.5,1"
-                                         StartPoint="0.5,0">
-                        <GradientStop Color="#FFF6FCFF"
-                                      Offset="0.04"/>
-                        <GradientStop Color="#FFDBF3FF"
-                                      Offset="0.46"/>
-                        <GradientStop Color="#FF87ACCD"
-                                      Offset="0.937"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
-
-                <!-- Logo và menu -->
-                <StackPanel>
-                    <Image x:Name="UserChat_iLogo1"
-                           Height="40"
-                           Margin="0,30,0,40"
-                           Width="112.38"
-                           HorizontalAlignment="Center"
-                           Source="/Views/Images/header.png"/>
-
-                    <Grid Margin="30,40,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="50"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Menu items -->
-                        <StackPanel Grid.Row="0"
-                                Orientation="Horizontal">
-                            <Image Height="30"
-                                    Width="30"
-                                    Source="/Views/Images/home.png"/>
-                            <Label Content="Home"
-                                    Margin="33,0,0,0"
-                                    FontSize="20"
-                                    FontWeight="Bold"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1"
-                                Orientation="Horizontal">
-                            <Image Height="30"
-                                    Width="30"
-                                    Source="/Views/Images/chat_bubble.png"/>
-                            <Label Content="Chat"
-                                    Margin="33,0,0,0"
-                                    FontSize="20"
-                                    FontWeight="Bold"
-                                    Foreground="#FF597CA2"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="2"
-                                Orientation="Horizontal">
-                            <Image Height="30"
-                                    Width="30"
-                                    Source="/Views/Images/activities.png"/>
-                            <Label Content="Activities"
-                                    Margin="33,0,0,0"
-                                    FontSize="20"
-                                    FontWeight="Bold"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="3"
-                                Orientation="Horizontal">
-                            <Image Height="30"
-                                    Width="30"
-                                    Source="/Views/Images/members.png"/>
-                            <Label Content="Members"
-                                    Margin="33,0,0,0"
-                                    FontSize="20"
-                                    FontWeight="Bold"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Grid>
-        </Border>
 
         <!-- Top Icons -->
         <StackPanel Orientation="Horizontal"
@@ -606,5 +526,145 @@
                 </Border>
             </Grid>
         </Border>
+        <Border x:Name="LightHomePage_Dashboard"
+            BorderBrush="Black"
+            HorizontalAlignment="Left"
+            Height="942"
+            Margin="43,40,0,0"
+            VerticalAlignment="Top"
+            Width="288"
+            CornerRadius="10,10,10,10">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1"
+                    StartPoint="0.5,0">
+                    <GradientStop Color="#FFF6FCFF"
+                        Offset="0.04"/>
+                    <GradientStop Color="#FFDBF3FF"
+                        Offset="0.46"/>
+                    <GradientStop Color="#FF87ACCD"
+                        Offset="0.937"/>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Image x:Name="LightHomePage_iLogo"
+            HorizontalAlignment="Left"
+            Height="40"
+            Margin="131,71,0,0"
+            VerticalAlignment="Top"
+            Width="112.38"
+            Source="/Views/Images/header.png"/>
+        <Image x:Name="LightHomePage_iHome"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,203,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/active-home.png"/>
+        <Image x:Name="LightHomePage_iChat"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,279,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/chat_bubble.png"/>
+        <Image x:Name="LightHomePage_iActivities"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,354,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/activities.png"/>
+        <Image x:Name="LightHomePage_Task_iMembers"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,432,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/members.png"/>
+        <Image x:Name="LightHomePage_iTasks"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="102,510,0,0"
+            VerticalAlignment="Top"
+            Width="30"
+            Source="/Views/Images/tasks.png"/>
+        <Label x:Name="LightHomePage_lbHome"
+            Content="Home"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,203,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"
+            Foreground="#597CA2"/>
+        <Label x:Name="LightHomePage_lbChat"
+            Content="Chat"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,279,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightHomePage_lbActivities"
+            Content="Activities"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,354,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightHomePage_lbMembers"
+            Content="Members"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,432,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"/>
+        <Label x:Name="LightHomePage_lbTasks"
+            Content="Tasks"
+            HorizontalAlignment="Left"
+            Height="30"
+            Margin="165,510,0,0"
+            VerticalAlignment="Top"
+            Width="108"
+            FontFamily="Segoe UI"
+            FontSize="20"
+            FontWeight="Bold"
+            Padding="0,0,0,0"
+            RenderTransformOrigin="0.527,3.278"/>
+        <Image x:Name="LightHomePage_iFacebook"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="175,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/facebook.png"/>
+        <Image x:Name="LightHomePage_iInstagram"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="135,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/instagram.png"/>
+        <Image x:Name="LightHomePage_iYoutube"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="215,926,0,0"
+            VerticalAlignment="Top"
+            Width="24"
+            Source="/Views/Images/youtube.png"/>
     </Grid>
 </Window>
