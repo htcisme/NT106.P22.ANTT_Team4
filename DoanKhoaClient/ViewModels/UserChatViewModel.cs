@@ -174,6 +174,7 @@ namespace DoanKhoaClient.ViewModels
         public ICommand DeleteMessageCommand { get; private set; }
         public ICommand ShowGroupDetailCommand { get; private set; } // Add this line
         public ICommand RemoveUserFromGroupCommand { get; private set; } // Add this line
+
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
         public UserChatViewModel()

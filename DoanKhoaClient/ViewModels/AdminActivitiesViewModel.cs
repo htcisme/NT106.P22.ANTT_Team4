@@ -117,6 +117,18 @@ namespace DoanKhoaClient.ViewModels
         public ICommand BatchDeleteCommand { get; }
         public ICommand ViewDetailCommand { get; }
 
+        public ObservableCollection<FilterOption> ActivityTypeOptions { get; set; }
+        public ObservableCollection<FilterOption> ActivityStatusOptions { get; set; }
+        public ObservableCollection<string> SelectedFilterTags { get; set; } = new ObservableCollection<string>();
+        private bool _isFilterDropdownOpen;
+        public bool IsFilterDropdownOpen
+        {
+            get => _isFilterDropdownOpen;
+            set { _isFilterDropdownOpen = value; OnPropertyChanged(); }
+        }
+        public ICommand RemoveFilterTagCommand { get; }
+        public ICommand ApplyFilterCommand { get; }
+
         public AdminActivitiesViewModel(ActivityService activityService = null)
         {
             _activityService = activityService ?? new ActivityService();
@@ -147,6 +159,32 @@ namespace DoanKhoaClient.ViewModels
 
             // Fire and forget pattern - không chờ đợi
             _ = LoadActivitiesAsync();
+
+            ActivityTypeOptions = new ObservableCollection<FilterOption>
+            {
+                new FilterOption { Display = "Hoạt động học thuật", Value = ActivityType.Academic },
+                new FilterOption { Display = "Hoạt động tình nguyện", Value = ActivityType.Volunteer },
+                new FilterOption { Display = "Hoạt động ngoại khóa", Value = ActivityType.Entertainment }
+            };
+            ActivityStatusOptions = new ObservableCollection<FilterOption>
+            {
+                new FilterOption { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming },
+                new FilterOption { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing },
+                new FilterOption { Display = "Đã diễn ra", Value = ActivityStatus.Completed }
+            };
+            RemoveFilterTagCommand = new RelayCommand(tag =>
+            {
+                foreach (var opt in ActivityTypeOptions.Concat(ActivityStatusOptions))
+                    if (opt.Display == (string)tag) opt.IsChecked = false;
+                UpdateSelectedTags();
+                FilterActivities();
+            });
+            ApplyFilterCommand = new RelayCommand(_ =>
+            {
+                UpdateSelectedTags();
+                FilterActivities();
+                IsFilterDropdownOpen = false;
+            });
         }
 
         private async Task LoadActivitiesAsync()
@@ -400,5 +438,43 @@ namespace DoanKhoaClient.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        private void UpdateSelectedTags()
+        {
+            SelectedFilterTags.Clear();
+            foreach (var opt in ActivityTypeOptions.Where(o => o.IsChecked))
+                SelectedFilterTags.Add(opt.Display);
+            foreach (var opt in ActivityStatusOptions.Where(o => o.IsChecked))
+                SelectedFilterTags.Add(opt.Display);
+        }
+
+        private void FilterActivities()
+        {
+            var selectedTypes = ActivityTypeOptions.Where(o => o.IsChecked).Select(o => (ActivityType)o.Value).ToList();
+            var selectedStatuses = ActivityStatusOptions.Where(o => o.IsChecked).Select(o => (ActivityStatus)o.Value).ToList();
+
+            var filtered = Activities.Where(a =>
+                (selectedTypes.Count == 0 || selectedTypes.Contains(a.Type)) &&
+                (selectedStatuses.Count == 0 || selectedStatuses.Contains(a.Status))
+                // ... các điều kiện khác như search text ...
+            ).ToList();
+
+            Activities = new ObservableCollection<Activity>(filtered);
+        }
+    }
+
+    public class FilterOption : INotifyPropertyChanged
+    {
+        public string Display { get; set; }
+        public object Value { get; set; }
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set { _isChecked = value; OnPropertyChanged(); }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
