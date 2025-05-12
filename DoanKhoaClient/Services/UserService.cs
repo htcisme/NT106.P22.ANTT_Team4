@@ -90,5 +90,27 @@ namespace DoanKhoaClient.Services
                 throw new Exception($"User search failed: {ex.Message}", ex);
             }
         }
+
+        public async Task<System.Collections.Generic.List<User>> GetUsersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("user/all");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<System.Collections.Generic.List<User>>();
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error getting users: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get users: {ex.Message}", ex);
+            }
+        }
     }
 }

@@ -119,29 +119,46 @@ namespace DoanKhoaClient.ViewModels
 
         private async Task ExecuteCreateProgramAsync()
         {
-            var dialog = new CreateTaskProgramDialog(Session.Id, _programType);
-            if (dialog.ShowDialog() == true)
+            try
             {
-                try
+                // Khởi tạo dialog với phiên hiện tại
+                var dialog = new CreateTaskProgramDialog(_session);
+
+                // Hiển thị dialog và chờ người dùng nhập thông tin
+                if (dialog.ShowDialog() == true)
                 {
                     IsLoading = true;
-                    var newProgram = await _taskService.CreateTaskProgramAsync(dialog.TaskProgram);
+
+                    // Đảm bảo loại chương trình phù hợp với view hiện tại
+                    dialog.ProgramToCreate.Type = _programType;
+
+                    // Tạo chương trình mới thông qua service
+                    var newProgram = await _taskService.CreateTaskProgramAsync(dialog.ProgramToCreate);
+
+                    // Cập nhật UI
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Programs.Add(newProgram);
+
+                        // Sắp xếp lại danh sách sau khi thêm
+                        Programs = new ObservableCollection<TaskProgram>(
+                            Programs.OrderBy(p => p.StartDate)
+                        );
                     });
+
+                    // Thông báo thành công
                     MessageBox.Show("Chương trình đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
-                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 

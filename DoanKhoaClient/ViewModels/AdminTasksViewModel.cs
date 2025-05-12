@@ -220,6 +220,10 @@ namespace DoanKhoaClient.ViewModels
             try
             {
                 IsLoading = true;
+
+                // Đảm bảo cập nhật thời gian
+                updatedSession.UpdatedAt = DateTime.Now;
+
                 var result = await _taskService.UpdateTaskSessionAsync(updatedSession.Id, updatedSession);
 
                 Application.Current.Dispatcher.Invoke(() =>
@@ -311,7 +315,23 @@ namespace DoanKhoaClient.ViewModels
 
                     if (programsView != null)
                     {
-                        programsView.Show();
+                        try
+                        {
+                            // Đảm bảo tài nguyên được tải trước khi hiển thị cửa sổ
+                            programsView.Resources.MergedDictionaries.Add(new ResourceDictionary
+                            {
+                                Source = new Uri("/DoanKhoaClient;component/Resources/TaskViewResources.xaml", UriKind.Relative)
+                            });
+
+                            // Đặt vị trí cửa sổ mới ở giữa màn hình
+                            programsView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                            programsView.Show();
+                        }
+                        catch (Exception resourceEx)
+                        {
+                            MessageBox.Show($"Lỗi tải tài nguyên: {resourceEx.Message}",
+                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
