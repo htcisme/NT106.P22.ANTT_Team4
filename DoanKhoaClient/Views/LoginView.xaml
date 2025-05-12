@@ -22,7 +22,7 @@
         <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
 
-    <Grid>
+    <Grid x:Name="Login_Background">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0.67" Color="#FFF6FCFF" />

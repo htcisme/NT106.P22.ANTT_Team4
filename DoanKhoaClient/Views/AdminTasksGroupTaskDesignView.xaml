@@ -1,359 +1,93 @@
-﻿<Window x:Name="Admin_Light_Tasks_GroupTaskDesignView"
-        x:Class="DoanKhoaClient.Views.AdminLightTasksGroupTaskDesignView"
+﻿<Window x:Class="DoanKhoaClient.Views.AdminTaskGroupTaskDesignView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DoanKhoaClient.Views"
-        mc:Ignorable="d"
-        Title="AdminLightTasksGroupTaskDesignView"
-        Height="1036"
-        Width="1440">
-        <Grid x:Name="Admin_LightGroupTask_Design_Background"
-              Width="1440"
-              Height="1022.8">
-                <Grid.Background>
-                        <LinearGradientBrush EndPoint="0.5,1"
-                                             StartPoint="0.5,0">
-                                <GradientStop Color="#FFF6FCFF"
-                                              Offset="0.596"/>
-                                <GradientStop Color="#FFDBF3FF"
-                                              Offset="1"/>
-                        </LinearGradientBrush>
-                </Grid.Background>
-                <TextBox x:Name="Admin_LightGroupTask_Design_tbSearch"
-                         HorizontalAlignment="Left"
-                         Margin="370,41,0,0"
-                         TextWrapping="Wrap"
-                         Text=""
-                         VerticalAlignment="Top"
-                         Width="307"
-                         Height="50"
-                         Background="#FFDBF3FF"
-                         BorderBrush="{x:Null}"/>
-                <Border x:Name="Admin_LightGroupTask_Design_Dashboard"
-                        BorderBrush="Black"
-                        HorizontalAlignment="Left"
-                        Height="942"
-                        Margin="43,0,0,0"
-                        VerticalAlignment="Center"
-                        Width="288"
-                        CornerRadius="10,10,10,10">
-                        <Border.Background>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                                                     StartPoint="0.5,0">
-                                        <GradientStop Color="#FFF6FCFF"
-                                                      Offset="0.04"/>
-                                        <GradientStop Color="#FFDBF3FF"
-                                                      Offset="0.46"/>
-                                        <GradientStop Color="#FF87ACCD"
-                                                      Offset="0.937"/>
-                                </LinearGradientBrush>
-                        </Border.Background>
-                </Border>
-                <Image x:Name="Admin_LightGroupTask_Design_iUsers"
-                       Grid.Column="1"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1358,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/generic avatar.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iNotifications"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1297,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/light-notifications.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iDark"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1236,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/dark.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iSearch"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="628,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/search.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iLogo"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="131,71,0,0"
-                       VerticalAlignment="Top"
-                       Width="112.38"
-                       Source="/Views/Images/header.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iHome"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/home.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iChat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/chat_bubble.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iActivities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/activities.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iMembers"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/members.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iTasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/active-tasks.png"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbHome"
-                       Content="Home"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbChat"
-                       Content="Chat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbActivities"
-                       Content="Activities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbMembers"
-                       Content="Members"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbTasks"
-                       Content="Tasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       RenderTransformOrigin="0.527,3.278"
-                       Foreground="#597CA2"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iFacebook"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="175,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/facebook.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iInstagram"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="135,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/instagram.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iYoutube"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="215,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/youtube.png"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbInformationTeam"
-                       Content="BAN THIẾT KẾ"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="40"
-                       Margin="365,147,0,0"
-                       VerticalAlignment="Top"
-                       Width="236"
-                       FontSize="32"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Rectangle HorizontalAlignment="Left"
-                           Height="1"
-                           Margin="365,331,0,0"
-                           Stroke="Black"
-                           VerticalAlignment="Top"
-                           Width="1020"
-                           RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                                <TransformGroup>
-                                        <ScaleTransform ScaleY="-1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                </TransformGroup>
-                        </Rectangle.RenderTransform>
-                </Rectangle>
-                <Label Content="Manager:"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="365,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="92"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbManagerDesignTeam"
-                       Content="Hoàng Bảo Phước"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="462,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="180"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iList1"
-                       HorizontalAlignment="Left"
-                       Height="12"
-                       Margin="365,359,0,0"
-                       VerticalAlignment="Top"
-                       Width="22"
-                       Source="/Views/Images/light-down-list.png"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbEvent1"
-                       Content="NGỌN ĐUỐC XANH"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="32"
-                       Margin="423,349,0,0"
-                       VerticalAlignment="Top"
-                       Width="228"
-                       FontSize="24"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Border HorizontalAlignment="Left"
-                        Height="70"
-                        Margin="423,396,0,0"
-                        VerticalAlignment="Top"
-                        Width="852"
-                        Background="#FFDBF3FF"
-                        CornerRadius="5,5,5,5"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbNameTasks1"
-                       Content="Giấy Chứng nhận"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="524,416,0,0"
-                       VerticalAlignment="Top"
-                       Width="172"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-                <Image HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="470,416,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/calendar-tasks.png"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iList2"
-                       HorizontalAlignment="Left"
-                       Height="22"
-                       Margin="370,497,0,0"
-                       VerticalAlignment="Top"
-                       Width="12"
-                       Source="/Views/Images/light-up-list.png"
-                       RenderTransformOrigin="1.333,0.452"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbEvent2"
-                       Content="VNU TOUR 2025"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="32"
-                       Margin="423,491,0,0"
-                       VerticalAlignment="Top"
-                       Width="228"
-                       FontSize="24"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Image x:Name="Admin_LightGroupTask_Design_iList3"
-                       HorizontalAlignment="Left"
-                       Height="22"
-                       Margin="370,557,0,0"
-                       VerticalAlignment="Top"
-                       Width="12"
-                       Source="/Views/Images/light-up-list.png"
-                       RenderTransformOrigin="1.333,0.452"/>
-                <Label x:Name="Admin_LightGroupTask_Design_lbEvent3"
-                       Content="NETSEC DAY 2025"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="32"
-                       Margin="423,552,0,0"
-                       VerticalAlignment="Top"
-                       Width="228"
-                       FontSize="24"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Button x:Name="Admin_LightGroupTask_Design_btCreateNew"
-                        Content="Tạo mới"
-                        HorizontalAlignment="Left"
-                        Height="40"
-                        Margin="365,255,0,0"
-                        VerticalAlignment="Top"
-                        Width="147"
-                        Background="#FF042354"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#F6FCFF"/>
-                <Button x:Name="Admin_LightGroupTask_Design_btEdit"
-                        Content="Chỉnh sửa"
-                        HorizontalAlignment="Left"
-                        Height="40"
-                        Margin="534,255,0,0"
-                        VerticalAlignment="Top"
-                        Width="147"
-                        Background="#FF042354"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#F6FCFF"/>
+        Title="Quản lý chương trình thiết kế" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+    <Grid x:Name="Admin_GroupTask_Design_Background">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Background="#3498db" Height="60">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                <Button Background="Transparent" BorderThickness="0" Margin="0,0,10,0"
+                        Click="BackButton_Click">
+                    <Image Source="/Images/back_icon.png" Width="24" Height="24"/>
+                </Button>
+                <TextBlock Text="{Binding Session.Name}" 
+                           VerticalAlignment="Center"
+                           FontSize="18" FontWeight="Bold" Foreground="White"/>
+            </StackPanel>
+
+            <Image Grid.Column="2" Source="/Images/theme_toggle.png" Width="24" Height="24"
+                   Margin="0,0,20,0" MouseDown="ThemeToggleButton_MouseDown"/>
         </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Commands -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Tạo mới" Width="100" Height="30" Margin="0,0,10,0"
+                            Command="{Binding CreateProgramCommand}"/>
+                    <Button Content="Chỉnh sửa" Width="100" Height="30" Margin="0,0,10,0"
+                            Command="{Binding EditProgramCommand}" CommandParameter="{Binding SelectedProgram}"/>
+                    <Button Content="Xoá" Width="100" Height="30"
+                            Command="{Binding DeleteProgramCommand}" CommandParameter="{Binding SelectedProgram}"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="Làm mới" Width="100" Height="30"
+                        Command="{Binding RefreshCommand}"/>
+            </Grid>
+
+            <!-- Programs List -->
+            <ListView Grid.Row="1" ItemsSource="{Binding Programs}" SelectedItem="{Binding SelectedProgram}"
+                     BorderThickness="1" BorderBrush="#DDDDDD">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Tên chương trình" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                        <GridViewColumn Header="Mô tả" DisplayMemberBinding="{Binding Description}" Width="300"/>
+                        <GridViewColumn Header="Bắt đầu" DisplayMemberBinding="{Binding StartDate, StringFormat=dd/MM/yyyy}" Width="100"/>
+                        <GridViewColumn Header="Kết thúc" DisplayMemberBinding="{Binding EndDate, StringFormat=dd/MM/yyyy}" Width="100"/>
+                        <GridViewColumn Header="Hành động" Width="130">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Chi tiết" Width="80" Height="25"
+                                            Command="{Binding DataContext.ViewProgramDetailsCommand, 
+                                                      RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Loading Indicator -->
+            <Grid Grid.Row="1" Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Đang tải..." FontSize="16" HorizontalAlignment="Center"/>
+                    <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>

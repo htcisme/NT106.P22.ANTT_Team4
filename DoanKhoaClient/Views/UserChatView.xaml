@@ -7,72 +7,95 @@
         xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
         xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
         mc:Ignorable="d"
-        Title="Chat Application" Height="1024" Width="1440">
+        Title="Chat Application"
+        Height="1024"
+        Width="1440">
+
 
     <!-- Khai báo Converters -->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
-        <converters:CurrentUserConverter x:Key="CurrentUserConverter" />
-        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter" />
-        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter" />
-        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter" />
-        <converters:FileIconConverter x:Key="FileIconConverter" />
-        <converters:FileSizeConverter x:Key="FileSizeConverter" />
+        <converters:CurrentUserConverter x:Key="CurrentUserConverter"/>
+        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter"/>
+        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter"/>
+        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter"/>
+        <converters:FileIconConverter x:Key="FileIconConverter"/>
+        <converters:FileSizeConverter x:Key="FileSizeConverter"/>
         <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
     </Window.Resources>
 
     <Window.DataContext>
-        <vm:LightUserChatViewModel/>
+        <vm:UserChatViewModel/>
     </Window.DataContext>
 
-    <Grid x:Name="ChatBackGround">
+    <Grid x:Name="UserChat_Background">
         <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FFF6FCFF" Offset="0.67"/>
-                <GradientStop Color="#FFDBF3FF" Offset="1"/>
+            <LinearGradientBrush EndPoint="0.5,1"
+                    StartPoint="0.5,0">
+                <GradientStop Color="#FFF6FCFF"
+                        Offset="0.67"/>
+                <GradientStop Color="#FFDBF3FF"
+                        Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
 
         <!-- Search Box -->
-        <TextBox x:Name="LightUserChat_tbSearch1"
-                HorizontalAlignment="Left"
-                Margin="370,41,0,0"
-                TextWrapping="Wrap"
-                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                VerticalAlignment="Top"
-                Width="307"
-                Height="50"
-                Background="#FFDBF3FF"
-                BorderBrush="{x:Null}"/>
+        <TextBox x:Name="UserChat_tbSearch1"
+                 HorizontalAlignment="Left"
+                 Margin="370,41,0,0"
+                 TextWrapping="Wrap"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 VerticalAlignment="Top"
+                 Width="307"
+                 Height="50"
+                 Background="#FFDBF3FF"
+                 BorderBrush="{x:Null}"/>
 
         <!-- Left Dashboard -->
-        <Border x:Name="LightUserChat_Dashboard1"
+        <Border x:Name="UserChat_Dashboard1"
                 BorderBrush="Black"
                 HorizontalAlignment="Left"
                 Height="942"
                 Margin="43,40,0,0"
                 VerticalAlignment="Top"
                 Width="288"
-                CornerRadius="10,10,10,10"/>
 
         <!-- Top Icons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,46,40,0">
-            <Image Height="40" Width="40" Source="/Views/Images/dark.png" Margin="0,0,20,0" MouseDown="ThemeToggleButton_MouseDown"/>
-            <Image Height="40" Width="40" Source="/Views/Images/light-notifications.png" Margin="0,0,20,0"/>
-            <Image Height="40" Width="40" Source="/Views/Images/generic avatar.png"/>
+        <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,46,40,0">
+            <Image x:Name="ThemeToggleButton"
+                    Height="40"
+                    Width="40"
+                    Source="/Views/Images/dark.png"
+                    Margin="0,0,20,0"
+                    MouseDown="ThemeToggleButton_MouseDown"/>
+            <Image Height="40"
+                    Width="40"
+                    Source="/Views/Images/light-notifications.png"
+                    Margin="0,0,20,0"/>
+            <Image Height="40"
+                    Width="40"
+                    Source="/Views/Images/generic avatar.png"/>
         </StackPanel>
 
-        <Image HorizontalAlignment="Left" Height="40" Margin="628,46,0,0" VerticalAlignment="Top" Width="40" Source="/Views/Images/search.png"/>
+        <Image HorizontalAlignment="Left"
+                Height="40"
+                Margin="628,46,0,0"
+                VerticalAlignment="Top"
+                Width="40"
+                Source="/Views/Images/search.png"/>
 
         <!-- Conversation List -->
         <Border HorizontalAlignment="Left"
-            Height="864"
-            Margin="370,119,0,0"
-            VerticalAlignment="Top"
-            Width="358"
-            Background="#FFD9D9D9"
-            CornerRadius="10,10,10,10">
+                Height="864"
+                Margin="370,119,0,0"
+                VerticalAlignment="Top"
+                Width="358"
+                Background="#FFD9D9D9"
+                CornerRadius="10,10,10,10">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -80,9 +103,9 @@
                 </Grid.RowDefinitions>
 
                 <!-- Button tạo nhóm -->
-                <Button Grid.Row="0" 
+                <Button Grid.Row="0"
                         Command="{Binding CreateGroupCommand}"
-                        HorizontalAlignment="Right" 
+                        HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Margin="0,10,10,10"
                         Padding="8,5"
@@ -91,35 +114,45 @@
                         BorderThickness="0"
                         Content="Tạo nhóm mới"/>
                 <Button Command="{Binding SearchFriendsCommand}"
-        ToolTip="Tìm bạn bè"
-        HorizontalAlignment="Left" 
-        VerticalAlignment="Center"
-        Margin="162,0,0,0"
-        Padding="10,5"
-        Background="#87ACCD"
-        Foreground="White"
-        BorderThickness="0"
-        Content="Tìm bạn bè" />
+                        ToolTip="Tìm bạn bè"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="162,0,0,0"
+                        Padding="10,5"
+                        Background="#87ACCD"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Content="Tìm bạn bè"/>
                 <!-- Danh sách cuộc trò chuyện -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <ListView ItemsSource="{Binding Conversations}" 
+                <ScrollViewer Grid.Row="1"
+                        VerticalScrollBarVisibility="Auto">
+                    <ListView ItemsSource="{Binding Conversations}"
                               SelectedItem="{Binding SelectedConversation}"
-                              Background="Transparent" 
+                              Background="Transparent"
                               BorderThickness="0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Height="70" Width="336" Background="#FFDAE9F6" CornerRadius="10" Margin="0,5">
+                                <Border Height="70"
+                                        Width="336"
+                                        Background="#FFDAE9F6"
+                                        CornerRadius="10"
+                                        Margin="0,5">
                                     <Grid>
-                                        <Image Height="44" Width="44" Margin="10,0,0,0" 
-                                               HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                        <Image Height="44"
+                                                Width="44"
+                                                Margin="10,0,0,0"
+                                               HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
                                                Source="/Views/Images/account_circle.png"/>
-                                        <Label Content="{Binding Converter={StaticResource ConversationTitleConverter}}" 
-       Margin="60,10,0,0" 
-       HorizontalAlignment="Left" 
-       VerticalAlignment="Top"/>
-                                        <Label Content="{Binding LastActivity, StringFormat='{}{0:HH:mm}'}" 
-                                               Margin="0,10,10,0" FontSize="10"
-                                               HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        <Label Content="{Binding Converter={StaticResource ConversationTitleConverter}}"
+                                               Margin="60,10,0,0"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Top"/>
+                                        <Label Content="{Binding LastActivity, StringFormat='{}{0:HH:mm}'}"
+                                               Margin="0,10,10,0"
+                                                FontSize="10"
+                                               HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -131,17 +164,22 @@
 
         <!-- Chat Box Container -->
         <Border HorizontalAlignment="Left"
-            Height="864"
-            Margin="764,119,0,0"
-            VerticalAlignment="Top"
-            Width="634"
-            CornerRadius="10,10,10,10">
+                Height="864"
+                Margin="764,119,0,0"
+                VerticalAlignment="Top"
+                Width="634"
+                CornerRadius="10,10,10,10">
             <Border.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FF87ACCD" Offset="1"/>
-                    <GradientStop Color="#FFDBF3FF" Offset="0.46"/>
-                    <GradientStop Color="#FFDBF3FF" Offset="0.54"/>
-                    <GradientStop Color="#FF87ACCD" Offset="0"/>
+                <LinearGradientBrush EndPoint="0.5,1"
+                        StartPoint="0.5,0">
+                    <GradientStop Color="#FF87ACCD"
+                            Offset="1"/>
+                    <GradientStop Color="#FFDBF3FF"
+                            Offset="0.46"/>
+                    <GradientStop Color="#FFDBF3FF"
+                            Offset="0.54"/>
+                    <GradientStop Color="#FF87ACCD"
+                            Offset="0"/>
                 </LinearGradientBrush>
             </Border.Background>
 
@@ -149,8 +187,8 @@
             <Grid>
                 <!-- ChatBox Background -->
                 <Border Margin="29,24,29,24"
-                    Background="White"
-                    CornerRadius="20,20,20,20">
+                        Background="White"
+                        CornerRadius="20,20,20,20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -160,22 +198,30 @@
 
                         <!-- Header -->
                         <Border Grid.Row="0"
-    Height="56"
-    Background="#FFDAE9F6"
-    CornerRadius="20,20,0,0">
+                                Height="56"
+                                Background="#FFDAE9F6"
+                                CornerRadius="20,20,0,0">
                             <Grid>
-                                <Image HorizontalAlignment="Left" Height="30" Margin="26,13,0,0" 
-               VerticalAlignment="Center" Width="30" Source="/Views/Images/account_circle.png"/>
+                                <Image HorizontalAlignment="Left"
+                                        Height="30"
+                                        Margin="26,13,0,0"
+                                       VerticalAlignment="Center"
+                                        Width="30"
+                                        Source="/Views/Images/account_circle.png"/>
                                 <!-- Change this line to use the converter -->
-                                <Label Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}" 
-               Margin="69,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15"/>
+                                <Label Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
+                                       Margin="69,0,0,0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        FontSize="15"/>
                             </Grid>
                         </Border>
 
                         <!-- Messages Area -->
-                        <ScrollViewer Grid.Row="1" x:Name="MessageScrollViewer" 
-                                    VerticalScrollBarVisibility="Auto" 
-                                    Margin="0,5">
+                        <ScrollViewer Grid.Row="1"
+                                x:Name="MessageScrollViewer"
+                                      VerticalScrollBarVisibility="Auto"
+                                      Margin="0,5">
                             <ItemsControl ItemsSource="{Binding Messages}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -186,65 +232,77 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Tin nhắn hệ thống -->
-                                            <Border Grid.Column="0" Grid.ColumnSpan="2"
-                                                Background="#FFE8E8E8" 
-                                                CornerRadius="10" 
-                                                Padding="10,5"
-                                                HorizontalAlignment="Center"
-                                                Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter='system'}">
-                                                <TextBlock Text="{Binding Content}" 
-                                                        TextWrapping="Wrap" 
-                                                        FontStyle="Italic"
-                                                        Foreground="#FF666666"/>
+                                            <Border Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
+                                                    Background="#FFE8E8E8"
+                                                    CornerRadius="10"
+                                                    Padding="10,5"
+                                                    HorizontalAlignment="Center"
+                                                    Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter='system'}">
+                                                <TextBlock Text="{Binding Content}"
+                                                           TextWrapping="Wrap"
+                                                           FontStyle="Italic"
+                                                           Foreground="#FF666666"/>
                                             </Border>
 
                                             <!-- Tin nhắn từ người khác -->
-                                            <Border Grid.Column="0" 
-                                                Background="#FFB9D4EB" 
-                                                CornerRadius="20,20,20,5" 
-                                                Padding="15,10"
-                                                MaxWidth="275" 
-                                                HorizontalAlignment="Left"
-                                                Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                            <Border Grid.Column="0"
+                                                    Background="#FFB9D4EB"
+                                                    CornerRadius="20,20,20,5"
+                                                    Padding="15,10"
+                                                    MaxWidth="275"
+                                                    HorizontalAlignment="Left"
+                                                    Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
                                                 <StackPanel>
                                                     <!-- Nội dung text -->
-                                                    <TextBlock Text="{Binding Content}" 
-                                                            TextWrapping="Wrap"
-                                                            Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
+                                                    <TextBlock Text="{Binding Content}"
+                                                               TextWrapping="Wrap"
+                                                               Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
 
                                                     <!-- Hiển thị hình ảnh và files -->
-                                                    <ItemsControl ItemsSource="{Binding Attachments}" Margin="0,5,0,0">
+                                                    <ItemsControl ItemsSource="{Binding Attachments}"
+                                                            Margin="0,5,0,0">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
                                                                 <!-- Hình ảnh -->
                                                                 <StackPanel>
-                                                                    <Image Source="{Binding FileUrl}" 
-                                                                        MaxHeight="150" MaxWidth="200"
-                                                                        Stretch="Uniform" HorizontalAlignment="Left"
-                                                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                                        Margin="0,5,0,5"/>
+                                                                    <Image Source="{Binding FileUrl}"
+                                                                           MaxHeight="150"
+                                                                            MaxWidth="200"
+                                                                           Stretch="Uniform"
+                                                                            HorizontalAlignment="Left"
+                                                                           Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                           Margin="0,5,0,5"/>
 
                                                                     <!-- Files -->
                                                                     <Border Background="#FFF0F0F0"
-                                                                        Margin="0,5,0,0" Padding="5" CornerRadius="5"
-                                                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                                                                            Margin="0,5,0,0"
+                                                                            Padding="5"
+                                                                            CornerRadius="5"
+                                                                            Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                                                                         <Grid>
                                                                             <Grid.ColumnDefinitions>
                                                                                 <ColumnDefinition Width="Auto"/>
                                                                                 <ColumnDefinition Width="*"/>
                                                                             </Grid.ColumnDefinitions>
 
-                                                                            <TextBlock Grid.Column="0" 
-                                                                                    Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
-                                                                                    Width="24" Height="24" Margin="0,0,5,0"
-                                                                                    TextAlignment="Center" VerticalAlignment="Center"
-                                                                                    FontWeight="Bold" Background="#FFE0E0FF"/>
+                                                                            <TextBlock Grid.Column="0"
+                                                                                       Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
+                                                                                       Width="24"
+                                                                                    Height="24"
+                                                                                    Margin="0,0,5,0"
+                                                                                       TextAlignment="Center"
+                                                                                    VerticalAlignment="Center"
+                                                                                       FontWeight="Bold"
+                                                                                    Background="#FFE0E0FF"/>
 
                                                                             <StackPanel Grid.Column="1">
-                                                                                <TextBlock Text="{Binding FileName}" 
-                                                                                        TextWrapping="Wrap" FontWeight="SemiBold"/>
-                                                                                <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}" 
-                                                                                        Foreground="#FF666666" FontSize="10"/>
+                                                                                <TextBlock Text="{Binding FileName}"
+                                                                                           TextWrapping="Wrap"
+                                                                                        FontWeight="SemiBold"/>
+                                                                                <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"
+                                                                                           Foreground="#FF666666"
+                                                                                        FontSize="10"/>
                                                                             </StackPanel>
                                                                         </Grid>
                                                                     </Border>
@@ -254,58 +312,71 @@
                                                     </ItemsControl>
 
                                                     <!-- Timestamp -->
-                                                    <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}" 
-                                                            FontSize="10" HorizontalAlignment="Right" Margin="0,5,0,0"/>
+                                                    <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
+                                                               FontSize="10"
+                                                            HorizontalAlignment="Right"
+                                                            Margin="0,5,0,0"/>
                                                 </StackPanel>
                                             </Border>
 
                                             <!-- Tin nhắn từ user hiện tại -->
-                                            <Border Grid.Column="1" 
-                                                Background="#FFD5E0E9" 
-                                                CornerRadius="20,20,5,20" 
-                                                Padding="15,10"
-                                                MaxWidth="275" 
-                                                HorizontalAlignment="Right"
-                                                Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                            <Border Grid.Column="1"
+                                                    Background="#FFD5E0E9"
+                                                    CornerRadius="20,20,5,20"
+                                                    Padding="15,10"
+                                                    MaxWidth="275"
+                                                    HorizontalAlignment="Right"
+                                                    Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
                                                 <StackPanel>
                                                     <!-- Nội dung text -->
-                                                    <TextBlock Text="{Binding Content}" 
-                                                            TextWrapping="Wrap"
-                                                            Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
+                                                    <TextBlock Text="{Binding Content}"
+                                                               TextWrapping="Wrap"
+                                                               Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
 
                                                     <!-- Hiển thị hình ảnh và files -->
-                                                    <ItemsControl ItemsSource="{Binding Attachments}" Margin="0,5,0,0">
+                                                    <ItemsControl ItemsSource="{Binding Attachments}"
+                                                            Margin="0,5,0,0">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate>
                                                                 <!-- Hình ảnh -->
                                                                 <StackPanel>
-                                                                    <Image Source="{Binding FileUrl}" 
-                                                                        MaxHeight="150" MaxWidth="200"
-                                                                        Stretch="Uniform" HorizontalAlignment="Left"
-                                                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                                        Margin="0,5,0,5"/>
+                                                                    <Image Source="{Binding FileUrl}"
+                                                                           MaxHeight="150"
+                                                                            MaxWidth="200"
+                                                                           Stretch="Uniform"
+                                                                            HorizontalAlignment="Left"
+                                                                           Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                           Margin="0,5,0,5"/>
 
                                                                     <!-- Files -->
                                                                     <Border Background="#FFF0F0F0"
-                                                                        Margin="0,5,0,0" Padding="5" CornerRadius="5"
-                                                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
+                                                                            Margin="0,5,0,0"
+                                                                            Padding="5"
+                                                                            CornerRadius="5"
+                                                                            Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
                                                                         <Grid>
                                                                             <Grid.ColumnDefinitions>
                                                                                 <ColumnDefinition Width="Auto"/>
                                                                                 <ColumnDefinition Width="*"/>
                                                                             </Grid.ColumnDefinitions>
 
-                                                                            <TextBlock Grid.Column="0" 
-                                                                                    Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
-                                                                                    Width="24" Height="24" Margin="0,0,5,0"
-                                                                                    TextAlignment="Center" VerticalAlignment="Center"
-                                                                                    FontWeight="Bold" Background="#FFE0E0FF"/>
+                                                                            <TextBlock Grid.Column="0"
+                                                                                       Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
+                                                                                       Width="24"
+                                                                                    Height="24"
+                                                                                    Margin="0,0,5,0"
+                                                                                       TextAlignment="Center"
+                                                                                    VerticalAlignment="Center"
+                                                                                       FontWeight="Bold"
+                                                                                    Background="#FFE0E0FF"/>
 
                                                                             <StackPanel Grid.Column="1">
-                                                                                <TextBlock Text="{Binding FileName}" 
-                                                                                        TextWrapping="Wrap" FontWeight="SemiBold"/>
-                                                                                <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}" 
-                                                                                        Foreground="#FF666666" FontSize="10"/>
+                                                                                <TextBlock Text="{Binding FileName}"
+                                                                                           TextWrapping="Wrap"
+                                                                                        FontWeight="SemiBold"/>
+                                                                                <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"
+                                                                                           Foreground="#FF666666"
+                                                                                        FontSize="10"/>
                                                                             </StackPanel>
                                                                         </Grid>
                                                                     </Border>
@@ -315,8 +386,10 @@
                                                     </ItemsControl>
 
                                                     <!-- Timestamp -->
-                                                    <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}" 
-                                                            FontSize="10" HorizontalAlignment="Right" Margin="0,5,0,0"/>
+                                                    <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
+                                                               FontSize="10"
+                                                            HorizontalAlignment="Right"
+                                                            Margin="0,5,0,0"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -326,30 +399,35 @@
                         </ScrollViewer>
 
                         <!-- Input Area -->
-                        <Grid Grid.Row="2" Margin="0,5,0,0">
+                        <Grid Grid.Row="2"
+                                Margin="0,5,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Panel hiển thị file đính kèm -->
-                            <Border Grid.Row="0" 
-                                  Background="#F0F5F9" 
-                                  BorderThickness="0,0,0,1" 
-                                  BorderBrush="#D0E5F5"
-                                  Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
-                                            VerticalScrollBarVisibility="Disabled" 
-                                            MaxHeight="100">
-                                    <ItemsControl ItemsSource="{Binding SelectedAttachments}" Margin="10">
+                            <Border Grid.Row="0"
+                                    Background="#F0F5F9"
+                                    BorderThickness="0,0,0,1"
+                                    BorderBrush="#D0E5F5"
+                                    Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Disabled"
+                                              MaxHeight="100">
+                                    <ItemsControl ItemsSource="{Binding SelectedAttachments}"
+                                            Margin="10">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel />
+                                                <WrapPanel/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="#E0EAF5" Margin="0,0,10,5" CornerRadius="5" Padding="5">
+                                                <Border Background="#E0EAF5"
+                                                        Margin="0,0,10,5"
+                                                        CornerRadius="5"
+                                                        Padding="5">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
@@ -357,11 +435,19 @@
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
-                                                        <TextBlock Grid.Column="0" Text="📁" 
-                                                                   Width="16" Height="16" Margin="0,0,5,0"/>
-                                                        <TextBlock Grid.Column="1" Text="{Binding FileName}" 
-                                                                   MaxWidth="100" TextTrimming="CharacterEllipsis"/>
-                                                        <Button Grid.Column="2" Content="×" Padding="3,0" Margin="5,0,0,0"
+                                                        <TextBlock Grid.Column="0"
+                                                                Text="📁"
+                                                                   Width="16"
+                                                                Height="16"
+                                                                Margin="0,0,5,0"/>
+                                                        <TextBlock Grid.Column="1"
+                                                                Text="{Binding FileName}"
+                                                                   MaxWidth="100"
+                                                                TextTrimming="CharacterEllipsis"/>
+                                                        <Button Grid.Column="2"
+                                                                Content="×"
+                                                                Padding="3,0"
+                                                                Margin="5,0,0,0"
                                                                 Command="{Binding DataContext.RemoveAttachmentCommand, 
                                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                 CommandParameter="{Binding}"/>
@@ -375,41 +461,63 @@
 
                             <!-- Input và nút -->
                             <Border Grid.Row="1"
-                                   Height="56"
-                                   Background="#FFDAE9F6"
-                                   CornerRadius="0,0,20,20">
+                                    Height="56"
+                                    Background="#FFDAE9F6"
+                                    CornerRadius="0,0,20,20">
                                 <Grid>
                                     <Button Command="{Binding ShowAttachmentsPanelCommand}"
-                                           HorizontalAlignment="Left" Width="30" Height="30"
-                                           Margin="10,0,0,0" Background="Transparent" BorderThickness="0">
-                                        <Image Source="/Views/Images/attachment.png" Width="18" Height="18"/>
+                                            HorizontalAlignment="Left"
+                                            Width="30"
+                                            Height="30"
+                                            Margin="10,0,0,0"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Image Source="/Views/Images/attachment.png"
+                                                Width="18"
+                                                Height="18"/>
                                     </Button>
 
-                                    <StackPanel Orientation="Horizontal" 
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Center"
-                                               Margin="45,0,0,0"
-                                               Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <Button Command="{Binding SelectImageCommand}" 
-                                                Background="Transparent" BorderThickness="0"
-                                                Margin="0,0,10,0" ToolTip="Thêm hình ảnh">
-                                            <Image Source="/Views/Images/image.png" Width="18" Height="18"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Margin="45,0,0,0"
+                                                Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Button Command="{Binding SelectImageCommand}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Margin="0,0,10,0"
+                                                ToolTip="Thêm hình ảnh">
+                                            <Image Source="/Views/Images/image.png"
+                                                    Width="18"
+                                                    Height="18"/>
                                         </Button>
-                                        <Button Command="{Binding SelectFileCommand}" 
-                                                Background="Transparent" BorderThickness="0"
-                                                Margin="0,0,10,0" ToolTip="Thêm file">
-                                            <Image Source="/Views/Images/document.png" Width="18" Height="18"/>
+                                        <Button Command="{Binding SelectFileCommand}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Margin="0,0,10,0"
+                                                ToolTip="Thêm file">
+                                            <Image Source="/Views/Images/document.png"
+                                                    Width="18"
+                                                    Height="18"/>
                                         </Button>
                                     </StackPanel>
 
                                     <TextBox Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}"
-                                            BorderThickness="0" Background="Transparent"
-                                            Margin="80,0,50,0" VerticalAlignment="Center"/>
+                                             BorderThickness="0"
+                                            Background="Transparent"
+                                             Margin="80,0,50,0"
+                                            VerticalAlignment="Center"/>
 
-                                    <Button Command="{Binding SendMessageCommand}" 
-                                           HorizontalAlignment="Right" Width="40" Height="40"
-                                           Margin="0,0,10,0" Background="Transparent" BorderThickness="0">
-                                        <Image Source="/Views/Images/send.png" Width="19" Height="24"/>
+                                    <Button Command="{Binding SendMessageCommand}"
+                                            HorizontalAlignment="Right"
+                                            Width="40"
+                                            Height="40"
+                                            Margin="0,0,10,0"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Image Source="/Views/Images/send.png"
+                                                Width="19"
+                                                Height="24"/>
                                     </Button>
                                 </Grid>
                             </Border>

@@ -1,0 +1,55 @@
+<Window x:Class="DoanKhoaClient.Views.EditTaskProgramDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chỉnh sửa chương trình" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Chỉnh sửa chương trình" 
+                   FontSize="16" FontWeight="Bold" 
+                   Grid.ColumnSpan="2"
+                   Margin="0,0,0,15"/>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,10">
+            <TextBlock Text="Tên chương trình:" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Name}" Padding="5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
+            <TextBlock Text="Mô tả:" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Description}" Padding="5" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,5,10">
+            <TextBlock Text="Ngày bắt đầu:" Margin="0,0,0,5"/>
+            <DatePicker SelectedDate="{Binding StartDate}" Padding="5" Height="30"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,0,0,10">
+            <TextBlock Text="Ngày kết thúc:" Margin="0,0,0,5"/>
+            <DatePicker SelectedDate="{Binding EndDate}" Padding="5" Height="30"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Huỷ" Width="80" Height="30" 
+                    Margin="0,0,10,0" Click="CancelButton_Click"/>
+            <Button Content="Lưu" Width="80" Height="30" 
+                    Background="#3498db" Foreground="White" 
+                    Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

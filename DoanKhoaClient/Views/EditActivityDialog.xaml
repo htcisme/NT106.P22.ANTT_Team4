@@ -1,0 +1,251 @@
+<Window
+    x:Class="DoanKhoaClient.Views.EditActivityDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DoanKhoaClient.Models"
+    Title="Chỉnh sửa hoạt động"
+    Width="500"
+    Height="670"
+    Background="#FFF6FCFF"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <!-- Style cho các label -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,5" />
+            <Setter Property="Foreground" Value="#042354" />
+        </Style>
+
+        <!-- Style cho các input fields -->
+        <Style x:Key="InputStyle" TargetType="Control">
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="BorderBrush" Value="#597CA2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+
+        <!-- Style cho nút Hủy -->
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F2F2F2" />
+            <Setter Property="Foreground" Value="#042354" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="10"
+                                BorderThickness="1"
+                                BorderBrush="#DFDFDF">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E5E5E5" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D9D9D9" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style cho nút Lưu -->
+        <Style x:Key="SaveButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#042354" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0A3B85" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#031A3E" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="#FFF6FCFF" Margin="10">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <!-- Tiêu đề cửa sổ -->
+                <RowDefinition Height="Auto" />
+                <!-- Các trường nhập liệu -->
+                <RowDefinition Height="*" />
+                <!-- Thông báo lỗi -->
+                <RowDefinition Height="Auto" />
+                <!-- Nút -->
+                <RowDefinition Height="Auto" />
+                <!-- Đệm cuối cùng -->
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+
+            <!-- Tiêu đề cửa sổ -->
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,15"
+                HorizontalAlignment="Center"
+                FontSize="24"
+                FontWeight="Bold"
+                Foreground="#042354"
+                Text="CHỈNH SỬA HOẠT ĐỘNG" />
+
+            <!-- Các trường nhập liệu trong ScrollViewer -->
+            <ScrollViewer 
+                Grid.Row="1" 
+                VerticalScrollBarVisibility="Auto"
+                Margin="0">
+                <StackPanel>
+                    <!--  Tiêu đề  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="Tiêu đề:" />
+                    <TextBox
+                        x:Name="TitleTextBox"
+                        Style="{StaticResource InputStyle}"
+                        Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <!--  Mô tả  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="Mô tả:" />
+                    <TextBox
+                        x:Name="DescriptionTextBox"
+                        Height="70"
+                        Style="{StaticResource InputStyle}"
+                        AcceptsReturn="True"
+                        Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <!--  Loại hoạt động  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="Loại hoạt động:" />
+                    <ComboBox
+                        x:Name="TypeComboBox"
+                        Style="{StaticResource InputStyle}"
+                        ItemsSource="{x:Static local:ActivityTypeEnum.Values}"
+                        SelectedItem="{Binding Type, Mode=TwoWay}">
+                        <ComboBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+
+                    <!--  Ngày diễn ra  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="Ngày diễn ra:" />
+                    <DatePicker
+                        x:Name="DatePicker"
+                        Style="{StaticResource InputStyle}"
+                        SelectedDate="{Binding Date}" />
+
+                    <!--  URL hình ảnh  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="URL hình ảnh:" />
+                    <TextBox
+                        x:Name="ImgUrlTextBox"
+                        Style="{StaticResource InputStyle}"
+                        Text="{Binding ImgUrl, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <!--  Trạng thái hiện tại  -->
+                    <TextBlock
+                        Style="{StaticResource LabelStyle}"
+                        Text="Trạng thái:" />
+                    <ComboBox
+                        x:Name="StatusComboBox"
+                        Style="{StaticResource InputStyle}"
+                        ItemsSource="{x:Static local:ActivityStatusEnum.Values}"
+                        SelectedItem="{Binding Status, Mode=TwoWay}">
+                        <ComboBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5" />
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Thông báo lỗi -->
+            <Border 
+                Grid.Row="2" 
+                x:Name="ErrorMessageBorder"
+                Background="#FFEEEE"
+                BorderBrush="#FFCCCC"
+                BorderThickness="1"
+                CornerRadius="5"
+                Padding="10"
+                Margin="0,10,0,10"
+                MaxHeight="80"
+                Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock 
+                        x:Name="ErrorMessageText"
+                        TextWrapping="Wrap"
+                        Foreground="#CC0000"
+                        FontSize="12" />
+                </ScrollViewer>
+            </Border>
+
+            <!--  Nút  -->
+            <Grid
+                Grid.Row="3"
+                Margin="0,5,0,0">
+                <StackPanel
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Style="{StaticResource CancelButtonStyle}"
+                        Click="CancelButton_Click"
+                        Content="Hủy" />
+                    <Button
+                        Style="{StaticResource SaveButtonStyle}"
+                        Click="SaveButton_Click"
+                        Content="Lưu" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

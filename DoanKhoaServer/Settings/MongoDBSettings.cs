@@ -7,6 +7,10 @@ namespace DoanKhoaServer.Settings
         public string UsersCollectionName { get; set; } = string.Empty;
         public string MessagesCollectionName { get; set; } = string.Empty;
         public string ConversationsCollectionName { get; set; } = string.Empty;
-        public string AttachmentsCollectionName { get; set; } = string.Empty; // Added this
+        public string AttachmentsCollectionName { get; set; } = string.Empty;
+        public string ActivitiesCollectionName { get; set; } = string.Empty;
+        public string TaskSessionsCollectionName { get; set; }
+        public string TaskProgramsCollectionName { get; set; }
+        public string TaskItemsCollectionName { get; set; }
     }
 }

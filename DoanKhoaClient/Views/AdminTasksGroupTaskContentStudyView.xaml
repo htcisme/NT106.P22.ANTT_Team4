@@ -1,421 +1,116 @@
-﻿<Window x:Name="AdminTasksGroupTaskContentStudyView"
-        x:Class="DoanKhoaClient.Views.AdminLightTasksGroupTaskContentStudyView"
+﻿<Window x:Class="DoanKhoaClient.Views.AdminTasksGroupTaskContentStudyView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DoanKhoaClient.Views"
-        mc:Ignorable="d"
-        Title="AdminLightTasksGroupTaskContentStudyView"
-        Height="1036"
-        Width="1440">
-    <Grid x:Name="Admin_LightGroupTask_Content_Study_Background"
-              Width="1440"
-              Height="1022.8">
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1"
-                                             StartPoint="0.5,0">
-                <GradientStop Color="#FFF6FCFF"
-                                              Offset="0.596"/>
-                <GradientStop Color="#FFDBF3FF"
-                                              Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-        <TextBox x:Name="Admin_LightGroupTask_Study_tbSearch"
-                         HorizontalAlignment="Left"
-                         Margin="370,41,0,0"
-                         TextWrapping="Wrap"
-                         Text=""
-                         VerticalAlignment="Top"
-                         Width="307"
-                         Height="50"
-                         Background="#FFDBF3FF"
-                         BorderBrush="{x:Null}"/>
-        <Border x:Name="Admin_LightGroupTask_Study_Dashboard"
-                        BorderBrush="Black"
-                        HorizontalAlignment="Left"
-                        Height="942"
-                        Margin="43,0,0,0"
-                        VerticalAlignment="Center"
-                        Width="288"
-                        CornerRadius="10,10,10,10">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="0.5,1"
-                                                     StartPoint="0.5,0">
-                    <GradientStop Color="#FFF6FCFF"
-                                                      Offset="0.04"/>
-                    <GradientStop Color="#FFDBF3FF"
-                                                      Offset="0.46"/>
-                    <GradientStop Color="#FF87ACCD"
-                                                      Offset="0.937"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-        <Image x:Name="Admin_LightGroupTask_Study_iUsers"
-                       Grid.Column="1"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1358,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/generic avatar.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iNotifications"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1297,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/light-notifications.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iDark"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1236,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/dark.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iSearch"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="628,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/search.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iLogo"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="131,71,0,0"
-                       VerticalAlignment="Top"
-                       Width="112.38"
-                       Source="/Views/Images/header.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iHome"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/home.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iChat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/chat_bubble.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iActivities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/activities.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iMembers"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/members.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iTasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/active-tasks.png"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbHome"
-                       Content="Home"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbChat"
-                       Content="Chat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbActivities"
-                       Content="Activities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbMembers"
-                       Content="Members"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbTasks"
-                       Content="Tasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       RenderTransformOrigin="0.527,3.278"
-                       Foreground="#597CA2"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iFacebook"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="175,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/facebook.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iInstagram"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="135,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/instagram.png"/>
-        <Image x:Name="Admin_LightGroupTask_Study_iYoutube"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="215,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/youtube.png"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbInformationTeam"
-                       Content="BAN HỌC TẬP"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="40"
-                       Margin="365,147,0,0"
-                       VerticalAlignment="Top"
-                       Width="236"
-                       FontSize="32"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Rectangle HorizontalAlignment="Left"
-                           Height="1"
-                           Margin="365,250,0,0"
-                           Stroke="Black"
-                           VerticalAlignment="Top"
-                           Width="1020"
-                           RenderTransformOrigin="0.5,0.5">
-            <Rectangle.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Rectangle.RenderTransform>
-        </Rectangle>
-        <Label Content="Manager:"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="365,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="92"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbManagerStudyTeam"
-                       Content="Đỗ Quang Trung"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="462,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="180"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbHeadTasks1"
-                       Content="Giấy chứng nhận"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="47"
-                       Margin="443,305,0,0"
-                       VerticalAlignment="Top"
-                       Width="280"
-                       FontSize="32"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Border HorizontalAlignment="Left"
-                        Height="183"
-                        Margin="443,365,0,0"
-                        VerticalAlignment="Top"
-                        Width="872"
-                        Background="#FFDBF3FF"
-                        CornerRadius="5,5,5,5"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbOpenTime"
-                       Content="Hạn mở:"
-                       HorizontalAlignment="Left"
-                       Height="25"
-                       Margin="489,390,0,0"
-                       VerticalAlignment="Top"
-                       Width="87"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"
-                       FontWeight="Bold"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbCloseTime"
-                       Content="Hạn đóng:"
-                       HorizontalAlignment="Left"
-                       Height="25"
-                       Margin="489,425,0,0"
-                       VerticalAlignment="Top"
-                       Width="106"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"
-                       FontWeight="Bold"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbDetailsOpenTime"
-                       Content="Thứ Sáu, 7 tháng 3 2025, 1:00 PM"
-                       HorizontalAlignment="Left"
-                       Height="25"
-                       Margin="623,390,0,0"
-                       VerticalAlignment="Top"
-                       Width="242"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbDetailsCloseTime"
-                       Content="Thứ Sáu, 7 tháng 3 2025, 1:00 PM"
-                       HorizontalAlignment="Left"
-                       Height="25"
-                       Margin="623,425,0,0"
-                       VerticalAlignment="Top"
-                       Width="242"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbDescription"
-                       Content="Trong này sử dụng font chữ abc, hệ màu cmyk, xuất file pdf, gồm có 50 giấy, gửi trước 3 ngày để kiểm tra, &#xD;&#xA;sử dụng data từ link sau: https://..."
-                       HorizontalAlignment="Left"
-                       Height="46"
-                       Margin="489,470,0,0"
-                       VerticalAlignment="Top"
-                       Width="772"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Button x:Name="Admin_LightGroupTask_Study_btFinish"
-                                Content="Hoàn thành"
-                        HorizontalAlignment="Left"
-                        Height="35"
-                        Margin="1168,566,0,0"
-                        VerticalAlignment="Top"
-                        Width="147"
-                        Background="#FF042354"
-                        FontFamily="Segoe UI"
-                        FontSize="16"
-                        Padding="0,0,0,0"
-                        Foreground="#FFFFFF"
-                        FontWeight="Bold"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbHeadActive"
-                       Content="Trạng thái"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="47"
-                       Margin="448,633,0,0"
-                       VerticalAlignment="Top"
-                       Width="167"
-                       FontSize="32"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-        <Border HorizontalAlignment="Left"
-                        Height="114"
-                        Margin="448,693,0,0"
-                        VerticalAlignment="Top"
-                        Width="872"
-                        Background="#FFDBF3FF"
-                        CornerRadius="5,5,5,5"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbWorkStatus"
-                       Content="Trạng thái công việc:"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="489,716,0,0"
-                       VerticalAlignment="Top"
-                       Width="176"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"
-                       FontWeight="Bold"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbRemainingTime"
-                       Content="Thời gian còn lại:"
-                       HorizontalAlignment="Left"
-                       Height="26"
-                       Margin="489,750,0,0"
-                       VerticalAlignment="Top"
-                       Width="176"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"
-                       FontWeight="Bold"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbDetailsWorkStatus"
-                       Content="Chưa hoàn thành"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="677,716,0,0"
-                       VerticalAlignment="Top"
-                       Width="242"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Label x:Name="Admin_LightGroupTask_Study_lbDetailsRemainingTime"
-                       Content="2 ngày 12 giờ"
-                       HorizontalAlignment="Left"
-                       Height="26"
-                       Margin="677,750,0,0"
-                       VerticalAlignment="Top"
-                       Width="242"
-                       FontFamily="Segoe UI"
-                       FontSize="16"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-        <Button x:Name="Admin_LightGroupTask_Study_btEdit"
-                                Content="Chỉnh sửa"
-                        HorizontalAlignment="Left"
-                        Height="35"
-                        Margin="1168,311,0,0"
-                        VerticalAlignment="Top"
-                        Width="147"
-                        Background="#FF042354"
-                        FontFamily="Segoe UI"
-                        FontSize="16"
-                        Padding="0,0,0,0"
-                        Foreground="#FFFFFF"
-                        FontWeight="Bold"/>
+        Title="Chi tiết công việc học tập" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+    <Grid x:Name="Admin_GroupTask_Study_Background">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Background="#3498db" Height="60">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                <Button Background="Transparent" BorderThickness="0" Margin="0,0,10,0"
+                        Click="BackButton_Click">
+                    <Image Source="/Images/back_icon.png" Width="24" Height="24"/>
+                </Button>
+                <TextBlock Text="{Binding Program.Name}" 
+                           VerticalAlignment="Center"
+                           FontSize="18" FontWeight="Bold" Foreground="White"/>
+            </StackPanel>
+
+            <Image x:Name="ThemeToggleButton" Grid.Column="2" 
+                   Source="/Images/theme_toggle.png" Width="24" Height="24"
+                   Margin="0,0,20,0" MouseDown="ThemeToggleButton_MouseDown"/>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Commands -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Tạo mới" Width="100" Height="30" Margin="0,0,10,0"
+                            Command="{Binding CreateTaskItemCommand}"/>
+                    <Button Content="Chỉnh sửa" Width="100" Height="30" Margin="0,0,10,0"
+                            Command="{Binding EditTaskItemCommand}" CommandParameter="{Binding SelectedTaskItem}"/>
+                    <Button Content="Xoá" Width="100" Height="30" Margin="0,0,10,0"
+                            Command="{Binding DeleteTaskItemCommand}" CommandParameter="{Binding SelectedTaskItem}"/>
+                    <Button Content="Hoàn thành" Width="100" Height="30"
+                            Command="{Binding CompleteTaskItemCommand}" CommandParameter="{Binding SelectedTaskItem}"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="Làm mới" Width="100" Height="30"
+                        Command="{Binding RefreshCommand}"/>
+            </Grid>
+
+            <!-- Tasks List -->
+            <ListView Grid.Row="1" ItemsSource="{Binding TaskItems}" SelectedItem="{Binding SelectedTaskItem}"
+                     BorderThickness="1" BorderBrush="#DDDDDD">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Tiêu đề" DisplayMemberBinding="{Binding Title}" Width="200"/>
+                        <GridViewColumn Header="Mô tả" DisplayMemberBinding="{Binding Description}" Width="250"/>
+                        <GridViewColumn Header="Người thực hiện" DisplayMemberBinding="{Binding AssignedToName}" Width="150"/>
+                        <GridViewColumn Header="Hạn chót" DisplayMemberBinding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
+                        <GridViewColumn Header="Trạng thái" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                        <Setter Property="Text" Value="Đang chờ"/>
+                                                        <Setter Property="Foreground" Value="#f39c12"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                                                        <Setter Property="Text" Value="Đang thực hiện"/>
+                                                        <Setter Property="Foreground" Value="#3498db"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                        <Setter Property="Text" Value="Hoàn thành"/>
+                                                        <Setter Property="Foreground" Value="#2ecc71"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Canceled">
+                                                        <Setter Property="Text" Value="Hủy"/>
+                                                        <Setter Property="Foreground" Value="#e74c3c"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Loading Indicator -->
+            <Grid Grid.Row="1" Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Đang tải..." FontSize="16" HorizontalAlignment="Center"/>
+                    <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
