@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Text.Json;
 using System.Diagnostics;
-
+using MongoDB.Bson;
+using System.Threading;
 namespace DoanKhoaClient.Services
 {
     public class TaskService
     {
         private readonly HttpClient _httpClient;
-
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         // Các event để thông báo khi dữ liệu được cập nhật
         public delegate void TaskSessionUpdatedHandler(TaskSession session);
         public event TaskSessionUpdatedHandler TaskSessionUpdated;
@@ -125,6 +126,29 @@ namespace DoanKhoaClient.Services
             }
         }
 
+        public async Task<TaskProgram> GetTaskProgramByIdAsync(string id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"taskprogram/{id}");
+
+                // If program is not found, return null instead of throwing exception
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    return null;
+
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<TaskProgram>();
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Lỗi khi lấy thông tin chương trình: {ex.Message}", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+                return null;
+            }
+        }
         public async Task DeleteTaskSessionAsync(string id)
         {
             try
@@ -167,71 +191,80 @@ namespace DoanKhoaClient.Services
         {
             try
             {
-                // Đảm bảo các trường thời gian được cập nhật
-                program.CreatedAt = DateTime.Now;
-                program.UpdatedAt = DateTime.Now;
+                // Ensure we're not sending duplicate requests
+                await _semaphore.WaitAsync(); // Add a semaphore to prevent concurrent calls
 
-                // Đảm bảo ExecutorId và ExecutorName luôn có giá trị
-                if (string.IsNullOrEmpty(program.ExecutorId))
+                try
                 {
-                    // Sử dụng SessionId làm ExecutorId mặc định nếu không có
-                    program.ExecutorId = program.SessionId;
+                    // Basic validation to ensure we don't create duplicates
+                    if (!string.IsNullOrEmpty(program.Id))
+                    {
+                        // Check if this program already exists
+                        var existing = await GetTaskProgramByIdAsync(program.Id);
+                        if (existing != null)
+                        {
+                            return existing; // Return the existing program instead of creating a duplicate
+                        }
+                    }
+
+                    // Đảm bảo các trường thời gian được cập nhật
+                    program.CreatedAt = DateTime.Now;
+                    program.UpdatedAt = DateTime.Now;
+
+                    // Set up executor details
+                    if (string.IsNullOrEmpty(program.ExecutorId))
+                    {
+                        program.ExecutorId = program.SessionId;
+                    }
+
+                    if (string.IsNullOrEmpty(program.ExecutorName))
+                    {
+                        program.ExecutorName = "Auto Assigned";
+                    }
+
+                    // Don't send the ID - let the server generate it
+                    var programToCreate = new TaskProgram
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(), // Generate a new ID
+                        Name = program.Name,
+                        Description = program.Description,
+                        StartDate = program.StartDate,
+                        EndDate = program.EndDate,
+                        SessionId = program.SessionId,
+                        ExecutorId = program.ExecutorId,
+                        ExecutorName = program.ExecutorName,
+                        Type = program.Type,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Status = ProgramStatus.NotStarted
+                    };
+
+                    // Send request
+                    var response = await _httpClient.PostAsJsonAsync("taskprogram", programToCreate);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"API Error ({response.StatusCode}): {errorContent}");
+                    }
+
+                    var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
+                    OnTaskProgramUpdated(result);
+                    return result;
                 }
-
-                if (string.IsNullOrEmpty(program.ExecutorName))
+                finally
                 {
-                    program.ExecutorName = "Auto Assigned";
+                    _semaphore.Release(); // Release the semaphore when done
                 }
-
-                // Tạo bản sao của chương trình để gửi đến API
-                var programToCreate = new TaskProgram
-                {
-                    Name = program.Name,
-                    Description = program.Description,
-                    StartDate = program.StartDate,
-                    EndDate = program.EndDate,
-                    SessionId = program.SessionId,
-                    ExecutorId = program.ExecutorId,
-                    ExecutorName = program.ExecutorName,
-                    Type = program.Type,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    Status = ProgramStatus.NotStarted
-                };
-
-                // Log request để debug
-                var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
-                string jsonContent = JsonSerializer.Serialize(programToCreate, jsonOptions);
-                Debug.WriteLine($"Sending to API: {jsonContent}");
-
-                // Gửi API request
-                var response = await _httpClient.PostAsJsonAsync("taskprogram", programToCreate);
-
-                // Kiểm tra response
-                if (!response.IsSuccessStatusCode)
-                {
-                    string errorContent = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"API Error: {response.StatusCode}, Details: {errorContent}");
-                    throw new Exception($"API Error ({response.StatusCode}): {errorContent}");
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
-                OnTaskProgramUpdated(result); // Kích hoạt sự kiện cập nhật
-                return result;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception in CreateTaskProgramAsync: {ex}");
-
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 });
-
-                // Trong trường hợp API chưa sẵn sàng, tạo một chương trình mẫu
-                program.Id = Guid.NewGuid().ToString();
-                return program;
+                throw;
             }
         }
 
@@ -268,9 +301,20 @@ namespace DoanKhoaClient.Services
                     throw new Exception($"API Error ({response.StatusCode}): {errorContent}");
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
-                OnTaskProgramUpdated(result);
-                return result;
+                // If NoContent (204), return the original program with updated id
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    // Just use the program that was passed in since it was successfully updated
+                    OnTaskProgramUpdated(program);
+                    return program;
+                }
+                else
+                {
+                    // Otherwise try to deserialize the response
+                    var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
+                    OnTaskProgramUpdated(result);
+                    return result;
+                }
             }
             catch (Exception ex)
             {
