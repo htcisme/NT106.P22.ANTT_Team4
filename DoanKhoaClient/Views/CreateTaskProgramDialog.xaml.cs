@@ -79,9 +79,8 @@ namespace DoanKhoaClient.Views
 
                 // Thêm thông tin người thực hiện là người hiện tại đang đăng nhập
                 // Hoặc gán giá trị mặc định để tránh lỗi
-                ProgramToCreate.ExecutorId = _session.CreatorId; // Hoặc id người dùng hiện tại
-                ProgramToCreate.ExecutorName = "Auto Assigned"; // Hoặc tên người dùng hiện tại
-
+                ProgramToCreate.ExecutorId = _session.ManagerId;
+                ProgramToCreate.ExecutorName = _session.ManagerName;
                 // Gọi API để tạo mới
                 var createdProgram = await _taskService.CreateTaskProgramAsync(ProgramToCreate);
                 ProgramToCreate = createdProgram; // Cập nhật lại với ID mới
