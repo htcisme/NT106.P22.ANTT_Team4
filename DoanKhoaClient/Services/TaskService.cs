@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace DoanKhoaClient.Services
 {
@@ -27,24 +29,21 @@ namespace DoanKhoaClient.Services
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("http://localhost:5299/api/")
-
             };
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
         }
-
-
 
         private void OnTaskSessionUpdated(TaskSession session)
         {
             TaskSessionUpdated?.Invoke(session);
         }
 
-        private void OnTaskProgramUpdated(TaskProgram program)
+        protected virtual void OnTaskProgramUpdated(TaskProgram program)
         {
             TaskProgramUpdated?.Invoke(program);
         }
+
 
         private void OnTaskItemUpdated(TaskItem item)
         {
@@ -172,6 +171,18 @@ namespace DoanKhoaClient.Services
                 program.CreatedAt = DateTime.Now;
                 program.UpdatedAt = DateTime.Now;
 
+                // Đảm bảo ExecutorId và ExecutorName luôn có giá trị
+                if (string.IsNullOrEmpty(program.ExecutorId))
+                {
+                    // Sử dụng SessionId làm ExecutorId mặc định nếu không có
+                    program.ExecutorId = program.SessionId;
+                }
+
+                if (string.IsNullOrEmpty(program.ExecutorName))
+                {
+                    program.ExecutorName = "Auto Assigned";
+                }
+
                 // Tạo bản sao của chương trình để gửi đến API
                 var programToCreate = new TaskProgram
                 {
@@ -180,16 +191,29 @@ namespace DoanKhoaClient.Services
                     StartDate = program.StartDate,
                     EndDate = program.EndDate,
                     SessionId = program.SessionId,
-                    ExecutorId = program.ExecutorId,  // Thêm ExecutorId
-                    ExecutorName = program.ExecutorName,  // Thêm ExecutorName
+                    ExecutorId = program.ExecutorId,
+                    ExecutorName = program.ExecutorName,
                     Type = program.Type,
                     CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
+                    UpdatedAt = DateTime.Now,
+                    Status = ProgramStatus.NotStarted
                 };
+
+                // Log request để debug
+                var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+                string jsonContent = JsonSerializer.Serialize(programToCreate, jsonOptions);
+                Debug.WriteLine($"Sending to API: {jsonContent}");
 
                 // Gửi API request
                 var response = await _httpClient.PostAsJsonAsync("taskprogram", programToCreate);
-                response.EnsureSuccessStatusCode();
+
+                // Kiểm tra response
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Details: {errorContent}");
+                    throw new Exception($"API Error ({response.StatusCode}): {errorContent}");
+                }
 
                 var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
                 OnTaskProgramUpdated(result); // Kích hoạt sự kiện cập nhật
@@ -197,6 +221,8 @@ namespace DoanKhoaClient.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Exception in CreateTaskProgramAsync: {ex}");
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}", "Lỗi",
@@ -209,7 +235,6 @@ namespace DoanKhoaClient.Services
             }
         }
 
-        // Cập nhật phương thức UpdateTaskProgramAsync để hỗ trợ người thực hiện
         public async Task<TaskProgram> UpdateTaskProgramAsync(string id, TaskProgram program)
         {
             try
@@ -217,8 +242,31 @@ namespace DoanKhoaClient.Services
                 // Đảm bảo cập nhật thời gian
                 program.UpdatedAt = DateTime.Now;
 
+                // Đảm bảo ExecutorId và ExecutorName luôn có giá trị
+                if (string.IsNullOrEmpty(program.ExecutorId))
+                {
+                    program.ExecutorId = program.SessionId;
+                }
+
+                if (string.IsNullOrEmpty(program.ExecutorName))
+                {
+                    program.ExecutorName = "Auto Assigned";
+                }
+
+                // Log request để debug
+                var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+                string jsonContent = JsonSerializer.Serialize(program, jsonOptions);
+                Debug.WriteLine($"Updating program: {jsonContent}");
+
                 var response = await _httpClient.PutAsJsonAsync($"taskprogram/{id}", program);
-                response.EnsureSuccessStatusCode();
+
+                // Kiểm tra response
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Details: {errorContent}");
+                    throw new Exception($"API Error ({response.StatusCode}): {errorContent}");
+                }
 
                 var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
                 OnTaskProgramUpdated(result);
@@ -226,6 +274,8 @@ namespace DoanKhoaClient.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Exception in UpdateTaskProgramAsync: {ex}");
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show($"Lỗi khi cập nhật chương trình: {ex.Message}", "Lỗi",
@@ -236,6 +286,8 @@ namespace DoanKhoaClient.Services
                 return program;
             }
         }
+
+        // Cập nhật phương thức UpdateTaskProgramAsync để hỗ trợ người thực hiện
         public async Task DeleteTaskProgramAsync(string id)
         {
             try

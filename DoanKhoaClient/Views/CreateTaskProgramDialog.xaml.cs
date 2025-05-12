@@ -78,9 +78,12 @@ namespace DoanKhoaClient.Views
                 ProgramToCreate.SessionId = _session.Id;
 
                 // Thêm thông tin người thực hiện là người hiện tại đang đăng nhập
-                // Hoặc gán giá trị mặc định để tránh lỗi
-                ProgramToCreate.ExecutorId = _session.ManagerId;
-                ProgramToCreate.ExecutorName = _session.ManagerName;
+                ProgramToCreate.ExecutorId = _session.Id; // Sử dụng ID của phiên làm việc
+                ProgramToCreate.ExecutorName = "Auto Assigned"; // Tên mặc định
+
+                // Thêm một giá trị mặc định cho Id (sẽ bị server ghi đè)
+                ProgramToCreate.Id = Guid.NewGuid().ToString();
+
                 // Gọi API để tạo mới
                 var createdProgram = await _taskService.CreateTaskProgramAsync(ProgramToCreate);
                 ProgramToCreate = createdProgram; // Cập nhật lại với ID mới
@@ -93,7 +96,6 @@ namespace DoanKhoaClient.Views
                 ShowError($"Lỗi khi tạo chương trình: {ex.Message}");
             }
         }
-
         private void ShowError(string message)
         {
             ErrorMessageBlock.Text = message;
