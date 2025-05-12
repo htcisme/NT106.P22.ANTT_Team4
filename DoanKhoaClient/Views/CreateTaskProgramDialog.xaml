@@ -1,7 +1,7 @@
 <Window x:Class="DoanKhoaClient.Views.CreateTaskProgramDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tạo chương trình mới" Height="400" Width="500"
+        Title="Tạo chương trình mới" Height="450" Width="500"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -25,25 +25,29 @@
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,10">
             <TextBlock Text="Tên chương trình:" Margin="0,0,0,5"/>
-            <TextBox Text="{Binding Name}" Padding="5"/>
+            <TextBox x:Name="ProgramNameTextBox" Text="{Binding Name}" Padding="5"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
             <TextBlock Text="Mô tả:" Margin="0,0,0,5"/>
-            <TextBox Text="{Binding Description}" Padding="5" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+            <TextBox x:Name="DescriptionTextBox" Text="{Binding Description}" Padding="5" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,5,10">
             <TextBlock Text="Ngày bắt đầu:" Margin="0,0,0,5"/>
-            <DatePicker SelectedDate="{Binding StartDate}" Padding="5" Height="30"/>
+            <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding StartDate}" Padding="5" Height="30"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,0,0,10">
             <TextBlock Text="Ngày kết thúc:" Margin="0,0,0,5"/>
-            <DatePicker SelectedDate="{Binding EndDate}" Padding="5" Height="30"/>
+            <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding EndDate}" Padding="5" Height="30"/>
         </StackPanel>
+        
+        <!-- Thông báo lỗi -->
+        <TextBlock x:Name="ErrorMessageBlock" Grid.Row="4" Grid.ColumnSpan="2" 
+                  Foreground="Red" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,5,0,0"/>
 
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" 
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" 
                     HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="Huỷ" Width="80" Height="30" 
                     Margin="0,0,10,0" Click="CancelButton_Click"/>

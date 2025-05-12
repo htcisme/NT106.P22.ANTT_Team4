@@ -1,50 +1,45 @@
-using DoanKhoaClient.Models;
 using System;
+using System.Collections.Generic;
 using System.Windows;
+using DoanKhoaClient.Models;
+using DoanKhoaClient.Services;
 
 namespace DoanKhoaClient.Views
 {
     public partial class CreateTaskProgramDialog : Window
     {
-        public TaskProgram TaskProgram { get; private set; }
+        private readonly TaskSession _session;
+        private readonly TaskService _taskService;
+        // private List<User> _users; // Không cần thiết nữa
 
-        public CreateTaskProgramDialog(string sessionId, ProgramType type)
+        public TaskProgram ProgramToCreate { get; set; }
+
+        public CreateTaskProgramDialog(TaskSession session)
         {
             InitializeComponent();
-            TaskProgram = new TaskProgram
+            _session = session;
+            _taskService = new TaskService();
+
+            ProgramToCreate = new TaskProgram
             {
-                SessionId = sessionId,
-                Type = type,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddDays(7),
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddDays(7)
             };
-            DataContext = TaskProgram;
 
-            // Đặt tiêu đề dựa vào loại
-            switch (type)
-            {
-                case ProgramType.Event:
-                    this.Title = "Tạo chương trình sự kiện mới";
-                    break;
-                case ProgramType.Study:
-                    this.Title = "Tạo chương trình học tập mới";
-                    break;
-                case ProgramType.Design:
-                    this.Title = "Tạo chương trình thiết kế mới";
-                    break;
-            }
+            DataContext = ProgramToCreate;
+
+            // Khởi tạo DatePicker với ngày hiện tại nếu binding không hoạt động
+            if (StartDatePicker.SelectedDate == null)
+                StartDatePicker.SelectedDate = DateTime.Today;
+
+            if (EndDatePicker.SelectedDate == null)
+                EndDatePicker.SelectedDate = DateTime.Today.AddDays(7);
+
+            // Bỏ việc gọi LoadUsers() vì không cần nữa
+            // LoadUsers();
         }
 
-        private void CreateButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ValidateInput())
-            {
-                DialogResult = true;
-                Close();
-            }
-        }
+        // Có thể xóa hoặc giữ lại phương thức LoadUsers() nhưng không gọi nó
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -52,30 +47,58 @@ namespace DoanKhoaClient.Views
             Close();
         }
 
-        private bool ValidateInput()
+        private async void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TaskProgram.Name))
+            try
             {
-                MessageBox.Show("Vui lòng nhập tên chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
+                // Kiểm tra đầu vào
+                if (string.IsNullOrWhiteSpace(ProgramNameTextBox.Text))
+                {
+                    ShowError("Vui lòng nhập tên chương trình");
+                    return;
+                }
 
-            if (string.IsNullOrWhiteSpace(TaskProgram.Description))
+                if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
+                {
+                    ShowError("Vui lòng chọn ngày bắt đầu và kết thúc");
+                    return;
+                }
+
+                if (EndDatePicker.SelectedDate < StartDatePicker.SelectedDate)
+                {
+                    ShowError("Ngày kết thúc phải sau ngày bắt đầu");
+                    return;
+                }
+
+                // Cập nhật các trường khác nếu binding không hoạt động
+                ProgramToCreate.Name = ProgramNameTextBox.Text.Trim();
+                ProgramToCreate.Description = DescriptionTextBox.Text.Trim();
+                ProgramToCreate.StartDate = StartDatePicker.SelectedDate.Value;
+                ProgramToCreate.EndDate = EndDatePicker.SelectedDate.Value;
+                ProgramToCreate.SessionId = _session.Id;
+
+                // Thêm thông tin người thực hiện là người hiện tại đang đăng nhập
+                // Hoặc gán giá trị mặc định để tránh lỗi
+                ProgramToCreate.ExecutorId = _session.CreatorId; // Hoặc id người dùng hiện tại
+                ProgramToCreate.ExecutorName = "Auto Assigned"; // Hoặc tên người dùng hiện tại
+
+                // Gọi API để tạo mới
+                var createdProgram = await _taskService.CreateTaskProgramAsync(ProgramToCreate);
+                ProgramToCreate = createdProgram; // Cập nhật lại với ID mới
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Vui lòng nhập mô tả chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                ShowError($"Lỗi khi tạo chương trình: {ex.Message}");
             }
+        }
 
-            if (TaskProgram.EndDate < TaskProgram.StartDate)
-            {
-                MessageBox.Show("Ngày kết thúc phải sau ngày bắt đầu.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            return true;
+        private void ShowError(string message)
+        {
+            ErrorMessageBlock.Text = message;
+            ErrorMessageBlock.Visibility = Visibility.Visible;
         }
     }
 }

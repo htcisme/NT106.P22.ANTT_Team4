@@ -1,82 +1,46 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace DoanKhoaClient.Models
 {
-    public class TaskProgram : INotifyPropertyChanged
+    public class TaskProgram
     {
-        private string _id;
-        private string _sessionId;
-        private string _name;
-        private string _description;
-        private ProgramType _type; // Event, Study, Design
-        private DateTime _startDate;
-        private DateTime _endDate;
-        private DateTime _createdAt;
-        private DateTime _updatedAt;
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
-        public string Id
-        {
-            get => _id;
-            set { _id = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("name")]
+        public string Name { get; set; }
 
-        public string SessionId
-        {
-            get => _sessionId;
-            set { _sessionId = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("description")]
+        public string Description { get; set; }
 
-        public string Name
-        {
-            get => _name;
-            set { _name = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("startDate")]
+        public DateTime StartDate { get; set; }
 
-        public string Description
-        {
-            get => _description;
-            set { _description = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("endDate")]
+        public DateTime EndDate { get; set; }
 
-        public ProgramType Type
-        {
-            get => _type;
-            set { _type = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("sessionId")]
+        public string SessionId { get; set; }
 
-        public DateTime StartDate
-        {
-            get => _startDate;
-            set { _startDate = value; OnPropertyChanged(); }
-        }
+        // Thêm các trường cho người thực hiện
+        [JsonProperty("executorId")]
+        public string ExecutorId { get; set; }
 
-        public DateTime EndDate
-        {
-            get => _endDate;
-            set { _endDate = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("executorName")]
+        public string ExecutorName { get; set; }
 
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set { _createdAt = value; OnPropertyChanged(); }
-        }
+        [JsonProperty("createdAt")]
+        public DateTime CreatedAt { get; set; }
 
-        public DateTime UpdatedAt
-        {
-            get => _updatedAt;
-            set { _updatedAt = value; OnPropertyChanged(); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        [JsonProperty("updatedAt")]
+        public DateTime UpdatedAt { get; set; }
+        
+        [JsonProperty("type")]
+        public ProgramType Type { get; set; } = ProgramType.Event; // Mặc định là Event
+        
+        [JsonProperty("status")]
+        public ProgramStatus Status { get; set; } = ProgramStatus.NotStarted;
     }
 
     public enum ProgramType
@@ -84,5 +48,13 @@ namespace DoanKhoaClient.Models
         Event,
         Study,
         Design
+    }
+
+    public enum ProgramStatus
+    {
+        NotStarted,
+        InProgress,
+        Completed,
+        Cancelled
     }
 }

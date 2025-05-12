@@ -1,16 +1,23 @@
-using DoanKhoaClient.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using DoanKhoaClient.Models;
+using DoanKhoaClient.Services;
 
 namespace DoanKhoaClient.Views
 {
     public partial class EditTaskProgramDialog : Window
     {
         public TaskProgram TaskProgram { get; private set; }
+        private List<User> _users;
 
         public EditTaskProgramDialog(TaskProgram taskProgram)
         {
             InitializeComponent();
+            
+            // Tạo bản sao để tránh thay đổi trực tiếp đối tượng gốc
             TaskProgram = new TaskProgram
             {
                 Id = taskProgram.Id,
@@ -20,32 +27,48 @@ namespace DoanKhoaClient.Views
                 Type = taskProgram.Type,
                 StartDate = taskProgram.StartDate,
                 EndDate = taskProgram.EndDate,
+                ExecutorId = taskProgram.ExecutorId,
+                ExecutorName = taskProgram.ExecutorName,
                 CreatedAt = taskProgram.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
+            
             DataContext = TaskProgram;
-
-            // Đặt tiêu đề dựa vào loại
-            switch (taskProgram.Type)
-            {
-                case ProgramType.Event:
-                    this.Title = "Chỉnh sửa chương trình sự kiện";
-                    break;
-                case ProgramType.Study:
-                    this.Title = "Chỉnh sửa chương trình học tập";
-                    break;
-                case ProgramType.Design:
-                    this.Title = "Chỉnh sửa chương trình thiết kế";
-                    break;
-            }
+            
+            // Đặt giá trị cho các trường nếu binding không hoạt động
+            ProgramNameTextBox.Text = TaskProgram.Name;
+            DescriptionTextBox.Text = TaskProgram.Description;
+            StartDatePicker.SelectedDate = TaskProgram.StartDate;
+            EndDatePicker.SelectedDate = TaskProgram.EndDate;
+            
+            // Tải danh sách người dùng
+            _ = LoadUsersAsync();
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async Task LoadUsersAsync()
         {
-            if (ValidateInput())
+            try
             {
-                DialogResult = true;
-                Close();
+                var userService = new UserService();
+                _users = await userService.GetUsersAsync();
+                ExecutorComboBox.ItemsSource = _users;
+                ExecutorComboBox.DisplayMemberPath = "DisplayName";
+                ExecutorComboBox.SelectedValuePath = "Id";
+                
+                // Chọn người thực hiện hiện tại
+                if (!string.IsNullOrEmpty(TaskProgram.ExecutorId))
+                {
+                    var selectedUser = _users.FirstOrDefault(u => u.Id == TaskProgram.ExecutorId);
+                    if (selectedUser != null)
+                    {
+                        ExecutorComboBox.SelectedItem = selectedUser;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}",
+                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -55,30 +78,61 @@ namespace DoanKhoaClient.Views
             Close();
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ValidateInput())
+            {
+                // Cập nhật thông tin từ UI
+                TaskProgram.Name = ProgramNameTextBox.Text.Trim();
+                TaskProgram.Description = DescriptionTextBox.Text.Trim();
+                TaskProgram.StartDate = StartDatePicker.SelectedDate ?? DateTime.Today;
+                TaskProgram.EndDate = EndDatePicker.SelectedDate ?? DateTime.Today.AddDays(7);
+                
+                // Cập nhật thông tin người thực hiện
+                if (ExecutorComboBox.SelectedItem is User selectedUser)
+                {
+                    TaskProgram.ExecutorId = selectedUser.Id;
+                    TaskProgram.ExecutorName = selectedUser.DisplayName;
+                }
+                
+                DialogResult = true;
+                Close();
+            }
+        }
+
         private bool ValidateInput()
         {
-            if (string.IsNullOrWhiteSpace(TaskProgram.Name))
+            if (string.IsNullOrWhiteSpace(ProgramNameTextBox.Text))
             {
-                MessageBox.Show("Vui lòng nhập tên chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Vui lòng nhập tên chương trình");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TaskProgram.Description))
+            if (ExecutorComboBox.SelectedItem == null)
             {
-                MessageBox.Show("Vui lòng nhập mô tả chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Vui lòng chọn người thực hiện");
                 return false;
             }
 
-            if (TaskProgram.EndDate < TaskProgram.StartDate)
+            if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
             {
-                MessageBox.Show("Ngày kết thúc phải sau ngày bắt đầu.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Vui lòng chọn ngày bắt đầu và kết thúc");
+                return false;
+            }
+
+            if (EndDatePicker.SelectedDate < StartDatePicker.SelectedDate)
+            {
+                ShowError("Ngày kết thúc phải sau ngày bắt đầu");
                 return false;
             }
 
             return true;
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorMessageBlock.Text = message;
+            ErrorMessageBlock.Visibility = Visibility.Visible;
         }
     }
 }

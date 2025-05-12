@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls;
 using DoanKhoaClient.Helpers;
 using DoanKhoaClient.ViewModels;
 
@@ -15,8 +16,28 @@ namespace DoanKhoaClient.Views
             _viewModel = new AdminTasksViewModel();
             DataContext = _viewModel;
             ThemeManager.ApplyTheme(Admin_Task_Background);
+
+            // Thêm xử lý hướng dẫn và kiểm tra tài nguyên
+            Loaded += AdminTasksView_Loaded;
         }
 
+        private void AdminTasksView_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Kiểm tra tài nguyên và tiền tải các view cần thiết
+            try
+            {
+                // Đảm bảo tài nguyên được tải đúng cách
+                Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("/DoanKhoaClient;component/Resources/TaskViewResources.xaml", UriKind.Relative)
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi khi tải tài nguyên: {ex.Message}");
+            }
+        }
+        
         // Thêm các phương thức xử lý sự kiện
         private void Home_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -70,6 +91,21 @@ namespace DoanKhoaClient.Views
             {
                 _viewModel.EditSessionCommand.Execute(_viewModel.SelectedSession);
             }
+        }
+
+        private void SessionsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (_viewModel.SelectedSession != null &&
+                _viewModel.ViewSessionDetailsCommand.CanExecute(_viewModel.SelectedSession))
+            {
+                _viewModel.ViewSessionDetailsCommand.Execute(_viewModel.SelectedSession);
+            }
+        }
+
+        private void SessionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Đảm bảo command được cập nhật khi chọn session thay đổi
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }
