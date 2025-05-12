@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Input;
 using DoanKhoaClient.Views;
 using DoanKhoaClient.Services;
+using DoanKhoaClient.Helpers;
 using MongoDB.Bson;
 namespace DoanKhoaClient.ViewModels
 {
@@ -145,7 +146,11 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveAttachmentCommand { get; private set; }
         public ICommand CreateGroupCommand { get; private set; }
         public ICommand ShowAttachmentsPanelCommand { get; private set; }
-
+<Label Content = "{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
+       Margin="0,10,10,0"
+       FontSize="10"
+       HorizontalAlignment="Right"
+       VerticalAlignment="Top"/>
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
         public UserChatViewModel()
@@ -159,7 +164,7 @@ namespace DoanKhoaClient.ViewModels
             RemoveAttachmentCommand = new RelayCommand(RemoveAttachment);
             CreateGroupCommand = new RelayCommand(CreateGroup);
             ShowAttachmentsPanelCommand = new RelayCommand(_ => IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen);
-            
+
             LoadRealData();
 
             // Kết nối SignalR
@@ -179,17 +184,38 @@ namespace DoanKhoaClient.ViewModels
                 {
                     try
                     {
-                        // Thêm log để debug
-                        Console.WriteLine($"Received message: {message.Id}, ConvId: {message.ConversationId}, Current ConvId: {_selectedConversation?.Id}");
+                        // Kiểm tra xem tin nhắn là thông báo tạo nhóm không
+                        bool isGroupCreatedMessage = message.Type == MessageType.System &&
+                                                    message.Content.Contains("has been created");
 
-                        // Chỉ thêm tin nhắn vào nếu nó thuộc cuộc hội thoại hiện tại
-                        if (message.ConversationId == _selectedConversation?.Id)
+                        // Nếu là tin nhắn thông báo tạo nhóm
+                        if (isGroupCreatedMessage)
+                        {
+                            // Kiểm tra xem tin nhắn có được hiển thị trong cuộc trò chuyện hiện tại không
+                            if (message.ConversationId == _selectedConversation?.Id)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    // Kiểm tra nếu đã có thông báo tạo nhóm trong danh sách
+                                    bool alreadyHasCreationMessage = Messages.Any(m =>
+                                        m.Type == MessageType.System &&
+                                        m.Content.Contains("has been created"));
+
+                                    // Nếu chưa có thì mới thêm vào
+                                    if (!alreadyHasCreationMessage)
+                                    {
+                                        Messages.Add(message);
+                                    }
+                                });
+                            }
+                        }
+                        // Nếu là tin nhắn thông thường
+                        else if (message.ConversationId == _selectedConversation?.Id)
                         {
                             Application.Current.Dispatcher.Invoke(() =>
                             {
-                                // Kiểm tra tin nhắn đã tồn tại chưa để tránh trùng lặp
-                                if (!Messages.Any(m => m.Id == message.Id) &&
-                                    message.SenderId != CurrentUser.Id) // Không thêm tin nhắn của chính mình
+                                // Kiểm tra tin nhắn đã tồn tại chưa và không phải do chính mình gửi
+                                if (!Messages.Any(m => m.Id == message.Id) && message.SenderId != CurrentUser.Id)
                                 {
                                     Messages.Add(message);
                                 }
@@ -449,7 +475,7 @@ namespace DoanKhoaClient.ViewModels
         // Phương thức gửi tin nhắn có đính kèm
 
 
-        
+
 
         // Helper method để lấy MIME type từ extension
         private string GetMimeType(string extension)
@@ -619,7 +645,7 @@ namespace DoanKhoaClient.ViewModels
                     ConversationId = SelectedConversation.Id,
                     SenderId = CurrentUser.Id,
                     Content = CurrentMessage,
-                    Timestamp = DateTime.Now,
+                    Timestamp = DateTimeHelper.GetVietnamTime(), // Thay cho DateTime.UtcNow
                     Attachments = new List<Attachment>()
                 };
 
