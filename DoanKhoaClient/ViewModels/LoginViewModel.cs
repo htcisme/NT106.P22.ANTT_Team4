@@ -171,6 +171,7 @@ namespace DoanKhoaClient.ViewModels
         public LoginViewModel()
         {
             _authService = new AuthService();
+            _showOtpInput = false; // Đảm bảo mặc định là false
 
             // Initialize commands
             LoginCommand = new RelayCommand(ExecuteLogin, CanExecuteLogin);
@@ -182,6 +183,7 @@ namespace DoanKhoaClient.ViewModels
         #endregion
 
         #region Command Methods
+
         private bool CanExecuteLogin(object parameter)
         {
             return !IsLoading &&
