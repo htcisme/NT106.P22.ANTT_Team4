@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Services;
@@ -10,66 +7,23 @@ namespace DoanKhoaClient.Views
 {
     public partial class EditTaskProgramDialog : Window
     {
-        public TaskProgram TaskProgram { get; private set; }
-        private List<User> _users;
+        private readonly TaskSession _session;
+        private readonly TaskService _taskService;
+        // private List<User> _users; // Không cần thiết nữa
 
-        public EditTaskProgramDialog(TaskProgram taskProgram)
+        public TaskProgram Program { get; set; }
+
+        public EditTaskProgramDialog(TaskSession session, TaskProgram program)
         {
             InitializeComponent();
-            
-            // Tạo bản sao để tránh thay đổi trực tiếp đối tượng gốc
-            TaskProgram = new TaskProgram
-            {
-                Id = taskProgram.Id,
-                SessionId = taskProgram.SessionId,
-                Name = taskProgram.Name,
-                Description = taskProgram.Description,
-                Type = taskProgram.Type,
-                StartDate = taskProgram.StartDate,
-                EndDate = taskProgram.EndDate,
-                ExecutorId = taskProgram.ExecutorId,
-                ExecutorName = taskProgram.ExecutorName,
-                CreatedAt = taskProgram.CreatedAt,
-                UpdatedAt = DateTime.Now
-            };
-            
-            DataContext = TaskProgram;
-            
-            // Đặt giá trị cho các trường nếu binding không hoạt động
-            ProgramNameTextBox.Text = TaskProgram.Name;
-            DescriptionTextBox.Text = TaskProgram.Description;
-            StartDatePicker.SelectedDate = TaskProgram.StartDate;
-            EndDatePicker.SelectedDate = TaskProgram.EndDate;
-            
-            // Tải danh sách người dùng
-            _ = LoadUsersAsync();
-        }
+            _session = session;
+            _taskService = new TaskService();
+            Program = program;
 
-        private async Task LoadUsersAsync()
-        {
-            try
-            {
-                var userService = new UserService();
-                _users = await userService.GetUsersAsync();
-                ExecutorComboBox.ItemsSource = _users;
-                ExecutorComboBox.DisplayMemberPath = "DisplayName";
-                ExecutorComboBox.SelectedValuePath = "Id";
-                
-                // Chọn người thực hiện hiện tại
-                if (!string.IsNullOrEmpty(TaskProgram.ExecutorId))
-                {
-                    var selectedUser = _users.FirstOrDefault(u => u.Id == TaskProgram.ExecutorId);
-                    if (selectedUser != null)
-                    {
-                        ExecutorComboBox.SelectedItem = selectedUser;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}",
-                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            DataContext = Program;
+
+            // Bỏ việc gọi LoadUsers() vì không cần nữa
+            // LoadUsers();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -78,55 +32,64 @@ namespace DoanKhoaClient.Views
             Close();
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ValidateInput())
+            try
             {
-                // Cập nhật thông tin từ UI
-                TaskProgram.Name = ProgramNameTextBox.Text.Trim();
-                TaskProgram.Description = DescriptionTextBox.Text.Trim();
-                TaskProgram.StartDate = StartDatePicker.SelectedDate ?? DateTime.Today;
-                TaskProgram.EndDate = EndDatePicker.SelectedDate ?? DateTime.Today.AddDays(7);
-                
-                // Cập nhật thông tin người thực hiện
-                if (ExecutorComboBox.SelectedItem is User selectedUser)
+                // Kiểm tra đầu vào
+                if (string.IsNullOrWhiteSpace(ProgramNameTextBox.Text))
                 {
-                    TaskProgram.ExecutorId = selectedUser.Id;
-                    TaskProgram.ExecutorName = selectedUser.DisplayName;
+                    ShowError("Vui lòng nhập tên chương trình");
+                    return;
                 }
-                
+
+                if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
+                {
+                    ShowError("Vui lòng chọn ngày bắt đầu và kết thúc");
+                    return;
+                }
+
+                if (EndDatePicker.SelectedDate < StartDatePicker.SelectedDate)
+                {
+                    ShowError("Ngày kết thúc phải sau ngày bắt đầu");
+                    return;
+                }
+
+                // Cập nhật dữ liệu từ UI vào đối tượng Program
+                Program.Name = ProgramNameTextBox.Text.Trim();
+                Program.Description = DescriptionTextBox.Text.Trim();
+                Program.StartDate = StartDatePicker.SelectedDate.Value;
+                Program.EndDate = EndDatePicker.SelectedDate.Value;
+
+                // Giữ nguyên thông tin người thực hiện
+                // Không lấy từ UI nữa vì đã bỏ phần UI tương ứng
+                // Nếu không có sẵn, gán giá trị mặc định
+                if (string.IsNullOrEmpty(Program.ExecutorId))
+                {
+                    Program.ExecutorId = _session.Id;
+                }
+                if (string.IsNullOrEmpty(Program.ExecutorName))
+                {
+                    Program.ExecutorName = "Auto Assigned";
+                }
+
+                // Đảm bảo ID luôn có giá trị
+                if (string.IsNullOrEmpty(Program.Id))
+                {
+                    Program.Id = Guid.NewGuid().ToString();
+                }
+
+                // Gọi API để cập nhật
+                var updatedProgram = await _taskService.UpdateTaskProgramAsync(Program.Id, Program);
+                Program = updatedProgram;
+
                 DialogResult = true;
                 Close();
             }
-        }
-
-        private bool ValidateInput()
-        {
-            if (string.IsNullOrWhiteSpace(ProgramNameTextBox.Text))
+            catch (Exception ex)
             {
-                ShowError("Vui lòng nhập tên chương trình");
-                return false;
+                ShowError($"Lỗi khi cập nhật chương trình: {ex.Message}");
             }
-
-            if (ExecutorComboBox.SelectedItem == null)
-            {
-                ShowError("Vui lòng chọn người thực hiện");
-                return false;
-            }
-
-            if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
-            {
-                ShowError("Vui lòng chọn ngày bắt đầu và kết thúc");
-                return false;
-            }
-
-            if (EndDatePicker.SelectedDate < StartDatePicker.SelectedDate)
-            {
-                ShowError("Ngày kết thúc phải sau ngày bắt đầu");
-                return false;
-            }
-
-            return true;
         }
 
         private void ShowError(string message)
