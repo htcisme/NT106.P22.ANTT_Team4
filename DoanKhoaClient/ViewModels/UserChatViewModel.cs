@@ -146,11 +146,7 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveAttachmentCommand { get; private set; }
         public ICommand CreateGroupCommand { get; private set; }
         public ICommand ShowAttachmentsPanelCommand { get; private set; }
-<Label Content = "{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
-       Margin="0,10,10,0"
-       FontSize="10"
-       HorizontalAlignment="Right"
-       VerticalAlignment="Top"/>
+
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
         public UserChatViewModel()
