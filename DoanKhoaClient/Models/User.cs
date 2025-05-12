@@ -5,8 +5,9 @@ namespace DoanKhoaClient.Models
 {
     public enum UserRole
     {
-        User,
-        Admin
+        All = -1,
+        User = 0,
+        Admin = 1
     }
     public class RegisterRequest
     {

@@ -222,31 +222,42 @@ namespace DoanKhoaClient.ViewModels
 
                 if (response.RequiresTwoFactor)
                 {
-                    // Lưu user ID để sử dụng trong xác thực OTP
+                    // Xử lý xác thực hai lớp như hiện tại
                     _userId = response.Id;
                     ShowOtpInput = true;
                     MessageBox.Show(response.Message, "Xác thực hai bước", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (!string.IsNullOrEmpty(response.Id))
                 {
-                    App.Current.Properties["CurrentUser"] = new User
+                    // Lưu thông tin người dùng vào Application.Current.Properties
+                    var currentUser = new User
                     {
                         Id = response.Id,
                         Username = response.Username,
                         DisplayName = response.DisplayName,
                         Email = response.Email,
                         AvatarUrl = response.AvatarUrl,
-                        Role = response.Role // Save the role
+                        Role = response.Role
                     };
+                    App.Current.Properties["CurrentUser"] = currentUser;
 
                     MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Chuyển đến màn hình chính
-                    var chatWindow = new AdminTasksView();
-                    chatWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    chatWindow.Show();
-
-                    
+                    // Điều hướng dựa trên vai trò
+                    if (response.Role == UserRole.Admin)
+                    {
+                        // Mở trang Dashboard Admin
+                        var adminDashboard = new AdminDashboardView();
+                        adminDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        adminDashboard.Show();
+                    }
+                    else
+                    {
+                        // Mở trang thông thường cho người dùng
+                        var userDashboard = new UserChatView();
+                        userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        userDashboard.Show();
+                    }
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)
