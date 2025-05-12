@@ -31,8 +31,6 @@ namespace DoanKhoaClient.Helpers
             // Get theme resources
             var lightBackground = (LinearGradientBrush)Application.Current.Resources["LightBackground"];
             var darkBackground = (LinearGradientBrush)Application.Current.Resources["DarkBackground"];
-            var lightTextColor = (SolidColorBrush)Application.Current.Resources["LightTextColor"];
-            var darkTextColor = (SolidColorBrush)Application.Current.Resources["DarkTextColor"];
 
             // Apply to grid background
             var grid = root as Grid;
@@ -50,84 +48,19 @@ namespace DoanKhoaClient.Helpers
                     UriKind.Relative));
             }
 
-            // Apply to notifications
-            var notificationsIcon = FindElementByName(root, "Task_iNotifications") as Image;
-            if (notificationsIcon != null)
-            {
-                notificationsIcon.Source = new BitmapImage(new Uri(
-                    IsDarkMode ? DarkNotificationsIcon : LightNotificationsIcon,
-                    UriKind.Relative));
-            }
 
-            // Apply to all controls with text
-            ApplyThemeToLabels(root);
-            ApplyThemeToTextBlocks(root);
-            ApplyThemeToButtons(root);
 
-            // Apply to rectangle
-            var divider = FindElementByName(root, "DividerRectangle") as System.Windows.Shapes.Rectangle;
-            if (divider != null)
-            {
-                divider.Stroke = IsDarkMode ? darkTextColor : lightTextColor;
-            }
         }
 
-        private static void ApplyThemeToLabels(DependencyObject root)
-        {
-            var labels = FindElementsByType<Label>(root);
-            foreach (var label in labels)
-            {
-                ApplyControlTextColor(label, label.Background);
-            }
-        }
-
-        private static void ApplyThemeToTextBlocks(DependencyObject root)
-        {
-            var textBlocks = FindElementsByType<TextBlock>(root);
-            foreach (var textBlock in textBlocks)
-            {
-                // Get parent background
-                Brush parentBackground = GetParentBackground(textBlock);
-                ApplyTextBlockTextColor(textBlock, parentBackground);
-            }
-        }
-
-        private static void ApplyThemeToButtons(DependencyObject root)
-        {
-            var buttons = FindElementsByType<Button>(root);
-            foreach (var button in buttons)
-            {
-                ApplyControlTextColor(button, button.Background);
-            }
-        }
-
-        // New method to get parent background
-        private static Brush GetParentBackground(DependencyObject element)
-        {
-            DependencyObject parent = VisualTreeHelper.GetParent(element);
-            while (parent != null)
-            {
-                if (parent is Control control && control.Background != null)
-                {
-                    return control.Background;
-                }
-                else if (parent is Panel panel && panel.Background != null)
-                {
-                    return panel.Background;
-                }
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-            return null;
-        }
 
         private static void ApplyControlTextColor(Control control, Brush background)
         {
             // Don't process controls that should maintain their color regardless
-            if (control is Label label && label.Name != null && label.Name.EndsWith("lbTasks") && 
-                label.Foreground is SolidColorBrush brush && 
+            if (control is Label label && label.Name != null && label.Name.EndsWith("lbTasks") &&
+                label.Foreground is SolidColorBrush brush &&
                 brush.Color.ToString() == "#FF597CA2")
                 return;
-            
+
             // Store original color if not already saved
             if (!OriginalTextColors.ContainsKey(control))
             {
@@ -154,7 +87,7 @@ namespace DoanKhoaClient.Helpers
             {
                 // In light mode, not on dark background - use dark text
                 control.Foreground = darkTextColor;
-                
+
                 // Some special cases might need original color
                 if (OriginalTextColors[control] is SolidColorBrush originalBrush &&
                     !IsWhiteBrush(originalBrush) && !IsBlackBrush(originalBrush))
@@ -164,51 +97,6 @@ namespace DoanKhoaClient.Helpers
             }
         }
 
-        private static void ApplyTextBlockTextColor(TextBlock textBlock, Brush background)
-        {
-            // Store original color if not already saved
-            if (!OriginalTextColors.ContainsKey(textBlock))
-            {
-                OriginalTextColors[textBlock] = textBlock.Foreground?.Clone();
-            }
-
-            var darkTextColor = (SolidColorBrush)Application.Current.Resources["DarkTextColor"];
-            var lightTextColor = (SolidColorBrush)Application.Current.Resources["LightTextColor"];
-
-            // Special handling for chat bubble text
-            if (IsChatBubbleText(textBlock))
-            {
-                // Always use dark text for chat bubbles regardless of theme
-                textBlock.Foreground = darkTextColor;
-                return;
-            }
-
-            // Get background color
-            bool isOnDarkBackground = IsOnDarkBackground(textBlock);
-
-            if (isOnDarkBackground)
-            {
-                // Element is on a dark background, use white text
-                textBlock.Foreground = lightTextColor;
-            }
-            else if (IsDarkMode)
-            {
-                // In dark mode, but not on dark background - use light text
-                textBlock.Foreground = lightTextColor;
-            }
-            else
-            {
-                // In light mode, not on dark background - use dark text
-                textBlock.Foreground = darkTextColor;
-
-                // Some special cases might need original color
-                if (OriginalTextColors[textBlock] is SolidColorBrush originalBrush &&
-                    !IsWhiteBrush(originalBrush) && !IsBlackBrush(originalBrush))
-                {
-                    textBlock.Foreground = OriginalTextColors[textBlock];
-                }
-            }
-        }
 
         // New helper method to detect chat bubble text
         // New helper method to detect chat bubble text
@@ -252,7 +140,7 @@ namespace DoanKhoaClient.Helpers
         {
             // Check if element or any of its parents has a dark background
             DependencyObject current = element;
-            
+
             while (current != null)
             {
                 if (current is Control control && control.Background != null)
@@ -265,10 +153,10 @@ namespace DoanKhoaClient.Helpers
                     if (IsColoredOrDarkBackground(panel.Background))
                         return true;
                 }
-                
+
                 current = VisualTreeHelper.GetParent(current);
             }
-            
+
             return false;
         }
 
@@ -277,17 +165,17 @@ namespace DoanKhoaClient.Helpers
             if (background is SolidColorBrush solidBrush)
             {
                 var color = solidBrush.Color;
-                
+
                 // Check if color is dark
                 if (color.A > 0)
                 {
                     // Calculate luminance (brightness perception formula)
                     double luminance = (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
-                    
+
                     // If luminance < 0.5, it's a dark color
                     if (luminance < 0.5)
                         return true;
-                        
+
                     // Also consider certain colors as "colored" backgrounds
                     if (!(color.R > 240 && color.G > 240 && color.B > 240))
                     {
@@ -312,7 +200,7 @@ namespace DoanKhoaClient.Helpers
                 }
                 return false;
             }
-            
+
             return false;
         }
 

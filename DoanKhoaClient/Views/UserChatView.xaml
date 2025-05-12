@@ -26,13 +26,161 @@
         <converters:FileIconConverter x:Key="FileIconConverter"/>
         <converters:FileSizeConverter x:Key="FileSizeConverter"/>
         <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
+        <!-- Thêm Style này vào Window.Resources -->
+        <Style x:Key="MenuItemStyle"
+               TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1"
+                                        ScaleY="1"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="3"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="0"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SendButtonStyle"
+               TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1"
+                                    ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                             To="1.2"
+                                             Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                             To="1.2"
+                                             Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                             To="1"
+                                             Duration="0:0:0.1"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                             To="1"
+                                             Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="PreviewMouseDown">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                             To="0.9"
+                                             Duration="0:0:0.05"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                             To="0.9"
+                                             Duration="0:0:0.05"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="PreviewMouseUp">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                             To="1.2"
+                                             Duration="0:0:0.05"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                             To="1.2"
+                                             Duration="0:0:0.05"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
         <vm:UserChatViewModel/>
     </Window.DataContext>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <!-- Sửa lỗi bằng cách thêm Storyboard.TargetName cho animation opacity -->
+                    <DoubleAnimation
+                        Storyboard.TargetName="Chat_Background"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.5"/>
+                    <ThicknessAnimation
+                        Storyboard.TargetName="Chat_Background"
+                        Storyboard.TargetProperty="Margin"
+                        From="0,30,0,0"
+                        To="0,0,0,0"
+                        Duration="0:0:0.5">
+                        <ThicknessAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    <Grid x:Name="Chat_Background"
+          Opacity="0">
 
-    <Grid x:Name="Chat_Background">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0"
                                  EndPoint="0.5,1">
@@ -83,72 +231,132 @@
                         </Grid.Background>
 
                         <!-- Logo và menu -->
-                        <StackPanel>
-                            <Image x:Name="UserChat_iLogo1"
-                                   Height="40"
-                                   Margin="0,30,0,40"
-                                   Width="112.38"
-                                   HorizontalAlignment="Center"
-                                   Source="/Views/Images/header.png"/>
-
-                            <Grid Margin="30,40,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- Menu items -->
-                                <StackPanel Grid.Row="0"
-                                            Orientation="Horizontal">
-                                    <Image Height="30"
-                                           Width="30"
-                                           Source="/Views/Images/home.png"/>
-                                    <Label Content="Home"
-                                           Margin="33,0,0,0"
-                                           FontSize="20"
-                                           FontWeight="Bold"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="1"
-                                            Orientation="Horizontal">
-                                    <Image Height="30"
-                                           Width="30"
-                                           Source="/Views/Images/chat_bubble.png"/>
-                                    <Label Content="Chat"
-                                           Margin="33,0,0,0"
-                                           FontSize="20"
-                                           FontWeight="Bold"
-                                           Foreground="#FF597CA2"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="2"
-                                            Orientation="Horizontal">
-                                    <Image Height="30"
-                                           Width="30"
-                                           Source="/Views/Images/activities.png"/>
-                                    <Label Content="Activities"
-                                           Margin="33,0,0,0"
-                                           FontSize="20"
-                                           FontWeight="Bold"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="3"
-                                            Orientation="Horizontal">
-                                    <Image Height="30"
-                                           Width="30"
-                                           Source="/Views/Images/members.png"/>
-                                    <Label Content="Members"
-                                           Margin="33,0,0,0"
-                                           FontSize="20"
-                                           FontWeight="Bold"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
                     </Grid>
                 </Border>
 
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="102,203,0,0"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image Height="30"
+                           Width="30"
+                           Source="/Views/Images/home.png"/>
+                    <Label Content="Home"
+                           Height="30"
+                           Width="108"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="33,0,0,0"
+                           Padding="0,0,0,0"/>
+                </StackPanel>
+
+                <!-- Chat Menu Item -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="102,279,0,0"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image Height="30"
+                           Width="30"
+                           Source="/Views/Images/chat_bubble.png"/>
+                    <Label Content="Chat"
+                           Height="30"
+                           Width="108"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="33,0,0,0"
+                           Padding="0,0,0,0"
+                           Foreground="#597CA2"/>
+                </StackPanel>
+
+                <!-- Activities Menu Item -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="102,354,0,0"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image Height="30"
+                           Width="30"
+                           Source="/Views/Images/activities.png"/>
+                    <Label Content="Activities"
+                           Height="30"
+                           Width="108"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="33,0,0,0"
+                           Padding="0,0,0,0"/>
+                </StackPanel>
+
+                <!-- Members Menu Item -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="102,432,0,0"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image Height="30"
+                           Width="30"
+                           Source="/Views/Images/members.png"/>
+                    <Label Content="Members"
+                           Height="30"
+                           Width="108"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="33,0,0,0"
+                           Padding="0,0,0,0"/>
+                </StackPanel>
+
+                <!-- Tasks Menu Item -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Margin="102,510,0,0"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image Height="30"
+                           Width="30"
+                           Source="/Views/Images/active-tasks.png"/>
+                    <Label Content="Tasks"
+                           Height="30"
+                           Width="108"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Margin="33,0,0,0"
+                           Padding="0,0,0,0"/>
+                </StackPanel>
+                <Image x:Name="Task_iLogo"
+                       HorizontalAlignment="Left"
+                       Height="40"
+                       Margin="131,71,0,0"
+                       VerticalAlignment="Top"
+                       Width="112.38"
+                       Source="/Views/Images/header.png"/>
+                <!-- Social Media Icons -->
+                <Image x:Name="GroupTask_Design_iFacebook"
+                       HorizontalAlignment="Left"
+                       Height="24"
+                       Margin="175,926,0,0"
+                       VerticalAlignment="Top"
+                       Width="24"
+                       Source="/Views/Images/facebook.png"/>
+                <Image x:Name="GroupTask_Design_iInstagram"
+                       HorizontalAlignment="Left"
+                       Height="24"
+                       Margin="135,926,0,0"
+                       VerticalAlignment="Top"
+                       Width="24"
+                       Source="/Views/Images/instagram.png"/>
+                <Image x:Name="GroupTask_Design_iYoutube"
+                       HorizontalAlignment="Left"
+                       Height="24"
+                       Margin="215,926,0,0"
+                       VerticalAlignment="Top"
+                       Width="24"
+                       Source="/Views/Images/youtube.png"/>
                 <!-- Top Icons -->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right"
@@ -176,48 +384,118 @@
                        Width="40"
                        Source="/Views/Images/search.png"/>
 
-                <!-- Conversation List -->
+
+
                 <Border HorizontalAlignment="Left"
                         Height="864"
                         Margin="370,119,0,0"
                         VerticalAlignment="Top"
-                        Width="358"
-                        Background="#FFD9D9D9"
+                        Width="366"
                         CornerRadius="10,10,10,10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
+                    <Border.Background>
+                        <LinearGradientBrush EndPoint="0.5,1"
+                                             StartPoint="0.5,0">
+                            <GradientStop Color="#FFF6FCFF"
+                                          Offset="0.04"/>
+                            <GradientStop Color="#FFDBF3FF"
+                                          Offset="0.46"/>
+                            <GradientStop Color="#FF87ACCD"
+                                          Offset="0.937"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
 
-                        <!-- Button tạo nhóm -->
-                        <Button Grid.Row="0"
-                                Command="{Binding CreateGroupCommand}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Margin="0,10,10,10"
-                                Padding="8,5"
-                                Background="#87ACCD"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Content="Tạo nhóm mới"/>
-                        <Button Command="{Binding SearchFriendsCommand}"
-                                ToolTip="Tìm bạn bè"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Margin="162,0,0,0"
-                                Padding="10,5"
-                                Background="#87ACCD"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Content="Tìm bạn bè"/>
+                    <Grid>
+                        <!-- Header với nút tạo nhóm và tìm bạn -->
+                        <Grid Height="60"
+                              VerticalAlignment="Top">
+                            <Button Command="{Binding CreateGroupCommand}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,10,0"
+                                    Padding="8,5"
+                                    Background="#87ACCD"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Content="Tạo nhóm mới"/>
+
+                            <Button Command="{Binding SearchFriendsCommand}"
+                                    ToolTip="Tìm bạn bè"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Margin="15,0,0,0"
+                                    Padding="10,5"
+                                    Background="#87ACCD"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Content="Tìm bạn bè"/>
+                        </Grid>
+
                         <!-- Danh sách cuộc trò chuyện -->
-                        <ScrollViewer Grid.Row="1"
+                        <ScrollViewer Margin="0,60,0,0"
                                       VerticalScrollBarVisibility="Auto">
                             <ListView ItemsSource="{Binding Conversations}"
                                       SelectedItem="{Binding SelectedConversation}"
                                       Background="Transparent"
-                                      BorderThickness="0">
+                                      BorderThickness="0"
+                                      Width="340"
+                                      Margin="15,0">
+
+                                <!-- Thêm style ở đây -->
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Padding"
+                                                Value="0"/>
+                                        <Setter Property="Background"
+                                                Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                    <Border x:Name="Border"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderThickness="0"
+                                                            SnapsToDevicePixels="True"
+                                                            CornerRadius="10">
+                                                        <Grid>
+                                                            <ContentPresenter/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver"
+                                                                 Value="True">
+                                                            <Setter TargetName="Border"
+                                                                    Property="Background"
+                                                                    Value="#E5F1FF"/>
+                                                            <Setter TargetName="Border"
+                                                                    Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="5"
+                                                                                      ShadowDepth="1"
+                                                                                      Opacity="0.2"
+                                                                                      Color="#000000"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected"
+                                                                 Value="True">
+                                                            <Setter TargetName="Border"
+                                                                    Property="Background"
+                                                                    Value="#D2E5FF"/>
+                                                            <Setter TargetName="Border"
+                                                                    Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="5"
+                                                                                      ShadowDepth="1"
+                                                                                      Opacity="0.2"
+                                                                                      Color="#000000"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Border Height="70"
@@ -249,7 +527,6 @@
                         </ScrollViewer>
                     </Grid>
                 </Border>
-
                 <!-- Chat Box Container -->
                 <Border HorizontalAlignment="Left"
                         Height="864"
@@ -271,6 +548,7 @@
                         </LinearGradientBrush>
                     </Border.Background>
 
+
                     <!-- Nội dung chat -->
                     <Grid>
                         <!-- ChatBox Background -->
@@ -284,24 +562,23 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Header -->
+                                <!-- Header - Simplified -->
                                 <Border Grid.Row="0"
                                         Height="56"
                                         Background="#FFDAE9F6"
                                         CornerRadius="20,20,0,0">
                                     <Grid>
-                                        <Image HorizontalAlignment="Left"
-                                               Height="30"
-                                               Margin="26,13,0,0"
-                                               VerticalAlignment="Center"
-                                               Width="30"
-                                               Source="/Views/Images/account_circle.png"/>
-                                        <!-- Change this line to use the converter -->
-                                        <Label Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
-                                               Margin="69,0,0,0"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Left"
-                                               FontSize="15"/>
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="26,0,0,0">
+                                            <Image Height="30"
+                                                   Width="30"
+                                                   Source="/Views/Images/account_circle.png"/>
+                                            <Label Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
+                                                   Margin="13,0,0,0"
+                                                   FontSize="15"/>
+                                        </StackPanel>
                                     </Grid>
                                 </Border>
 
@@ -311,6 +588,38 @@
                                               VerticalScrollBarVisibility="Auto"
                                               Margin="0,5">
                                     <ItemsControl ItemsSource="{Binding Messages}">
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style TargetType="ContentPresenter">
+                                                <Setter Property="Opacity"
+                                                        Value="0"/>
+                                                <Setter Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <TranslateTransform X="0"
+                                                                            Y="20"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <EventTrigger RoutedEvent="Loaded">
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    To="1"
+                                                                    Duration="0:0:0.3"/>
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                                    To="0"
+                                                                    Duration="0:0:0.3">
+                                                                    <DoubleAnimation.EasingFunction>
+                                                                        <QuadraticEase EasingMode="EaseOut"/>
+                                                                    </DoubleAnimation.EasingFunction>
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid Margin="10,5">
@@ -553,43 +862,42 @@
                                             Background="#FFDAE9F6"
                                             CornerRadius="0,0,20,20">
                                         <Grid>
-                                            <Button Command="{Binding ShowAttachmentsPanelCommand}"
-                                                    HorizontalAlignment="Left"
-                                                    Width="30"
-                                                    Height="30"
-                                                    Margin="10,0,0,0"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
-                                                <Image Source="/Views/Images/add_circle.png"
-                                                       Width="18"
-                                                       Height="18"/>
-                                            </Button>
-
                                             <StackPanel Orientation="Horizontal"
-                                                        HorizontalAlignment="Left"
                                                         VerticalAlignment="Center"
-                                                        Margin="45,0,0,0"
-                                                        Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <Button Command="{Binding SelectImageCommand}"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="10,0,0,0">
+                                                <Button Command="{Binding ShowAttachmentsPanelCommand}"
+                                                        Width="30"
+                                                        Height="30"
                                                         Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Margin="0,0,10,0"
-                                                        ToolTip="Thêm hình ảnh">
-                                                    <Image Source="/Views/Images/image.png"
+                                                        BorderThickness="0">
+                                                    <Image Source="/Views/Images/add_circle.png"
                                                            Width="18"
                                                            Height="18"/>
                                                 </Button>
-                                                <Button Command="{Binding SelectFileCommand}"
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Margin="0,0,10,0"
-                                                        ToolTip="Thêm file">
-                                                    <Image Source="/Views/Images/document.png"
-                                                           Width="18"
-                                                           Height="18"/>
-                                                </Button>
-                                            </StackPanel>
 
+                                                <StackPanel Orientation="Horizontal"
+                                                            Margin="15,0,0,0"
+                                                            Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <Button Command="{Binding SelectImageCommand}"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Margin="0,0,10,0"
+                                                            ToolTip="Thêm hình ảnh">
+                                                        <Image Source="/Views/Images/image.png"
+                                                               Width="18"
+                                                               Height="18"/>
+                                                    </Button>
+                                                    <Button Command="{Binding SelectFileCommand}"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            ToolTip="Thêm file">
+                                                        <Image Source="/Views/Images/document.png"
+                                                               Width="18"
+                                                               Height="18"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
                                             <TextBox Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}"
                                                      BorderThickness="0"
                                                      Background="Transparent"
@@ -601,8 +909,7 @@
                                                     Width="40"
                                                     Height="40"
                                                     Margin="0,0,10,0"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
+                                                    Style="{StaticResource SendButtonStyle}">
                                                 <Image Source="/Views/Images/send.png"
                                                        Width="19"
                                                        Height="24"/>
@@ -614,6 +921,7 @@
                         </Border>
                     </Grid>
                 </Border>
+                <!-- Add this closing tag for the Chat Box Container -->
             </Grid>
         </Viewbox>
     </Grid>
