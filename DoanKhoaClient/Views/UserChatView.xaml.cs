@@ -8,12 +8,19 @@ namespace DoanKhoaClient.Views
         public UserChatView()
         {
             InitializeComponent();
-            ThemeManager.ApplyTheme(UserChat_Background);
+            ThemeManager.ApplyTheme(Chat_Background);
+            this.SizeChanged += (sender, e) =>
+{
+    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+    {
+        this.WindowState = WindowState.Normal;
+    }
+};
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ThemeManager.ToggleTheme(UserChat_Background);
+            ThemeManager.ToggleTheme(Chat_Background);
         }
     }
 }

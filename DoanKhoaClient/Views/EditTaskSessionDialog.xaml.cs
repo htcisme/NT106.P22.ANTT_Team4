@@ -17,7 +17,7 @@ namespace DoanKhoaClient.Views
         {
             InitializeComponent();
             _originalTaskSession = taskSession;
-            
+
             // Tạo bản sao để tránh thay đổi trực tiếp đến đối tượng gốc
             TaskSession = new TaskSession
             {
@@ -28,7 +28,7 @@ namespace DoanKhoaClient.Views
                 CreatedAt = taskSession.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
-            
+
             DataContext = TaskSession;
 
             // Tải danh sách người dùng
@@ -48,7 +48,7 @@ namespace DoanKhoaClient.Views
                     _users = await response.Content.ReadFromJsonAsync<List<User>>();
                     ManagerComboBox.ItemsSource = _users;
                     ManagerComboBox.DisplayMemberPath = "DisplayName";
-                    
+
                     // Chọn manager hiện tại
                     if (!string.IsNullOrEmpty(TaskSession.ManagerId))
                     {
@@ -83,7 +83,10 @@ namespace DoanKhoaClient.Views
                     TaskSession.ManagerId = selectedUser.Id;
                     TaskSession.ManagerName = selectedUser.DisplayName;
                 }
-                
+
+                // Đảm bảo cập nhật thời gian
+                TaskSession.UpdatedAt = DateTime.Now;
+
                 DialogResult = true;
                 Close();
             }
@@ -99,14 +102,14 @@ namespace DoanKhoaClient.Views
         {
             if (string.IsNullOrWhiteSpace(TaskSession.Name))
             {
-                MessageBox.Show("Vui lòng nhập tên phiên làm việc.", "Thông báo", 
+                MessageBox.Show("Vui lòng nhập tên phiên làm việc.", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
             if (ManagerComboBox.SelectedItem == null)
             {
-                MessageBox.Show("Vui lòng chọn người quản lý.", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn người quản lý.", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }

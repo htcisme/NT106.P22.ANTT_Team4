@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <NoWarn>$(WarningsNotAsErrors)</NoWarn>
   </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,7 @@
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
     <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <!-- Improved image resource handling -->

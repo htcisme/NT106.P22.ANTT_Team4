@@ -42,15 +42,20 @@ namespace DoanKhoaServer.Controllers
         {
             try
             {
+                // If no ID is provided, generate a MongoDB ObjectId
+                if (string.IsNullOrEmpty(taskProgram.Id))
+                {
+                    taskProgram.Id = MongoDB.Bson.ObjectId.GenerateNewId().ToString();
+                }
+
                 await _mongoDBService.CreateTaskProgramAsync(taskProgram);
                 return CreatedAtAction(nameof(Get), new { id = taskProgram.Id }, taskProgram);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest($"Error creating TaskProgram: {ex.Message}");
             }
         }
-
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> Update(string id, TaskProgram updatedTaskProgram)
         {

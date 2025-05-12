@@ -3,6 +3,7 @@ using DoanKhoaClient.ViewModels;
 using DoanKhoaClient.Helpers;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls; 
 
 namespace DoanKhoaClient.Views
 {
@@ -43,6 +44,19 @@ namespace DoanKhoaClient.Views
             if (_viewModel.EditProgramCommand.CanExecute(_viewModel.SelectedProgram))
             {
                 _viewModel.EditProgramCommand.Execute(_viewModel.SelectedProgram);
+            }
+        }
+        private void ProgramsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is ListView listView && listView.SelectedItem is TaskProgram selectedProgram)
+            {
+                // Lấy ViewModel từ DataContext
+                var viewModel = DataContext as AdminTaskProgramsViewModel;
+                if (viewModel != null && viewModel.ViewProgramDetailsCommand != null)
+                {
+                    // Gọi lệnh xem chi tiết chương trình từ ViewModel
+                    viewModel.ViewProgramDetailsCommand.Execute(selectedProgram);
+                }
             }
         }
     }
