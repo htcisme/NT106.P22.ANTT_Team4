@@ -10,6 +10,31 @@
     Width="1440"
     Height="1036"
     mc:Ignorable="d">
+    <Window.Resources>
+        <!--  Style cho sidebar button hover  -->
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFE2F5FF" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#B3E0F7" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid x:Name="Admin_ActivitiesPost_Background">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -56,118 +81,179 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Source="/Views/Images/header.png" />
-        <Image
-            x:Name="HomePage_iHome"
-            Grid.Column="0"
-            Width="30"
+        <Button
+            x:Name="SidebarHomeButton"
+            Width="160"
             Height="30"
             Margin="102,203,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/home.png" />
-        <Image
-            x:Name="HomePage_iChat"
-            Grid.Column="0"
-            Width="30"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="SidebarHomeButton_Click"
+            Cursor="Hand"
+            Style="{StaticResource SidebarButtonStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    x:Name="HomePage_iHome"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/home.png" />
+                <Label
+                    x:Name="HomePage_lbHome"
+                    Width="108"
+                    Height="30"
+                    Margin="30,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Home"
+                    FontFamily="Segoe UI"
+                    FontSize="20"
+                    FontWeight="Bold" />
+            </StackPanel>
+        </Button>
+        <Button
+            x:Name="SidebarChatButton"
+            Width="160"
             Height="30"
             Margin="102,279,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/chat_bubble.png" />
-        <Image
-            x:Name="HomePage_iActivities"
-            Grid.Column="0"
-            Width="30"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="SidebarChatButton_Click"
+            Cursor="Hand"
+            Style="{StaticResource SidebarButtonStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    x:Name="HomePage_iChat"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/chat_bubble.png" />
+                <Label
+                    x:Name="HomePage_lbChat"
+                    Width="108"
+                    Height="30"
+                    Margin="30,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Chat"
+                    FontFamily="Segoe UI"
+                    FontSize="20"
+                    FontWeight="Bold" />
+            </StackPanel>
+        </Button>
+        <Button
+            x:Name="SidebarActivitiesButton"
+            Width="160"
             Height="30"
             Margin="102,354,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/active-activities.png" />
-        <Image
-            x:Name="HomePage_Task_iMembers"
-            Grid.Column="0"
-            Width="30"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="SidebarActivitiesButton_Click"
+            Cursor="Hand"
+            IsEnabled="False"
+            Style="{StaticResource SidebarButtonStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    x:Name="HomePage_Activities"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/active-activities.png" />
+                <Label
+                    x:Name="HomePage_lbActivities"
+                    Width="108"
+                    Height="30"
+                    Margin="30,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Activities"
+                    FontFamily="Segoe UI"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Foreground="#597CA2" />
+            </StackPanel>
+        </Button>
+        <Button
+            x:Name="SidebarMemberButton"
+            Width="160"
             Height="30"
             Margin="102,432,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/members.png" />
-        <Image
-            x:Name="HomePage_iTasks"
-            Grid.Column="0"
-            Width="30"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="SidebarMembersButton_Click"
+            Cursor="Hand"
+            Style="{StaticResource SidebarButtonStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    x:Name="HomePage_Task_iMembers"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/members.png" />
+                <Label
+                    x:Name="HomePage_lbMembers"
+                    Width="108"
+                    Height="30"
+                    Margin="30,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Members"
+                    FontFamily="Segoe UI"
+                    FontSize="20"
+                    FontWeight="Bold" />
+            </StackPanel>
+        </Button>
+        <Button
+            x:Name="SidebarTaskButton"
+            Width="160"
             Height="30"
             Margin="102,510,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/tasks.png" />
-        <Label
-            x:Name="HomePage_lbHome"
-            Grid.Column="0"
-            Width="108"
-            Height="30"
-            Margin="165,203,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Home"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbChat"
-            Grid.Column="0"
-            Width="108"
-            Height="30"
-            Margin="165,279,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Chat"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbActivities"
-            Grid.Column="0"
-            Width="108"
-            Height="30"
-            Margin="165,354,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Activities"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Foreground="#597CA2" />
-        <Label
-            x:Name="HomePage_lbMembers"
-            Grid.Column="0"
-            Width="108"
-            Height="30"
-            Margin="165,432,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Members"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbTasks"
-            Grid.Column="0"
-            Width="108"
-            Height="30"
-            Margin="165,510,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Tasks"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            RenderTransformOrigin="0.527,3.278" />
+            Background="Transparent"
+            BorderThickness="0"
+            Click="SidebarTasksButton_Click"
+            Cursor="Hand"
+            Style="{StaticResource SidebarButtonStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    x:Name="HomePage_iTasks"
+                    Width="30"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/tasks.png" />
+                <Label
+                    x:Name="HomePage_lbTasks"
+                    Width="108"
+                    Height="30"
+                    Margin="30,0,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Tasks"
+                    FontFamily="Segoe UI"
+                    FontSize="20"
+                    FontWeight="Bold" />
+            </StackPanel>
+        </Button>
+
         <Image
             x:Name="HomePage_iFacebook"
             Grid.Column="0"
@@ -290,13 +376,13 @@
 
                 <!--  ScrollViewer để cuộn nội dung  -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Grid>
+                    <!--  Thay thế Grid với StackPanel để ngăn chồng lấn các phần tử UI  -->
+                    <StackPanel Margin="20">
                         <!--  Tiêu đề bài đăng  -->
                         <TextBlock
                             x:Name="ActivityTitle"
-                            Margin="100,30,100,0"
+                            Margin="30,30,30,10"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
                             FontSize="24"
                             FontWeight="Bold"
                             Foreground="#12305E"
@@ -307,9 +393,8 @@
                         <!--  Ngày đăng  -->
                         <TextBlock
                             x:Name="ActivityDate"
-                            Margin="0,100,0,0"
+                            Margin="0,10,0,20"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
                             FontSize="14"
                             Foreground="#6c757d"
                             Text="Thứ Sáu - 14/02/2025" />
@@ -318,9 +403,8 @@
                         <Border
                             Width="700"
                             Height="400"
-                            Margin="0,137,0,0"
+                            Margin="0,0,0,20"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
                             CornerRadius="8">
                             <Image
                                 x:Name="ActivityImage"
@@ -330,13 +414,10 @@
                                 StretchDirection="Both" />
                         </Border>
 
-                        <!--  Nút Chỉnh sửa  -->
-
                         <!--  Nội dung bài viết  -->
                         <TextBlock
-                            Margin="50,550,50,0"
+                            Margin="30,10,30,10"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
                             FontSize="16"
                             FontWeight="Bold"
                             Foreground="#12305E"
@@ -344,16 +425,15 @@
 
                         <TextBlock
                             x:Name="ActivityContent"
-                            Margin="50,580,50,0"
+                            Margin="30,0,30,20"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
                             FontSize="14"
                             LineHeight="24"
                             Text="Như câu nói &quot;Sống là cho đâu chỉ nhận riêng mình.&quot; của Tố Hữu, cho đi không phải là sự mất mát, mà là một cách để lan tỏa yêu thương và nghĩa trong cuộc sống. Một nụ cười, một bàn tay giúp đỡ hay một hành động nhỏ bé cũng có thể mang lại niềm vui và hy vọng cho những mảnh đời kém may mắn. Ngọn Đuốc Xanh chính là cơ hội để mỗi chúng ta viết tiếp câu chuyện của lòng nhân ái, cùng nhau lan tỏa ánh sáng của sự sẻ chia và tinh thần tình nguyện đến khắp mọi nơi."
                             TextWrapping="Wrap" />
 
                         <!--  Thông tin bổ sung: Loại hoạt động và Trạng thái  -->
-                        <Grid Margin="50,700,50,0" VerticalAlignment="Top">
+                        <Grid Margin="30,0,30,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -393,12 +473,11 @@
                         <!--  Separator  -->
                         <Rectangle
                             Height="1"
-                            Margin="20,750,20,0"
-                            VerticalAlignment="Top"
+                            Margin="20,0,20,20"
                             Fill="#FF042354" />
 
                         <!--  Like section  -->
-                        <Grid Margin="50,770,50,0" VerticalAlignment="Top">
+                        <Grid Margin="30,0,30,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -437,7 +516,7 @@
                         </Grid>
 
                         <!--  Comment section  -->
-                        <StackPanel Margin="50,820,50,50" VerticalAlignment="Top">
+                        <StackPanel Margin="30,0,30,20">
                             <!--  Comment 1  -->
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
@@ -539,7 +618,7 @@
                                 </Border>
                             </Grid>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </ScrollViewer>
             </Border>
         </Grid>

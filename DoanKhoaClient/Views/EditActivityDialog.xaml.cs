@@ -75,9 +75,9 @@ namespace DoanKhoaClient.Views
             {
                 errors.Add("Vui lòng nhập mô tả hoạt động");
             }
-            else if (Activity.Description.Length > 500)
+            else if (Activity.Description.Length < 1)
             {
-                errors.Add("Mô tả không được vượt quá 500 ký tự");
+                errors.Add("Bạn chuaw nhâp nội dung");
             }
 
             // Kiểm tra loại hoạt động

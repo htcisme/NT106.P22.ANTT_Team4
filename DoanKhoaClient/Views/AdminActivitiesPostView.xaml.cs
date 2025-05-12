@@ -53,6 +53,38 @@ namespace DoanKhoaClient.Views
             // Đóng cửa sổ hiện tại để quay lại màn hình danh sách
             Close();
         }
-        
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new HomePageView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AdminChatConservationsView(); // Đổi thành tên Window thực tế của bạn
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Đang ở trang này, có thể không cần xử lý hoặc chỉ cần return
+        }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new HomePageView(); // Đổi thành tên Window thực tế của bạn
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AdminTasksView(); // Đổi thành tên Window thực tế của bạn
+            win.Show();
+            this.Close();
+        }
+
     }
 }

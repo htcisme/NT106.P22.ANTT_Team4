@@ -138,7 +138,7 @@
                     <!--  Mô tả  -->
                     <TextBlock
                         Style="{StaticResource LabelStyle}"
-                        Text="Mô tả:" />
+                        Text="Nội dung:" />
                     <TextBox
                         x:Name="DescriptionTextBox"
                         Height="70"
