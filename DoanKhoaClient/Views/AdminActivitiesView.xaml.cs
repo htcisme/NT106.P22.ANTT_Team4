@@ -95,6 +95,16 @@ namespace DoanKhoaClient.Views
             }
         }
 
+        private void FilterDropdownButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ((ActivitiesViewModel)DataContext).IsFilterDropdownOpen = true;
+        }
+
+        private void FilterDropdownButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ((ActivitiesViewModel)DataContext).IsFilterDropdownOpen = false;
+        }
+
         // Helper method để tìm control trong visual tree
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {

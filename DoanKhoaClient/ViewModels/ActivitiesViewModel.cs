@@ -12,6 +12,7 @@ using System.Linq;
 using DoanKhoaClient.Views;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -40,6 +41,32 @@ namespace DoanKhoaClient.ViewModels
         private NullableTypeItem _selectedTypeItem;
         private NullableStatusItem _selectedStatusItem;
         private bool _isSearchResultOpen;
+
+        // Thêm thuộc tính cho Filter Dropdown
+        private bool _isFilterDropdownOpen;
+        private ObservableCollection<FilterOption<ActivityType>> _activityTypeOptions;
+        private ObservableCollection<FilterOption<ActivityStatus>> _activityStatusOptions;
+        private ObservableCollection<string> _selectedFilterTags;
+        private bool _isSearchDropdownOpen;
+
+
+    
+        public ObservableCollection<Activity> GetFilteredActivities(string keyword)
+        {
+            // Giả sử bạn có danh sách gốc là AllActivities
+            return new ObservableCollection<Activity>(
+                Activities.Where(a => a.Title.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            );
+        }
+
+       
+
+
+        public bool IsSearchDropdownOpen
+        {
+            get => _isSearchDropdownOpen;
+            set { _isSearchDropdownOpen = value; OnPropertyChanged(); }
+        }
 
         public ObservableCollection<Activity> Activities
         {
@@ -161,11 +188,38 @@ namespace DoanKhoaClient.ViewModels
             set { _isSearchResultOpen = value; OnPropertyChanged(); }
         }
 
+        // Thuộc tính mới cho Filter Dropdown
+        public bool IsFilterDropdownOpen
+        {
+            get => _isFilterDropdownOpen;
+            set { _isFilterDropdownOpen = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<FilterOption<ActivityType>> ActivityTypeOptions
+        {
+            get => _activityTypeOptions;
+            set { _activityTypeOptions = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<FilterOption<ActivityStatus>> ActivityStatusOptions
+        {
+            get => _activityStatusOptions;
+            set { _activityStatusOptions = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<string> SelectedFilterTags
+        {
+            get => _selectedFilterTags;
+            set { _selectedFilterTags = value; OnPropertyChanged(); }
+        }
+
         public ICommand CreateActivityCommand { get; }
         public ICommand EditActivityCommand { get; }
         public ICommand DeleteActivityCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand OpenActivityDetailCommand { get; }
+        public ICommand ApplyFilterCommand { get; }
+        public ICommand RemoveFilterTagCommand { get; }
 
         public ActivitiesViewModel(ActivityService activityService = null)
         {
@@ -205,12 +259,86 @@ namespace DoanKhoaClient.ViewModels
             SelectedTypeItem = TypeFilterOptions[0];
             SelectedStatusItem = StatusFilterOptions[0];
 
+            // Khởi tạo cho bộ lọc dropdown
+            ActivityTypeOptions = new ObservableCollection<FilterOption<ActivityType>>
+            {
+                new FilterOption<ActivityType> { Display = "Academic", Value = ActivityType.Academic, IsChecked = false },
+                new FilterOption<ActivityType> { Display = "Volunteer", Value = ActivityType.Volunteer, IsChecked = false },
+                new FilterOption<ActivityType> { Display = "Entertainment", Value = ActivityType.Entertainment, IsChecked = false }
+            };
+
+            ActivityStatusOptions = new ObservableCollection<FilterOption<ActivityStatus>>
+            {
+                new FilterOption<ActivityStatus> { Display = "Upcoming", Value = ActivityStatus.Upcoming, IsChecked = false },
+                new FilterOption<ActivityStatus> { Display = "Ongoing", Value = ActivityStatus.Ongoing, IsChecked = false },
+                new FilterOption<ActivityStatus> { Display = "Completed", Value = ActivityStatus.Completed, IsChecked = false }
+            };
+
+            SelectedFilterTags = new ObservableCollection<string>();
+
             CreateActivityCommand = new RelayCommand(async _ => await ExecuteCreateActivityAsync(), _ => !IsLoading);
             EditActivityCommand = new RelayCommand(async param => await ExecuteEditActivityAsync(param as Activity), param => !IsLoading && param is Activity);
             DeleteActivityCommand = new RelayCommand(async param => await ExecuteDeleteActivityAsync(param as Activity), param => !IsLoading && param is Activity);
             RefreshCommand = new RelayCommand(async _ => await LoadActivitiesAsync(), _ => !IsLoading);
             OpenActivityDetailCommand = new RelayCommand(param => ExecuteOpenActivityDetail(param as Activity), param => param is Activity);
+            ApplyFilterCommand = new RelayCommand(_ => ExecuteApplyFilter());
+            RemoveFilterTagCommand = new RelayCommand(param => ExecuteRemoveFilterTag(param as string));
+
             _ = LoadActivitiesAsync();
+        }
+
+        private void ExecuteApplyFilter()
+        {
+            // Xóa tất cả các tag đã chọn trước đó
+            SelectedFilterTags.Clear();
+
+            // Thêm các tag mới dựa trên bộ lọc đã chọn
+            foreach (var typeOption in ActivityTypeOptions.Where(o => o.IsChecked))
+            {
+                SelectedFilterTags.Add($"Loại: {typeOption.Display}");
+            }
+
+            foreach (var statusOption in ActivityStatusOptions.Where(o => o.IsChecked))
+            {
+                SelectedFilterTags.Add($"Trạng thái: {statusOption.Display}");
+            }
+
+            // Cập nhật lại bộ lọc
+            FilterActivities();
+
+            // Đóng popup
+            IsFilterDropdownOpen = false;
+        }
+
+        private void ExecuteRemoveFilterTag(string tag)
+        {
+            if (string.IsNullOrEmpty(tag)) return;
+
+            // Xóa tag khỏi danh sách đã chọn
+            SelectedFilterTags.Remove(tag);
+
+            // Cập nhật lại bộ lọc trong options
+            if (tag.StartsWith("Loại:"))
+            {
+                string typeValue = tag.Substring(5).Trim();
+                var typeOption = ActivityTypeOptions.FirstOrDefault(o => o.Display == typeValue);
+                if (typeOption != null)
+                {
+                    typeOption.IsChecked = false;
+                }
+            }
+            else if (tag.StartsWith("Trạng thái:"))
+            {
+                string statusValue = tag.Substring(10).Trim();
+                var statusOption = ActivityStatusOptions.FirstOrDefault(o => o.Display == statusValue);
+                if (statusOption != null)
+                {
+                    statusOption.IsChecked = false;
+                }
+            }
+
+            // Cập nhật lại dữ liệu
+            FilterActivities();
         }
 
         private void InitializeFeaturedActivities()
@@ -223,7 +351,8 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/vnutour.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 1.0
+                    Opacity = 1.0,
+                    IsActive = true
                 },
                 new FeaturedActivity
                 {
@@ -231,7 +360,8 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/ndx.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 1.0
+                    Opacity = 1.0,
+                    IsActive = false
                 },
                 new FeaturedActivity
                 {
@@ -239,7 +369,8 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/netsec.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 1.0
+                    Opacity = 1.0,
+                    IsActive = false
                 }
             };
         }
@@ -248,18 +379,18 @@ namespace DoanKhoaClient.ViewModels
         {
             PaginationDots = new ObservableCollection<PaginationDot>
             {
-                new PaginationDot 
-                { 
+                new PaginationDot
+                {
                     Color = new SolidColorBrush(Color.FromRgb(89, 124, 162)),
                     IsActive = true
                 },
-                new PaginationDot 
-                { 
+                new PaginationDot
+                {
                     Color = new SolidColorBrush(Color.FromRgb(219, 236, 247)),
                     IsActive = false
                 },
-                new PaginationDot 
-                { 
+                new PaginationDot
+                {
                     Color = new SolidColorBrush(Color.FromRgb(219, 236, 247)),
                     IsActive = false
                 }
@@ -308,13 +439,19 @@ namespace DoanKhoaClient.ViewModels
                 fa.Opacity = 1.0;
 
 
-            // Cập nhật dot
+            // Cập nhật dot và active state
             for (int i = 0; i < PaginationDots.Count; i++)
             {
                 PaginationDots[i].IsActive = (i == 0); // dot đầu tiên active
                 PaginationDots[i].Color = (i == 0)
                     ? new SolidColorBrush(Color.FromRgb(89, 124, 162))
                     : new SolidColorBrush(Color.FromRgb(219, 236, 247));
+            }
+
+            // Cập nhật trạng thái hoạt động cho FeaturedActivities
+            for (int i = 0; i < FeaturedActivities.Count; i++)
+            {
+                FeaturedActivities[i].IsActive = (i == 0);
             }
         }
 
@@ -385,11 +522,16 @@ namespace DoanKhoaClient.ViewModels
             IsSearchResultOpen = false;
         }
 
-        private void FilterActivities()
+        public void FilterActivities()
         {
             if (Activities == null) return;
-            var filtered = Activities.Where(a =>
-                (string.IsNullOrWhiteSpace(SearchText) ||
+
+            var filtered = Activities.AsEnumerable();
+
+            // Lọc theo nội dung tìm kiếm
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                filtered = filtered.Where(a =>
                     (SelectedSearchField?.Field == "All" && (
                         (a.Title?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
                         (a.Description?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
@@ -400,12 +542,59 @@ namespace DoanKhoaClient.ViewModels
                     (SelectedSearchField?.Field == "Description" && (a.Description?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)) ||
                     (SelectedSearchField?.Field == "Type" && a.Type.ToString().IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
                     (SelectedSearchField?.Field == "Status" && a.Status.ToString().IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                ) &&
-                (!SelectedTypeItem?.Value.HasValue ?? true || a.Type == SelectedTypeItem.Value) &&
-                (!SelectedStatusItem?.Value.HasValue ?? true || a.Status == SelectedStatusItem.Value) &&
-                (!DateFrom.HasValue || a.Date >= DateFrom.Value) &&
-                (!DateTo.HasValue || a.Date <= DateTo.Value)
-            ).ToList();
+                );
+            }
+
+            // Lọc theo Type từ dropdown filter
+            if (ActivityTypeOptions != null)
+            {
+                var selectedTypes = ActivityTypeOptions
+                    .Where(o => o != null && o.IsChecked)
+                    .Select(o => o.Value)
+                    .ToList();
+
+                if (selectedTypes.Any())
+                {
+                    filtered = filtered.Where(a => selectedTypes.Contains(a.Type));
+                }
+            }
+
+            // Lọc theo Status từ dropdown filter
+            if (ActivityStatusOptions != null)
+            {
+                var selectedStatuses = ActivityStatusOptions
+                    .Where(o => o != null && o.IsChecked)
+                    .Select(o => o.Value)
+                    .ToList();
+
+                if (selectedStatuses.Any())
+                {
+                    filtered = filtered.Where(a => selectedStatuses.Contains(a.Status));
+                }
+            }
+
+            // Lọc theo Type/Status từ combobox (nếu có)
+            if (SelectedTypeItem?.Value.HasValue ?? false)
+            {
+                filtered = filtered.Where(a => a.Type == SelectedTypeItem.Value);
+            }
+
+            if (SelectedStatusItem?.Value.HasValue ?? false)
+            {
+                filtered = filtered.Where(a => a.Status == SelectedStatusItem.Value);
+            }
+
+            // Lọc theo ngày tháng
+            if (DateFrom.HasValue)
+            {
+                filtered = filtered.Where(a => a.Date >= DateFrom.Value);
+            }
+
+            if (DateTo.HasValue)
+            {
+                filtered = filtered.Where(a => a.Date <= DateTo.Value);
+            }
+
             FilteredActivities = new ObservableCollection<Activity>(filtered);
             IsSearchResultOpen = !string.IsNullOrWhiteSpace(SearchText) && FilteredActivities.Any();
         }
@@ -420,10 +609,13 @@ namespace DoanKhoaClient.ViewModels
     public class FeaturedActivity : INotifyPropertyChanged
     {
         private double _opacity = 1.0;
+        private bool _isActive = false;
+
         public string Title { get; set; }
         public string ImgUrl { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
+
         public double Opacity
         {
             get => _opacity;
@@ -433,6 +625,17 @@ namespace DoanKhoaClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                _isActive = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
@@ -487,4 +690,16 @@ namespace DoanKhoaClient.ViewModels
         public string Display { get; set; }
         public ActivityStatus? Value { get; set; }
     }
-} 
+
+    public class FilterOption<T>
+    {
+        private bool _isChecked;
+        public string Display { get; set; }
+        public T Value { get; set; }
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => _isChecked = value;
+        }
+    }
+}
