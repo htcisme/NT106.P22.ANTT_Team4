@@ -1,6 +1,7 @@
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Services;
 using DoanKhoaClient.Views;
+using DoanKhoaClient.Helpers; // Thêm dòng này
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace DoanKhoaClient.ViewModels
         private TaskProgram _selectedProgram;
         private ProgramType _programType;
         private bool _isLoading;
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public TaskSession Session
@@ -94,7 +95,7 @@ namespace DoanKhoaClient.ViewModels
                 IsLoading = true;
                 var allPrograms = await _taskService.GetTaskProgramsAsync(Session.Id);
                 var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate);
-                
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Programs = new ObservableCollection<TaskProgram>(filteredPrograms);
@@ -102,7 +103,7 @@ namespace DoanKhoaClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách chương trình: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi tải danh sách chương trình: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -129,12 +130,12 @@ namespace DoanKhoaClient.ViewModels
                     {
                         Programs.Add(newProgram);
                     });
-                    MessageBox.Show("Chương trình đã được tạo thành công.", 
+                    MessageBox.Show("Chương trình đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}", 
+                    MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 finally
@@ -162,7 +163,7 @@ namespace DoanKhoaClient.ViewModels
             {
                 IsLoading = true;
                 var result = await _taskService.UpdateTaskProgramAsync(updatedProgram.Id, updatedProgram);
-                
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var index = Programs.IndexOf(Programs.FirstOrDefault(p => p.Id == result.Id));
@@ -171,13 +172,13 @@ namespace DoanKhoaClient.ViewModels
                         Programs[index] = result;
                     }
                 });
-                
-                MessageBox.Show("Chương trình đã được cập nhật thành công.", 
+
+                MessageBox.Show("Chương trình đã được cập nhật thành công.",
                     "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi cập nhật chương trình: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi cập nhật chương trình: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -203,18 +204,18 @@ namespace DoanKhoaClient.ViewModels
                     {
                         IsLoading = true;
                         await _taskService.DeleteTaskProgramAsync(program.Id);
-                        
+
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             Programs.Remove(program);
                         });
-                        
-                        MessageBox.Show("Chương trình đã được xóa thành công.", 
+
+                        MessageBox.Show("Chương trình đã được xóa thành công.",
                             "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi khi xóa chương trình: {ex.Message}", 
+                        MessageBox.Show($"Lỗi khi xóa chương trình: {ex.Message}",
                             "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     finally
@@ -231,7 +232,7 @@ namespace DoanKhoaClient.ViewModels
             {
                 // Chuyển sang view chi tiết dựa vào loại program
                 Window taskItemsView = null;
-                
+
                 switch (program.Type)
                 {
                     case ProgramType.Event:

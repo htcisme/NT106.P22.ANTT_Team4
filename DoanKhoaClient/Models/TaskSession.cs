@@ -63,7 +63,18 @@ namespace DoanKhoaClient.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+            public void PrepareForSending()
+        {
+            // Đảm bảo Id là null để server tạo mới
+            Id = "000000000000000000000000";  // 24 chữ số 0
+
+            // Đảm bảo timestamps
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
+        }
+
     }
+
 
     public enum TaskSessionType
     {

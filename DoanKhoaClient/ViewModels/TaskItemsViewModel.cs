@@ -1,6 +1,7 @@
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Services;
 using DoanKhoaClient.Views;
+using DoanKhoaClient.Helpers; // Thêm dòng này
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -67,9 +68,8 @@ namespace DoanKhoaClient.ViewModels
             CreateTaskItemCommand = new RelayCommand(_ => ExecuteCreateTaskItemAsync());
             EditTaskItemCommand = new RelayCommand(ExecuteEditTaskItem, CanExecuteAction);
             DeleteTaskItemCommand = new RelayCommand(ExecuteDeleteTaskItemAsync, CanExecuteAction);
-            CompleteTaskItemCommand = new RelayCommand(ExecuteCompleteTaskItemAsync, CanExecuteCompleteAction);
             RefreshCommand = new RelayCommand(_ => LoadTaskItemsAsync());
-
+            
             // Tải dữ liệu
             LoadTaskItemsAsync();
         }
