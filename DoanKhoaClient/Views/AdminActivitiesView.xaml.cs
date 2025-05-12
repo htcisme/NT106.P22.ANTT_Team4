@@ -4,7 +4,7 @@ using System.Windows.Input;
 using DoanKhoaClient.Models;
 using System.Windows.Media;
 using DoanKhoaClient.ViewModels;
-
+using DoanKhoaClient.Helpers;
 namespace DoanKhoaClient.Views
 {
     public partial class AdminActivitiesView : Window
@@ -14,10 +14,31 @@ namespace DoanKhoaClient.Views
         public AdminActivitiesView()
         {
             InitializeComponent();
+
+            // Kiểm tra quyền truy cập
+            AccessControl.CheckAdminAccess(this);
+
             _viewModel = new AdminActivitiesViewModel();
             DataContext = _viewModel;
+
+            // Check window size
+            this.SizeChanged += (sender, e) =>
+            {
+                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+                {
+                    this.WindowState = WindowState.Normal;
+                }
+            };
         }
 
+        // Thêm code để điều hướng đến các trang admin khác
+        private void GoToDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            var dashboardView = new AdminDashboardView();
+            dashboardView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            dashboardView.Show();
+            this.Close();
+        }
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Xử lý chuyển đổi theme (có thể bổ sung sau)
@@ -81,11 +102,11 @@ namespace DoanKhoaClient.Views
                     var clickPosition = e.GetPosition(item);
                     // Lấy vị trí checkbox tương đối với ListViewItem
                     var checkboxPosition = checkbox.TransformToAncestor(item).Transform(new Point(0, 0));
-                    
+
                     // Kiểm tra xem click có nằm trong vùng checkbox không
-                    if (clickPosition.X >= checkboxPosition.X && 
+                    if (clickPosition.X >= checkboxPosition.X &&
                         clickPosition.X <= checkboxPosition.X + checkbox.ActualWidth &&
-                        clickPosition.Y >= checkboxPosition.Y && 
+                        clickPosition.Y >= checkboxPosition.Y &&
                         clickPosition.Y <= checkboxPosition.Y + checkbox.ActualHeight)
                     {
                         checkbox.IsChecked = !checkbox.IsChecked;

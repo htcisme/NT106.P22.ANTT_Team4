@@ -3,20 +3,21 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:DoanKhoaClient.Views"
-    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
-    Title="Đăng ký tài khoản"
-    Width="1440"
-    Height="1024"
+    Title="Register"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
+    MinWidth="1024"
+    MinHeight="768"
     mc:Ignorable="d">
 
     <Window.Resources>
         <vm:RegisterViewModel x:Key="ViewModel"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter"/>
     </Window.Resources>
 
     <Window.DataContext>
@@ -25,420 +26,441 @@
 
     <Grid x:Name="Register_Background">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                              Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
         <!--  Grid chính để căn giữa nội dung  -->
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35*" />
-                <RowDefinition Height="279*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <!--  Form đăng ký  -->
-            <Border
-                Grid.Row="1"
-                Grid.Column="0"
-                Width="527"
-                Margin="25,10,0,119"
-                Padding="20"
-                HorizontalAlignment="Left"
-                CornerRadius="100">
-                <StackPanel Margin="-10,-10,-10,-20" VerticalAlignment="Center">
-                    <!--  Tên đăng nhập  -->
-                    <TextBlock
-    FontSize="16"
-    FontWeight="Bold"
-    Foreground="#FF042354"
-    Text="Tên đăng nhập:" />
-                    <TextBlock Text="{Binding UsernameError}" 
-           Foreground="Red" 
-           FontSize="12" 
-           Margin="10,0,0,5"
-           Visibility="{Binding UsernameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-                    <Grid Margin="5,10,5,10">
-                        <Border
-        Background="#FFFFFFFF"
-        BorderBrush="#FFCBCDD2"
-        BorderThickness="1"
-        CornerRadius="8">
-                            <TextBox
-            Height="35"
-            Margin="15,5"
-            VerticalContentAlignment="Center"
-            Background="Transparent"
-            BorderThickness="0"
-            FontSize="16"
-            Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
-                        </Border>
-
-                        <TextBlock
-        Margin="20,5"
-        VerticalAlignment="Center"
-        FontSize="16"
-        Foreground="Gray"
-        IsHitTestVisible="False"
-        Text="Nhập tên đăng nhập"
-        Visibility="{Binding UsernamePlaceholderVisibility}" />
-                    </Grid>
-                    <!--  Họ và tên  -->
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#FF042354"
-                        Text="Họ và tên:" />
-                    <TextBlock Text="{Binding FullNameError}" 
-           Foreground="Red" 
-           FontSize="12" 
-           Margin="10,0,0,5"
-           Visibility="{Binding FullNameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-
-                    <Grid Margin="5,10,5,10">
-                        <Border
-                            Background="#FFFFFFFF"
-                            BorderBrush="#FFCBCDD2"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <TextBox
-                                x:Name="UsernameTextBox"
-                                Height="35"
-                                Margin="15,5"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="16"
-                                Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" />
-                        </Border>
-
-                        <TextBlock
-                            x:Name="UsernamePlaceholder"
-                            Margin="20,5"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="Gray"
-                            IsHitTestVisible="False"
-                            Text="Nhập tên"
-                            Visibility="{Binding FullNamePlaceholderVisibility}" />
-                    </Grid>
-
-                    <!--  Email  -->
-                    <TextBlock
-                        Margin="0,10,0,0"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#FF042354"
-                        Text="Email:" />
-                    <TextBlock Text="{Binding EmailError}" 
-           Foreground="Red" 
-           FontSize="12" 
-           Margin="10,0,0,5"
-           Visibility="{Binding EmailError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-
-                    <Grid Margin="5,10,5,10">
-                        <Border
-                            Background="#FFFFFFFF"
-                            BorderBrush="#FFCBCDD2"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <TextBox
-                                x:Name="EmailTextBox"
-                                Height="35"
-                                Margin="15,5"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="16"
-                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
-                        </Border>
-
-                        <TextBlock
-                            x:Name="EmailPlaceholder"
-                            Margin="20,5"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="Gray"
-                            IsHitTestVisible="False"
-                            Text="Nhập email"
-                            Visibility="{Binding EmailPlaceholderVisibility}" />
-                        
-                    </Grid>
-
-                    <!--  Mật khẩu  -->
-                    <TextBlock
-                        Margin="0,10,0,0"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#FF042354"
-                        Text="Mật khẩu:" />
-                    <TextBlock Text="{Binding PasswordError}" 
-           Foreground="Red" 
-           FontSize="12" 
-           Margin="10,0,0,5"
-           Visibility="{Binding PasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-
-                    <Grid Margin="5,10,5,10">
-                        <Border
-                            Background="White"
-                            BorderBrush="#FFCBCDD2"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <PasswordBox
-                                x:Name="PasswordBox"
-                                Height="35"
-                                Margin="15,5"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="16">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PasswordChanged">
-                                        <i:InvokeCommandAction Command="{Binding PasswordChangedCommand}" 
-                                                            CommandParameter="{Binding ElementName=PasswordBox}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </PasswordBox>
-                        </Border>
-
-                        <TextBlock
-                            x:Name="PasswordPlaceholder"
-                            Margin="20,5"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="Gray"
-                            IsHitTestVisible="False"
-                            Text="Nhập mật khẩu"
-                            Visibility="{Binding PasswordPlaceholderVisibility}" />
-                    </Grid>
-
-                    <!--  Mật khẩu xác nhận  -->
-                    <TextBlock
-                        Margin="0,10,0,0"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="#FF042354"
-                        Text="Xác nhận mật khẩu:" />
-                    <TextBlock Text="{Binding ConfirmPasswordError}" 
-           Foreground="Red" 
-           FontSize="12" 
-           Margin="10,0,0,5"
-           Visibility="{Binding ConfirmPasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-                    <Grid Margin="5,10,5,10">
-                        <Border
-                            Background="White"
-                            BorderBrush="#FFCBCDD2"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <PasswordBox
-                                x:Name="ConfirmPasswordBox"
-                                Height="35"
-                                Margin="15,5"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="16">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PasswordChanged">
-                                        <i:InvokeCommandAction Command="{Binding ConfirmPasswordChangedCommand}" 
-                                                            CommandParameter="{Binding ElementName=ConfirmPasswordBox}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </PasswordBox>
-                        </Border>
-
-                        <TextBlock
-                            x:Name="ConfirmPasswordPlaceholder"
-                            Margin="20,5"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="Gray"
-                            IsHitTestVisible="False"
-                            Text="Xác nhận mật khẩu"
-                            Visibility="{Binding ConfirmPasswordPlaceholderVisibility}" />
-                    </Grid>
-
-                    <Grid Margin="5,10,5,10">
-                        <CheckBox 
-                            Content="Đăng ký với quyền Admin"
-                            IsChecked="{Binding IsAdmin}"
-                            Foreground="#FF042354"
-                            FontSize="14" />
-                    </Grid>
-                    <Grid Margin="5,10,5,10" Visibility="{Binding ShowAdminCode, Converter={StaticResource BoolToVis}}">
-                        <TextBlock
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Foreground="#FF042354"
-                            Text="Mã xác thực Admin:" />
-                        <TextBlock 
-                            Text="{Binding AdminCodeError}" 
-                            Foreground="Red" 
-                            FontSize="12" 
-                            Margin="10,25,0,5"
-                            Visibility="{Binding AdminCodeError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
-                        <Border
-                            Margin="0,30,0,0"
-                            Background="White"
-                            BorderBrush="#FFCBCDD2"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <PasswordBox
-                                x:Name="AdminCodeBox"
-                                Height="35"
-                                Margin="15,5"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="16">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PasswordChanged">
-                                        <i:InvokeCommandAction Command="{Binding AdminCodeChangedCommand}" 
-                                                            CommandParameter="{Binding ElementName=AdminCodeBox}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </PasswordBox>
-                        </Border>
-                    </Grid>
-                    <!-- Error Message -->
-                    <TextBlock 
-                        Foreground="Red"
-                        Margin="5,10,5,10"
-                        Text="{Binding ErrorMessage}"
-                        TextWrapping="Wrap"
-                        Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
-
-                    <!--  Nút đăng ký  -->
+        <Viewbox Stretch="Uniform"
+                 MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                 MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+            <Grid Width="1440"
+                  Height="1024">
+                <!-- Your original RegisterView content here -->
+                <Grid HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--  Form đăng ký  -->
                     <Border
-                        Margin="5,25,5,10"
-                        Background="#FF042354"
-                        BorderBrush="#FFCBCDD2"
-                        BorderThickness="1"
-                        CornerRadius="8">
-                        <Button
-                            Command="{Binding RegisterCommand}"
-                            Height="46"
-                            BorderThickness="0"
-                            Content="Đăng ký"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Foreground="White">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border
-                                                    x:Name="ButtonBorder"
-                                                    Background="{TemplateBinding Background}"
-                                                    CornerRadius="8">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="ButtonBorder" Property="Background" Value="#FF1A3C78" />
-                                                        <Setter Property="Foreground" Value="#FFFFD700" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="ButtonBorder" Property="Background" Value="#FF0A1D4A" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </Border>
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="527"
+                        Margin="25,10,0,119"
+                        Padding="20"
+                        HorizontalAlignment="Left"
+                        CornerRadius="100">
+                        <StackPanel Margin="-10,-10,-10,-20"
+                                    VerticalAlignment="Center">
+                            <!--  Tên đăng nhập  -->
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF042354"
+                                Text="Tên đăng nhập:"/>
+                            <TextBlock Text="{Binding UsernameError}"
+                                       Foreground="Red"
+                                       FontSize="12"
+                                       Margin="10,0,0,5"
+                                       Visibility="{Binding UsernameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+                            <Grid Margin="5,10,5,10">
+                                <Border
+                                    Background="#FFFFFFFF"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <TextBox
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16"
+                                        Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
 
-                    <!--  Điều kiện đăng ký  -->
-                    <TextBlock
-                        Margin="2,0,2,20"
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Foreground="#FF042354"
-                        TextWrapping="Wrap">
+                                <TextBlock
+                                    Margin="20,5"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    IsHitTestVisible="False"
+                                    Text="Nhập tên đăng nhập"
+                                    Visibility="{Binding UsernamePlaceholderVisibility}"/>
+                            </Grid>
+                            <!--  Họ và tên  -->
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF042354"
+                                Text="Họ và tên:"/>
+                            <TextBlock Text="{Binding FullNameError}"
+                                       Foreground="Red"
+                                       FontSize="12"
+                                       Margin="10,0,0,5"
+                                       Visibility="{Binding FullNameError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
+                            <Grid Margin="5,10,5,10">
+                                <Border
+                                    Background="#FFFFFFFF"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <TextBox
+                                        x:Name="UsernameTextBox"
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16"
+                                        Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
+
+                                <TextBlock
+                                    x:Name="UsernamePlaceholder"
+                                    Margin="20,5"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    IsHitTestVisible="False"
+                                    Text="Nhập tên"
+                                    Visibility="{Binding FullNamePlaceholderVisibility}"/>
+                            </Grid>
+
+                            <!--  Email  -->
+                            <TextBlock
+                                Margin="0,10,0,0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF042354"
+                                Text="Email:"/>
+                            <TextBlock Text="{Binding EmailError}"
+                                       Foreground="Red"
+                                       FontSize="12"
+                                       Margin="10,0,0,5"
+                                       Visibility="{Binding EmailError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
+                            <Grid Margin="5,10,5,10">
+                                <Border
+                                    Background="#FFFFFFFF"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <TextBox
+                                        x:Name="EmailTextBox"
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16"
+                                        Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
+
+                                <TextBlock
+                                    x:Name="EmailPlaceholder"
+                                    Margin="20,5"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    IsHitTestVisible="False"
+                                    Text="Nhập email"
+                                    Visibility="{Binding EmailPlaceholderVisibility}"/>
+
+                            </Grid>
+
+                            <!--  Mật khẩu  -->
+                            <TextBlock
+                                Margin="0,10,0,0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF042354"
+                                Text="Mật khẩu:"/>
+                            <TextBlock Text="{Binding PasswordError}"
+                                       Foreground="Red"
+                                       FontSize="12"
+                                       Margin="10,0,0,5"
+                                       Visibility="{Binding PasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+
+                            <Grid Margin="5,10,5,10">
+                                <Border
+                                    Background="White"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <PasswordBox
+                                        x:Name="PasswordBox"
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PasswordChanged">
+                                                <i:InvokeCommandAction Command="{Binding PasswordChangedCommand}"
+                                                                       CommandParameter="{Binding ElementName=PasswordBox}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </PasswordBox>
+                                </Border>
+
+                                <TextBlock
+                                    x:Name="PasswordPlaceholder"
+                                    Margin="20,5"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    IsHitTestVisible="False"
+                                    Text="Nhập mật khẩu"
+                                    Visibility="{Binding PasswordPlaceholderVisibility}"/>
+                            </Grid>
+
+                            <!--  Mật khẩu xác nhận  -->
+                            <TextBlock
+                                Margin="0,10,0,0"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF042354"
+                                Text="Xác nhận mật khẩu:"/>
+                            <TextBlock Text="{Binding ConfirmPasswordError}"
+                                       Foreground="Red"
+                                       FontSize="12"
+                                       Margin="10,0,0,5"
+                                       Visibility="{Binding ConfirmPasswordError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+                            <Grid Margin="5,10,5,10">
+                                <Border
+                                    Background="White"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <PasswordBox
+                                        x:Name="ConfirmPasswordBox"
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PasswordChanged">
+                                                <i:InvokeCommandAction Command="{Binding ConfirmPasswordChangedCommand}"
+                                                                       CommandParameter="{Binding ElementName=ConfirmPasswordBox}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </PasswordBox>
+                                </Border>
+
+                                <TextBlock
+                                    x:Name="ConfirmPasswordPlaceholder"
+                                    Margin="20,5"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    IsHitTestVisible="False"
+                                    Text="Xác nhận mật khẩu"
+                                    Visibility="{Binding ConfirmPasswordPlaceholderVisibility}"/>
+                            </Grid>
+
+                            <Grid Margin="5,10,5,10">
+                                <CheckBox
+                                    Content="Đăng ký với quyền Admin"
+                                    IsChecked="{Binding IsAdmin}"
+                                    Foreground="#FF042354"
+                                    FontSize="14"/>
+                            </Grid>
+                            <Grid Margin="5,10,5,10"
+                                  Visibility="{Binding ShowAdminCode, Converter={StaticResource BoolToVis}}">
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="#FF042354"
+                                    Text="Mã xác thực Admin:"/>
+                                <TextBlock
+                                    Text="{Binding AdminCodeError}"
+                                    Foreground="Red"
+                                    FontSize="12"
+                                    Margin="10,25,0,5"
+                                    Visibility="{Binding AdminCodeError, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}"/>
+                                <Border
+                                    Margin="0,30,0,0"
+                                    Background="White"
+                                    BorderBrush="#FFCBCDD2"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <PasswordBox
+                                        x:Name="AdminCodeBox"
+                                        Height="35"
+                                        Margin="15,5"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PasswordChanged">
+                                                <i:InvokeCommandAction Command="{Binding AdminCodeChangedCommand}"
+                                                                       CommandParameter="{Binding ElementName=AdminCodeBox}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </PasswordBox>
+                                </Border>
+                            </Grid>
+                            <!-- Error Message -->
+                            <TextBlock
+                                Foreground="Red"
+                                Margin="5,10,5,10"
+                                Text="{Binding ErrorMessage}"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
+
+                            <!--  Nút đăng ký  -->
+                            <Border
+                                Margin="5,25,5,10"
+                                Background="#FF042354"
+                                BorderBrush="#FFCBCDD2"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                                <Button
+                                    Command="{Binding RegisterCommand}"
+                                    Height="46"
+                                    BorderThickness="0"
+                                    Content="Đăng ký"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="White">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Background"
+                                                    Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                        <Border
+                                                            x:Name="ButtonBorder"
+                                                            Background="{TemplateBinding Background}"
+                                                            CornerRadius="8">
+                                                            <ContentPresenter HorizontalAlignment="Center"
+                                                                              VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver"
+                                                                     Value="True">
+                                                                <Setter TargetName="ButtonBorder"
+                                                                        Property="Background"
+                                                                        Value="#FF1A3C78"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="#FFFFD700"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsPressed"
+                                                                     Value="True">
+                                                                <Setter TargetName="ButtonBorder"
+                                                                        Property="Background"
+                                                                        Value="#FF0A1D4A"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+
+                            <!--  Điều kiện đăng ký  -->
+                            <TextBlock
+                                Margin="2,0,2,20"
+                                HorizontalAlignment="Center"
+                                FontSize="14"
+                                Foreground="#FF042354"
+                                TextWrapping="Wrap">
                         Bằng cách đăng ký tài khoản, bạn cũng đồng thời chấp nhận mọi&#x00A0;<Run FontWeight="Bold">
                             điều kiện về quy định và chính sách của Đoàn khoa Mạng máy tính và Truyền thông.
                         </Run>
-                    </TextBlock>
+                            </TextBlock>
 
 
 
-                    <!--  Đã có tài khoản? Đăng nhập  -->
-                    <Grid Margin="10,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                            <!--  Đã có tài khoản? Đăng nhập  -->
+                            <Grid Margin="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                        <TextBlock
-                            Grid.Column="0"
-                            HorizontalAlignment="Center"
-                            Cursor="Hand"
-                            FontSize="16"
-                            FontStyle="Italic"
-                            Foreground="#FF042354"
-                            Text="Đã có tài khoản? Đăng nhập">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="TextDecorations" Value="Underline" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    Cursor="Hand"
+                                    FontSize="16"
+                                    FontStyle="Italic"
+                                    Foreground="#FF042354"
+                                    Text="Đã có tài khoản? Đăng nhập">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver"
+                                                         Value="True">
+                                                    <Setter Property="TextDecorations"
+                                                            Value="Underline"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDown">
                                     <i:InvokeCommandAction Command="{Binding NavigateToLoginCommand}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                        </TextBlock>
-                    </Grid>
+                                </TextBlock>
+                            </Grid>
 
-                </StackPanel>
-            </Border>
+                        </StackPanel>
+                    </Border>
 
-            <!--  Hình ảnh và Logo  -->
-            <Border
-                Grid.RowSpan="2"
-                Grid.Column="1"
-                Width="836"
-                Height="942"
-                Margin="20,0,0,0"
-                CornerRadius="40">
-                <Grid>
-                    <!--  Hình ảnh nền  -->
-                    <Image
+                    <!--  Hình ảnh và Logo  -->
+                    <Border
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
                         Width="836"
                         Height="942"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="/Views/Images/user-hero.png"
-                        Stretch="UniformToFill" />
-                    <!--  Logo  -->
-                    <Image
-                        Width="272"
-                        Height="71"
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Source="/Views/Images/light-header.png"
-                        Stretch="Fill">
+                        Margin="20,0,0,0"
+                        CornerRadius="40">
+                        <Grid>
+                            <!--  Hình ảnh nền  -->
+                            <Image
+                                Width="836"
+                                Height="942"
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                Source="/Views/Images/user-hero.png"
+                                Stretch="UniformToFill"/>
+                            <!--  Logo  -->
+                            <Image
+                                Width="272"
+                                Height="71"
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Source="/Views/Images/light-header.png"
+                                Stretch="Fill">
 
-                        <Image.Effect>
-                            <DropShadowEffect
-                                BlurRadius="3"
-                                Opacity="0.5"
-                                ShadowDepth="2"
-                                Color="#66000000" />
-                        </Image.Effect>
-                    </Image>
+                                <Image.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="3"
+                                        Opacity="0.5"
+                                        ShadowDepth="2"
+                                        Color="#66000000"/>
+                                </Image.Effect>
+                            </Image>
+                        </Grid>
+                    </Border>
                 </Grid>
-            </Border>
-        </Grid>
+            </Grid>
+        </Viewbox>
     </Grid>
 </Window>

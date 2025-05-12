@@ -94,11 +94,16 @@ namespace DoanKhoaClient.ViewModels
             {
                 IsLoading = true;
                 var allPrograms = await _taskService.GetTaskProgramsAsync(Session.Id);
-                var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate);
+                var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate).ToList();
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Programs = new ObservableCollection<TaskProgram>(filteredPrograms);
+                    // Clear and repopulate instead of creating new collection
+                    Programs.Clear();
+                    foreach (var program in filteredPrograms)
+                    {
+                        Programs.Add(program);
+                    }
                 });
             }
             catch (Exception ex)
@@ -119,29 +124,32 @@ namespace DoanKhoaClient.ViewModels
 
         private async Task ExecuteCreateProgramAsync()
         {
-            var dialog = new CreateTaskProgramDialog(Session.Id, _programType);
-            if (dialog.ShowDialog() == true)
+            try
             {
-                try
+                var dialog = new CreateTaskProgramDialog(_session);
+                if (dialog.ShowDialog() == true)
                 {
                     IsLoading = true;
-                    var newProgram = await _taskService.CreateTaskProgramAsync(dialog.TaskProgram);
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Programs.Add(newProgram);
-                    });
+                    dialog.ProgramToCreate.Type = _programType;
+                    
+                    // Create the program but don't add it to the collection here
+                    await _taskService.CreateTaskProgramAsync(dialog.ProgramToCreate);
+                    
+                    // Simply reload all programs from the server
+                    await LoadProgramsAsync();
+                    
                     MessageBox.Show("Chương trình đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
-                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -149,10 +157,15 @@ namespace DoanKhoaClient.ViewModels
         {
             if (param is TaskProgram program)
             {
-                var dialog = new EditTaskProgramDialog(program);
+                var selectedProgram = SelectedProgram; 
+                var dialog = new EditTaskProgramDialog(_session, selectedProgram);
                 if (dialog.ShowDialog() == true)
                 {
-                    EditProgramAsync(dialog.TaskProgram);
+                    var index = Programs.IndexOf(selectedProgram);
+                    if (index >= 0)
+                    {
+                        Programs[index] = dialog.Program;
+                    }
                 }
             }
         }

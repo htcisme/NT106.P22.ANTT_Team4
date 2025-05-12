@@ -239,129 +239,6 @@
                             </TransformGroup>
                      </Rectangle.RenderTransform>
               </Rectangle>
-              <Border HorizontalAlignment="Left"
-                      Height="108"
-                      Margin="364,325,0,0"
-                      VerticalAlignment="Top"
-                      Width="940"
-                      Background="#FFDBF3FF"
-                      CornerRadius="10,10,10,10"/>
-              <Border HorizontalAlignment="Left"
-                      Height="108"
-                      Margin="364,460,0,0"
-                      VerticalAlignment="Top"
-                      Width="940"
-                      Background="#FFDBF3FF"
-                      CornerRadius="10,10,10,10"/>
-              <Border HorizontalAlignment="Left"
-                      Height="108"
-                      Margin="364,595,0,0"
-                      VerticalAlignment="Top"
-                      Width="940"
-                      Background="#FFDBF3FF"
-                      CornerRadius="10,10,10,10"/>
-              <Label x:Name="Admin_Task_lbDesignTeam"
-                     Content="Ban Thiết kế"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,342,0,0"
-                     VerticalAlignment="Top"
-                     Width="134"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label Content="Manager:"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,387,0,0"
-                     VerticalAlignment="Top"
-                     Width="92"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label x:Name="Admin_Task_lbManagerDesignTeam"
-                     Content="Hoàng Bảo Phước"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="481,387,0,0"
-                     VerticalAlignment="Top"
-                     Width="180"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label x:Name="Admin_Task_lbMediaEventTeam"
-                     Content="Ban Truyền thông và Sự kiện"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,477,0,0"
-                     VerticalAlignment="Top"
-                     Width="293"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label Content="Manager:"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,522,0,0"
-                     VerticalAlignment="Top"
-                     Width="92"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label x:Name="Admin_Task_lbManagerMediaEventTeam"
-                     Content="Huỳnh Ngọc Ngân Tuyền"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="481,522,0,0"
-                     VerticalAlignment="Top"
-                     Width="239"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label x:Name="Admin_Task_lbStudyTeam"
-                     Content="Ban Học tập"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,612,0,0"
-                     VerticalAlignment="Top"
-                     Width="293"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label Content="Manager:"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="384,657,0,0"
-                     VerticalAlignment="Top"
-                     Width="92"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
-              <Label x:Name="Admin_Task_lbManagerStudyTeam"
-                     Content="Đỗ Quang Trung"
-                     HorizontalAlignment="Left"
-                     Height="30"
-                     Margin="481,657,0,0"
-                     VerticalAlignment="Top"
-                     Width="167"
-                     FontFamily="Segoe UI"
-                     FontSize="20"
-                     Padding="0,0,0,0"
-                     Foreground="#042354"/>
               <Button x:Name="CreateSessionButton"
                       Command="{Binding CreateSessionCommand}"
                       Content="Tạo mới"
@@ -381,6 +258,7 @@
                       CommandParameter="{Binding SelectedSession}"
                       Content="Chỉnh sửa"
                       Click="EditSessionButton_Click"
+                      IsEnabled="{Binding SelectedSession, Converter={StaticResource NullToBooleanConverter}}"
                       HorizontalAlignment="Left"
                       Height="40"
                       Margin="534,219,0,0"
@@ -390,5 +268,65 @@
                       FontSize="16"
                       FontWeight="Bold"
                       Foreground="#F6FCFF"/>
+
+              <!-- filepath: d:\PROJECT\NT106.P22.ANTT_Team4\DoanKhoaClient\Views\AdminTasksView.xaml -->
+              <ListView x:Name="SessionsListView"
+                        ItemsSource="{Binding Sessions}"
+                        SelectedItem="{Binding SelectedSession}"
+                        SelectionChanged="SessionsListView_SelectionChanged"
+                        MouseDoubleClick="SessionsListView_MouseDoubleClick"
+                        Margin="370,330,55,41"
+                        BorderThickness="1"
+                        BorderBrush="#E0E0E0">
+                     <ListView.View>
+                            <GridView>
+                                   <GridViewColumn Header="Tên phiên làm việc"
+                                                   Width="300">
+                                          <GridViewColumn.CellTemplate>
+                                                 <DataTemplate>
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontWeight="SemiBold"/>
+                                                 </DataTemplate>
+                                          </GridViewColumn.CellTemplate>
+                                   </GridViewColumn>
+                                   <GridViewColumn Header="Người quản lý"
+                                                   Width="200">
+                                          <GridViewColumn.CellTemplate>
+                                                 <DataTemplate>
+                                                        <TextBlock Text="{Binding ManagerName}"/>
+                                                 </DataTemplate>
+                                          </GridViewColumn.CellTemplate>
+                                   </GridViewColumn>
+                                   <GridViewColumn Header="Ngày tạo"
+                                                   Width="150">
+                                          <GridViewColumn.CellTemplate>
+                                                 <DataTemplate>
+                                                        <TextBlock Text="{Binding CreatedAt, StringFormat=dd/MM/yyyy HH:mm}"/>
+                                                 </DataTemplate>
+                                          </GridViewColumn.CellTemplate>
+                                   </GridViewColumn>
+                            </GridView>
+                     </ListView.View>
+                     <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                   <Setter Property="HorizontalContentAlignment"
+                                           Value="Stretch"/>
+                                   <Setter Property="Padding"
+                                           Value="8,6"/>
+                                   <Style.Triggers>
+                                          <Trigger Property="IsSelected"
+                                                   Value="True">
+                                                 <Setter Property="Background"
+                                                         Value="#E3F2FD"/>
+                                          </Trigger>
+                                   </Style.Triggers>
+                            </Style>
+                     </ListView.ItemContainerStyle>
+                     <ListView.ToolTip>
+                            <ToolTip>
+                                   <TextBlock Text="Nhấp đúp để xem chi tiết phiên làm việc"/>
+                            </ToolTip>
+                     </ListView.ToolTip>
+              </ListView>
        </Grid>
 </Window>

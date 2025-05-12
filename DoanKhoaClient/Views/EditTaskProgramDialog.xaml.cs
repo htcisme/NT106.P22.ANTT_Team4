@@ -1,52 +1,29 @@
-using DoanKhoaClient.Models;
 using System;
 using System.Windows;
+using DoanKhoaClient.Models;
+using DoanKhoaClient.Services;
 
 namespace DoanKhoaClient.Views
 {
     public partial class EditTaskProgramDialog : Window
     {
-        public TaskProgram TaskProgram { get; private set; }
+        private readonly TaskSession _session;
+        private readonly TaskService _taskService;
+        // private List<User> _users; // Không cần thiết nữa
 
-        public EditTaskProgramDialog(TaskProgram taskProgram)
+        public TaskProgram Program { get; set; }
+
+        public EditTaskProgramDialog(TaskSession session, TaskProgram program)
         {
             InitializeComponent();
-            TaskProgram = new TaskProgram
-            {
-                Id = taskProgram.Id,
-                SessionId = taskProgram.SessionId,
-                Name = taskProgram.Name,
-                Description = taskProgram.Description,
-                Type = taskProgram.Type,
-                StartDate = taskProgram.StartDate,
-                EndDate = taskProgram.EndDate,
-                CreatedAt = taskProgram.CreatedAt,
-                UpdatedAt = DateTime.Now
-            };
-            DataContext = TaskProgram;
+            _session = session;
+            _taskService = new TaskService();
+            Program = program;
 
-            // Đặt tiêu đề dựa vào loại
-            switch (taskProgram.Type)
-            {
-                case ProgramType.Event:
-                    this.Title = "Chỉnh sửa chương trình sự kiện";
-                    break;
-                case ProgramType.Study:
-                    this.Title = "Chỉnh sửa chương trình học tập";
-                    break;
-                case ProgramType.Design:
-                    this.Title = "Chỉnh sửa chương trình thiết kế";
-                    break;
-            }
-        }
+            DataContext = Program;
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ValidateInput())
-            {
-                DialogResult = true;
-                Close();
-            }
+            // Bỏ việc gọi LoadUsers() vì không cần nữa
+            // LoadUsers();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -55,30 +32,70 @@ namespace DoanKhoaClient.Views
             Close();
         }
 
-        private bool ValidateInput()
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TaskProgram.Name))
+            try
             {
-                MessageBox.Show("Vui lòng nhập tên chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
+                // Kiểm tra đầu vào
+                if (string.IsNullOrWhiteSpace(ProgramNameTextBox.Text))
+                {
+                    ShowError("Vui lòng nhập tên chương trình");
+                    return;
+                }
 
-            if (string.IsNullOrWhiteSpace(TaskProgram.Description))
+                if (StartDatePicker.SelectedDate == null || EndDatePicker.SelectedDate == null)
+                {
+                    ShowError("Vui lòng chọn ngày bắt đầu và kết thúc");
+                    return;
+                }
+
+                if (EndDatePicker.SelectedDate < StartDatePicker.SelectedDate)
+                {
+                    ShowError("Ngày kết thúc phải sau ngày bắt đầu");
+                    return;
+                }
+
+                // Cập nhật dữ liệu từ UI vào đối tượng Program
+                Program.Name = ProgramNameTextBox.Text.Trim();
+                Program.Description = DescriptionTextBox.Text.Trim();
+                Program.StartDate = StartDatePicker.SelectedDate.Value;
+                Program.EndDate = EndDatePicker.SelectedDate.Value;
+
+                // Giữ nguyên thông tin người thực hiện
+                // Không lấy từ UI nữa vì đã bỏ phần UI tương ứng
+                // Nếu không có sẵn, gán giá trị mặc định
+                if (string.IsNullOrEmpty(Program.ExecutorId))
+                {
+                    Program.ExecutorId = _session.Id;
+                }
+                if (string.IsNullOrEmpty(Program.ExecutorName))
+                {
+                    Program.ExecutorName = "Auto Assigned";
+                }
+
+                // Đảm bảo ID luôn có giá trị
+                if (string.IsNullOrEmpty(Program.Id))
+                {
+                    Program.Id = Guid.NewGuid().ToString();
+                }
+
+                // Gọi API để cập nhật
+                var updatedProgram = await _taskService.UpdateTaskProgramAsync(Program.Id, Program);
+                Program = updatedProgram;
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Vui lòng nhập mô tả chương trình.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                ShowError($"Lỗi khi cập nhật chương trình: {ex.Message}");
             }
+        }
 
-            if (TaskProgram.EndDate < TaskProgram.StartDate)
-            {
-                MessageBox.Show("Ngày kết thúc phải sau ngày bắt đầu.", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            return true;
+        private void ShowError(string message)
+        {
+            ErrorMessageBlock.Text = message;
+            ErrorMessageBlock.Visibility = Visibility.Visible;
         }
     }
 }
