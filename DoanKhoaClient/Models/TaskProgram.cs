@@ -1,5 +1,5 @@
-using System;
 using Newtonsoft.Json;
+using System;
 
 namespace DoanKhoaClient.Models
 {
@@ -35,7 +35,7 @@ namespace DoanKhoaClient.Models
 
         [JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
-        
+
         [JsonProperty("type")]
         public ProgramType Type { get; set; } = ProgramType.Event; // Mặc định là Event
         
@@ -55,6 +55,6 @@ namespace DoanKhoaClient.Models
         NotStarted,
         InProgress,
         Completed,
-        Cancelled
+        Canceled
     }
 }

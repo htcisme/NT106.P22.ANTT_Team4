@@ -166,10 +166,15 @@ namespace DoanKhoaClient.ViewModels
         {
             if (param is TaskProgram program)
             {
-                var dialog = new EditTaskProgramDialog(program);
+                var selectedProgram = SelectedProgram; 
+                var dialog = new EditTaskProgramDialog(_session, selectedProgram);
                 if (dialog.ShowDialog() == true)
                 {
-                    EditProgramAsync(dialog.TaskProgram);
+                    var index = Programs.IndexOf(selectedProgram);
+                    if (index >= 0)
+                    {
+                        Programs[index] = dialog.Program;
+                    }
                 }
             }
         }

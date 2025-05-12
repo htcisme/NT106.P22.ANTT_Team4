@@ -28,34 +28,28 @@
             <TextBox x:Name="ProgramNameTextBox" Text="{Binding Name}" Padding="5"/>
         </StackPanel>
 
-        <!-- Trường người thực hiện -->
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
-            <TextBlock Text="Người thực hiện:" Margin="0,0,0,5"/>
-            <ComboBox x:Name="ExecutorComboBox" Padding="5" Height="30">
-                <!-- Các items sẽ được load từ code-behind -->
-            </ComboBox>
-        </StackPanel>
+        <!-- Bỏ phần người thực hiện (đã xóa StackPanel ở Grid.Row="2") -->
 
-        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,0,10">
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
             <TextBlock Text="Mô tả:" Margin="0,0,0,5"/>
             <TextBox x:Name="DescriptionTextBox" Text="{Binding Description}" Padding="5" Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,5,10">
+        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,5,10">
             <TextBlock Text="Ngày bắt đầu:" Margin="0,0,0,5"/>
             <DatePicker x:Name="StartDatePicker" SelectedDate="{Binding StartDate}" Padding="5" Height="30"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" Grid.Column="1" Margin="5,0,0,10">
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,0,0,10">
             <TextBlock Text="Ngày kết thúc:" Margin="0,0,0,5"/>
             <DatePicker x:Name="EndDatePicker" SelectedDate="{Binding EndDate}" Padding="5" Height="30"/>
         </StackPanel>
         
         <!-- Thông báo lỗi -->
-        <TextBlock x:Name="ErrorMessageBlock" Grid.Row="5" Grid.ColumnSpan="2" 
+        <TextBlock x:Name="ErrorMessageBlock" Grid.Row="4" Grid.ColumnSpan="2" 
                    Foreground="Red" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,5,0,0"/>
 
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" 
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" 
                     HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button x:Name="CancelButton" Content="Huỷ" Width="80" Height="30" 
                     Margin="0,0,10,0" Click="CancelButton_Click"/>
