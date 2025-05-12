@@ -81,8 +81,6 @@ namespace DoanKhoaClient.Views
                 ProgramToCreate.ExecutorId = _session.Id; // Sử dụng ID của phiên làm việc
                 ProgramToCreate.ExecutorName = "Auto Assigned"; // Tên mặc định
 
-                // Thêm một giá trị mặc định cho Id (sẽ bị server ghi đè)
-                ProgramToCreate.Id = Guid.NewGuid().ToString();
 
                 // Gọi API để tạo mới
                 var createdProgram = await _taskService.CreateTaskProgramAsync(ProgramToCreate);

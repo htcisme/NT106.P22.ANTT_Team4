@@ -94,11 +94,16 @@ namespace DoanKhoaClient.ViewModels
             {
                 IsLoading = true;
                 var allPrograms = await _taskService.GetTaskProgramsAsync(Session.Id);
-                var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate);
+                var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate).ToList();
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Programs = new ObservableCollection<TaskProgram>(filteredPrograms);
+                    // Clear and repopulate instead of creating new collection
+                    Programs.Clear();
+                    foreach (var program in filteredPrograms)
+                    {
+                        Programs.Add(program);
+                    }
                 });
             }
             catch (Exception ex)
@@ -121,32 +126,18 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
-                // Khởi tạo dialog với phiên hiện tại
                 var dialog = new CreateTaskProgramDialog(_session);
-
-                // Hiển thị dialog và chờ người dùng nhập thông tin
                 if (dialog.ShowDialog() == true)
                 {
                     IsLoading = true;
-
-                    // Đảm bảo loại chương trình phù hợp với view hiện tại
                     dialog.ProgramToCreate.Type = _programType;
-
-                    // Tạo chương trình mới thông qua service
-                    var newProgram = await _taskService.CreateTaskProgramAsync(dialog.ProgramToCreate);
-
-                    // Cập nhật UI
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Programs.Add(newProgram);
-
-                        // Sắp xếp lại danh sách sau khi thêm
-                        Programs = new ObservableCollection<TaskProgram>(
-                            Programs.OrderBy(p => p.StartDate)
-                        );
-                    });
-
-                    // Thông báo thành công
+                    
+                    // Create the program but don't add it to the collection here
+                    await _taskService.CreateTaskProgramAsync(dialog.ProgramToCreate);
+                    
+                    // Simply reload all programs from the server
+                    await LoadProgramsAsync();
+                    
                     MessageBox.Show("Chương trình đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
