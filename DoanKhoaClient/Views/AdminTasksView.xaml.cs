@@ -13,12 +13,32 @@ namespace DoanKhoaClient.Views
         public AdminTasksView()
         {
             InitializeComponent();
+
+            // Kiểm tra quyền truy cập
+            AccessControl.CheckAdminAccess(this);
+
             _viewModel = new AdminTasksViewModel();
             DataContext = _viewModel;
             ThemeManager.ApplyTheme(Admin_Task_Background);
 
             // Thêm xử lý hướng dẫn và kiểm tra tài nguyên
             Loaded += AdminTasksView_Loaded;
+
+            // Check window size
+            this.SizeChanged += (sender, e) =>
+            {
+                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+                {
+                    this.WindowState = WindowState.Normal;
+                }
+            };
+        }
+        private void GoToDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            var dashboardView = new AdminDashboardView();
+            dashboardView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            dashboardView.Show();
+            this.Close();
         }
 
         private void AdminTasksView_Loaded(object sender, RoutedEventArgs e)
@@ -37,7 +57,7 @@ namespace DoanKhoaClient.Views
                 System.Diagnostics.Debug.WriteLine($"Lỗi khi tải tài nguyên: {ex.Message}");
             }
         }
-        
+
         // Thêm các phương thức xử lý sự kiện
         private void Home_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
