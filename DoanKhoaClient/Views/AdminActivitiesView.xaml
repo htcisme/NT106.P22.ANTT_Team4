@@ -17,7 +17,7 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-        <!-- Style cho nút chính -->
+        <!--  Style cho nút chính  -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#FF12305E" />
             <Setter Property="Foreground" Value="White" />
@@ -46,7 +46,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style cho nút thứ cấp (Xanh nhạt) -->
+        <!--  Style cho nút thứ cấp (Xanh nhạt)  -->
         <Style x:Key="SecondaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#597CA2" />
             <Setter Property="Foreground" Value="White" />
@@ -75,7 +75,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style cho nút Sửa -->
+        <!--  Style cho nút Sửa  -->
         <Style x:Key="EditButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#3498db" />
             <Setter Property="Foreground" Value="White" />
@@ -104,7 +104,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style cho nút Xóa -->
+        <!--  Style cho nút Xóa  -->
         <Style x:Key="DeleteButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#e74c3c" />
             <Setter Property="Foreground" Value="White" />
@@ -133,7 +133,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style cho CheckBox tùy chỉnh -->
+        <!--  Style cho CheckBox tùy chỉnh  -->
         <Style x:Key="CustomCheckBoxStyle" TargetType="CheckBox">
             <Setter Property="Template">
                 <Setter.Value>
@@ -192,34 +192,14 @@
             BorderBrush="{x:Null}"
             Text=""
             TextWrapping="Wrap" />
-
-        <Border
-            x:Name="Admin_Activities_Dashboard"
-            Width="288"
-            Margin="43,40,0,40"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Stretch"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                    <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                    <GradientStop Offset="0.937" Color="#FF87ACCD" />
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-
         <Image
-            x:Name="HomePage_iUsers"
-            Grid.Column="1"
+            x:Name="HomePage_iSearch"
             Width="40"
             Height="40"
-            Margin="1358,46,0,0"
+            Margin="628,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/generic avatar.png" />
-
+            Source="/Views/Images/search.png" />
         <Image
             x:Name="HomePage_iNotifications"
             Width="40"
@@ -238,15 +218,38 @@
             VerticalAlignment="Top"
             MouseDown="ThemeToggleButton_MouseDown"
             Source="/Views/Images/dark.png" />
-
         <Image
-            x:Name="HomePage_iSearch"
+            x:Name="HomePage_iUsers"
+            Grid.Column="1"
             Width="40"
             Height="40"
-            Margin="628,46,0,0"
+            Margin="1358,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/search.png" />
+            Source="/Views/Images/generic avatar.png" />
+
+        <Border
+            x:Name="Admin_Activities_Dashboard"
+            Width="288"
+            Margin="43,40,0,40"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Stretch"
+            BorderBrush="Black"
+            CornerRadius="10,10,10,10">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                    <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                    <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+
+
+
+
+
 
         <Image
             x:Name="HomePage_iLogo"
@@ -257,14 +260,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/header.png" />
 
-        <Image
-            x:Name="HomePage_iHome"
-            Width="30"
-            Height="30"
-            Margin="102,203,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/home.png" />
+
 
         <Image
             x:Name="HomePage_iChat"
@@ -301,6 +297,15 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Source="/Views/Images/tasks.png" />
+
+        <Image
+            x:Name="HomePage_iHome"
+            Width="30"
+            Height="30"
+            Margin="102,203,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Source="/Views/Images/home.png" />
 
         <Label
             x:Name="HomePage_lbHome"
@@ -395,7 +400,7 @@
             VerticalAlignment="Top"
             Source="/Views/Images/youtube.png" />
 
-        <!-- Phần thẻ thống kê -->
+        <!--  Phần thẻ thống kê  -->
         <Grid
             Height="220"
             Margin="370,120,42,0"
@@ -407,7 +412,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Events Card -->
+            <!--  Events Card  -->
             <Border
                 Grid.Column="0"
                 Margin="0,0,10,0"
@@ -439,7 +444,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- People Reached Card -->
+            <!--  People Reached Card  -->
             <Border
                 Grid.Column="1"
                 Margin="10,0,10,0"
@@ -471,7 +476,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Reacts Card -->
+            <!--  Reacts Card  -->
             <Border
                 Grid.Column="2"
                 Margin="10,0,10,0"
@@ -503,7 +508,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Comments Card -->
+            <!--  Comments Card  -->
             <Border
                 Grid.Column="3"
                 Margin="10,0,0,0"
@@ -536,7 +541,7 @@
             </Border>
         </Grid>
 
-        <!-- Main Content Border -->
+        <!--  Main Content Border  -->
         <Border
             Margin="370,372,42,40"
             HorizontalAlignment="Stretch"
@@ -551,10 +556,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Tiêu đề và nút tạo mới -->
-                <Grid
-                    Grid.Row="0"
-                    Margin="20,20,20,10">
+                <!--  Tiêu đề và nút tạo mới  -->
+                <Grid Grid.Row="0" Margin="20,20,20,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -623,14 +626,14 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Đường kẻ phân cách -->
+                <!--  Đường kẻ phân cách  -->
                 <Rectangle
                     Grid.Row="1"
                     Height="2"
                     Margin="20,0,20,10"
                     Fill="#FF12305E" />
 
-                <!-- Danh sách hoạt động -->
+                <!--  Danh sách hoạt động  -->
                 <ScrollViewer
                     Grid.Row="2"
                     Margin="20,0,20,20"
@@ -678,7 +681,7 @@
                                             <ColumnDefinition Width="80" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Checkbox -->
+                                        <!--  Checkbox  -->
                                         <CheckBox
                                             Grid.Column="0"
                                             Margin="0,0,15,0"
@@ -687,7 +690,7 @@
                                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                             Style="{StaticResource CustomCheckBoxStyle}" />
 
-                                        <!-- Hình ảnh hoạt động -->
+                                        <!--  Hình ảnh hoạt động  -->
                                         <Border
                                             Grid.Column="1"
                                             Width="60"
@@ -700,8 +703,12 @@
                                             <Image Source="{Binding ImgUrl}" Stretch="UniformToFill" />
                                         </Border>
 
-                                        <!-- Thông tin chính -->
-                                        <StackPanel Grid.Column="2" Margin="15,0,0,0">
+                                        <!--  Thông tin chính  -->
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            Height="50"
+                                            MaxWidth="500"
+                                            Margin="15,0,0,0">
                                             <TextBlock
                                                 FontSize="18"
                                                 FontWeight="Bold"
@@ -726,17 +733,17 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <!-- Nút xem chi tiết -->
+                                        <!--  Nút xem chi tiết  -->
                                         <Button
                                             Grid.Column="3"
                                             Width="60"
-                                            Margin="10,0,10,0"
+                                            Margin="0,0,10,0"
                                             Click="ViewDetailButton_Click"
                                             Content="Xem"
                                             Style="{StaticResource SecondaryButtonStyle}"
                                             Tag="{Binding}" />
 
-                                        <!-- Nút sửa -->
+                                        <!--  Nút sửa  -->
                                         <Button
                                             Grid.Column="4"
                                             Margin="0,0,10,0"
@@ -745,7 +752,7 @@
                                             Content="Sửa"
                                             Style="{StaticResource EditButtonStyle}" />
 
-                                        <!-- Nút xóa -->
+                                        <!--  Nút xóa  -->
                                         <Button
                                             Grid.Column="5"
                                             Command="{Binding DataContext.DeleteActivityCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
