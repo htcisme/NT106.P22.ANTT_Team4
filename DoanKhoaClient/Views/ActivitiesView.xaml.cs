@@ -127,5 +127,40 @@ namespace DoanKhoaClient.Views
                 }
             }
         }
+
+        private void sortByButton_Click(object sender, RoutedEventArgs e)
+        {
+            SortFilterPopup.IsOpen = true;
+        }
+
+        private void ApplySortButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                string sortType = ((ComboBoxItem)SortTypeComboBox.SelectedItem).Content.ToString();
+                if (int.TryParse(SortAmountTextBox.Text, out int amount))
+                {
+                    _viewModel.SortActivities(sortType, amount);
+                    sortByButton.Content = $"Sắp xếp: {amount} {sortType.ToLower()}";
+                }
+                else
+                {
+                    MessageBox.Show("Vui lòng nhập số lượng hợp lệ", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            SortFilterPopup.IsOpen = false;
+        }
+
+        private void ClearSortButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                // Load lại toàn bộ activities gốc từ database
+                _viewModel.LoadActivitiesAsync();
+                sortByButton.Content = "Sắp xếp theo:";
+            }
+            SortFilterPopup.IsOpen = false;
+        }
     }
 }

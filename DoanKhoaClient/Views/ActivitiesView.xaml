@@ -112,7 +112,6 @@
             <Border
                 Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
                 Background="#FFEDF9FF"
-                BorderBrush="#CCC"
                 BorderThickness="1"
                 CornerRadius="5">
                 <ListBox
@@ -123,10 +122,20 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock
+                            <Button
+                                Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Content="{Binding Title}"
                                 Padding="10"
-                                FontSize="15"
-                                Text="{Binding Title}" />
+                                FontSize="13"
+                                FontWeight="Bold"
+                                Foreground="#12305E"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Margin="0,4,0,4"
+                                HorizontalContentAlignment="Left"
+                                Height="44"
+                                MinWidth="220" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -546,10 +555,7 @@
                                 Background="#e6e6e6"
                                 CornerRadius="8">
                                 <Grid>
-                                    <Image
-                                        Opacity="{Binding Opacity}"
-                                        Source="{Binding ImgUrl}"
-                                        Stretch="UniformToFill">
+                                    <Image Source="{Binding ImgUrl}" Stretch="UniformToFill">
                                         <Image.RenderTransform>
                                             <TranslateTransform X="0" />
                                         </Image.RenderTransform>
@@ -563,7 +569,6 @@
                                 FontSize="17"
                                 FontWeight="Bold"
                                 Foreground="#FF12305E"
-                                Opacity="{Binding Opacity}"
                                 Text="{Binding Title}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap">
@@ -591,7 +596,7 @@
                                         <Storyboard>
                                             <DoubleAnimation
                                                 Storyboard.TargetProperty="Opacity"
-                                                To="0.3"
+                                                To="1"
                                                 Duration="0:0:0.4" />
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -720,52 +725,66 @@
             VerticalAlignment="Top"
             Orientation="Horizontal">
             <Button
-                Width="132"
-                Margin="0,0,25,0"
-                Padding="15,8"
-                Background="#FF12305E"
-                BorderThickness="0"
-                Content="90 ngày qua"
-                FontSize="18"
-                FontWeight="Bold"
-                Foreground="White"
-                Style="{StaticResource CustomButtonStyle}">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-            <Button
-                Width="235"
-                Height="40"
-                Padding="15,8"
-                Background="#FF12305E"
-                BorderThickness="0"
-                Content="Sắp xếp theo: Ngày"
-                FontSize="18"
-                FontWeight="Bold"
-                Foreground="White"
-                Style="{StaticResource CustomButtonStyle}">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                x:Name="sortByButton"
+                Width="248"
+                Height="50"
+                Click="sortByButton_Click"
+                Content="Sắp xếp theo"
+                Style="{StaticResource CustomButtonStyle}" />
         </StackPanel>
+        <Popup
+            x:Name="SortFilterPopup"
+            Placement="Bottom"
+            PlacementTarget="{Binding ElementName=sortByButton}"
+            StaysOpen="False">
+            <Border
+                Width="300"
+                Padding="16"
+                Background="#E6F0FA"
+                BorderBrush="#CCC"
+                BorderThickness="1"
+                CornerRadius="5">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Text="Sắp xếp theo thời gian" />
+
+                    <StackPanel
+                        Margin="0,8,0,8"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+                        <TextBox
+                            x:Name="SortAmountTextBox"
+                            Width="60"
+                            Margin="0,0,8,0"
+                            Text="1" />
+                        <ComboBox
+                            x:Name="SortTypeComboBox"
+                            Width="120"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="Ngày" />
+                            <ComboBoxItem Content="Tháng" />
+                            <ComboBoxItem Content="Năm" />
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Button
+                        x:Name="ApplySortButton"
+                        Margin="0,8,0,0"
+                        Click="ApplySortButton_Click"
+                        Content="Áp dụng" />
+                    <Button
+                        x:Name="ClearSortButton"
+                        Margin="0,8,0,0"
+                        Background="#FF597CA2"
+                        Click="ClearSortButton_Click"
+                        Content="Bỏ sắp xếp"
+                        Foreground="White" />
+                </StackPanel>
+            </Border>
+        </Popup>
         <Border
             Width="1028"
             Height="400"
@@ -782,7 +801,7 @@
             Padding="10,10,10,10"
             CornerRadius="10">
             <ScrollViewer Padding="15,25" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Activities}">
+                <ItemsControl ItemsSource="{Binding Activities, UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button

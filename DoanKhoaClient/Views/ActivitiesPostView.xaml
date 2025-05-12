@@ -46,16 +46,172 @@
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
-            x:Name="ActivitiesPost_tbSearch"
+            x:Name="Activities_tbSearch"
             Width="307"
             Height="50"
             Margin="370,41,0,0"
+            Padding="15,0,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            HorizontalContentAlignment="Left"
+            VerticalContentAlignment="Center"
             Background="#FFDBF3FF"
             BorderBrush="{x:Null}"
-            Text=""
-            TextWrapping="Wrap" />
+            FontSize="17"
+            KeyDown="Activities_tbSearch_KeyDown"
+            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+        <Popup
+            IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
+            Placement="Bottom"
+            PlacementTarget="{Binding ElementName=Activities_tbSearch}"
+            StaysOpen="False">
+            <Border
+                Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
+                Background="#FFEDF9FF"
+                BorderThickness="1"
+                CornerRadius="5">
+                <ListBox
+                    MaxHeight="200"
+                    Background="White"
+                    BorderThickness="0"
+                    ItemsSource="{Binding FilteredActivities}"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Height="44"
+                                MinWidth="220"
+                                Margin="0,4,0,4"
+                                Padding="10"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Content="{Binding Title}"
+                                FontSize="13"
+                                FontWeight="Bold"
+                                Foreground="#12305E" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+        </Popup>
+        <ToggleButton
+            x:Name="FilterDropdownButton"
+            Margin="687,41,706,932"
+            Background="#FFDBF3FF"
+            BorderBrush="{x:Null}"
+            Checked="FilterDropdownButton_Checked"
+            Unchecked="FilterDropdownButton_Unchecked">
+            <Image
+                Width="33"
+                Height="33"
+                OpacityMask="#FF597CA2"
+                Source="/Views/Images/filter.png" />
+        </ToggleButton>
+        <WrapPanel
+            Width="493"
+            Height="74"
+            Margin="743,46,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <!--  Tag filter đã chọn
+    <ItemsControl Margin="10,0,0,0" ItemsSource="{Binding SelectedFilterTags}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border
+                    Margin="0,0,8,8"
+                    Padding="6,2"
+                    Background="#FF12305E"
+                    CornerRadius="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,4,0"
+                            Foreground="White"
+                            Text="{Binding}" />
+                        <Button
+                            Width="16"
+                            Height="16"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding DataContext.RemoveFilterTagCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}"
+                            Content="✕"
+                            Foreground="White" />
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>-->
+
+            <!--  Nút mở dropdown  -->
+            <!--  Dropdown filter  -->
+            <Popup
+                IsOpen="{Binding IsFilterDropdownOpen, Mode=TwoWay}"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=FilterDropdownButton}"
+                StaysOpen="False">
+                <Popup.Resources>
+                    <Storyboard x:Key="PopupFadeIn">
+                        <DoubleAnimation
+                            Storyboard.TargetProperty="Opacity"
+                            From="0"
+                            To="1"
+                            Duration="0:0:0.2" />
+                    </Storyboard>
+                </Popup.Resources>
+                <Border
+                    Padding="16"
+                    Background="#E6F0FA"
+                    BorderBrush="#CCC"
+                    BorderThickness="1"
+                    Loaded="FilterPopupBorder_Loaded">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Text="Bộ lọc" />
+                        <TextBlock
+                            Margin="0,8,0,4"
+                            FontWeight="Bold"
+                            Text="Loại hoạt động" />
+                        <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Separator Margin="0,8" />
+                        <TextBlock
+                            Margin="0,8,0,4"
+                            FontWeight="Bold"
+                            Text="Trạng thái" />
+                        <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button
+                            Margin="0,12,0,0"
+                            Command="{Binding ApplyFilterCommand}"
+                            Content="Lọc" />
+                    </StackPanel>
+                </Border>
+            </Popup>
+
+        </WrapPanel>
         <Border
             x:Name="ActivitiesPost_Dashboard"
             Width="288"
