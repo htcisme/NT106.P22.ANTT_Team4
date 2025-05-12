@@ -33,6 +33,9 @@ namespace DoanKhoaClient.ViewModels
         private bool _isAttachmentsPanelOpen = false;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private ObservableCollection<User> _groupMembers = new ObservableCollection<User>();
+        private bool _isGroupDetailVisible = false;
+
         // Properties
         public string CurrentMessage
         {
@@ -138,6 +141,28 @@ namespace DoanKhoaClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
+
+        public ObservableCollection<User> GroupMembers
+        {
+            get => _groupMembers;
+            set
+            {
+                _groupMembers = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsGroupDetailVisible
+        {
+            get => _isGroupDetailVisible;
+            set
+            {
+                _isGroupDetailVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
         // Commands
         public ICommand SendMessageCommand { get; private set; }
         public ICommand NewConversationCommand { get; private set; }
@@ -146,11 +171,9 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveAttachmentCommand { get; private set; }
         public ICommand CreateGroupCommand { get; private set; }
         public ICommand ShowAttachmentsPanelCommand { get; private set; }
-<Label Content = "{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
-       Margin="0,10,10,0"
-       FontSize="10"
-       HorizontalAlignment="Right"
-       VerticalAlignment="Top"/>
+        public ICommand DeleteMessageCommand { get; private set; }
+        public ICommand ShowGroupDetailCommand { get; private set; } // Add this line
+        public ICommand RemoveUserFromGroupCommand { get; private set; } // Add this line
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
         public UserChatViewModel()
@@ -164,6 +187,9 @@ namespace DoanKhoaClient.ViewModels
             RemoveAttachmentCommand = new RelayCommand(RemoveAttachment);
             CreateGroupCommand = new RelayCommand(CreateGroup);
             ShowAttachmentsPanelCommand = new RelayCommand(_ => IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen);
+            DeleteMessageCommand = new RelayCommand(DeleteMessage);  // Thêm dòng này
+            ShowGroupDetailCommand = new RelayCommand(_ => ToggleGroupDetail());
+            RemoveUserFromGroupCommand = new RelayCommand(RemoveUserFromGroup);
 
             LoadRealData();
 
@@ -179,6 +205,70 @@ namespace DoanKhoaClient.ViewModels
                     .WithUrl("http://localhost:5299/chatHub")
                     .WithAutomaticReconnect()
                     .Build();
+                _hubConnection.On<string>("MessageDeleted", (messageId) =>
+                {
+                    try
+                    {
+                        Console.WriteLine($"Received MessageDeleted for ID: {messageId}");
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            var messageToRemove = Messages.FirstOrDefault(m => m.Id == messageId);
+                            if (messageToRemove != null)
+                            {
+                                Console.WriteLine("Removing message from UI");
+                                Messages.Remove(messageToRemove);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Message not found in Messages collection");
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error in MessageDeleted handler: {ex.Message}");
+                    }
+                });
+
+                // Thêm sự kiện xử lý khi user bị xóa khỏi nhóm
+                _hubConnection.On<string, Message>("UserRemovedFromGroup", (userId, systemMessage) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        // Nếu người dùng hiện tại bị xóa
+                        if (userId == CurrentUser.Id)
+                        {
+                            MessageBox.Show("Bạn đã bị xóa khỏi nhóm này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            // Xóa conversation hiện tại nếu cần
+                            var conversationToRemove = Conversations.FirstOrDefault(c => c.Id == systemMessage.ConversationId);
+                            if (conversationToRemove != null)
+                            {
+                                Conversations.Remove(conversationToRemove);
+                                SelectedConversation = null;
+                            }
+                        }
+                        else
+                        {
+                            // Hiển thị thông báo hệ thống trong chat
+                            if (systemMessage.ConversationId == _selectedConversation?.Id)
+                            {
+                                Messages.Add(systemMessage);
+                            }
+
+                            // Cập nhật danh sách thành viên
+                            if (IsGroupDetailVisible)
+                            {
+                                var memberToRemove = GroupMembers.FirstOrDefault(m => m.Id == userId);
+                                if (memberToRemove != null)
+                                {
+                                    GroupMembers.Remove(memberToRemove);
+                                }
+                            }
+                        }
+                    });
+                });
 
                 _hubConnection.On<Message>("ReceiveMessage", (message) =>
                 {
@@ -287,6 +377,52 @@ namespace DoanKhoaClient.ViewModels
 
             Users = new ObservableCollection<User>(users);
         }
+        private async void DeleteMessage(object parameter)
+        {
+            if (parameter is Message message)
+            {
+                MessageBox.Show($"Bạn có chắc muốn xóa tin nhắn này không?", "Xác nhận",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                // Kiểm tra quyền xóa (người gửi hoặc admin)
+                if (message.SenderId != CurrentUser.Id && CurrentUser.Role != UserRole.Admin)
+                {
+                    MessageBox.Show("Bạn không có quyền xóa tin nhắn này.", "Thông báo",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var result = MessageBox.Show("Bạn có chắc muốn xóa tin nhắn này?",
+                    "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+                        {
+                            Console.WriteLine($"Deleting message with ID: {message.Id}");
+                            await _hubConnection.InvokeAsync("DeleteMessage", message.Id);
+
+                            // Xóa tin nhắn khỏi UI ngay lập tức để phản hồi nhanh
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                Messages.Remove(message);
+                            });
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể kết nối với máy chủ", "Lỗi kết nối",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa tin nhắn: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
         private async Task LoadRealData()
         {
             try
@@ -351,6 +487,106 @@ namespace DoanKhoaClient.ViewModels
             {
                 // Xử lý lỗi
                 MessageBox.Show($"Lỗi khởi tạo: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Thêm phương thức mới
+        private void ToggleGroupDetail()
+        {
+            if (SelectedConversation != null && SelectedConversation.IsGroup)
+            {
+                IsGroupDetailVisible = !IsGroupDetailVisible;
+
+                if (IsGroupDetailVisible)
+                {
+                    LoadGroupMembers();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một cuộc trò chuyện nhóm.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private async void LoadGroupMembers()
+        {
+            if (SelectedConversation == null || !SelectedConversation.IsGroup) return;
+
+            try
+            {
+                // Xóa danh sách members hiện tại
+                GroupMembers.Clear();
+
+                // Lấy thông tin tất cả người dùng
+                var response = await _httpClient.GetAsync($"conversations/{SelectedConversation.Id}/members");
+                if (response.IsSuccessStatusCode)
+                {
+                    var members = await response.Content.ReadFromJsonAsync<List<User>>();
+                    if (members != null)
+                    {
+                        foreach (var member in members)
+                        {
+                            GroupMembers.Add(member);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải thành viên: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void RemoveUserFromGroup(object parameter)
+        {
+            if (parameter is User user && SelectedConversation != null && SelectedConversation.IsGroup)
+            {
+                // Kiểm tra quyền xóa thành viên
+                if (CurrentUser.Id != SelectedConversation.CreatorId && CurrentUser.Role != UserRole.Admin)
+                {
+                    MessageBox.Show("Bạn không có quyền xóa thành viên khỏi nhóm.", "Thông báo",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                if (user.Id == SelectedConversation.CreatorId)
+                {
+                    MessageBox.Show("Không thể xóa người tạo nhóm.", "Thông báo",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var result = MessageBox.Show($"Bạn có chắc muốn xóa {user.DisplayName} khỏi nhóm?",
+                    "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+                        {
+                            await _hubConnection.InvokeAsync("RemoveUserFromGroup",
+                                SelectedConversation.Id, user.Id);
+
+                            // Cập nhật UI
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                GroupMembers.Remove(user);
+
+                                // Hiển thị thông báo
+                                MessageBox.Show($"Đã xóa {user.DisplayName} khỏi nhóm.",
+                                    "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa người dùng khỏi nhóm: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
         private async void SelectFile(object parameter)

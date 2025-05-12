@@ -581,9 +581,75 @@
                                                    Margin="13,0,0,0"
                                                    FontSize="15"/>
                                         </StackPanel>
+
+                                        <Button Command="{Binding ShowGroupDetailCommand}"
+                                                HorizontalAlignment="Right"
+                                                Width="30"
+                                                Height="30"
+                                                Margin="0,0,15,0"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Visibility="{Binding SelectedConversation.IsGroup, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Image Source="/Views/Images/more_vert.png"
+                                                   Width="20"
+                                                   Height="20"/>
+                                        </Button>
                                     </Grid>
                                 </Border>
+                                <Border Grid.Row="1"
+                                        Width="200"
+                                        Background="#FFDAE9F6"
+                                        Margin="0,0,0,0"
+                                        CornerRadius="10"
+                                        HorizontalAlignment="Right"
+                                        Visibility="{Binding IsGroupDetailVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Panel.ZIndex="10">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
 
+                                        <TextBlock Grid.Row="0"
+                                                   Text="Thành viên nhóm"
+                                                   FontWeight="Bold"
+                                                   Margin="10,10,0,5"/>
+
+                                        <ListBox Grid.Row="1"
+                                                 ItemsSource="{Binding GroupMembers}"
+                                                 BorderThickness="0"
+                                                 Background="Transparent">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0"
+                                                                    Orientation="Horizontal">
+                                                            <Image Source="/Views/Images/account_circle.png"
+                                                                   Width="24"
+                                                                   Height="24"
+                                                                   Margin="0,0,5,0"/>
+                                                            <TextBlock Text="{Binding DisplayName}"
+                                                                       VerticalAlignment="Center"/>
+                                                        </StackPanel>
+
+                                                        <Button Grid.Column="1"
+                                                                Content="×"
+                                                                Padding="5,0"
+                                                                Margin="5,0,0,0"
+                                                                Command="{Binding RemoveUserFromGroupCommand,
+                                         RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                                CommandParameter="{Binding}"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Grid>
+                                </Border>
                                 <!-- Messages Area -->
                                 <ScrollViewer Grid.Row="1"
                                               x:Name="MessageScrollViewer"
@@ -652,6 +718,14 @@
                                                             MaxWidth="275"
                                                             HorizontalAlignment="Left"
                                                             Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                                        <Border.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="Xóa tin nhắn"
+                                                                          Command="{Binding DataContext.DeleteMessageCommand, 
+                   RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                                          CommandParameter="{Binding}"/>
+                                                            </ContextMenu>
+                                                        </Border.ContextMenu>
                                                         <StackPanel>
                                                             <!-- Nội dung text -->
                                                             <TextBlock Text="{Binding Content}"
@@ -726,6 +800,14 @@
                                                             MaxWidth="275"
                                                             HorizontalAlignment="Right"
                                                             Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                                        <Border.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="Xóa tin nhắn"
+                                                                          Command="{Binding DataContext.DeleteMessageCommand, 
+                   RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                                          CommandParameter="{Binding}"/>
+                                                            </ContextMenu>
+                                                        </Border.ContextMenu>
                                                         <StackPanel>
                                                             <!-- Nội dung text -->
                                                             <TextBlock Text="{Binding Content}"
@@ -847,7 +929,7 @@
                                                                         Content="×"
                                                                         Padding="3,0"
                                                                         Margin="5,0,0,0"
-                                                                        Command="{Binding DataContext.RemoveAttachmentCommand, 
+                                                                        Command="{Binding RemoveAttachmentCommand, 
                                                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                         CommandParameter="{Binding}"/>
                                                             </Grid>
