@@ -360,7 +360,7 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/ndx.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 1.0,
+                    Opacity = 0.8,
                     IsActive = false
                 },
                 new FeaturedActivity
@@ -369,7 +369,7 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/netsec.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 1.0,
+                    Opacity = 0.8,
                     IsActive = false
                 }
             };
@@ -409,49 +409,67 @@ namespace DoanKhoaClient.ViewModels
         {
             if (FeaturedActivities.Count < 3) return;
 
-            for (double o = 1.0; o >= 0; o -= 0.05)
+            // Store current state
+            var currentActiveIndex = FeaturedActivities.IndexOf(FeaturedActivities.FirstOrDefault(f => f.IsActive));
+            var nextActiveIndex = (currentActiveIndex + 1) % FeaturedActivities.Count;
+
+            // Prepare for transition
+            for (int i = 0; i < FeaturedActivities.Count; i++)
             {
-                foreach (var fa in FeaturedActivities)
-                    fa.Opacity = o;
-                await Task.Delay(9); // tổng ~180ms
+                if (i == currentActiveIndex)
+                {
+                    FeaturedActivities[i].IsActive = false;
+                }
+                else if (i == nextActiveIndex)
+                {
+                    FeaturedActivities[i].IsActive = true;
+                }
             }
-            foreach (var fa in FeaturedActivities)
-                fa.Opacity = 0;
 
-            // Đổi vị trí: xoay carousel
-            var first = FeaturedActivities[0];
-            FeaturedActivities.RemoveAt(0);
-            FeaturedActivities.Add(first);
-
-            // Xoay PaginationDots cùng chiều với ảnh
-            var firstDot = PaginationDots[0];
-            PaginationDots.RemoveAt(0);
-            PaginationDots.Add(firstDot);
-
-
-            for (double o = 0; o <= 1.0; o += 0.05)
-            {
-                foreach (var fa in FeaturedActivities)
-                    fa.Opacity = o;
-                await Task.Delay(9);
-            }
-            foreach (var fa in FeaturedActivities)
-                fa.Opacity = 1.0;
-
-
-            // Cập nhật dot và active state
+            // Update dots
             for (int i = 0; i < PaginationDots.Count; i++)
             {
-                PaginationDots[i].IsActive = (i == 0); // dot đầu tiên active
-                PaginationDots[i].Color = (i == 0)
+                PaginationDots[i].IsActive = (i == nextActiveIndex);
+                PaginationDots[i].Color = (i == nextActiveIndex)
                     ? new SolidColorBrush(Color.FromRgb(89, 124, 162))
                     : new SolidColorBrush(Color.FromRgb(219, 236, 247));
             }
 
-            // Cập nhật trạng thái hoạt động cho FeaturedActivities
+            // Smooth transition animation
+            for (double t = 0; t <= 1; t += 0.1)
+            {
+                // Calculate opacity for each item
+                for (int i = 0; i < FeaturedActivities.Count; i++)
+                {
+                    if (i == currentActiveIndex)
+                    {
+                        FeaturedActivities[i].Opacity = 1 - t;
+                    }
+                    else if (i == nextActiveIndex)
+                    {
+                        FeaturedActivities[i].Opacity = t;
+                    }
+                    else
+                    {
+                        FeaturedActivities[i].Opacity = 0.8; // Keep other items visible but slightly dimmed
+                    }
+                }
+                await Task.Delay(20);
+            }
+
+            // Ensure final state with clear images
             for (int i = 0; i < FeaturedActivities.Count; i++)
             {
-                FeaturedActivities[i].IsActive = (i == 0);
+                if (i == nextActiveIndex)
+                {
+                    FeaturedActivities[i].Opacity = 1.0;
+                    FeaturedActivities[i].IsActive = true;
+                }
+                else
+                {
+                    FeaturedActivities[i].Opacity = 0.8;
+                    FeaturedActivities[i].IsActive = false;
+                }
             }
         }
 
