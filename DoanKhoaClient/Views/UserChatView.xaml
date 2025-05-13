@@ -266,7 +266,7 @@
                             MouseDown="ChatMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
-                           Source="/Views/Images/chat_bubble.png"/>
+                           Source="/Views/Images/active-chat_bubble.png"/>
                     <Label Content="Chat"
                            Height="30"
                            Width="108"
@@ -327,7 +327,7 @@
                             MouseDown="TasksMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
-                           Source="/Views/Images/active-tasks.png"/>
+                           Source="/Views/Images/tasks.png"/>
                     <Label Content="Tasks"
                            Height="30"
                            Width="108"
