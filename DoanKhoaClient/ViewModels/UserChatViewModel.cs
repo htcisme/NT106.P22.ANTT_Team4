@@ -149,6 +149,14 @@ namespace DoanKhoaClient.ViewModels
 
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
+
+        // Navigation Commands
+        public ICommand NavigateToHomeCommand { get; private set; }
+        public ICommand NavigateToChatCommand { get; private set; }
+        public ICommand NavigateToActivitiesCommand { get; private set; }
+        public ICommand NavigateToMembersCommand { get; private set; }
+        public ICommand NavigateToTasksCommand { get; private set; }
+
         public UserChatViewModel()
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
@@ -160,6 +168,13 @@ namespace DoanKhoaClient.ViewModels
             RemoveAttachmentCommand = new RelayCommand(RemoveAttachment);
             CreateGroupCommand = new RelayCommand(CreateGroup);
             ShowAttachmentsPanelCommand = new RelayCommand(_ => IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen);
+
+            // Initialize Navigation Commands
+            NavigateToHomeCommand = new RelayCommand(NavigateToHome);
+            NavigateToChatCommand = new RelayCommand(NavigateToChat);
+            NavigateToActivitiesCommand = new RelayCommand(NavigateToActivities);
+            NavigateToMembersCommand = new RelayCommand(NavigateToMembers);
+            NavigateToTasksCommand = new RelayCommand(NavigateToTasks);
 
             LoadRealData();
 
@@ -937,6 +952,40 @@ namespace DoanKhoaClient.ViewModels
             {
                 CommandManager.InvalidateRequerySuggested();
             }
+        }
+
+        // Navigation Methods
+        private void NavigateToHome(object parameter)
+        {
+            var homeView = new HomePageView();
+            homeView.Show();
+            Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is UserChatView)?.Close();
+        }
+
+        private void NavigateToChat(object parameter)
+        {
+            // Already in chat view, do nothing
+        }
+
+        private void NavigateToActivities(object parameter)
+        {
+            var activitiesView = new ActivitiesView();
+            activitiesView.Show();
+            Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is UserChatView)?.Close();
+        }
+
+        private void NavigateToMembers(object parameter)
+        {
+            var membersView = new MembersView();
+            membersView.Show();
+            Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is UserChatView)?.Close();
+        }
+
+        private void NavigateToTasks(object parameter)
+        {
+            var tasksView = new TasksView();
+            tasksView.Show();
+            Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is UserChatView)?.Close();
         }
     }
 }

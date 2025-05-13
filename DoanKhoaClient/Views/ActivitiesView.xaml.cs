@@ -7,17 +7,31 @@ using DoanKhoaClient.Helpers;
 using DoanKhoaClient.ViewModels;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace DoanKhoaClient.Views
 {
-    public partial class ActivitiesView : Window
+    public partial class ActivitiesView : Window, INotifyPropertyChanged
     {
         private ActivitiesViewModel _viewModel;
+        private bool _isDarkMode;
+
+        public bool IsDarkMode
+        {
+            get => _isDarkMode;
+            set
+            {
+                _isDarkMode = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ActivitiesView()
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(Activities_Background);
+            IsDarkMode = ThemeManager.IsDarkMode;
             _viewModel = new ActivitiesViewModel();
             this.DataContext = _viewModel;
         }
@@ -25,6 +39,13 @@ namespace DoanKhoaClient.Views
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(Activities_Background);
+            IsDarkMode = ThemeManager.IsDarkMode;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
@@ -48,7 +69,7 @@ namespace DoanKhoaClient.Views
 
         private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
         {
-            var win = new HomePageView();
+            var win = new MembersView();
             win.Show();
             this.Close();
         }
@@ -122,8 +143,6 @@ namespace DoanKhoaClient.Views
                 if (viewModel != null)
                 {
                     viewModel.FilterActivities();
-
-
                 }
             }
         }
