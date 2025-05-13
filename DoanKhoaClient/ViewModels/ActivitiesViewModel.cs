@@ -13,19 +13,20 @@ using DoanKhoaClient.Views;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace DoanKhoaClient.ViewModels
 {
     public class ActivitiesViewModel : INotifyPropertyChanged
     {
         private readonly ActivityService _activityService;
-        private ObservableCollection<Activity> _activities;
-        private ObservableCollection<Activity> _latestActivities;
+        private ObservableCollection<DoanKhoaClient.Models.Activity> _activities;
+        private ObservableCollection<DoanKhoaClient.Models.Activity> _latestActivities;
         private ObservableCollection<FeaturedActivity> _featuredActivities;
         private ObservableCollection<PaginationDot> _paginationDots;
         private bool _isLoading;
         private string _errorMessage;
-        private Activity _selectedActivity;
+        private DoanKhoaClient.Models.Activity _selectedActivity;
         private DispatcherTimer _carouselTimer;
         private int _currentFeaturedIndex = 0;
         private string _searchText;
@@ -33,7 +34,7 @@ namespace DoanKhoaClient.ViewModels
         private ActivityStatus? _selectedStatus;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
-        private ObservableCollection<Activity> _filteredActivities = new ObservableCollection<Activity>();
+        private ObservableCollection<DoanKhoaClient.Models.Activity> _filteredActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
         private ObservableCollection<SearchField> _searchFields;
         private SearchField _selectedSearchField;
         private ObservableCollection<NullableTypeItem> _typeFilterOptions;
@@ -51,10 +52,10 @@ namespace DoanKhoaClient.ViewModels
 
 
     
-        public ObservableCollection<Activity> GetFilteredActivities(string keyword)
+        public ObservableCollection<DoanKhoaClient.Models.Activity> GetFilteredActivities(string keyword)
         {
             // Giả sử bạn có danh sách gốc là AllActivities
-            return new ObservableCollection<Activity>(
+            return new ObservableCollection<DoanKhoaClient.Models.Activity>(
                 Activities.Where(a => a.Title.Contains(keyword, StringComparison.OrdinalIgnoreCase))
             );
         }
@@ -68,13 +69,13 @@ namespace DoanKhoaClient.ViewModels
             set { _isSearchDropdownOpen = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Activity> Activities
+        public ObservableCollection<DoanKhoaClient.Models.Activity> Activities
         {
             get => _activities;
             set { _activities = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Activity> LatestActivities
+        public ObservableCollection<DoanKhoaClient.Models.Activity> LatestActivities
         {
             get => _latestActivities;
             set { _latestActivities = value; OnPropertyChanged(); }
@@ -92,7 +93,7 @@ namespace DoanKhoaClient.ViewModels
             set { _paginationDots = value; OnPropertyChanged(); }
         }
 
-        public Activity SelectedActivity
+        public DoanKhoaClient.Models.Activity SelectedActivity
         {
             get => _selectedActivity;
             set { _selectedActivity = value; OnPropertyChanged(); }
@@ -140,7 +141,7 @@ namespace DoanKhoaClient.ViewModels
             set { _dateTo = value; OnPropertyChanged(); FilterActivities(); }
         }
 
-        public ObservableCollection<Activity> FilteredActivities
+        public ObservableCollection<DoanKhoaClient.Models.Activity> FilteredActivities
         {
             get => _filteredActivities;
             set { _filteredActivities = value; OnPropertyChanged(); }
@@ -224,8 +225,8 @@ namespace DoanKhoaClient.ViewModels
         public ActivitiesViewModel(ActivityService activityService = null)
         {
             _activityService = activityService ?? new ActivityService();
-            Activities = new ObservableCollection<Activity>();
-            LatestActivities = new ObservableCollection<Activity>();
+            Activities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
+            LatestActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
             InitializeFeaturedActivities();
             InitializePaginationDots();
             InitializeCarouselTimer();
@@ -277,10 +278,10 @@ namespace DoanKhoaClient.ViewModels
             SelectedFilterTags = new ObservableCollection<string>();
 
             CreateActivityCommand = new RelayCommand(async _ => await ExecuteCreateActivityAsync(), _ => !IsLoading);
-            EditActivityCommand = new RelayCommand(async param => await ExecuteEditActivityAsync(param as Activity), param => !IsLoading && param is Activity);
-            DeleteActivityCommand = new RelayCommand(async param => await ExecuteDeleteActivityAsync(param as Activity), param => !IsLoading && param is Activity);
+            EditActivityCommand = new RelayCommand(async param => await ExecuteEditActivityAsync(param as DoanKhoaClient.Models.Activity), param => !IsLoading && param is DoanKhoaClient.Models.Activity);
+            DeleteActivityCommand = new RelayCommand(async param => await ExecuteDeleteActivityAsync(param as DoanKhoaClient.Models.Activity), param => !IsLoading && param is DoanKhoaClient.Models.Activity);
             RefreshCommand = new RelayCommand(async _ => await LoadActivitiesAsync(), _ => !IsLoading);
-            OpenActivityDetailCommand = new RelayCommand(param => ExecuteOpenActivityDetail(param as Activity), param => param is Activity);
+            OpenActivityDetailCommand = new RelayCommand(param => ExecuteOpenActivityDetail(param as DoanKhoaClient.Models.Activity), param => param is DoanKhoaClient.Models.Activity);
             ApplyFilterCommand = new RelayCommand(_ => ExecuteApplyFilter());
             RemoveFilterTagCommand = new RelayCommand(param => ExecuteRemoveFilterTag(param as string));
 
@@ -360,7 +361,7 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/ndx.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 0.8,
+                    Opacity = 1.0,
                     IsActive = false
                 },
                 new FeaturedActivity
@@ -369,7 +370,7 @@ namespace DoanKhoaClient.ViewModels
                     ImgUrl = "/Views/Images/netsec.png",
                     Width = 175,
                     Height = 175,
-                    Opacity = 0.8,
+                    Opacity = 1.0,
                     IsActive = false
                 }
             };
@@ -413,64 +414,30 @@ namespace DoanKhoaClient.ViewModels
             var currentActiveIndex = FeaturedActivities.IndexOf(FeaturedActivities.FirstOrDefault(f => f.IsActive));
             var nextActiveIndex = (currentActiveIndex + 1) % FeaturedActivities.Count;
 
-            // Prepare for transition
+            // Move the last item to the beginning
+            var lastItem = FeaturedActivities[FeaturedActivities.Count - 1];
+            FeaturedActivities.RemoveAt(FeaturedActivities.Count - 1);
+            FeaturedActivities.Insert(0, lastItem);
+
+            // Update active states
             for (int i = 0; i < FeaturedActivities.Count; i++)
             {
-                if (i == currentActiveIndex)
-                {
-                    FeaturedActivities[i].IsActive = false;
-                }
-                else if (i == nextActiveIndex)
-                {
-                    FeaturedActivities[i].IsActive = true;
-                }
+                FeaturedActivities[i].IsActive = (i == 0);
             }
 
             // Update dots
             for (int i = 0; i < PaginationDots.Count; i++)
             {
-                PaginationDots[i].IsActive = (i == nextActiveIndex);
-                PaginationDots[i].Color = (i == nextActiveIndex)
+                PaginationDots[i].IsActive = (i == 0);
+                PaginationDots[i].Color = (i == 0)
                     ? new SolidColorBrush(Color.FromRgb(89, 124, 162))
                     : new SolidColorBrush(Color.FromRgb(219, 236, 247));
             }
 
-            // Smooth transition animation
-            for (double t = 0; t <= 1; t += 0.1)
-            {
-                // Calculate opacity for each item
-                for (int i = 0; i < FeaturedActivities.Count; i++)
-                {
-                    if (i == currentActiveIndex)
-                    {
-                        FeaturedActivities[i].Opacity = 1 - t;
-                    }
-                    else if (i == nextActiveIndex)
-                    {
-                        FeaturedActivities[i].Opacity = t;
-                    }
-                    else
-                    {
-                        FeaturedActivities[i].Opacity = 0.8; // Keep other items visible but slightly dimmed
-                    }
-                }
-                await Task.Delay(20);
-            }
-
-            // Ensure final state with clear images
-            for (int i = 0; i < FeaturedActivities.Count; i++)
-            {
-                if (i == nextActiveIndex)
-                {
-                    FeaturedActivities[i].Opacity = 1.0;
-                    FeaturedActivities[i].IsActive = true;
-                }
-                else
-                {
-                    FeaturedActivities[i].Opacity = 0.8;
-                    FeaturedActivities[i].IsActive = false;
-                }
-            }
+            // Move the last dot to the beginning
+            var lastDot = PaginationDots[PaginationDots.Count - 1];
+            PaginationDots.RemoveAt(PaginationDots.Count - 1);
+            PaginationDots.Insert(0, lastDot);
         }
 
         public async Task LoadActivitiesAsync()
@@ -479,15 +446,36 @@ namespace DoanKhoaClient.ViewModels
             {
                 IsLoading = true;
                 ErrorMessage = null;
+                
+                // Load activities from database
                 var activities = await _activityService.GetActivitiesAsync();
+                if (activities == null || !activities.Any())
+                {
+                    ErrorMessage = "Không có hoạt động nào được tìm thấy.";
+                    return;
+                }
+
+                // Sort activities by date descending
                 var sorted = activities.OrderByDescending(a => a.Date).ToList();
-                Activities = new ObservableCollection<Activity>(sorted);
-                LatestActivities = new ObservableCollection<Activity>(sorted.Take(3));
+                
+                // Update collections
+                Activities = new ObservableCollection<DoanKhoaClient.Models.Activity>(sorted);
+                LatestActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>(sorted.Take(3));
+                
+                // Apply any existing filters
                 FilterActivities();
+                
+                // Log for debugging
+                Debug.WriteLine($"Loaded {Activities.Count} activities");
+                foreach (var activity in Activities)
+                {
+                    Debug.WriteLine($"Activity: {activity.Title}, Date: {activity.Date}");
+                }
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"Không thể tải danh sách hoạt động: {ex.Message}";
+                Debug.WriteLine($"Error loading activities: {ex}");
             }
             finally
             {
@@ -501,14 +489,14 @@ namespace DoanKhoaClient.ViewModels
             MessageBox.Show("Tính năng tạo mới hoạt động chưa được cài đặt.");
         }
 
-        private async Task ExecuteEditActivityAsync(Activity activity)
+        private async Task ExecuteEditActivityAsync(DoanKhoaClient.Models.Activity activity)
         {
             if (activity == null) return;
             // TODO: Hiển thị dialog sửa, lấy dữ liệu và gọi API
             MessageBox.Show("Tính năng sửa hoạt động chưa được cài đặt.");
         }
 
-        private async Task ExecuteDeleteActivityAsync(Activity activity)
+        private async Task ExecuteDeleteActivityAsync(DoanKhoaClient.Models.Activity activity)
         {
             if (activity == null) return;
             if (MessageBox.Show("Bạn có chắc muốn xoá hoạt động này?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -519,7 +507,7 @@ namespace DoanKhoaClient.ViewModels
                     await _activityService.DeleteActivityAsync(activity.Id);
                     Activities.Remove(activity);
                     // Cập nhật lại LatestActivities khi xóa
-                    LatestActivities = new ObservableCollection<Activity>(Activities.Take(3));
+                    LatestActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>(Activities.Take(3));
                 }
                 catch (Exception ex)
                 {
@@ -532,7 +520,7 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        private void ExecuteOpenActivityDetail(Activity activity)
+        private void ExecuteOpenActivityDetail(DoanKhoaClient.Models.Activity activity)
         {
             if (activity == null) return;
             var postView = new ActivitiesPostView(activity);
@@ -613,8 +601,37 @@ namespace DoanKhoaClient.ViewModels
                 filtered = filtered.Where(a => a.Date <= DateTo.Value);
             }
 
-            FilteredActivities = new ObservableCollection<Activity>(filtered);
+            FilteredActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>(filtered);
             IsSearchResultOpen = !string.IsNullOrWhiteSpace(SearchText) && FilteredActivities.Any();
+        }
+
+        public void SortActivities(string sortType, int amount)
+        {
+            if (Activities == null) return;
+
+            var sorted = Activities.ToList();
+
+            switch (sortType)
+            {
+                case "Ngày":
+                    sorted = sorted.Where(a => a.Date >= DateTime.Now.AddDays(-amount))
+                                 .OrderByDescending(a => a.Date)
+                                 .ToList();
+                    break;
+                case "Tháng":
+                    sorted = sorted.Where(a => a.Date >= DateTime.Now.AddMonths(-amount))
+                                 .OrderByDescending(a => a.Date)
+                                 .ToList();
+                    break;
+                case "Năm":
+                    sorted = sorted.Where(a => a.Date >= DateTime.Now.AddYears(-amount))
+                                 .OrderByDescending(a => a.Date)
+                                 .ToList();
+                    break;
+            }
+
+            Activities = new ObservableCollection<DoanKhoaClient.Models.Activity>(sorted);
+            // LatestActivities KHÔNG thay đổi, luôn lấy 3 hoạt động mới nhất theo ngày
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
