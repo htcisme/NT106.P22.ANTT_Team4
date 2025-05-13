@@ -7,103 +7,169 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Light_HomePageView"
     Title="HomePageView"
-    Width="1440"
-    Height="1036"
+    MinWidth="1024"
+    MinHeight="768"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
     mc:Ignorable="d">
-    <Grid
-        x:Name="HomePage_Background"
-        Width="1440"
-        Height="1022.8">
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
-            </LinearGradientBrush>
-        </Grid.Background>
-        <TextBox
-            x:Name="HomePage_tbSearch"
-            Width="307"
-            Height="50"
-            Margin="370,41,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            Text=""
-            TextWrapping="Wrap" />
-        <TextBox
-            x:Name="Activities_tbSearch"
-            Width="307"
-            Height="50"
-            Margin="370,41,0,0"
-            Padding="15,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Left"
-            VerticalContentAlignment="Center"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            FontSize="17"
-            KeyDown="Activities_tbSearch_KeyDown"
-            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-        <Popup
-            IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
-            Placement="Bottom"
-            PlacementTarget="{Binding ElementName=Activities_tbSearch}"
-            StaysOpen="False">
-            <Border
-                Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
-                Background="#FFEDF9FF"
-                BorderThickness="1"
-                CornerRadius="5">
-                <ListBox
-                    MaxHeight="200"
-                    Background="White"
-                    BorderThickness="0"
-                    ItemsSource="{Binding FilteredActivities}"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Height="44"
-                                MinWidth="220"
-                                Margin="0,4,0,4"
-                                Padding="10"
-                                HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding}"
-                                Content="{Binding Title}"
-                                FontSize="13"
-                                FontWeight="Bold"
-                                Foreground="#12305E" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Border>
-        </Popup>
-        <ToggleButton
-            x:Name="FilterDropdownButton"
-            Margin="687,41,706,932"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            Checked="FilterDropdownButton_Checked"
-            Unchecked="FilterDropdownButton_Unchecked">
-            <Image
-                Width="33"
-                Height="33"
-                OpacityMask="#FF597CA2"
-                Source="/Views/Images/filter.png" />
-        </ToggleButton>
-        <WrapPanel
-            Width="493"
-            Height="74"
-            Margin="743,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Orientation="Horizontal">
-            <!--  Tag filter đã chọn
+    <!-- Thêm animations vào Window.Resources -->
+    <Window.Resources>
+        <!-- Animations -->
+        <Storyboard x:Key="PageLoadStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:1.0"/>
+        </Storyboard>
+
+        <Storyboard x:Key="BorderFadeInStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.7">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                From="30"
+                To="0"
+                Duration="0:0:0.7">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SidebarItemHoverStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                To="1.05"
+                Duration="0:0:0.2"/>
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                To="1.05"
+                Duration="0:0:0.2"/>
+        </Storyboard>
+
+        <Storyboard x:Key="SidebarItemLeaveStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                To="1.0"
+                Duration="0:0:0.2"/>
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                To="1.0"
+                Duration="0:0:0.2"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid x:Name="HomePage_Background"
+              Width="1440"
+              Height="1022.8"
+              Opacity="0">
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="Grid.Loaded">
+                    <BeginStoryboard Storyboard="{StaticResource PageLoadStoryboard}"/>
+                </EventTrigger>
+            </Grid.Triggers>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0.5,0"
+                                     EndPoint="0.5,1">
+                    <GradientStop Offset="0.596"
+                                  Color="#FFF6FCFF"/>
+                    <GradientStop Offset="1"
+                                  Color="#FFDBF3FF"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <TextBox
+                x:Name="HomePage_tbSearch"
+                Width="307"
+                Height="50"
+                Margin="370,41,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#FFDBF3FF"
+                BorderBrush="{x:Null}"
+                Text=""
+                TextWrapping="Wrap"/>
+            <TextBox
+                x:Name="Activities_tbSearch"
+                Width="307"
+                Height="50"
+                Margin="370,41,0,0"
+                Padding="15,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Background="#FFDBF3FF"
+                BorderBrush="{x:Null}"
+                FontSize="17"
+                KeyDown="Activities_tbSearch_KeyDown"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <Popup
+                IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=Activities_tbSearch}"
+                StaysOpen="False">
+                <Border
+                    Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
+                    Background="#FFEDF9FF"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <ListBox
+                        MaxHeight="200"
+                        Background="White"
+                        BorderThickness="0"
+                        ItemsSource="{Binding FilteredActivities}"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Height="44"
+                                    MinWidth="220"
+                                    Margin="0,4,0,4"
+                                    Padding="10"
+                                    HorizontalContentAlignment="Left"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding Title}"
+                                    FontSize="13"
+                                    FontWeight="Bold"
+                                    Foreground="#12305E"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Popup>
+            <ToggleButton
+                x:Name="FilterDropdownButton"
+                Margin="687,41,706,932"
+                Background="#FFDBF3FF"
+                BorderBrush="{x:Null}"
+                Checked="FilterDropdownButton_Checked"
+                Unchecked="FilterDropdownButton_Unchecked">
+                <Image
+                    Width="33"
+                    Height="33"
+                    OpacityMask="#FF597CA2"
+                    Source="/Views/Images/filter.png"/>
+            </ToggleButton>
+            <WrapPanel
+                Width="493"
+                Height="74"
+                Margin="743,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <!--  Tag filter đã chọn
 <ItemsControl Margin="10,0,0,0" ItemsSource="{Binding SelectedFilterTags}">
     <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -138,304 +204,397 @@
     </ItemsControl.ItemTemplate>
 </ItemsControl>-->
 
-            <!--  Nút mở dropdown  -->
-            <!--  Dropdown filter  -->
-            <Popup
-                IsOpen="{Binding IsFilterDropdownOpen, Mode=TwoWay}"
-                Placement="Bottom"
-                PlacementTarget="{Binding ElementName=FilterDropdownButton}"
-                StaysOpen="False">
-                <Popup.Resources>
-                    <Storyboard x:Key="PopupFadeIn">
-                        <DoubleAnimation
-                            Storyboard.TargetProperty="Opacity"
-                            From="0"
-                            To="1"
-                            Duration="0:0:0.2" />
-                    </Storyboard>
-                </Popup.Resources>
-                <Border
-                    Padding="16"
-                    Background="#E6F0FA"
-                    BorderBrush="#CCC"
-                    BorderThickness="1"
-                    Loaded="FilterPopupBorder_Loaded">
-                    <StackPanel>
-                        <TextBlock
-                            Margin="0,0,0,8"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Text="Bộ lọc" />
-                        <TextBlock
-                            Margin="0,8,0,4"
-                            FontWeight="Bold"
-                            Text="Loại hoạt động" />
-                        <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <Separator Margin="0,8" />
-                        <TextBlock
-                            Margin="0,8,0,4"
-                            FontWeight="Bold"
-                            Text="Trạng thái" />
-                        <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <Button
-                            Margin="0,12,0,0"
-                            Command="{Binding ApplyFilterCommand}"
-                            Content="Lọc" />
-                    </StackPanel>
-                </Border>
-            </Popup>
+                <!--  Nút mở dropdown  -->
+                <!--  Dropdown filter  -->
+                <Popup
+                    IsOpen="{Binding IsFilterDropdownOpen, Mode=TwoWay}"
+                    Placement="Bottom"
+                    PlacementTarget="{Binding ElementName=FilterDropdownButton}"
+                    StaysOpen="False">
+                    <Popup.Resources>
+                        <Storyboard x:Key="PopupFadeIn">
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Opacity"
+                                From="0"
+                                To="1"
+                                Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </Popup.Resources>
+                    <Border
+                        Padding="16"
+                        Background="#E6F0FA"
+                        BorderBrush="#CCC"
+                        BorderThickness="1"
+                        Loaded="FilterPopupBorder_Loaded">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Text="Bộ lọc"/>
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontWeight="Bold"
+                                Text="Loại hoạt động"/>
+                            <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Display}"
+                                                  IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Separator Margin="0,8"/>
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontWeight="Bold"
+                                Text="Trạng thái"/>
+                            <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Display}"
+                                                  IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button
+                                Margin="0,12,0,0"
+                                Command="{Binding ApplyFilterCommand}"
+                                Content="Lọc"/>
+                        </StackPanel>
+                    </Border>
+                </Popup>
 
-        </WrapPanel>
-        <Border
-            x:Name="HomePage_Dashboard"
-            Width="288"
-            Height="942"
-            Margin="43,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                    <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                    <GradientStop Offset="0.937" Color="#FF87ACCD" />
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
-        <Border
-            Grid.ColumnSpan="2"
-            Width="1028"
-            Height="222"
-            Margin="370,120,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FFD9D9D9"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10" />
-        <Border
-            Grid.ColumnSpan="2"
-            Width="691"
-            Height="611"
-            Margin="370,372,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FFD9D9D9"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10" />
-        <Border
-            Grid.Column="1"
-            Width="299"
-            Height="611"
-            Margin="1099,372,44,0"
-            VerticalAlignment="Top"
-            Background="#FFD9D9D9"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10" />
-        <Image
-            x:Name="HomePage_iUsers"
-            Grid.Column="1"
-            Width="40"
-            Height="40"
-            Margin="1358,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/generic avatar.png" />
-        <Image
-            x:Name="HomePage_iNotifications"
-            Width="40"
-            Height="40"
-            Margin="1297,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/light-notifications.png" />
-        <Image
-            x:Name="ThemeToggleButton"
-            Width="40"
-            Height="40"
-            Margin="1236,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            MouseDown="ThemeToggleButton_MouseDown"
-            Source="/Views/Images/dark.png" />
-        <Image
-            x:Name="HomePage_iSearch"
-            Width="40"
-            Height="40"
-            Margin="628,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/search.png" />
-        <Image
-            x:Name="HomePage_iLogo"
-            Width="112.38"
-            Height="40"
-            Margin="131,71,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/header.png" />
-        <Label
-            x:Name="HomePage_lbFaculty"
-            Width="686.59"
-            Height="38"
-            Margin="557,199,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Content="TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN - ĐHQG-HCM"
-            FontSize="22.5"
-            Foreground="#042354" />
-        <Label
-            x:Name="HomePage_lbYouthUnion"
-            Width="677.26"
-            Height="38"
-            Margin="561.67,225,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            Content="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG"
-            FontSize="24"
-            FontWeight="Bold"
-            Foreground="#042354" />
-        <Image
-            x:Name="HomePage_iHome"
-            Width="30"
-            Height="30"
-            Margin="102,203,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/active-home.png" />
-        <Image
-            x:Name="HomePage_iChat"
-            Width="30"
-            Height="30"
-            Margin="102,279,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/chat_bubble.png" />
-        <Image
-            x:Name="HomePage_iActivities"
-            Width="30"
-            Height="30"
-            Margin="102,354,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/activities.png" />
-        <Image
-            x:Name="HomePage_Task_iMembers"
-            Width="30"
-            Height="30"
-            Margin="102,432,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/members.png" />
-        <Image
-            x:Name="HomePage_iTasks"
-            Width="30"
-            Height="30"
-            Margin="102,510,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/tasks.png" />
-        <Label
-            x:Name="HomePage_lbHome"
-            Width="108"
-            Height="30"
-            Margin="165,203,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Home"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Foreground="#597CA2" />
-        <Label
-            x:Name="HomePage_lbChat"
-            Width="108"
-            Height="30"
-            Margin="165,279,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Chat"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbActivities"
-            Width="108"
-            Height="30"
-            Margin="165,354,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Activities"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbMembers"
-            Width="108"
-            Height="30"
-            Margin="165,432,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Members"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold" />
-        <Label
-            x:Name="HomePage_lbTasks"
-            Width="108"
-            Height="30"
-            Margin="165,510,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Tasks"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            RenderTransformOrigin="0.527,3.278" />
-        <Image
-            x:Name="HomePage_iFacebook"
-            Width="24"
-            Height="24"
-            Margin="175,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/facebook.png" />
-        <Image
-            x:Name="HomePage_iInstagram"
-            Width="24"
-            Height="24"
-            Margin="135,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/instagram.png" />
-        <Image
-            x:Name="HomePage_iYoutube"
-            Width="24"
-            Height="24"
-            Margin="215,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/youtube.png" />
+            </WrapPanel>
+            <Border
+                x:Name="HomePage_Dashboard"
+                Width="288"
+                Height="942"
+                Margin="43,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                BorderBrush="Black"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0"
+                                         EndPoint="0.5,1">
+                        <GradientStop Offset="0.04"
+                                      Color="#FFF6FCFF"/>
+                        <GradientStop Offset="0.46"
+                                      Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0.937"
+                                      Color="#FF87ACCD"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <Border Grid.ColumnSpan="2"
+                    Width="1028"
+                    Height="222"
+                    Margin="370,120,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="#FFD9D9D9"
+                    BorderBrush="Black"
+                    CornerRadius="10,10,10,10"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform Y="30"/>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Border.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0"
+                                    To="1"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2"/>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                    From="30"
+                                    To="0"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuadraticEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+            <Border
+                Grid.ColumnSpan="2"
+                Width="691"
+                Height="611"
+                Margin="370,372,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#FFD9D9D9"
+                BorderBrush="Black"
+                CornerRadius="10,10,10,10"
+                Opacity="0"
+                RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform Y="30"/>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Border.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0"
+                                    To="1"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2"/>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                    From="30"
+                                    To="0"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuadraticEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+            <Border
+                Grid.Column="1"
+                Width="299"
+                Height="611"
+                Margin="1099,372,44,0"
+                VerticalAlignment="Top"
+                Background="#FFD9D9D9"
+                BorderBrush="Black"
+                CornerRadius="10,10,10,10"
+                Opacity="0"
+                RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform Y="30"/>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Border.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0"
+                                    To="1"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2"/>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                    From="30"
+                                    To="0"
+                                    Duration="0:0:0.7"
+                                    BeginTime="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuadraticEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+            <Image
+                x:Name="HomePage_iUsers"
+                Grid.Column="1"
+                Width="40"
+                Height="40"
+                Margin="1358,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/generic avatar.png"/>
+            <Image
+                x:Name="HomePage_iNotifications"
+                Width="40"
+                Height="40"
+                Margin="1297,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/light-notifications.png"/>
+            <Image
+                x:Name="ThemeToggleButton"
+                Width="40"
+                Height="40"
+                Margin="1236,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                MouseDown="ThemeToggleButton_MouseDown"
+                Source="/Views/Images/dark.png"/>
+            <Image
+                x:Name="HomePage_iSearch"
+                Width="40"
+                Height="40"
+                Margin="628,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/search.png"/>
+            <Image
+                x:Name="HomePage_iLogo"
+                Width="112.38"
+                Height="40"
+                Margin="131,71,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/header.png"/>
+            <Label
+                x:Name="HomePage_lbFaculty"
+                Width="686.59"
+                Height="38"
+                Margin="557,199,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN - ĐHQG-HCM"
+                FontSize="22.5"
+                Foreground="#042354"/>
+            <Label
+                x:Name="HomePage_lbYouthUnion"
+                Width="677.26"
+                Height="38"
+                Margin="561.67,225,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                Content="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG"
+                FontSize="24"
+                FontWeight="Bold"
+                Foreground="#042354"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,203,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="HomeMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/active-home.png"/>
+                <Label Content="Home"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"
+                       Foreground="#597CA2"/>
+            </StackPanel>
 
-    </Grid>
+            <!-- Chat Menu Item (đã được chọn) -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,279,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="ChatMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/chat_bubble.png"/>
+                <Label Content="Chat"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+
+            <!-- Activities Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,354,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="ActivitiesMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/activities.png"/>
+                <Label Content="Activities"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+
+            <!-- Members Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,432,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="MembersMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/members.png"/>
+                <Label Content="Members"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+
+            <!-- Tasks Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,510,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="TasksMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/tasks.png"/>
+                <Label Content="Tasks"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+            <Image
+                x:Name="HomePage_iFacebook"
+                Width="24"
+                Height="24"
+                Margin="175,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/facebook.png"/>
+            <Image
+                x:Name="HomePage_iInstagram"
+                Width="24"
+                Height="24"
+                Margin="135,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/instagram.png"/>
+            <Image
+                x:Name="HomePage_iYoutube"
+                Width="24"
+                Height="24"
+                Margin="215,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/youtube.png"/>
+
+        </Grid>
+    </Viewbox>
 </Window>

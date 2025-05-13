@@ -236,11 +236,14 @@
                     </Grid>
                 </Border>
 
+
+                <!-- Members Menu Item -->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
                             Margin="102,203,0,0"
                             VerticalAlignment="Top"
-                            Style="{StaticResource MenuItemStyle}">
+                            Style="{StaticResource MenuItemStyle}"
+                            MouseDown="HomeMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
                            Source="/Views/Images/home.png"/>
@@ -254,15 +257,16 @@
                            Padding="0,0,0,0"/>
                 </StackPanel>
 
-                <!-- Chat Menu Item -->
+                <!-- Chat Menu Item (đã được chọn) -->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
                             Margin="102,279,0,0"
                             VerticalAlignment="Top"
-                            Style="{StaticResource MenuItemStyle}">
+                            Style="{StaticResource MenuItemStyle}"
+                            MouseDown="ChatMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
-                           Source="/Views/Images/chat_bubble.png"/>
+                           Source="/Views/Images/active-chat_bubble.png"/>
                     <Label Content="Chat"
                            Height="30"
                            Width="108"
@@ -279,7 +283,8 @@
                             HorizontalAlignment="Left"
                             Margin="102,354,0,0"
                             VerticalAlignment="Top"
-                            Style="{StaticResource MenuItemStyle}">
+                            Style="{StaticResource MenuItemStyle}"
+                            MouseDown="ActivitiesMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
                            Source="/Views/Images/activities.png"/>
@@ -298,7 +303,8 @@
                             HorizontalAlignment="Left"
                             Margin="102,432,0,0"
                             VerticalAlignment="Top"
-                            Style="{StaticResource MenuItemStyle}">
+                            Style="{StaticResource MenuItemStyle}"
+                            MouseDown="MembersMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
                            Source="/Views/Images/members.png"/>
@@ -317,10 +323,11 @@
                             HorizontalAlignment="Left"
                             Margin="102,510,0,0"
                             VerticalAlignment="Top"
-                            Style="{StaticResource MenuItemStyle}">
+                            Style="{StaticResource MenuItemStyle}"
+                            MouseDown="TasksMenuItem_MouseDown">
                     <Image Height="30"
                            Width="30"
-                           Source="/Views/Images/active-tasks.png"/>
+                           Source="/Views/Images/tasks.png"/>
                     <Label Content="Tasks"
                            Height="30"
                            Width="108"

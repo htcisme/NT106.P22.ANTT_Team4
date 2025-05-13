@@ -11,7 +11,8 @@
     Width="1440"
     Height="1024"
     mc:Ignorable="d">
-    <Grid>
+        <Viewbox Stretch="Uniform">
+    <Grid x:Name="Members_Background">
         <Border x:Name="LightHomePage_Dashboard"
             BorderBrush="Black"
             HorizontalAlignment="Left"
@@ -39,98 +40,106 @@
             VerticalAlignment="Top"
             Width="112.38"
             Source="/Views/Images/header.png"/>
-        <Image x:Name="LightHomePage_iHome"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="102,203,0,0"
-            VerticalAlignment="Top"
-            Width="30"
-            Source="/Views/Images/active-home.png"/>
-        <Image x:Name="LightHomePage_iChat"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="102,279,0,0"
-            VerticalAlignment="Top"
-            Width="30"
-            Source="/Views/Images/chat_bubble.png"/>
-        <Image x:Name="LightHomePage_iActivities"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="102,354,0,0"
-            VerticalAlignment="Top"
-            Width="30"
-            Source="/Views/Images/activities.png"/>
-        <Image x:Name="LightHomePage_Task_iMembers"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="102,432,0,0"
-            VerticalAlignment="Top"
-            Width="30"
-            Source="/Views/Images/members.png"/>
-        <Image x:Name="LightHomePage_iTasks"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="102,510,0,0"
-            VerticalAlignment="Top"
-            Width="30"
-            Source="/Views/Images/tasks.png"/>
-        <Label x:Name="LightHomePage_lbHome"
-            Content="Home"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="165,203,0,0"
-            VerticalAlignment="Top"
-            Width="108"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Padding="0,0,0,0"
-            Foreground="#597CA2"/>
-        <Label x:Name="LightHomePage_lbChat"
-            Content="Chat"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="165,279,0,0"
-            VerticalAlignment="Top"
-            Width="108"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Padding="0,0,0,0"/>
-        <Label x:Name="LightHomePage_lbActivities"
-            Content="Activities"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="165,354,0,0"
-            VerticalAlignment="Top"
-            Width="108"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Padding="0,0,0,0"/>
-        <Label x:Name="LightHomePage_lbMembers"
-            Content="Members"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="165,432,0,0"
-            VerticalAlignment="Top"
-            Width="108"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Padding="0,0,0,0"/>
-        <Label x:Name="LightHomePage_lbTasks"
-            Content="Tasks"
-            HorizontalAlignment="Left"
-            Height="30"
-            Margin="165,510,0,0"
-            VerticalAlignment="Top"
-            Width="108"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Padding="0,0,0,0"
-            RenderTransformOrigin="0.527,3.278"/>
+        <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,203,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="HomeMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/home.png"/>
+                <Label Content="Home"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+
+            <!-- Chat Menu Item (đã được chọn) -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,279,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="ChatMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/chat_bubble.png"/>
+                <Label Content="Chat"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"
+                       />
+            </StackPanel>
+
+            <!-- Activities Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,354,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="ActivitiesMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/activities.png"/>
+                <Label Content="Activities"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
+
+            <!-- Members Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,432,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="MembersMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/active-members.png"/>
+                <Label Content="Members"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"
+                       Foreground="#597CA2"/>
+            </StackPanel>
+
+            <!-- Tasks Menu Item -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="102,510,0,0"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource MenuItemStyle}"
+                        MouseDown="TasksMenuItem_MouseDown">
+                <Image Height="30"
+                       Width="30"
+                       Source="/Views/Images/tasks.png"/>
+                <Label Content="Tasks"
+                       Height="30"
+                       Width="108"
+                       FontFamily="Segoe UI"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="33,0,0,0"
+                       Padding="0,0,0,0"/>
+            </StackPanel>
         <Image x:Name="LightHomePage_iFacebook"
             HorizontalAlignment="Left"
             Height="24"
@@ -260,4 +269,5 @@
         </Border>
 
     </Grid>
+        </Viewbox>
 </Window>
