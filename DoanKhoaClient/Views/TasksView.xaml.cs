@@ -16,6 +16,10 @@ namespace DoanKhoaClient.Views
         {
             ThemeManager.ToggleTheme(Task_Background);
         }
+
+
+
+
     }
 }
 

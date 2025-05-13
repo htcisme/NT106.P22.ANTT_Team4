@@ -15,9 +15,12 @@
         Width="1440"
         Height="1022.8">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                    EndPoint="0.5,1">
+                <GradientStop Offset="0.596"
+                        Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                        Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
@@ -30,174 +33,9 @@
             Background="#FFDBF3FF"
             BorderBrush="{x:Null}"
             Text=""
-            TextWrapping="Wrap" />
-        <TextBox
-            x:Name="Activities_tbSearch"
-            Width="307"
-            Height="50"
-            Margin="370,41,0,0"
-            Padding="15,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Left"
-            VerticalContentAlignment="Center"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            FontSize="17"
-            KeyDown="Activities_tbSearch_KeyDown"
-            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-        <Popup
-            IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
-            Placement="Bottom"
-            PlacementTarget="{Binding ElementName=Activities_tbSearch}"
-            StaysOpen="False">
-            <Border
-                Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
-                Background="#FFEDF9FF"
-                BorderThickness="1"
-                CornerRadius="5">
-                <ListBox
-                    MaxHeight="200"
-                    Background="White"
-                    BorderThickness="0"
-                    ItemsSource="{Binding FilteredActivities}"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Height="44"
-                                MinWidth="220"
-                                Margin="0,4,0,4"
-                                Padding="10"
-                                HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding}"
-                                Content="{Binding Title}"
-                                FontSize="13"
-                                FontWeight="Bold"
-                                Foreground="#12305E" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Border>
-        </Popup>
-        <ToggleButton
-            x:Name="FilterDropdownButton"
-            Margin="687,41,706,932"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            Checked="FilterDropdownButton_Checked"
-            Unchecked="FilterDropdownButton_Unchecked">
-            <Image
-                Width="33"
-                Height="33"
-                OpacityMask="#FF597CA2"
-                Source="/Views/Images/filter.png" />
-        </ToggleButton>
-        <WrapPanel
-            Width="493"
-            Height="74"
-            Margin="743,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Orientation="Horizontal">
-            <!--  Tag filter đã chọn
-<ItemsControl Margin="10,0,0,0" ItemsSource="{Binding SelectedFilterTags}">
-    <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-            <WrapPanel Orientation="Horizontal" />
-        </ItemsPanelTemplate>
-    </ItemsControl.ItemsPanel>
-    <ItemsControl.ItemTemplate>
-        <DataTemplate>
-            <Border
-                Margin="0,0,8,8"
-                Padding="6,2"
-                Background="#FF12305E"
-                CornerRadius="5">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,4,0"
-                        Foreground="White"
-                        Text="{Binding}" />
-                    <Button
-                        Width="16"
-                        Height="16"
-                        Padding="0"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Command="{Binding DataContext.RemoveFilterTagCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                        CommandParameter="{Binding}"
-                        Content="✕"
-                        Foreground="White" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-    </ItemsControl.ItemTemplate>
-</ItemsControl>-->
+            TextWrapping="Wrap"/>
+        
 
-            <!--  Nút mở dropdown  -->
-            <!--  Dropdown filter  -->
-            <Popup
-                IsOpen="{Binding IsFilterDropdownOpen, Mode=TwoWay}"
-                Placement="Bottom"
-                PlacementTarget="{Binding ElementName=FilterDropdownButton}"
-                StaysOpen="False">
-                <Popup.Resources>
-                    <Storyboard x:Key="PopupFadeIn">
-                        <DoubleAnimation
-                            Storyboard.TargetProperty="Opacity"
-                            From="0"
-                            To="1"
-                            Duration="0:0:0.2" />
-                    </Storyboard>
-                </Popup.Resources>
-                <Border
-                    Padding="16"
-                    Background="#E6F0FA"
-                    BorderBrush="#CCC"
-                    BorderThickness="1"
-                    Loaded="FilterPopupBorder_Loaded">
-                    <StackPanel>
-                        <TextBlock
-                            Margin="0,0,0,8"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Text="Bộ lọc" />
-                        <TextBlock
-                            Margin="0,8,0,4"
-                            FontWeight="Bold"
-                            Text="Loại hoạt động" />
-                        <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <Separator Margin="0,8" />
-                        <TextBlock
-                            Margin="0,8,0,4"
-                            FontWeight="Bold"
-                            Text="Trạng thái" />
-                        <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <Button
-                            Margin="0,12,0,0"
-                            Command="{Binding ApplyFilterCommand}"
-                            Content="Lọc" />
-                    </StackPanel>
-                </Border>
-            </Popup>
-
-        </WrapPanel>
         <Border
             x:Name="Task_Dashboard"
             Width="288"
@@ -208,10 +46,14 @@
             BorderBrush="Black"
             CornerRadius="10,10,10,10">
             <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                    <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                    <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                <LinearGradientBrush StartPoint="0.5,0"
+                        EndPoint="0.5,1">
+                    <GradientStop Offset="0.04"
+                            Color="#FFF6FCFF"/>
+                    <GradientStop Offset="0.46"
+                            Color="#FFDBF3FF"/>
+                    <GradientStop Offset="0.937"
+                            Color="#FF87ACCD"/>
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
@@ -223,7 +65,7 @@
             Margin="1358,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/generic avatar.png" />
+            Source="/Views/Images/generic avatar.png"/>
         <Image
             x:Name="Task_iNotifications"
             Width="40"
@@ -231,7 +73,7 @@
             Margin="1297,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/light-notifications.png" />
+            Source="/Views/Images/light-notifications.png"/>
         <Image
             x:Name="ThemeToggleButton"
             Width="40"
@@ -240,7 +82,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             MouseDown="ThemeToggleButton_MouseDown"
-            Source="/Views/Images/dark.png" />
+            Source="/Views/Images/dark.png"/>
         <Image
             x:Name="Task_iSearch"
             Width="40"
@@ -248,7 +90,7 @@
             Margin="628,46,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/search.png" />
+            Source="/Views/Images/search.png"/>
         <Image
             x:Name="Task_iLogo"
             Width="112.38"
@@ -256,7 +98,7 @@
             Margin="131,71,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/header.png" />
+            Source="/Views/Images/header.png"/>
         <Image
             x:Name="Task_iHome"
             Width="30"
@@ -264,7 +106,7 @@
             Margin="102,203,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/home.png" />
+            Source="/Views/Images/home.png"/>
         <Image
             x:Name="Task_iChat"
             Width="30"
@@ -272,7 +114,7 @@
             Margin="102,279,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/chat_bubble.png" />
+            Source="/Views/Images/chat_bubble.png"/>
         <Image
             x:Name="Task_iActivities"
             Width="30"
@@ -280,7 +122,7 @@
             Margin="102,354,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/activities.png" />
+            Source="/Views/Images/activities.png"/>
         <Image
             x:Name="Task_iMembers"
             Width="30"
@@ -288,7 +130,7 @@
             Margin="102,432,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/members.png" />
+            Source="/Views/Images/members.png"/>
         <Image
             x:Name="Task_iTasks"
             Width="30"
@@ -296,7 +138,7 @@
             Margin="102,510,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/active-tasks.png" />
+            Source="/Views/Images/active-tasks.png"/>
         <Label
             x:Name="Task_lbHome"
             Width="108"
@@ -308,7 +150,7 @@
             Content="Home"
             FontFamily="Segoe UI"
             FontSize="20"
-            FontWeight="Bold" />
+            FontWeight="Bold"/>
         <Label
             x:Name="Task_lbChat"
             Width="108"
@@ -320,7 +162,7 @@
             Content="Chat"
             FontFamily="Segoe UI"
             FontSize="20"
-            FontWeight="Bold" />
+            FontWeight="Bold"/>
         <Label
             x:Name="Task_lbActivities"
             Width="108"
@@ -332,7 +174,7 @@
             Content="Activities"
             FontFamily="Segoe UI"
             FontSize="20"
-            FontWeight="Bold" />
+            FontWeight="Bold"/>
         <Label
             x:Name="Task_lbMembers"
             Width="108"
@@ -344,7 +186,7 @@
             Content="Members"
             FontFamily="Segoe UI"
             FontSize="20"
-            FontWeight="Bold" />
+            FontWeight="Bold"/>
         <Label
             x:Name="Task_lbTasks"
             Width="108"
@@ -358,7 +200,7 @@
             FontSize="20"
             FontWeight="Bold"
             Foreground="#597CA2"
-            RenderTransformOrigin="0.527,3.278" />
+            RenderTransformOrigin="0.527,3.278"/>
         <Image
             x:Name="Task_iFacebook"
             Width="24"
@@ -366,7 +208,7 @@
             Margin="175,926,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/facebook.png" />
+            Source="/Views/Images/facebook.png"/>
         <Image
             x:Name="Task_iInstagram"
             Width="24"
@@ -374,7 +216,7 @@
             Margin="135,926,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/instagram.png" />
+            Source="/Views/Images/instagram.png"/>
         <Image
             x:Name="Task_iYoutube"
             Width="24"
@@ -382,7 +224,7 @@
             Margin="215,926,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Source="/Views/Images/youtube.png" />
+            Source="/Views/Images/youtube.png"/>
         <Label
             x:Name="Task_lbInformationTasks"
             Width="386"
@@ -395,7 +237,7 @@
             Content="THÔNG TIN CÔNG VIỆC"
             FontSize="32"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Rectangle
             Width="1020"
             Height="1"
@@ -406,10 +248,10 @@
             Stroke="Black">
             <Rectangle.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleY="-1" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
                 </TransformGroup>
             </Rectangle.RenderTransform>
         </Rectangle>
@@ -420,7 +262,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="#FFDBF3FF"
-            CornerRadius="10,10,10,10" />
+            CornerRadius="10,10,10,10"/>
         <Border
             Width="940"
             Height="108"
@@ -428,7 +270,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="#FFDBF3FF"
-            CornerRadius="10,10,10,10" />
+            CornerRadius="10,10,10,10"/>
         <Border
             Width="940"
             Height="108"
@@ -436,7 +278,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="#FFDBF3FF"
-            CornerRadius="10,10,10,10" />
+            CornerRadius="10,10,10,10"/>
         <Label
             x:Name="Task_lbDesignTeam"
             Width="134"
@@ -449,7 +291,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             Width="92"
             Height="30"
@@ -461,7 +303,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             x:Name="Task_lbManagerDesignTeam"
             Width="180"
@@ -473,7 +315,7 @@
             Content="Hoàng Bảo Phước"
             FontFamily="Segoe UI"
             FontSize="20"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             x:Name="Task_lbMediaEventTeam"
             Width="293"
@@ -486,7 +328,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             Width="92"
             Height="30"
@@ -498,7 +340,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             x:Name="Task_lbManagerMediaEventTeam"
             Width="239"
@@ -510,7 +352,7 @@
             Content="Huỳnh Ngọc Ngân Tuyền"
             FontFamily="Segoe UI"
             FontSize="20"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             x:Name="Task_lbStudyTeam"
             Width="293"
@@ -523,7 +365,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             Width="92"
             Height="30"
@@ -535,7 +377,7 @@
             FontFamily="Segoe UI"
             FontSize="20"
             FontWeight="Bold"
-            Foreground="#042354" />
+            Foreground="#042354"/>
         <Label
             x:Name="Task_lbManagerStudyTeam"
             Width="167"
@@ -547,6 +389,6 @@
             Content="Đỗ Quang Trung"
             FontFamily="Segoe UI"
             FontSize="20"
-            Foreground="#042354" />
+            Foreground="#042354"/>
     </Grid>
 </Window>
