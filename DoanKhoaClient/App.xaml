@@ -5,14 +5,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
     xmlns:local="clr-namespace:DoanKhoaClient"
-    StartupUri="Views/HomepageView.xaml">
+    StartupUri="Views/LoginView.xaml">
     <Application.Resources>
-        <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ResourceDictionary.MergedDictionaries>
                 <!--  Tham chiếu đến TaskViewResources.xaml  -->
-                <ResourceDictionary Source="/DoanKhoaClient;component/Resources/TaskViewResources.xaml" />
+                <ResourceDictionary Source="/DoanKhoaClient;component/Resources/TaskViewResources.xaml"/>
 
-                <ResourceDictionary Source="/Resources/EffectResources.xaml" />
+                <ResourceDictionary Source="/Resources/EffectResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <!--  Fade In Animation  -->
             <Storyboard x:Key="FadeInStoryboard">
@@ -20,7 +21,7 @@
                     Storyboard.TargetProperty="Opacity"
                     From="0"
                     To="1"
-                    Duration="0:0:0.3" />
+                    Duration="0:0:0.3"/>
             </Storyboard>
 
             <!--  Fade Out Animation  -->
@@ -29,7 +30,7 @@
                     Storyboard.TargetProperty="Opacity"
                     From="1"
                     To="0"
-                    Duration="0:0:0.3" />
+                    Duration="0:0:0.3"/>
             </Storyboard>
 
             <!--  Scale In Animation  -->
@@ -38,12 +39,12 @@
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                     From="0.95"
                     To="1"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
                 <DoubleAnimation
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                     From="0.95"
                     To="1"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
             </Storyboard>
 
             <!--  Button Hover Animation  -->
@@ -52,12 +53,12 @@
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                     From="1"
                     To="1.05"
-                    Duration="0:0:0.1" />
+                    Duration="0:0:0.1"/>
                 <DoubleAnimation
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                     From="1"
                     To="1.05"
-                    Duration="0:0:0.1" />
+                    Duration="0:0:0.1"/>
             </Storyboard>
 
             <!--  Button Hover Out Animation  -->
@@ -66,12 +67,12 @@
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                     From="1.05"
                     To="1"
-                    Duration="0:0:0.1" />
+                    Duration="0:0:0.1"/>
                 <DoubleAnimation
                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                     From="1.05"
                     To="1"
-                    Duration="0:0:0.1" />
+                    Duration="0:0:0.1"/>
             </Storyboard>
 
             <!--  Input Field Focus Animation  -->
@@ -79,11 +80,11 @@
                 <ColorAnimation
                     Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                     To="#597CA2"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
                 <ThicknessAnimation
                     Storyboard.TargetProperty="BorderThickness"
                     To="2"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
             </Storyboard>
 
             <!--  Input Field Unfocus Animation  -->
@@ -91,30 +92,42 @@
                 <ColorAnimation
                     Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                     To="#FFCBCDD2"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
                 <ThicknessAnimation
                     Storyboard.TargetProperty="BorderThickness"
                     To="1"
-                    Duration="0:0:0.2" />
+                    Duration="0:0:0.2"/>
             </Storyboard>
             <!--  Các tài nguyên hiện có  -->
             <FontFamily x:Key="MontserratFont">pack://application:,,,/static/#Montserrat</FontFamily>
 
             <!--  Light Theme  -->
-            <LinearGradientBrush x:Key="LightBackground" StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush x:Key="LightBackground"
+                                 StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.596"
+                              Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="LightTextColor" Color="#042354" />
-            <SolidColorBrush x:Key="LightAccentColor" Color="#597CA2" />
+            <SolidColorBrush x:Key="LightTextColor"
+                             Color="#042354"/>
+            <SolidColorBrush x:Key="LightAccentColor"
+                             Color="#597CA2"/>
 
             <!--  Dark Theme  -->
-            <LinearGradientBrush x:Key="DarkBackground" StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#042354" />
-                <GradientStop Offset="1" Color="#597CA2" />
+            <LinearGradientBrush x:Key="DarkBackground"
+                                 StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                              Color="#042354"/>
+                <GradientStop Offset="1"
+                              Color="#597CA2"/>
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="DarkTextColor" Color="#F6FCFF" />
-            <SolidColorBrush x:Key="DarkAccentColor" Color="#87ACCD" />
+            <SolidColorBrush x:Key="DarkTextColor"
+                             Color="#F6FCFF"/>
+            <SolidColorBrush x:Key="DarkAccentColor"
+                             Color="#87ACCD"/>
             <!--  Original design colors for light theme  -->
             <Color x:Key="BackgroundColor">#FFF6FCFF</Color>
             <Color x:Key="SecondaryBackgroundColor">#FFDBF3FF</Color>
@@ -127,49 +140,81 @@
             <Color x:Key="SystemMessageBackground">#FFE8E8E8</Color>
 
             <!--  Brushes created from colors  -->
-            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
-            <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="{StaticResource SecondaryBackgroundColor}" />
-            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
-            <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}" />
-            <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}" />
-            <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
-            <SolidColorBrush x:Key="ChatMessageBackgroundUserBrush" Color="{StaticResource ChatMessageBackgroundUser}" />
-            <SolidColorBrush x:Key="ChatMessageBackgroundOtherBrush" Color="{StaticResource ChatMessageBackgroundOther}" />
-            <SolidColorBrush x:Key="SystemMessageBackgroundBrush" Color="{StaticResource SystemMessageBackground}" />
+            <SolidColorBrush x:Key="BackgroundBrush"
+                             Color="{StaticResource BackgroundColor}"/>
+            <SolidColorBrush x:Key="SecondaryBackgroundBrush"
+                             Color="{StaticResource SecondaryBackgroundColor}"/>
+            <SolidColorBrush x:Key="AccentBrush"
+                             Color="{StaticResource AccentColor}"/>
+            <SolidColorBrush x:Key="TextBrush"
+                             Color="{StaticResource TextColor}"/>
+            <SolidColorBrush x:Key="SecondaryTextBrush"
+                             Color="{StaticResource SecondaryTextColor}"/>
+            <SolidColorBrush x:Key="BorderBrush"
+                             Color="{StaticResource BorderColor}"/>
+            <SolidColorBrush x:Key="ChatMessageBackgroundUserBrush"
+                             Color="{StaticResource ChatMessageBackgroundUser}"/>
+            <SolidColorBrush x:Key="ChatMessageBackgroundOtherBrush"
+                             Color="{StaticResource ChatMessageBackgroundOther}"/>
+            <SolidColorBrush x:Key="SystemMessageBackgroundBrush"
+                             Color="{StaticResource SystemMessageBackground}"/>
 
             <!--  Gradient Brushes  -->
-            <LinearGradientBrush x:Key="MainBackgroundGradient" StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="{StaticResource BackgroundColor}" />
-                <GradientStop Offset="1" Color="{StaticResource SecondaryBackgroundColor}" />
+            <LinearGradientBrush x:Key="MainBackgroundGradient"
+                                 StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                              Color="{StaticResource BackgroundColor}"/>
+                <GradientStop Offset="1"
+                              Color="{StaticResource SecondaryBackgroundColor}"/>
             </LinearGradientBrush>
 
-            <LinearGradientBrush x:Key="LeftDashboardGradient" StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                <GradientStop Offset="0.937" Color="#FF87ACCD" />
+            <LinearGradientBrush x:Key="LeftDashboardGradient"
+                                 StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.04"
+                              Color="#FFF6FCFF"/>
+                <GradientStop Offset="0.46"
+                              Color="#FFDBF3FF"/>
+                <GradientStop Offset="0.937"
+                              Color="#FF87ACCD"/>
             </LinearGradientBrush>
 
-            <LinearGradientBrush x:Key="ChatBoxContainerGradient" StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="1" Color="#FF87ACCD" />
-                <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                <GradientStop Offset="0.54" Color="#FFDBF3FF" />
-                <GradientStop Offset="0" Color="#FF87ACCD" />
+            <LinearGradientBrush x:Key="ChatBoxContainerGradient"
+                                 StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="1"
+                              Color="#FF87ACCD"/>
+                <GradientStop Offset="0.46"
+                              Color="#FFDBF3FF"/>
+                <GradientStop Offset="0.54"
+                              Color="#FFDBF3FF"/>
+                <GradientStop Offset="0"
+                              Color="#FF87ACCD"/>
             </LinearGradientBrush>
             <!--  Converters  -->
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <!--  Thêm converter với key là 'BoolToVisibility'  -->
-            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-            <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
-            <Style x:Key="AnimatedButton" TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="#FF042354" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="Cursor" Value="Hand" />
-                <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+            <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+            <Style x:Key="AnimatedButton"
+                   TargetType="{x:Type Button}">
+                <Setter Property="Background"
+                        Value="#FF042354"/>
+                <Setter Property="Foreground"
+                        Value="White"/>
+                <Setter Property="BorderThickness"
+                        Value="0"/>
+                <Setter Property="FontWeight"
+                        Value="Bold"/>
+                <Setter Property="Cursor"
+                        Value="Hand"/>
+                <Setter Property="RenderTransformOrigin"
+                        Value="0.5,0.5"/>
                 <Setter Property="RenderTransform">
                     <Setter.Value>
-                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <ScaleTransform ScaleX="1"
+                                        ScaleY="1"/>
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Template">
@@ -183,30 +228,31 @@
                                 <ContentPresenter
                                     Margin="{TemplateBinding Padding}"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
                                     <Trigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                                     To="1.03"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1.03"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <ColorAnimation
                                                     Storyboard.TargetName="ButtonBorder"
                                                     Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
                                                     To="#FF1A3C78"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <ColorAnimation
                                                     Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)"
                                                     To="#FFFFD700"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.EnterActions>
@@ -216,29 +262,33 @@
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                                     To="1"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                                     To="1"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <ColorAnimation
                                                     Storyboard.TargetName="ButtonBorder"
                                                     Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
                                                     To="#FF042354"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                                 <ColorAnimation
                                                     Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)"
                                                     To="White"
-                                                    Duration="0:0:0.15" />
+                                                    Duration="0:0:0.15"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.ExitActions>
                                 </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#FF0A1D4A" />
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter TargetName="ButtonBorder"
+                                            Property="Background"
+                                            Value="#FF0A1D4A"/>
                                     <Setter Property="RenderTransform">
                                         <Setter.Value>
-                                            <ScaleTransform ScaleX="0.98" ScaleY="0.98" />
+                                            <ScaleTransform ScaleX="0.98"
+                                                            ScaleY="0.98"/>
                                         </Setter.Value>
                                     </Setter>
                                 </Trigger>
@@ -246,6 +296,19 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <Style x:Key="MenuItemStyle"
+                   TargetType="StackPanel">
+                <Setter Property="Cursor"
+                        Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver"
+                             Value="True">
+                        <Setter Property="Background"
+                                Value="#1A12305E"/>
+                    </Trigger>
+                </Style.Triggers>
             </Style>
         </ResourceDictionary>
     </Application.Resources>
