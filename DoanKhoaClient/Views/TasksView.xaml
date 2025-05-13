@@ -78,10 +78,14 @@
     </Window.Resources>
 
     <Grid x:Name="Task_Background">
+
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.596"
+                              Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
         <Grid Width="1440" Height="1024">
@@ -542,4 +546,5 @@
                 Foreground="#042354" />
         </Grid>
     </Grid>
+        </Viewbox>
 </Window>

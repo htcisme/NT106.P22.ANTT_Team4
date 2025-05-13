@@ -169,6 +169,7 @@
                     VerticalAlignment="Top"
                     Orientation="Horizontal">
                     <!--  Tag filter đã chọn
+
 <ItemsControl Margin="10,0,0,0" ItemsSource="{Binding SelectedFilterTags}">
     <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -202,7 +203,6 @@
         </DataTemplate>
     </ItemsControl.ItemTemplate>
 </ItemsControl>-->
-
                     <!--  Nút mở dropdown  -->
                     <!--  Dropdown filter  -->
                     <Popup
@@ -577,4 +577,5 @@
             </Grid>
         </Grid>
     </Grid>
+
 </Window>

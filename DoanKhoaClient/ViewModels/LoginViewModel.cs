@@ -256,7 +256,7 @@ namespace DoanKhoaClient.ViewModels
                     else
                     {
                         // Mở trang thông thường cho người dùng
-                        var userDashboard = new UserChatView();
+                        var userDashboard = new HomePageView();
                         userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                         userDashboard.Show();
                     }

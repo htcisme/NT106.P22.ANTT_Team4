@@ -34,6 +34,14 @@ namespace DoanKhoaClient.Views
             IsDarkMode = ThemeManager.IsDarkMode;
             _viewModel = new ActivitiesViewModel();
             this.DataContext = _viewModel;
+
+                this.SizeChanged += (sender, e) =>
+    {
+        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+        {
+            this.WindowState = WindowState.Normal;
+        }
+    };
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -48,37 +56,32 @@ namespace DoanKhoaClient.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        private async void HomeMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var win = new HomePageView();
-            win.Show();
-            this.Close();
+            await NavigationHelper.NavigateToHome(this, Activities_Background);
         }
 
-        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        private async void ChatMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var win = new UserChatView();
-            win.Show();
-            this.Close();
+            await NavigationHelper.NavigateToChat(this, Activities_Background);
         }
 
-        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        private void ActivitiesMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Đang ở trang này, có thể không cần xử lý hoặc chỉ cần return
+            // Đã ở trang Activities, không cần điều hướng
         }
 
-        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        private async void MembersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var win = new MembersView();
             win.Show();
             this.Close();
+
         }
 
-        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        private async void TasksMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var win = new TasksView();
-            win.Show();
-            this.Close();
+            await NavigationHelper.NavigateToTasks(this, Activities_Background);
         }
 
         private void LightHomePage_iSearch_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

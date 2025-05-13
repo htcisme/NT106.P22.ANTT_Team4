@@ -31,12 +31,14 @@ namespace DoanKhoaClient.Views
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(HomePage_Background);
+
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(HomePage_Background);
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

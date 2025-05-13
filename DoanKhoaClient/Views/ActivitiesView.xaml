@@ -11,6 +11,7 @@
     MinWidth="1024"
     MinHeight="768"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
+
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -88,13 +89,16 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -105,19 +109,28 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#FFE2F5FF" />
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Foreground"
+                            Value="#FFE2F5FF"/>
                 </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#B3E0F7" />
+                <Trigger Property="IsPressed"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#B3E0F7"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="ActivityButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Style x:Key="ActivityButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="0"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -125,14 +138,21 @@
                             x:Name="border"
                             Background="{TemplateBinding Background}"
                             CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFC1D4DE" />
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFC1D4DE"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#E3F2FD" />
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#E3F2FD"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -218,6 +238,7 @@
                 FontSize="17"
                 KeyDown="Activities_tbSearch_KeyDown"
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
             <Popup
                 IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
                 Placement="Bottom"
@@ -266,6 +287,7 @@
                     Width="33"
                     Height="33"
                     OpacityMask="#FF597CA2"
+
                     Source="/Views/Images/filter.png" />
             </ToggleButton>
             <WrapPanel
@@ -287,6 +309,7 @@
                                 From="0"
                                 To="1"
                                 Duration="0:0:0.2" />
+
                         </Storyboard>
                     </Popup.Resources>
                     <Border
@@ -331,6 +354,7 @@
                         </StackPanel>
                     </Border>
                 </Popup>
+
             </WrapPanel>
             <Border
                 x:Name="Activities_Dashboard"
@@ -376,6 +400,7 @@
                 VerticalAlignment="Top"
                 MouseDown="ThemeToggleButton_MouseDown"
                 Source="/Views/Images/dark.png" />
+
             <Image
                 x:Name="LightHomePage_iSearch"
                 Width="40"
@@ -631,6 +656,7 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" />
+
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -668,6 +694,7 @@
                             </StackPanel>
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IsActive}" Value="True">
+
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
@@ -706,6 +733,7 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" />
+
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -791,7 +819,7 @@
                                             FontWeight="Bold"
                                             Foreground="#FF12305E"
                                             Text="{Binding Title}"
-                                            TextWrapping="Wrap" />
+                                            TextWrapping="Wrap"/>
                                         <TextBlock
                                             Margin="0,5,0,0"
                                             FontSize="13"
@@ -838,6 +866,7 @@
                             FontWeight="Bold"
                             Text="Sắp xếp theo thời gian" />
 
+
                         <StackPanel
                             Margin="0,8,0,8"
                             HorizontalAlignment="Left"
@@ -882,6 +911,7 @@
                 Background="#FFDBF3FF"
                 CornerRadius="10,10,10,10" />
             <Border
+
                 Width="1028"
                 Height="400"
                 Margin="370,372,0,40"
@@ -939,4 +969,5 @@
             </Border>
         </Grid>
     </Grid>
+
 </Window>
