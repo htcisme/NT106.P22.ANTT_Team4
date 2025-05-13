@@ -7,20 +7,33 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Light_TasksView"
     Title="TasksView"
-    Width="1440"
-    Height="1036"
+    MinWidth="1024"
+    MinHeight="768"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
     mc:Ignorable="d">
+        <Window.Resources>
+        <Style x:Key="MenuItemStyle" TargetType="StackPanel">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1A12305E"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+<Viewbox Stretch="Uniform">
     <Grid
         x:Name="Task_Background"
         Width="1440"
         Height="1022.8">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0"
-                    EndPoint="0.5,1">
+                                 EndPoint="0.5,1">
                 <GradientStop Offset="0.596"
-                        Color="#FFF6FCFF"/>
+                              Color="#FFF6FCFF"/>
                 <GradientStop Offset="1"
-                        Color="#FFDBF3FF"/>
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
         <TextBox
@@ -34,7 +47,7 @@
             BorderBrush="{x:Null}"
             Text=""
             TextWrapping="Wrap"/>
-        
+
 
         <Border
             x:Name="Task_Dashboard"
@@ -47,13 +60,13 @@
             CornerRadius="10,10,10,10">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0.5,0"
-                        EndPoint="0.5,1">
+                                     EndPoint="0.5,1">
                     <GradientStop Offset="0.04"
-                            Color="#FFF6FCFF"/>
+                                  Color="#FFF6FCFF"/>
                     <GradientStop Offset="0.46"
-                            Color="#FFDBF3FF"/>
+                                  Color="#FFDBF3FF"/>
                     <GradientStop Offset="0.937"
-                            Color="#FF87ACCD"/>
+                                  Color="#FF87ACCD"/>
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
@@ -99,108 +112,106 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Source="/Views/Images/header.png"/>
-        <Image
-            x:Name="Task_iHome"
-            Width="30"
-            Height="30"
-            Margin="102,203,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/home.png"/>
-        <Image
-            x:Name="Task_iChat"
-            Width="30"
-            Height="30"
-            Margin="102,279,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/chat_bubble.png"/>
-        <Image
-            x:Name="Task_iActivities"
-            Width="30"
-            Height="30"
-            Margin="102,354,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/activities.png"/>
-        <Image
-            x:Name="Task_iMembers"
-            Width="30"
-            Height="30"
-            Margin="102,432,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/members.png"/>
-        <Image
-            x:Name="Task_iTasks"
-            Width="30"
-            Height="30"
-            Margin="102,510,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/active-tasks.png"/>
-        <Label
-            x:Name="Task_lbHome"
-            Width="108"
-            Height="30"
-            Margin="165,203,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Home"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"/>
-        <Label
-            x:Name="Task_lbChat"
-            Width="108"
-            Height="30"
-            Margin="165,279,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Chat"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"/>
-        <Label
-            x:Name="Task_lbActivities"
-            Width="108"
-            Height="30"
-            Margin="165,354,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Activities"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"/>
-        <Label
-            x:Name="Task_lbMembers"
-            Width="108"
-            Height="30"
-            Margin="165,432,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Members"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"/>
-        <Label
-            x:Name="Task_lbTasks"
-            Width="108"
-            Height="30"
-            Margin="165,510,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Tasks"
-            FontFamily="Segoe UI"
-            FontSize="20"
-            FontWeight="Bold"
-            Foreground="#597CA2"
-            RenderTransformOrigin="0.527,3.278"/>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="102,203,0,0"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource MenuItemStyle}"
+                    MouseDown="HomeMenuItem_MouseDown">
+            <Image Height="30"
+                   Width="30"
+                   Source="/Views/Images/home.png"/>
+            <Label Content="Home"
+                   Height="30"
+                   Width="108"
+                   FontFamily="Segoe UI"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="33,0,0,0"
+                   Padding="0,0,0,0"/>
+        </StackPanel>
+
+        <!-- Chat Menu Item (đã được chọn) -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="102,279,0,0"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource MenuItemStyle}"
+                    MouseDown="ChatMenuItem_MouseDown">
+            <Image Height="30"
+                   Width="30"
+                   Source="/Views/Images/chat_bubble.png"/>
+            <Label Content="Chat"
+                   Height="30"
+                   Width="108"
+                   FontFamily="Segoe UI"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="33,0,0,0"
+                   Padding="0,0,0,0"
+                   />
+        </StackPanel>
+
+        <!-- Activities Menu Item -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="102,354,0,0"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource MenuItemStyle}"
+                    MouseDown="ActivitiesMenuItem_MouseDown">
+            <Image Height="30"
+                   Width="30"
+                   Source="/Views/Images/activities.png"/>
+            <Label Content="Activities"
+                   Height="30"
+                   Width="108"
+                   FontFamily="Segoe UI"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="33,0,0,0"
+                   Padding="0,0,0,0"/>
+        </StackPanel>
+
+        <!-- Members Menu Item -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="102,432,0,0"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource MenuItemStyle}"
+                    MouseDown="MembersMenuItem_MouseDown">
+            <Image Height="30"
+                   Width="30"
+                   Source="/Views/Images/members.png"/>
+            <Label Content="Members"
+                   Height="30"
+                   Width="108"
+                   FontFamily="Segoe UI"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="33,0,0,0"
+                   Padding="0,0,0,0"/>
+        </StackPanel>
+
+        <!-- Tasks Menu Item -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="102,510,0,0"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource MenuItemStyle}"
+                    MouseDown="TasksMenuItem_MouseDown">
+            <Image Height="30"
+                   Width="30"
+                   Source="/Views/Images/active-tasks.png"/>
+            <Label Content="Tasks"
+                   Height="30"
+                   Width="108"
+                   FontFamily="Segoe UI"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="33,0,0,0"
+                   Padding="0,0,0,0"
+                   Foreground="#597CA2"/>
+        </StackPanel>
         <Image
             x:Name="Task_iFacebook"
             Width="24"
@@ -391,4 +402,5 @@
             FontSize="20"
             Foreground="#042354"/>
     </Grid>
+        </Viewbox>
 </Window>

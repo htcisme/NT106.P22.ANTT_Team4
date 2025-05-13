@@ -24,11 +24,42 @@ namespace DoanKhoaClient.Views
             {
                 await _viewModel.LoadActivitiesAsync();
             };
+                this.SizeChanged += (sender, e) =>
+    {
+        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+        {
+            this.WindowState = WindowState.Normal;
+        }
+    };
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(HomePage_Background);
+        }
+        private void HomeMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Đã ở trang Home, không cần điều hướng
+        }
+
+        private async void ChatMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            await NavigationHelper.NavigateToChat(this, HomePage_Background);
+        }
+
+        private async void ActivitiesMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            await NavigationHelper.NavigateToActivities(this, HomePage_Background);
+        }
+
+        private async void MembersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            await NavigationHelper.NavigateToMembers(this, HomePage_Background);
+        }
+
+        private async void TasksMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            await NavigationHelper.NavigateToTasks(this, HomePage_Background);
         }
         private void FilterDropdownButton_Checked(object sender, RoutedEventArgs e)
         {
