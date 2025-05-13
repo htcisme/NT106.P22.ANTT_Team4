@@ -7,6 +7,9 @@ using DoanKhoaClient.Helpers;
 using DoanKhoaClient.ViewModels;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Net.WebSockets;
 
 
 namespace DoanKhoaClient.Views
@@ -14,52 +17,64 @@ namespace DoanKhoaClient.Views
     public partial class HomePageView : Window
     {
         private ActivitiesViewModel _viewModel;
+        private bool _isDarkMode;
+        public bool IsDarkMode
+        {
+            get => _isDarkMode;
+            set
+            {
+                _isDarkMode = value;
+                OnPropertyChanged();
+            }
+        }
         public HomePageView()
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(HomePage_Background);
-            _viewModel = new ActivitiesViewModel();
-            this.DataContext = _viewModel;
-            this.Loaded += async (s, e) =>
-            {
-                await _viewModel.LoadActivitiesAsync();
-            };
-                this.SizeChanged += (sender, e) =>
-    {
-        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-        {
-            this.WindowState = WindowState.Normal;
-        }
-    };
+
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(HomePage_Background);
         }
-        private void HomeMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            // Đã ở trang Home, không cần điều hướng
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
-        private async void ChatMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
         {
-            await NavigationHelper.NavigateToChat(this, HomePage_Background);
+            var win = new UserChatView();
+            win.Show();
+            this.Close();
         }
 
-        private async void ActivitiesMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
         {
-            await NavigationHelper.NavigateToActivities(this, HomePage_Background);
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
         }
 
-        private async void MembersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
         {
-            await NavigationHelper.NavigateToMembers(this, HomePage_Background);
+            var win = new MembersView();
+            win.Show();
+            this.Close();
         }
 
-        private async void TasksMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
         {
-            await NavigationHelper.NavigateToTasks(this, HomePage_Background);
+            var win = new TasksView();
+            win.Show();
+            this.Close();
         }
         private void FilterDropdownButton_Checked(object sender, RoutedEventArgs e)
         {

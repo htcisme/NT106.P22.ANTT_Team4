@@ -56,7 +56,7 @@ namespace DoanKhoaClient.Views
 
         private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
         {
-            var win = new HomePageView();
+            var win = new MembersView();
             win.Show();
             this.Close();
         }
