@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using DoanKhoaClient.Helpers;
 
 namespace DoanKhoaClient.Views
@@ -9,56 +10,19 @@ namespace DoanKhoaClient.Views
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(Task_Background);
-                this.SizeChanged += (sender, e) =>
+            this.SizeChanged += (sender, e) =>
+{
+    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
     {
-        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-        {
-            this.WindowState = WindowState.Normal;
-        }
-    };
+        this.WindowState = WindowState.Normal;
+    }
+};
         }
 
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(Task_Background);
         }
-        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new HomePageView();
-            win.Show();
-            this.Close();
-        }
-
-        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new UserChatView();
-            win.Show();
-            this.Close();
-        }
-
-        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new ActivitiesView();
-            win.Show();
-            this.Close();
-        }
-
-        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new HomePageView();
-            win.Show();
-            this.Close();
-        }
-
-        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new TasksView();
-            win.Show();
-            this.Close();
-        }
-    }
-}
-
 
         private async void HomeMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
