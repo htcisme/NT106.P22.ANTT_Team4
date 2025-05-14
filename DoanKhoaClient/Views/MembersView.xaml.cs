@@ -32,13 +32,13 @@ namespace DoanKhoaClient.Views
             InitializeComponent();
             ThemeManager.ApplyTheme(Members_Background);
 
-                this.SizeChanged += (sender, e) =>
+            this.SizeChanged += (sender, e) =>
+{
+    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
     {
-        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-        {
-            this.WindowState = WindowState.Normal;
-        }
-    };
+        this.WindowState = WindowState.Normal;
+    }
+};
         }
 
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
@@ -103,11 +103,7 @@ namespace DoanKhoaClient.Views
             win.Show();
             this.Close();
         }
-        private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            ThemeManager.ToggleTheme(Members_Background);
-            IsDarkMode = ThemeManager.IsDarkMode;
-        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

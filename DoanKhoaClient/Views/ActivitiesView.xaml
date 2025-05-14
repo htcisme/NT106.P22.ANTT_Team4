@@ -11,32 +11,39 @@
     MinWidth="1024"
     MinHeight="768"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
 
     <Window.Resources>
-        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
+        <Style x:Key="NavigationButtonStyle"
+                TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter />
+                        <ContentPresenter/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Style x:Key="MenuItemStyle"
+                TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1" ScaleY="1" />
-                        <TranslateTransform />
+                        <ScaleTransform ScaleX="1"
+                                ScaleY="1"/>
+                        <TranslateTransform/>
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -47,15 +54,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -65,27 +72,34 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="CustomButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FF12305E" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Padding" Value="15,8" />
-            <Setter Property="BorderThickness" Value="0" />
+        <Style x:Key="CustomButtonStyle"
+                TargetType="Button">
+            <Setter Property="Background"
+                    Value="#FF12305E"/>
+            <Setter Property="Foreground"
+                    Value="White"/>
+            <Setter Property="FontSize"
+                    Value="18"/>
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+            <Setter Property="Padding"
+                    Value="15,8"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -99,13 +113,17 @@
             </Setter>
         </Style>
 
-        <Style x:Key="SidebarButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
+        <Style x:Key="SidebarButtonStyle"
+                TargetType="Button">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button" />
+                    <ControlTemplate TargetType="Button"/>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -159,29 +177,48 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ActivitiesTitleStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="30" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="#FF12305E" />
+        <Style x:Key="ActivitiesTitleStyle"
+                TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="30"/>
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+            <Setter Property="Foreground"
+                    Value="#FF12305E"/>
         </Style>
-        <Style x:Key="ActivitiesSubtitleStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Foreground" Value="#597CA2" />
+        <Style x:Key="ActivitiesSubtitleStyle"
+                TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="20"/>
+            <Setter Property="Foreground"
+                    Value="#597CA2"/>
         </Style>
-        <Style x:Key="ActivitiesContentStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#FF12305E" />
+        <Style x:Key="ActivitiesContentStyle"
+                TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#FF12305E"/>
         </Style>
-        <Style x:Key="ActivitiesDateStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#6c757d" />
+        <Style x:Key="ActivitiesDateStyle"
+                TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#6c757d"/>
         </Style>
-        <Style x:Key="SortButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FF12305E" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Padding" Value="15,8" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
+        <Style x:Key="SortButtonStyle"
+                TargetType="Button">
+            <Setter Property="Background"
+                    Value="#FF12305E"/>
+            <Setter Property="Foreground"
+                    Value="White"/>
+            <Setter Property="FontSize"
+                    Value="18"/>
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+            <Setter Property="Padding"
+                    Value="15,8"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -189,15 +226,22 @@
                             x:Name="border"
                             Background="{TemplateBinding Background}"
                             CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1A3C78" />
+                            <Trigger Property="IsMouseOver"
+                                    Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#1A3C78"/>
 
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0A1D4A" />
+                            <Trigger Property="IsPressed"
+                                    Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#0A1D4A"/>
 
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -205,11 +249,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="HighlightTitleDarkModeStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#FF12305E" />
+        <Style x:Key="HighlightTitleDarkModeStyle"
+                TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#FF12305E"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsDarkMode, ElementName=ActivitiesWindow}" Value="True">
-                    <Setter Property="Foreground" Value="Yellow" />
+                <DataTrigger Binding="{Binding IsDarkMode, ElementName=ActivitiesWindow}"
+                        Value="True">
+                    <Setter Property="Foreground"
+                            Value="Yellow"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -217,12 +265,16 @@
 
     <Grid x:Name="Activities_Background">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                    EndPoint="0.5,1">
+                <GradientStop Offset="0.596"
+                        Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                        Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Grid Width="1440" Height="1024">
+        <Grid Width="1440"
+                Height="1024">
             <TextBox
                 x:Name="Activities_tbSearch"
                 Width="307"
@@ -237,7 +289,7 @@
                 BorderBrush="{x:Null}"
                 FontSize="17"
                 KeyDown="Activities_tbSearch_KeyDown"
-                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Popup
                 IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
@@ -270,7 +322,7 @@
                                     Content="{Binding Title}"
                                     FontSize="13"
                                     FontWeight="Bold"
-                                    Foreground="#12305E" />
+                                    Foreground="#12305E"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -287,8 +339,7 @@
                     Width="33"
                     Height="33"
                     OpacityMask="#FF597CA2"
-
-                    Source="/Views/Images/filter.png" />
+                    Source="/Views/Images/filter.png"/>
             </ToggleButton>
             <WrapPanel
                 Width="493"
@@ -308,7 +359,7 @@
                                 Storyboard.TargetProperty="Opacity"
                                 From="0"
                                 To="1"
-                                Duration="0:0:0.2" />
+                                Duration="0:0:0.2"/>
 
                         </Storyboard>
                     </Popup.Resources>
@@ -323,34 +374,36 @@
                                 Margin="0,0,0,8"
                                 FontSize="16"
                                 FontWeight="Bold"
-                                Text="Bộ lọc" />
+                                Text="Bộ lọc"/>
                             <TextBlock
                                 Margin="0,8,0,4"
                                 FontWeight="Bold"
-                                Text="Loại hoạt động" />
+                                Text="Loại hoạt động"/>
                             <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                                        <CheckBox Content="{Binding Display}"
+                                                IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <Separator Margin="0,8" />
+                            <Separator Margin="0,8"/>
                             <TextBlock
                                 Margin="0,8,0,4"
                                 FontWeight="Bold"
-                                Text="Trạng thái" />
+                                Text="Trạng thái"/>
                             <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                                        <CheckBox Content="{Binding Display}"
+                                                IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                             <Button
                                 Margin="0,12,0,0"
                                 Command="{Binding ApplyFilterCommand}"
-                                Content="Lọc" />
+                                Content="Lọc"/>
                         </StackPanel>
                     </Border>
                 </Popup>
@@ -366,10 +419,14 @@
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    <LinearGradientBrush StartPoint="0.5,0"
+                            EndPoint="0.5,1">
+                        <GradientStop Offset="0.04"
+                                Color="#FFF6FCFF"/>
+                        <GradientStop Offset="0.46"
+                                Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0.937"
+                                Color="#FF87ACCD"/>
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -382,7 +439,7 @@
                 Margin="1358,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/generic avatar.png" />
+                Source="/Views/Images/generic avatar.png"/>
             <Image
                 x:Name="LightHomePage_iNotifications"
                 Width="40"
@@ -390,7 +447,7 @@
                 Margin="1297,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/light-notifications.png" />
+                Source="/Views/Images/light-notifications.png"/>
             <Image
                 x:Name="ThemeToggleButton"
                 Width="40"
@@ -399,7 +456,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 MouseDown="ThemeToggleButton_MouseDown"
-                Source="/Views/Images/dark.png" />
+                Source="/Views/Images/dark.png"/>
 
             <Image
                 x:Name="LightHomePage_iSearch"
@@ -409,7 +466,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 MouseDown="LightHomePage_iSearch_MouseDown"
-                Source="/Views/Images/search.png" />
+                Source="/Views/Images/search.png"/>
             <Image
                 x:Name="LightHomePage_iLogo"
                 Width="112.38"
@@ -417,7 +474,7 @@
                 Margin="131,71,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/header.png" />
+                Source="/Views/Images/header.png"/>
             <StackPanel>
                 <Button
                     x:Name="SidebarHomeButton"
@@ -431,14 +488,15 @@
                     Click="SidebarHomeButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
                         <Image
                             x:Name="HomePage_iHome"
                             Width="30"
                             Height="30"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Source="/Views/Images/home.png" />
+                            Source="/Views/Images/home.png"/>
                         <Label
                             x:Name="HomePage_lbHome"
                             Width="108"
@@ -450,7 +508,7 @@
                             Content="Home"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -466,14 +524,15 @@
                 Click="SidebarChatButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal"
+                        Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iChat"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/chat_bubble.png" />
+                        Source="/Views/Images/chat_bubble.png"/>
                     <Label
                         x:Name="HomePage_lbChat"
                         Width="108"
@@ -485,7 +544,7 @@
                         Content="Chat"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold" />
+                        FontWeight="Bold"/>
                 </StackPanel>
             </Button>
             <Button
@@ -500,14 +559,15 @@
                 Click="SidebarActivitiesButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal"
+                        Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Activities"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/active-activities.png" />
+                        Source="/Views/Images/active-activities.png"/>
                     <Label
                         x:Name="HomePage_lbActivities"
                         Width="108"
@@ -520,7 +580,7 @@
                         FontFamily="Segoe UI"
                         FontSize="20"
                         FontWeight="Bold"
-                        Foreground="#597CA2" />
+                        Foreground="#597CA2"/>
                 </StackPanel>
             </Button>
             <Button
@@ -535,14 +595,15 @@
                 Click="SidebarMembersButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal"
+                        Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Task_iMembers"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/members.png" />
+                        Source="/Views/Images/members.png"/>
                     <Label
                         x:Name="HomePage_lbMembers"
                         Width="108"
@@ -554,7 +615,7 @@
                         Content="Members"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold" />
+                        FontWeight="Bold"/>
                 </StackPanel>
             </Button>
             <Button
@@ -566,17 +627,18 @@
                 VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="SidebarTasksButton_Click"
+                MouseDown="SidebarTasksButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal"
+                        Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iTasks"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/tasks.png" />
+                        Source="/Views/Images/tasks.png"/>
                     <Label
                         x:Name="HomePage_lbTasks"
                         Width="108"
@@ -588,7 +650,7 @@
                         Content="Tasks"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold" />
+                        FontWeight="Bold"/>
                 </StackPanel>
             </Button>
             <Image
@@ -598,7 +660,7 @@
                 Margin="175,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/facebook.png" />
+                Source="/Views/Images/facebook.png"/>
             <Image
                 x:Name="LightHomePage_iInstagram"
                 Width="24"
@@ -606,7 +668,7 @@
                 Margin="135,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/instagram.png" />
+                Source="/Views/Images/instagram.png"/>
             <Image
                 x:Name="LightHomePage_iYoutube"
                 Width="24"
@@ -614,7 +676,7 @@
                 Margin="215,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/youtube.png" />
+                Source="/Views/Images/youtube.png"/>
 
             <StackPanel x:Name="Activities_hightlight">
                 <TextBlock
@@ -625,7 +687,7 @@
                     FontWeight="Bold"
                     Foreground="#FF12305E"
                     Style="{StaticResource HighlightTitleDarkModeStyle}"
-                    Text="CÁC HOẠT ĐỘNG NỔI BẬT" />
+                    Text="CÁC HOẠT ĐỘNG NỔI BẬT"/>
             </StackPanel>
 
             <TextBlock
@@ -637,10 +699,13 @@
                 Text="CỦA TUỔI TRẺ MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="#597CA2" />
+                        <Setter Property="Foreground"
+                                Value="#597CA2"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsDarkMode}" Value="True">
-                                <Setter Property="Foreground" Value="#B0B0B0" />
+                            <DataTrigger Binding="{Binding IsDarkMode}"
+                                    Value="True">
+                                <Setter Property="Foreground"
+                                        Value="#B0B0B0"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -652,16 +717,18 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
-                <ItemsControl x:Name="FeaturedActivitiesCarousel" ItemsSource="{Binding FeaturedActivities}">
+                <ItemsControl x:Name="FeaturedActivitiesCarousel"
+                        ItemsSource="{Binding FeaturedActivities}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <StackPanel Orientation="Horizontal"/>
 
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Width="190" Margin="0,0,20,0">
+                            <StackPanel Width="190"
+                                    Margin="0,0,20,0">
                                 <Border
                                     Width="{Binding Width}"
                                     Height="{Binding Height}"
@@ -669,9 +736,10 @@
                                     Background="#e6e6e6"
                                     CornerRadius="8">
                                     <Grid>
-                                        <Image Source="{Binding ImgUrl}" Stretch="UniformToFill">
+                                        <Image Source="{Binding ImgUrl}"
+                                                Stretch="UniformToFill">
                                             <Image.RenderTransform>
-                                                <TranslateTransform X="0" />
+                                                <TranslateTransform X="0"/>
                                             </Image.RenderTransform>
                                         </Image>
                                     </Grid>
@@ -688,12 +756,13 @@
                                     TextAlignment="Center"
                                     TextWrapping="Wrap">
                                     <TextBlock.RenderTransform>
-                                        <TranslateTransform X="0" />
+                                        <TranslateTransform X="0"/>
                                     </TextBlock.RenderTransform>
                                 </TextBlock>
                             </StackPanel>
                             <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                <DataTrigger Binding="{Binding IsActive}"
+                                        Value="True">
 
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
@@ -701,19 +770,20 @@
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="Opacity"
                                                     To="1"
-                                                    Duration="0:0:0.4" />
+                                                    Duration="0:0:0.4"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.EnterActions>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsActive}" Value="False">
+                                <DataTrigger Binding="{Binding IsActive}"
+                                        Value="False">
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
                                                 <DoubleAnimation
                                                     Storyboard.TargetProperty="Opacity"
                                                     To="1"
-                                                    Duration="0:0:0.4" />
+                                                    Duration="0:0:0.4"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.EnterActions>
@@ -732,7 +802,7 @@
                 <ItemsControl ItemsSource="{Binding PaginationDots}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <StackPanel Orientation="Horizontal"/>
 
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
@@ -744,11 +814,14 @@
                                 Margin="0,0,5,0"
                                 Fill="{Binding Color}">
                                 <Ellipse.RenderTransform>
-                                    <ScaleTransform x:Name="DotScale" ScaleX="1" ScaleY="1" />
+                                    <ScaleTransform x:Name="DotScale"
+                                            ScaleX="1"
+                                            ScaleY="1"/>
                                 </Ellipse.RenderTransform>
                             </Ellipse>
                             <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                <DataTrigger Binding="{Binding IsActive}"
+                                        Value="True">
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
@@ -756,12 +829,12 @@
                                                     Storyboard.TargetName="DotScale"
                                                     Storyboard.TargetProperty="ScaleX"
                                                     To="1.2"
-                                                    Duration="0:0:0.3" />
+                                                    Duration="0:0:0.3"/>
                                                 <DoubleAnimation
                                                     Storyboard.TargetName="DotScale"
                                                     Storyboard.TargetProperty="ScaleY"
                                                     To="1.2"
-                                                    Duration="0:0:0.3" />
+                                                    Duration="0:0:0.3"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.EnterActions>
@@ -772,12 +845,12 @@
                                                     Storyboard.TargetName="DotScale"
                                                     Storyboard.TargetProperty="ScaleX"
                                                     To="1"
-                                                    Duration="0:0:0.3" />
+                                                    Duration="0:0:0.3"/>
                                                 <DoubleAnimation
                                                     Storyboard.TargetName="DotScale"
                                                     Storyboard.TargetProperty="ScaleY"
                                                     To="1"
-                                                    Duration="0:0:0.3" />
+                                                    Duration="0:0:0.3"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </DataTrigger.ExitActions>
@@ -804,7 +877,7 @@
                         FontWeight="Bold"
                         Foreground="#FFFFFF"
                         Text="TIN TỨC MỚI NHẤT"
-                        TextAlignment="Center" />
+                        TextAlignment="Center"/>
 
                     <ItemsControl ItemsSource="{Binding LatestActivities}">
                         <ItemsControl.ItemTemplate>
@@ -825,7 +898,7 @@
                                             FontSize="13"
                                             Foreground="#6c757d"
                                             Style="{StaticResource ActivitiesDateStyle}"
-                                            Text="{Binding Date, StringFormat='{}{0:dddd • dd/MM/yyyy}'}" />
+                                            Text="{Binding Date, StringFormat='{}{0:dddd • dd/MM/yyyy}'}"/>
                                     </StackPanel>
                                 </Button>
                             </DataTemplate>
@@ -845,7 +918,7 @@
                     Height="42"
                     Click="sortByButton_Click"
                     Content="Sắp xếp theo"
-                    Style="{StaticResource SortButtonStyle}" />
+                    Style="{StaticResource SortButtonStyle}"/>
             </StackPanel>
             <Popup
                 x:Name="SortFilterPopup"
@@ -864,7 +937,7 @@
                             Margin="0,0,0,8"
                             FontSize="16"
                             FontWeight="Bold"
-                            Text="Sắp xếp theo thời gian" />
+                            Text="Sắp xếp theo thời gian"/>
 
 
                         <StackPanel
@@ -875,14 +948,14 @@
                                 x:Name="SortAmountTextBox"
                                 Width="60"
                                 Margin="0,0,8,0"
-                                Text="1" />
+                                Text="1"/>
                             <ComboBox
                                 x:Name="SortTypeComboBox"
                                 Width="120"
                                 SelectedIndex="0">
-                                <ComboBoxItem Content="Ngày" />
-                                <ComboBoxItem Content="Tháng" />
-                                <ComboBoxItem Content="Năm" />
+                                <ComboBoxItem Content="Ngày"/>
+                                <ComboBoxItem Content="Tháng"/>
+                                <ComboBoxItem Content="Năm"/>
                             </ComboBox>
                         </StackPanel>
 
@@ -890,14 +963,14 @@
                             x:Name="ApplySortButton"
                             Margin="0,8,0,0"
                             Click="ApplySortButton_Click"
-                            Content="Áp dụng" />
+                            Content="Áp dụng"/>
                         <Button
                             x:Name="ClearSortButton"
                             Margin="0,8,0,0"
                             Background="#FF597CA2"
                             Click="ClearSortButton_Click"
                             Content="Bỏ sắp xếp"
-                            Foreground="White" />
+                            Foreground="White"/>
                     </StackPanel>
                 </Border>
             </Popup>
@@ -909,9 +982,8 @@
                 VerticalAlignment="Bottom"
                 Panel.ZIndex="-1"
                 Background="#FFDBF3FF"
-                CornerRadius="10,10,10,10" />
+                CornerRadius="10,10,10,10"/>
             <Border
-
                 Width="1028"
                 Height="400"
                 Margin="370,372,0,40"
@@ -919,12 +991,13 @@
                 VerticalAlignment="Bottom"
                 Background="#FFDBF3FF"
                 BorderBrush="Black"
-                CornerRadius="10,10,10,10" />
+                CornerRadius="10,10,10,10"/>
             <Border
                 Margin="370,580,42,60"
                 Padding="10,10,10,10"
                 CornerRadius="10">
-                <ScrollViewer Padding="15,25" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Padding="15,25"
+                        VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Activities, UpdateSourceTrigger=PropertyChanged}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -934,8 +1007,8 @@
                                     Style="{StaticResource ActivityButtonStyle}">
                                     <Grid Margin="0,15,0,15">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="80" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Border
                                             Grid.Column="0"
@@ -943,7 +1016,8 @@
                                             Height="60"
                                             ClipToBounds="True"
                                             CornerRadius="5">
-                                            <Image Source="{Binding ImgUrl}" Stretch="UniformToFill" />
+                                            <Image Source="{Binding ImgUrl}"
+                                                    Stretch="UniformToFill"/>
                                         </Border>
                                         <StackPanel Grid.Column="1">
                                             <TextBlock
@@ -952,13 +1026,13 @@
                                                 Foreground="#FF12305E"
                                                 Style="{StaticResource ActivitiesContentStyle}"
                                                 Text="{Binding Title}"
-                                                TextWrapping="Wrap" />
+                                                TextWrapping="Wrap"/>
                                             <TextBlock
                                                 Margin="0,4,0,0"
                                                 FontSize="16"
                                                 Foreground="#6c757d"
                                                 Style="{StaticResource ActivitiesDateStyle}"
-                                                Text="{Binding Date, StringFormat='{}{0:dddd • dd/MM/yyyy}'}" />
+                                                Text="{Binding Date, StringFormat='{}{0:dddd • dd/MM/yyyy}'}"/>
                                         </StackPanel>
                                     </Grid>
                                 </Button>

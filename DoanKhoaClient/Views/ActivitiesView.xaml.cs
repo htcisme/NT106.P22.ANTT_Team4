@@ -35,13 +35,13 @@ namespace DoanKhoaClient.Views
             _viewModel = new ActivitiesViewModel();
             this.DataContext = _viewModel;
 
-                this.SizeChanged += (sender, e) =>
+            this.SizeChanged += (sender, e) =>
+{
+    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
     {
-        if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-        {
-            this.WindowState = WindowState.Normal;
-        }
-    };
+        this.WindowState = WindowState.Normal;
+    }
+};
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -183,6 +183,39 @@ namespace DoanKhoaClient.Views
                 sortByButton.Content = "Sắp xếp theo:";
             }
             SortFilterPopup.IsOpen = false;
+        }
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new HomePageView();
+            win.Show();
+            this.Close();
+        }
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new UserChatView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new MembersView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new TasksView();
+            win.Show();
+            this.Close();
         }
     }
 }

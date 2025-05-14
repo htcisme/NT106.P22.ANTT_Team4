@@ -452,6 +452,7 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
+
                 IsLoading = true;
                 ResetErrors(); // Xóa tất cả lỗi trước khi bắt đầu
 
