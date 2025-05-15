@@ -1,23 +1,19 @@
-using DoanKhoaClient.Helpers;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using DoanKhoaClient.Extensions;
+using DoanKhoaClient.Helpers;
+
 namespace DoanKhoaClient.Views
 {
-    public partial class AdminMembersView : Window
+    public partial class AdminChatView : Window
     {
         private bool _isDarkMode;
         private bool isAdminSubmenuOpen; // Add this field declaration
-        public AdminMembersView()
+        public AdminChatView()
         {
             InitializeComponent();
 
-            // Áp dụng theme
-            ThemeManager.ApplyTheme(Admin_Members_Background);
-
-            // Kiểm tra quyền truy cập
+            // Kiểm tra quyền admin
             AccessControl.CheckAdminAccess(this);
-
             if (AccessControl.IsAdmin())
             {
                 SidebarAdminButton.Visibility = Visibility.Visible;
@@ -27,40 +23,10 @@ namespace DoanKhoaClient.Views
                 SidebarAdminButton.Visibility = Visibility.Collapsed;
                 AdminSubmenu.Visibility = Visibility.Collapsed;
             }
-
-            Admin_Members_iUsers.SetupAsUserAvatar();
+            // Áp dụng theme
+            ThemeManager.ApplyTheme(AdminChat_Background);
 
         }
-
-        private void GoToTasks(object sender, MouseButtonEventArgs e)
-        {
-            var adminTasksView = new AdminTasksView();
-            adminTasksView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            adminTasksView.Show();
-            this.Close();
-        }
-
-        private void GoToActivities(object sender, MouseButtonEventArgs e)
-        {
-            var adminActivitiesView = new AdminActivitiesView();
-            adminActivitiesView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            adminActivitiesView.Show();
-            this.Close();
-        }
-
-        private void GoToChat(object sender, MouseButtonEventArgs e)
-        {
-            var chatView = new UserChatView();
-            chatView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            chatView.Show();
-            this.Close();
-        }
-        private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ThemeManager.ToggleTheme(Admin_Members_Background);
-        }
-
-
         private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -129,6 +95,9 @@ namespace DoanKhoaClient.Views
             this.Close();
         }
 
-
+        private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ThemeManager.ToggleTheme(AdminChat_Background);
+        }
     }
 }

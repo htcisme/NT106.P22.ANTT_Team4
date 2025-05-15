@@ -1,40 +1,51 @@
-using DoanKhoaClient.Models;
 using System.Windows;
-using DoanKhoaClient.Views;
-using System.Windows.Input;
-using DoanKhoaClient.Services;
-using System.Windows.Controls;
-using System.Windows.Media;
-using DoanKhoaClient.ViewModels;
+using DoanKhoaClient.Models;
 
 namespace DoanKhoaClient.Helpers
 {
     public static class AccessControl
     {
+        private static bool _isAdmin = false;
+        private static string _userId = string.Empty;
+
+        public static void SetCurrentUser(AuthResponse user)
+        {
+            if (user != null)
+            {
+                // Debug để kiểm tra giá trị role
+                MessageBox.Show($"Setting user role: {user.Role}, Is Admin: {user.Role == UserRole.Admin}");
+
+                _isAdmin = user.Role == UserRole.Admin;
+                _userId = user.Id;
+            }
+            else
+            {
+                _isAdmin = false;
+                _userId = string.Empty;
+            }
+        }
+        public static void SetAdminForTesting(bool isAdmin)
+        {
+            _isAdmin = isAdmin;
+        }
         public static bool IsAdmin()
         {
-            if (Application.Current.Properties.Contains("CurrentUser") &&
-                Application.Current.Properties["CurrentUser"] is User currentUser)
-            {
-                return currentUser.Role == UserRole.Admin;
-            }
-            return false;
+            return _isAdmin;
         }
 
-        public static void CheckAdminAccess(Window currentWindow)
+        public static string GetCurrentUserId()
+        {
+            return _userId;
+        }
+
+        public static void CheckAdminAccess(Window adminWindow)
         {
             if (!IsAdmin())
             {
-                MessageBox.Show("Bạn không có quyền truy cập trang này.", "Quyền truy cập bị từ chối",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                // Chuyển hướng về dashboard người dùng thông thường
-                var userView = new UserChatView();
-                userView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                userView.Show();
-
-                // Đóng cửa sổ hiện tại
-                currentWindow.Close();
+                MessageBox.Show("Bạn không có quyền truy cập trang này.", "Không có quyền truy cập", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var homePage = new DoanKhoaClient.Views.HomePageView();
+                homePage.Show();
+                adminWindow.Close();
             }
         }
     }

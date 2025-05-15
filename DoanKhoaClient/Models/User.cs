@@ -42,6 +42,7 @@ namespace DoanKhoaClient.Models
         public bool RequiresTwoFactor { get; set; }
         public UserRole Role { get; set; }
         public string Message { get; set; }
+        public bool RequiresEmailVerification { get; set; }
     }
 
     public class User
@@ -55,5 +56,8 @@ namespace DoanKhoaClient.Models
         public List<string> Conversations { get; set; } = new List<string>();
         public bool TwoFactorEnabled { get; set; }
         public UserRole Role { get; set; } = UserRole.User; // Default to regular user
+        public bool EmailVerified { get; set; } = false;
+        public string EmailVerificationCode { get; set; }
+        public DateTime? EmailVerificationCodeExpiry { get; set; }
     }
 }

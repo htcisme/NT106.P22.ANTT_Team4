@@ -3,13 +3,15 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using DoanKhoaClient.Helpers;
 using DoanKhoaClient.ViewModels;
+using DoanKhoaClient.Extensions;
 
 namespace DoanKhoaClient.Views
 {
     public partial class AdminTasksView : Window
     {
         private AdminTasksViewModel _viewModel;
-
+        private bool _isDarkMode;
+        private bool isAdminSubmenuOpen; // Add this field declaration
         public AdminTasksView()
         {
             InitializeComponent();
@@ -23,22 +25,20 @@ namespace DoanKhoaClient.Views
 
             // Thêm xử lý hướng dẫn và kiểm tra tài nguyên
             Loaded += AdminTasksView_Loaded;
+            Admin_Task_iUsers.SetupAsUserAvatar();
 
-            // Check window size
-            this.SizeChanged += (sender, e) =>
+            AccessControl.CheckAdminAccess(this);
+
+            if (AccessControl.IsAdmin())
             {
-                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-                {
-                    this.WindowState = WindowState.Normal;
-                }
-            };
-        }
-        private void GoToDashboard_Click(object sender, RoutedEventArgs e)
-        {
-            var dashboardView = new AdminDashboardView();
-            dashboardView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            dashboardView.Show();
-            this.Close();
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         private void AdminTasksView_Loaded(object sender, RoutedEventArgs e)
@@ -59,43 +59,104 @@ namespace DoanKhoaClient.Views
         }
 
         // Thêm các phương thức xử lý sự kiện
-        private void Home_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+
+        private void GoToTasks(object sender, MouseButtonEventArgs e)
         {
-            if (_viewModel.NavigateToHomeCommand.CanExecute(null))
-            {
-                _viewModel.NavigateToHomeCommand.Execute(null);
-            }
+            var adminTasksView = new AdminTasksView();
+            adminTasksView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            adminTasksView.Show();
+            this.Close();
         }
 
-        private void Chat_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GoToActivities(object sender, MouseButtonEventArgs e)
         {
-            if (_viewModel.NavigateToChatCommand.CanExecute(null))
-            {
-                _viewModel.NavigateToChatCommand.Execute(null);
-            }
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            adminActivitiesView.Show();
+            this.Close();
         }
 
-        private void Activities_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GoToChat(object sender, MouseButtonEventArgs e)
         {
-            if (_viewModel.NavigateToActivitiesCommand.CanExecute(null))
-            {
-                _viewModel.NavigateToActivitiesCommand.Execute(null);
-            }
+            var chatView = new UserChatView();
+            chatView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            chatView.Show();
+            this.Close();
         }
-
-        private void Members_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (_viewModel.NavigateToMembersCommand.CanExecute(null))
-            {
-                _viewModel.NavigateToMembersCommand.Execute(null);
-            }
-        }
-
-        // Các phương thức hiện có
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(Admin_Task_Background);
         }
+
+
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new UserChatView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new MembersView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new TasksView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
+        // Các phương thức hiện có
 
         private void CreateSessionButton_Click(object sender, RoutedEventArgs e)
         {

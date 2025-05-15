@@ -452,9 +452,8 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
-
                 IsLoading = true;
-                ResetErrors(); // Xóa tất cả lỗi trước khi bắt đầu
+                ResetErrors();
 
                 bool hasError = false;
 
@@ -531,7 +530,7 @@ namespace DoanKhoaClient.ViewModels
                     Password = Password,
                     EnableTwoFactorAuth = EnableTwoFactorAuth,
                     Role = IsAdmin ? UserRole.Admin : UserRole.User,
-                    AdminCode = IsAdmin ? AdminCode : string.Empty // Include admin code if registering as admin
+                    AdminCode = IsAdmin ? AdminCode : string.Empty
                 };
                 System.Diagnostics.Debug.WriteLine($"Gửi request đăng ký: Username={Username}, Email={Email}");
 
@@ -543,14 +542,77 @@ namespace DoanKhoaClient.ViewModels
 
                 if (response != null && !string.IsNullOrEmpty(response.Id))
                 {
-                    // Đơn giản hóa, không cần sử dụng Dispatcher.Invoke vì đang ở UI thread
-                    MessageBox.Show("Đăng ký thành công! Vui lòng đăng nhập.", "Thông báo",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (response.RequiresEmailVerification)
+                    {
+                        // Open email verification view
+                        var verificationView = new EmailVerificationView();
+                        var viewModel = verificationView.DataContext as EmailVerificationViewModel;
+                        if (viewModel != null)
+                        {
+                            viewModel.UserId = response.Id;
+                            viewModel.Email = response.Email;
+                            viewModel.Username = response.Username;
+                        }
 
-                    System.Diagnostics.Debug.WriteLine("Đăng ký thành công, chuyển đến trang đăng nhập...");
+                        verificationView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        verificationView.Show();
 
-                    // Sử dụng phương thức đơn giản hơn
-                    OpenLoginWindowAndCloseRegister();
+                        // Close registration window
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            if (window is RegisterView)
+                            {
+                                window.Close();
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Standard success flow (no email verification required)
+                        MessageBox.Show("Đăng ký thành công! Vui lòng đăng nhập.", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // Navigate to login
+                        OpenLoginWindowAndCloseRegister();
+                    }
+                }
+                else if (response != null)
+                {
+                    // Handle specific error messages
+                    string errorMsg = response.Message ?? "";
+
+                    if (errorMsg.Contains("duplicate_username"))
+                    {
+                        UsernameError = "Tên đăng nhập đã tồn tại";
+                        ErrorMessage = "Tên đăng nhập đã được sử dụng, vui lòng chọn tên khác.";
+                    }
+                    else if (errorMsg.Contains("duplicate_email"))
+                    {
+                        EmailError = "Email đã được sử dụng";
+                        ErrorMessage = "Email này đã được đăng ký, vui lòng sử dụng email khác.";
+                    }
+                    else if (errorMsg.Contains("admin_code_error"))
+                    {
+                        AdminCodeError = "Mã xác thực Admin không hợp lệ";
+                        ErrorMessage = "Mã xác thực Admin không chính xác.";
+                    }
+                    else if (errorMsg.Contains("email_error"))
+                    {
+                        ErrorMessage = "Không thể gửi email xác thực. Vui lòng kiểm tra lại email của bạn.";
+                    }
+                    else if (errorMsg.Contains("validation_error"))
+                    {
+                        ErrorMessage = "Vui lòng kiểm tra lại thông tin đăng ký.";
+                    }
+                    else if (errorMsg.Contains("server_error"))
+                    {
+                        ErrorMessage = "Lỗi máy chủ. Vui lòng thử lại sau.";
+                    }
+                    else
+                    {
+                        ErrorMessage = errorMsg;
+                    }
                 }
             }
             catch (Exception ex)

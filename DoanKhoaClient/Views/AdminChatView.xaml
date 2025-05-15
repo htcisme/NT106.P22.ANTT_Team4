@@ -1,0 +1,781 @@
+﻿<Window
+    x:Class="DoanKhoaClient.Views.AdminChatView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:DoanKhoaClient.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
+    Title="Quản Lý Chat"
+    MinWidth="1024"
+    MinHeight="768"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
+    mc:Ignorable="d">
+
+    <!-- Giữ nguyên Resources từ UserChatView -->
+    <Window.Resources>
+        <!-- Sao chép các Resources từ UserChatView -->
+        <converters:TimeZoneConverter x:Key="TimeZoneConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
+        <converters:CurrentUserConverter x:Key="CurrentUserConverter"/>
+        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter"/>
+        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter"/>
+        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter"/>
+        <converters:FileIconConverter x:Key="FileIconConverter"/>
+        <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
+
+        <!-- Style cho menu item -->
+        <Style x:Key="MenuItemStyle"
+                TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1"
+                                ScaleY="1"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="3"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="0"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NavigationButtonStyle"
+                TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SendButtonStyle"
+                TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1"
+                            ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1.2"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1.2"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                To="1"
+                                Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:AdminChatViewModel/>
+    </Window.DataContext>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetName="AdminChat_Background"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.5"/>
+                    <ThicknessAnimation
+                        Storyboard.TargetName="AdminChat_Background"
+                        Storyboard.TargetProperty="Margin"
+                        From="0,30,0,0"
+                        To="0,0,0,0"
+                        Duration="0:0:0.5">
+                        <ThicknessAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid x:Name="AdminChat_Background"
+            Opacity="0">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0.5,0"
+                    EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                        Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                        Color="#FFDBF3FF"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Viewbox
+            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+            MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+            Stretch="Uniform">
+            <Grid Width="1440"
+                    Height="1024">
+                <!-- Search Box -->
+                <TextBox
+                    x:Name="AdminChat_tbSearch"
+                    Width="307"
+                    Height="50"
+                    Margin="370,41,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="#FFDBF3FF"
+                    BorderBrush="{x:Null}"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap"/>
+
+                <!-- Filter Button -->
+                <ToggleButton
+                    x:Name="FilterDropdownButton"
+                    Margin="687,41,706,932"
+                    Background="#FFDBF3FF"
+                    BorderBrush="{x:Null}">
+                    <Image
+                        Width="33"
+                        Height="33"
+                        OpacityMask="#FF597CA2"
+                        Source="/Views/Images/filter.png"/>
+                </ToggleButton>
+
+                <!-- Left Dashboard -->
+                <Border
+                    x:Name="AdminChat_Dashboard"
+                    Width="288"
+                    Height="942"
+                    Margin="43,40,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    BorderBrush="Black"
+                    CornerRadius="10,10,10,10">
+                    <Grid>
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0.5,0"
+                                    EndPoint="0.5,1">
+                                <GradientStop Offset="0.04"
+                                        Color="#FFF6FCFF"/>
+                                <GradientStop Offset="0.46"
+                                        Color="#FFDBF3FF"/>
+                                <GradientStop Offset="0.937"
+                                        Color="#FF87ACCD"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                    </Grid>
+                </Border>
+
+                <!-- Home Menu Item -->
+                <StackPanel>
+                    <Button
+                        x:Name="SidebarHomeButton"
+                        Width="160"
+                        Height="30"
+                        Margin="102,203,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="SidebarHomeButton_Click"
+                        Cursor="Hand"
+                        Style="{StaticResource NavigationButtonStyle}">
+                        <StackPanel Orientation="Horizontal"
+                                    Style="{StaticResource MenuItemStyle}">
+                            <Image
+                                x:Name="HomePage_iHome"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Source="/Views/Images/active-home.png"/>
+                            <Label
+                                x:Name="HomePage_lbHome"
+                                Width="108"
+                                Height="30"
+                                Margin="30,0,0,0"
+                                Padding="0,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="Home"
+                                FontFamily="Segoe UI"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="#597CA2"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <Button
+                    x:Name="SidebarChatButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,279,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarChatButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iChat"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/chat_bubble.png"/>
+                        <Label
+                            x:Name="HomePage_lbChat"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Chat"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <Button
+                    x:Name="SidebarActivitiesButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,354,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarActivitiesButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_Activities"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/activities.png"/>
+                        <Label
+                            x:Name="HomePage_lbActivities"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Activities"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <Button
+                    x:Name="SidebarMemberButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,432,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarMembersButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_Task_iMembers"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/members.png"/>
+                        <Label
+                            x:Name="HomePage_lbMembers"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Members"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <Button
+                    x:Name="SidebarTaskButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,510,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarTasksButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iTasks"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/tasks.png"/>
+                        <Label
+                            x:Name="HomePage_lbTasks"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Tasks"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+                <Button
+                    x:Name="SidebarAdminButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,586,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarAdminButton_Click"
+                    Cursor="Hand"
+                    Visibility="Collapsed"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iAdmin"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/admin_panel.png"/>
+                        <Label
+                            x:Name="HomePage_lbAdmin"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Admin"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Admin submenu -->
+                <StackPanel
+                    x:Name="AdminSubmenu"
+                    Margin="132,621,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Visibility="Collapsed">
+                    <Button
+                        x:Name="AdminTaskButton"
+                        Margin="0,5,0,5"
+                        Click="AdminTaskButton_Click"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                        <TextBlock
+                            Text="Quản lý công việc"
+                            FontSize="15"
+                            Foreground="#042354"/>
+                    </Button>
+                    <Button
+                        x:Name="AdminMembersButton"
+                        Margin="0,5,0,5"
+                        Click="AdminMembersButton_Click"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                        <TextBlock
+                            Text="Quản lý thành viên"
+                            FontSize="15"
+                            Foreground="#042354"/>
+                    </Button>
+                    <Button
+                        x:Name="AdminChatButton"
+                        Margin="0,5,0,5"
+                        Click="AdminChatButton_Click"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                        <TextBlock
+                            Text="Quản lý chat"
+                            FontSize="15"
+                            Foreground="#042354"/>
+                    </Button>
+                    <Button
+                        x:Name="AdminActivitiesButton"
+                        Margin="0,5,0,5"
+                        Click="AdminActivitiesButton_Click"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand">
+                        <TextBlock
+                            Text="Quản lý hoạt động"
+                            FontSize="15"
+                            Foreground="#042354"/>
+                    </Button>
+                </StackPanel>
+                <!-- Logo -->
+                <Image
+                    x:Name="AdminChat_iLogo"
+                    Width="112.38"
+                    Height="40"
+                    Margin="131,71,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/header.png"/>
+
+                <!-- Social Media Icons -->
+                <Image
+                    x:Name="AdminChat_iFacebook"
+                    Width="24"
+                    Height="24"
+                    Margin="175,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/facebook.png"/>
+                <Image
+                    x:Name="AdminChat_iInstagram"
+                    Width="24"
+                    Height="24"
+                    Margin="135,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/instagram.png"/>
+                <Image
+                    x:Name="AdminChat_iYoutube"
+                    Width="24"
+                    Height="24"
+                    Margin="215,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/youtube.png"/>
+
+                <!-- Top icons -->
+                <StackPanel
+                    Margin="0,46,40,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Image
+                        x:Name="ThemeToggleButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,20,0"
+                        MouseDown="ThemeToggleButton_MouseDown"
+                        Source="/Views/Images/dark.png"/>
+                    <Image
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,20,0"
+                        Source="/Views/Images/light-notifications.png"/>
+                    <Image
+                        Width="40"
+                        Height="40"
+                        Source="/Views/Images/generic avatar.png"/>
+                </StackPanel>
+
+                <Image
+                    Width="40"
+                    Height="40"
+                    Margin="628,46,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/search.png"/>
+
+                <!-- Tùy chỉnh cho Admin Chat -->
+                <TabControl Margin="370,119,40,40">
+                    <TabItem Header="Quản lý Trò chuyện">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="366*"/>
+                                <ColumnDefinition Width="634*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Danh sách cuộc trò chuyện bên trái -->
+                            <Border
+                                Background="#FFDBF3FF"
+                                CornerRadius="10,10,10,10">
+                                <Grid>
+                                    <Grid Height="60"
+                                            VerticalAlignment="Top">
+                                        <Button
+                                            Margin="0,0,10,0"
+                                            Padding="8,5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="#87ACCD"
+                                            BorderThickness="0"
+                                            Command="{Binding CreateGroupCommand}"
+                                            Content="Tạo nhóm mới"
+                                            Foreground="White"/>
+
+                                        <Button
+                                            Margin="15,0,0,0"
+                                            Padding="10,5"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Background="#87ACCD"
+                                            BorderThickness="0"
+                                            Command="{Binding SearchUsersCommand}"
+                                            Content="Tìm người dùng"
+                                            Foreground="White"/>
+                                    </Grid>
+
+                                    <ScrollViewer Margin="0,60,0,0"
+                                            VerticalScrollBarVisibility="Auto">
+                                        <ListView
+                                            Margin="15,0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            ItemsSource="{Binding Conversations}"
+                                            SelectedItem="{Binding SelectedConversation}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Width="336"
+                                                        Height="70"
+                                                        Margin="0,5"
+                                                        Background="#FFDAE9F6"
+                                                        CornerRadius="10">
+                                                        <Grid>
+                                                            <Image
+                                                                Width="44"
+                                                                Height="44"
+                                                                Margin="10,0,0,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Source="/Views/Images/account_circle.png"/>
+                                                            <Label
+                                                                Margin="60,10,0,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                Content="{Binding Converter={StaticResource ConversationTitleConverter}}"/>
+                                                            <Label
+                                                                Margin="0,10,10,0"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Top"
+                                                                Content="{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
+                                                                FontSize="10"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+
+                            <!-- Chat box hoặc spam management bên phải -->
+                            <Grid Grid.Column="1">
+                                <TabControl>
+                                    <TabItem Header="Tin nhắn">
+                                        <!-- Nội dung chat tương tự UserChatView -->
+                                        <Border
+                                            Background="White"
+                                            Margin="10"
+                                            CornerRadius="20">
+                                            <!-- Copy chat content từ UserChatView -->
+                                        </Border>
+                                    </TabItem>
+                                    <TabItem Header="Tin nhắn Spam">
+                                        <Border
+                                            Background="White"
+                                            Margin="10"
+                                            CornerRadius="20">
+                                            <ListBox ItemsSource="{Binding SpamMessages}">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border
+                                                            Margin="5"
+                                                            Padding="10"
+                                                            Background="#FFE8E8E8"
+                                                            CornerRadius="10">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <TextBlock
+                                                                    Text="{Binding SenderName}"
+                                                                    FontWeight="Bold"
+                                                                    Grid.Row="0"/>
+                                                                <TextBlock
+                                                                    Text="{Binding Content}"
+                                                                    Grid.Row="1"
+                                                                    Margin="0,5"/>
+                                                                <StackPanel
+                                                                    Grid.Row="2"
+                                                                    Orientation="Horizontal"
+                                                                    HorizontalAlignment="Right">
+                                                                    <Button
+                                                                        Content="Xóa"
+                                                                        Margin="5,0"
+                                                                        Command="{Binding DataContext.DeleteSpamCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                                        CommandParameter="{Binding}"/>
+                                                                    <Button
+                                                                        Content="Khôi phục"
+                                                                        Margin="5,0"
+                                                                        Command="{Binding DataContext.RestoreMessageCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                                        CommandParameter="{Binding}"/>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Border>
+                                    </TabItem>
+                                    <TabItem Header="Cài đặt Chat">
+                                        <Border
+                                            Background="White"
+                                            Margin="10"
+                                            CornerRadius="20">
+                                            <StackPanel Margin="20">
+                                                <TextBlock
+                                                    Text="Cài đặt lọc spam"
+                                                    FontSize="18"
+                                                    FontWeight="Bold"
+                                                    Margin="0,0,0,20"/>
+                                                <CheckBox
+                                                    Content="Tự động lọc tin nhắn spam"
+                                                    IsChecked="{Binding AutoFilterSpam}"
+                                                    Margin="0,5"/>
+                                                <CheckBox
+                                                    Content="Thông báo khi phát hiện spam"
+                                                    IsChecked="{Binding NotifyOnSpamDetection}"
+                                                    Margin="0,5"/>
+                                                <TextBlock
+                                                    Text="Mức lọc spam:"
+                                                    Margin="0,15,0,5"/>
+                                                <Slider
+                                                    Minimum="1"
+                                                    Maximum="10"
+                                                    Value="{Binding SpamFilterLevel}"
+                                                    TickPlacement="BottomRight"
+                                                    TickFrequency="1"
+                                                    IsSnapToTickEnabled="True"/>
+                                                <Button
+                                                    Content="Lưu cài đặt"
+                                                    Margin="0,20,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Padding="15,5"
+                                                    Command="{Binding SaveSettingsCommand}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Viewbox>
+    </Grid>
+</Window>

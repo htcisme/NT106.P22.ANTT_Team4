@@ -1,13 +1,24 @@
 ﻿using System.Windows;
 using DoanKhoaClient.Helpers;
 using System.Windows.Input;
+using DoanKhoaClient.Extensions;
 namespace DoanKhoaClient.Views
 {
     public partial class UserChatView : Window
     {
+        private bool isAdminSubmenuOpen = false;
         public UserChatView()
         {
             InitializeComponent();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
             ThemeManager.ApplyTheme(Chat_Background);
             this.SizeChanged += (sender, e) =>
 {
@@ -15,6 +26,7 @@ namespace DoanKhoaClient.Views
     {
         this.WindowState = WindowState.Normal;
     }
+    UserAvatar.SetupAsUserAvatar();
 };
         }
 
@@ -45,5 +57,42 @@ namespace DoanKhoaClient.Views
         {
             await NavigationHelper.NavigateToTasks(this, Chat_Background);
         }
+
+
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
+
     }
 }

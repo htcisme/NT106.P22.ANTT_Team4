@@ -62,7 +62,7 @@ namespace DoanKhoaClient.Views
 
         private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
         {
-            var win = new AdminChatConservationsView(); // Đổi thành tên Window thực tế của bạn
+            var win = new AdminChatView(); // Đổi thành tên Window thực tế của bạn
             win.Show();
             this.Close();
         }

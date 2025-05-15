@@ -116,104 +116,277 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Source="/Views/Images/header.png"/>
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Left"
-                        Margin="102,203,0,0"
-                        VerticalAlignment="Top"
-                        Style="{StaticResource MenuItemStyle}"
-                        MouseDown="HomeMenuItem_MouseDown">
-                <Image Height="30"
-                       Width="30"
-                       Source="/Views/Images/home.png"/>
-                <Label Content="Home"
-                       Height="30"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="33,0,0,0"
-                       Padding="0,0,0,0"/>
+            <StackPanel>
+                <Button
+                    x:Name="SidebarHomeButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,203,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarHomeButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal"
+                                Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iHome"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/home.png"/>
+                        <Label
+                            x:Name="HomePage_lbHome"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Home"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
-
-            <!-- Chat Menu Item (đã được chọn) -->
-            <StackPanel Orientation="Horizontal"
+            <Button
+                x:Name="SidebarChatButton"
+                Width="160"
+                Height="30"
+                Margin="102,279,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarChatButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iChat"
+                        Width="30"
+                        Height="30"
                         HorizontalAlignment="Left"
-                        Margin="102,279,0,0"
                         VerticalAlignment="Top"
-                        Style="{StaticResource MenuItemStyle}"
-                        MouseDown="ChatMenuItem_MouseDown">
-                <Image Height="30"
-                       Width="30"
-                       Source="/Views/Images/chat_bubble.png"/>
-                <Label Content="Chat"
-                       Height="30"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="33,0,0,0"
-                       Padding="0,0,0,0"/>
-            </StackPanel>
-
-            <!-- Activities Menu Item -->
-            <StackPanel Orientation="Horizontal"
+                        Source="/Views/Images/chat_bubble.png"/>
+                    <Label
+                        x:Name="HomePage_lbChat"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
                         HorizontalAlignment="Left"
-                        Margin="102,354,0,0"
                         VerticalAlignment="Top"
-                        Style="{StaticResource MenuItemStyle}"
-                        MouseDown="ActivitiesMenuItem_MouseDown">
-                <Image Height="30"
-                       Width="30"
-                       Source="/Views/Images/activities.png"/>
-                <Label Content="Activities"
-                       Height="30"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="33,0,0,0"
-                       Padding="0,0,0,0"/>
-            </StackPanel>
-
-            <!-- Members Menu Item -->
-            <StackPanel Orientation="Horizontal"
+                        Content="Chat"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+            <Button
+                x:Name="SidebarActivitiesButton"
+                Width="160"
+                Height="30"
+                Margin="102,354,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarActivitiesButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_Activities"
+                        Width="30"
+                        Height="30"
                         HorizontalAlignment="Left"
-                        Margin="102,432,0,0"
                         VerticalAlignment="Top"
-                        Style="{StaticResource MenuItemStyle}"
-                        MouseDown="MembersMenuItem_MouseDown">
-                <Image Height="30"
-                       Width="30"
-                       Source="/Views/Images/members.png"/>
-                <Label Content="Members"
-                       Height="30"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="33,0,0,0"
-                       Padding="0,0,0,0"/>
-            </StackPanel>
-
-            <!-- Tasks Menu Item -->
-            <StackPanel Orientation="Horizontal"
+                        Source="/Views/Images/active-activities.png"/>
+                    <Label
+                        x:Name="HomePage_lbActivities"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
                         HorizontalAlignment="Left"
-                        Margin="102,510,0,0"
                         VerticalAlignment="Top"
-                        Style="{StaticResource MenuItemStyle}"
-                        MouseDown="TasksMenuItem_MouseDown">
-                <Image Height="30"
-                       Width="30"
-                       Source="/Views/Images/active-tasks.png"/>
-                <Label Content="Tasks"
-                       Height="30"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="33,0,0,0"
-                       Padding="0,0,0,0"
-                       Foreground="#597CA2"/>
+                        Content="Activities"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="#597CA2"/>
+                </StackPanel>
+            </Button>
+            <Button
+                x:Name="SidebarMemberButton"
+                Width="160"
+                Height="30"
+                Margin="102,432,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarMembersButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_Task_iMembers"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/members.png"/>
+                    <Label
+                        x:Name="HomePage_lbMembers"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Members"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+            <Button
+                x:Name="SidebarTaskButton"
+                Width="160"
+                Height="30"
+                Margin="102,510,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                MouseDown="SidebarTasksButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iTasks"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/tasks.png"/>
+                    <Label
+                        x:Name="HomePage_lbTasks"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Tasks"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+            <!-- Admin Button - Chỉ hiển thị cho admin -->
+            <Button
+                x:Name="SidebarAdminButton"
+                Width="160"
+                Height="30"
+                Margin="102,586,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarAdminButton_Click"
+                Cursor="Hand"
+                Visibility="Collapsed"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal"
+                            Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iAdmin"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/admin_panel.png"/>
+                    <Label
+                        x:Name="HomePage_lbAdmin"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Admin"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Admin submenu -->
+            <StackPanel
+                x:Name="AdminSubmenu"
+                Margin="132,621,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Button
+                    x:Name="AdminTaskButton"
+                    Margin="0,5,0,5"
+                    Click="AdminTaskButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
+                    <TextBlock
+                        Text="Quản lý công việc"
+                        FontSize="15"
+                        Foreground="#042354"/>
+                </Button>
+                <Button
+                    x:Name="AdminMembersButton"
+                    Margin="0,5,0,5"
+                    Click="AdminMembersButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
+                    <TextBlock
+                        Text="Quản lý thành viên"
+                        FontSize="15"
+                        Foreground="#042354"/>
+                </Button>
+                <Button
+                    x:Name="AdminChatButton"
+                    Margin="0,5,0,5"
+                    Click="AdminChatButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
+                    <TextBlock
+                        Text="Quản lý chat"
+                        FontSize="15"
+                        Foreground="#042354"/>
+                </Button>
+                <Button
+                    x:Name="AdminActivitiesButton"
+                    Margin="0,5,0,5"
+                    Click="AdminActivitiesButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand">
+                    <TextBlock
+                        Text="Quản lý hoạt động"
+                        FontSize="15"
+                        Foreground="#042354"/>
+                </Button>
             </StackPanel>
             <Image
                 x:Name="Task_iFacebook"

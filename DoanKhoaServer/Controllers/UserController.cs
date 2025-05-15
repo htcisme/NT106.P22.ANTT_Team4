@@ -31,19 +31,19 @@ namespace DoanKhoaServer.Controllers
                 {
                     return BadRequest("Vui lòng nhập đầy đủ thông tin.");
                 }
-                
+
                 // Admin validation
                 if (request.Role == UserRole.Admin)
                 {
                     // Define your secret admin code - in a real app, this should be in a secure config
                     const string ADMIN_SECRET_CODE = "DoankhoaMMT&TT";
-                    
+
                     if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
                     {
                         return BadRequest("Mã xác thực Admin không hợp lệ.");
                     }
                 }
-                
+
                 // Register user with validated role
                 var (user, message) = await _authService.RegisterUser(
                     request.Username,
@@ -108,7 +108,8 @@ namespace DoanKhoaServer.Controllers
                     Email = user.Email,
                     AvatarUrl = user.AvatarUrl,
                     RequiresTwoFactor = requiresTwoFactor,
-                    Message = message
+                    Message = message,
+                    Role = user.Role // Include role in response
                 });
             }
             catch (Exception ex)
