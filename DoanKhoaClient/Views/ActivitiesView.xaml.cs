@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-
+using DoanKhoaClient.Extensions;
 namespace DoanKhoaClient.Views
 {
     public partial class ActivitiesView : Window, INotifyPropertyChanged
@@ -26,7 +26,7 @@ namespace DoanKhoaClient.Views
                 OnPropertyChanged();
             }
         }
-
+        private bool isAdminSubmenuOpen = false;
         public ActivitiesView()
         {
             InitializeComponent();
@@ -34,6 +34,16 @@ namespace DoanKhoaClient.Views
             IsDarkMode = ThemeManager.IsDarkMode;
             _viewModel = new ActivitiesViewModel();
             this.DataContext = _viewModel;
+            LightHomePage_iUsers.SetupAsUserAvatar();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
 
             this.SizeChanged += (sender, e) =>
 {
@@ -68,7 +78,7 @@ namespace DoanKhoaClient.Views
 
         private void ActivitiesMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Đã ở trang Activities, không cần điều hướng
+
         }
 
         private async void MembersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
@@ -110,6 +120,39 @@ namespace DoanKhoaClient.Views
                 // Cập nhật thuộc tính trong ViewModel để điều khiển Popup
                 _viewModel.IsFilterDropdownOpen = false;
             }
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
         }
         private void FilterPopupBorder_Loaded(object sender, RoutedEventArgs e)
         {

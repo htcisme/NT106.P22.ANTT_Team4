@@ -1,11 +1,13 @@
 using DoanKhoaClient.Helpers;
 using System.Windows;
 using System.Windows.Input;
-
+using DoanKhoaClient.Extensions;
 namespace DoanKhoaClient.Views
 {
     public partial class AdminMembersView : Window
     {
+        private bool _isDarkMode;
+        private bool isAdminSubmenuOpen; // Add this field declaration
         public AdminMembersView()
         {
             InitializeComponent();
@@ -16,14 +18,18 @@ namespace DoanKhoaClient.Views
             // Kiểm tra quyền truy cập
             AccessControl.CheckAdminAccess(this);
 
-            // Kiểm tra kích thước cửa sổ
-            this.SizeChanged += (sender, e) =>
+            if (AccessControl.IsAdmin())
             {
-                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-                {
-                    this.WindowState = WindowState.Normal;
-                }
-            };
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
+
+            Admin_Members_iUsers.SetupAsUserAvatar();
+
         }
 
         private void GoToTasks(object sender, MouseButtonEventArgs e)
@@ -49,35 +55,80 @@ namespace DoanKhoaClient.Views
             chatView.Show();
             this.Close();
         }
-
-        private void GoToDashboard(object sender, MouseButtonEventArgs e)
+        private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var dashboardView = new AdminDashboardView();
-            dashboardView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            dashboardView.Show();
+            ThemeManager.ToggleTheme(Admin_Members_Background);
+        }
+
+
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new UserChatView();
+            win.Show();
             this.Close();
         }
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
         {
-            // Xác nhận đăng xuất
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?",
-                "Xác nhận đăng xuất", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                // Xóa thông tin đăng nhập hiện tại
-                if (Application.Current.Properties.Contains("CurrentUser"))
-                {
-                    Application.Current.Properties.Remove("CurrentUser");
-                }
-
-                // Chuyển về trang đăng nhập
-                var loginView = new LoginView();
-                loginView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                loginView.Show();
-                this.Close();
-            }
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
         }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new MembersView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new TasksView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
+
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using DoanKhoaClient.Helpers;
 using System.Windows.Input;
+using DoanKhoaClient.Extensions;
 namespace DoanKhoaClient.Views
 {
     public partial class UserChatView : Window
@@ -25,6 +26,7 @@ namespace DoanKhoaClient.Views
     {
         this.WindowState = WindowState.Normal;
     }
+    UserAvatar.SetupAsUserAvatar();
 };
         }
 

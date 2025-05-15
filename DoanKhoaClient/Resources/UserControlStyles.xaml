@@ -1,0 +1,30 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Style cho avatar menu item -->
+    <Style x:Key="AvatarMenuItemStyle"
+            TargetType="MenuItem">
+        <Setter Property="FontSize"
+                Value="14"/>
+        <Setter Property="FontWeight"
+                Value="Normal"/>
+        <Setter Property="Padding"
+                Value="8,5"/>
+        <Setter Property="Foreground"
+                Value="#042354"/>
+    </Style>
+
+    <!-- Style cho context menu -->
+    <Style x:Key="UserAvatarContextMenuStyle"
+            TargetType="ContextMenu">
+        <Setter Property="Background"
+                Value="White"/>
+        <Setter Property="BorderBrush"
+                Value="#DDDDDD"/>
+        <Setter Property="BorderThickness"
+                Value="1"/>
+        <Setter Property="Padding"
+                Value="2"/>
+    </Style>
+</ResourceDictionary>

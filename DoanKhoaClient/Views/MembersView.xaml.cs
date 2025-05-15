@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-
+using DoanKhoaClient.Extensions;
 
 namespace DoanKhoaClient.Views
 {
@@ -26,12 +26,21 @@ namespace DoanKhoaClient.Views
                 OnPropertyChanged();
             }
         }
-
+        private bool isAdminSubmenuOpen = false;
         public MembersView()
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(Members_Background);
-
+            LightHomePage_iUsers.SetupAsUserAvatar();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
             this.SizeChanged += (sender, e) =>
 {
     if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
@@ -46,37 +55,6 @@ namespace DoanKhoaClient.Views
             ThemeManager.ToggleTheme(Members_Background);
         }
 
-        private async void HomeMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await NavigationHelper.NavigateToHome(this, Members_Background);
-        }
-
-        private async void ChatMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await NavigationHelper.NavigateToChat(this, Members_Background);
-        }
-
-        private async void ActivitiesMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await NavigationHelper.NavigateToActivities(this, Members_Background);
-        }
-
-        private void MembersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // Đã ở trang Members, không cần điều hướng
-        }
-
-        private async void TasksMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await NavigationHelper.NavigateToTasks(this, Members_Background);
-        }
-
-        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new HomePageView();
-            win.Show();
-            this.Close();
-        }
 
         private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
         {
@@ -94,7 +72,9 @@ namespace DoanKhoaClient.Views
 
         private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var win = new MembersView();
+            win.Show();
+            this.Close();
         }
 
         private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
@@ -103,7 +83,47 @@ namespace DoanKhoaClient.Views
             win.Show();
             this.Close();
         }
+        private async void TasksMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            await NavigationHelper.NavigateToTasks(this, Members_Background);
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
 
+        }
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

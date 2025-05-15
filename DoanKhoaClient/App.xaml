@@ -12,6 +12,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <!--  Tham chiếu đến TaskViewResources.xaml  -->
                 <ResourceDictionary Source="/DoanKhoaClient;component/Resources/TaskViewResources.xaml"/>
+                <ResourceDictionary Source="/Resources/UserControlStyles.xaml"/>
 
                 <ResourceDictionary Source="/Resources/EffectResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -310,6 +311,32 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+
+            <Style x:Key="NavigationButtonStyle"
+                   TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Cursor"
+                        Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver"
+                             Value="True">
+                        <Setter Property="Opacity"
+                                Value="0.8"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Menu Item Style -->
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

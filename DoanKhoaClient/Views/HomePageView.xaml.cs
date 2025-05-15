@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Net.WebSockets;
 using DoanKhoaClient.Models;
-
+using DoanKhoaClient.Extensions;
 namespace DoanKhoaClient.Views
 {
     public partial class HomePageView : Window
@@ -41,7 +41,7 @@ namespace DoanKhoaClient.Views
                 SidebarAdminButton.Visibility = Visibility.Collapsed;
                 AdminSubmenu.Visibility = Visibility.Collapsed;
             }
-
+            HomePage_iUsers.SetupAsUserAvatar();
 
 
             ThemeManager.ApplyTheme(HomePage_Background);

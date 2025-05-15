@@ -30,7 +30,7 @@
         <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
         <!--  Thêm Style này vào Window.Resources  -->
         <Style x:Key="MenuItemStyle"
-                TargetType="{x:Type StackPanel}">
+               TargetType="{x:Type StackPanel}">
             <Setter Property="Cursor"
                     Value="Hand"/>
             <Setter Property="RenderTransformOrigin"
@@ -39,7 +39,7 @@
                 <Setter.Value>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1"
-                                ScaleY="1"/>
+                                        ScaleY="1"/>
                         <TranslateTransform/>
                     </TransformGroup>
                 </Setter.Value>
@@ -85,7 +85,7 @@
         </Style>
 
         <Style x:Key="NavigationButtonStyle"
-                TargetType="{x:Type Button}">
+               TargetType="{x:Type Button}">
             <Setter Property="Background"
                     Value="Transparent"/>
             <Setter Property="BorderThickness"
@@ -102,7 +102,7 @@
         </Style>
 
         <Style x:Key="SendButtonStyle"
-                TargetType="{x:Type Button}">
+               TargetType="{x:Type Button}">
             <Setter Property="Background"
                     Value="Transparent"/>
             <Setter Property="BorderThickness"
@@ -114,7 +114,7 @@
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <ScaleTransform ScaleX="1"
-                            ScaleY="1"/>
+                                    ScaleY="1"/>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -207,15 +207,15 @@
         </EventTrigger>
     </Window.Triggers>
     <Grid x:Name="Chat_Background"
-            Opacity="0">
+          Opacity="0">
 
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0"
-                    EndPoint="0.5,1">
+                                 EndPoint="0.5,1">
                 <GradientStop Offset="0.67"
-                        Color="#FFF6FCFF"/>
+                              Color="#FFF6FCFF"/>
                 <GradientStop Offset="1"
-                        Color="#FFDBF3FF"/>
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
 
@@ -224,7 +224,7 @@
             MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
             Stretch="Uniform">
             <Grid Width="1440"
-                    Height="1024">
+                  Height="1024">
                 <ToggleButton
                     x:Name="FilterDropdownButton"
                     Margin="687,41,706,932"
@@ -263,13 +263,13 @@
                     <Grid>
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0.5,0"
-                                    EndPoint="0.5,1">
+                                                 EndPoint="0.5,1">
                                 <GradientStop Offset="0.04"
-                                        Color="#FFF6FCFF"/>
+                                              Color="#FFF6FCFF"/>
                                 <GradientStop Offset="0.46"
-                                        Color="#FFDBF3FF"/>
+                                              Color="#FFDBF3FF"/>
                                 <GradientStop Offset="0.937"
-                                        Color="#FF87ACCD"/>
+                                              Color="#FF87ACCD"/>
                             </LinearGradientBrush>
                         </Grid.Background>
 
@@ -429,7 +429,7 @@
                     Visibility="Collapsed"
                     Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
+                                Style="{StaticResource MenuItemStyle}">
                         <Image
                             x:Name="HomePage_iAdmin"
                             Width="30"
@@ -560,6 +560,7 @@
                         Margin="0,0,20,0"
                         Source="/Views/Images/light-notifications.png"/>
                     <Image
+                        x:Name="UserAvatar"
                         Width="40"
                         Height="40"
                         Source="/Views/Images/generic avatar.png"/>
@@ -584,20 +585,20 @@
                     CornerRadius="10,10,10,10">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0.5,0"
-                                EndPoint="0.5,1">
+                                             EndPoint="0.5,1">
                             <GradientStop Offset="0.04"
-                                    Color="#FFF6FCFF"/>
+                                          Color="#FFF6FCFF"/>
                             <GradientStop Offset="0.46"
-                                    Color="#FFDBF3FF"/>
+                                          Color="#FFDBF3FF"/>
                             <GradientStop Offset="0.937"
-                                    Color="#FF87ACCD"/>
+                                          Color="#FF87ACCD"/>
                         </LinearGradientBrush>
                     </Border.Background>
 
                     <Grid>
                         <!--  Header với nút tạo nhóm và tìm bạn  -->
                         <Grid Height="60"
-                                VerticalAlignment="Top">
+                              VerticalAlignment="Top">
                             <Button
                                 Margin="0,0,10,0"
                                 Padding="8,5"
@@ -624,7 +625,7 @@
 
                         <!--  Danh sách cuộc trò chuyện  -->
                         <ScrollViewer Margin="0,60,0,0"
-                                VerticalScrollBarVisibility="Auto">
+                                      VerticalScrollBarVisibility="Auto">
                             <ListView
                                 Width="340"
                                 Margin="15,0"
@@ -655,7 +656,7 @@
                                                     </Border>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver"
-                                                                Value="True">
+                                                                 Value="True">
                                                             <Setter TargetName="Border"
                                                                     Property="Background"
                                                                     Value="#E5F1FF"/>
@@ -671,7 +672,7 @@
                                                             </Setter>
                                                         </Trigger>
                                                         <Trigger Property="IsSelected"
-                                                                Value="True">
+                                                                 Value="True">
                                                             <Setter TargetName="Border"
                                                                     Property="Background"
                                                                     Value="#D2E5FF"/>
@@ -737,15 +738,15 @@
                     CornerRadius="10,10,10,10">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0.5,0"
-                                EndPoint="0.5,1">
+                                             EndPoint="0.5,1">
                             <GradientStop Offset="1"
-                                    Color="#FF87ACCD"/>
+                                          Color="#FF87ACCD"/>
                             <GradientStop Offset="0.46"
-                                    Color="#FFDBF3FF"/>
+                                          Color="#FFDBF3FF"/>
                             <GradientStop Offset="0.54"
-                                    Color="#FFDBF3FF"/>
+                                          Color="#FFDBF3FF"/>
                             <GradientStop Offset="0"
-                                    Color="#FF87ACCD"/>
+                                          Color="#FF87ACCD"/>
                         </LinearGradientBrush>
                     </Border.Background>
 
@@ -802,7 +803,7 @@
                                                 <Setter Property="RenderTransform">
                                                     <Setter.Value>
                                                         <TranslateTransform X="0"
-                                                                Y="20"/>
+                                                                            Y="20"/>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
@@ -869,7 +870,7 @@
 
                                                             <!--  Hiển thị hình ảnh và files  -->
                                                             <ItemsControl Margin="0,5,0,0"
-                                                                    ItemsSource="{Binding Attachments}">
+                                                                          ItemsSource="{Binding Attachments}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <!--  Hình ảnh  -->
@@ -951,7 +952,7 @@
 
                                                             <!--  Hiển thị hình ảnh và files  -->
                                                             <ItemsControl Margin="0,5,0,0"
-                                                                    ItemsSource="{Binding Attachments}">
+                                                                          ItemsSource="{Binding Attachments}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <!--  Hình ảnh  -->
@@ -1022,7 +1023,7 @@
 
                                 <!--  Input Area  -->
                                 <Grid Grid.Row="2"
-                                        Margin="0,5,0,0">
+                                      Margin="0,5,0,0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -1040,7 +1041,7 @@
                                             HorizontalScrollBarVisibility="Auto"
                                             VerticalScrollBarVisibility="Disabled">
                                             <ItemsControl Margin="10"
-                                                    ItemsSource="{Binding SelectedAttachments}">
+                                                          ItemsSource="{Binding SelectedAttachments}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <WrapPanel/>

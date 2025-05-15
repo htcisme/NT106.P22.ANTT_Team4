@@ -57,7 +57,8 @@ namespace DoanKhoaClient.Services
                 }
                 else
                 {
-                    return new AuthResponse { Message = $"Lỗi server: {response.StatusCode} - {responseContent}" };
+                    // Parse error message to get specific error type
+                    return new AuthResponse { Message = responseContent };
                 }
             }
             catch (Exception ex)
@@ -66,7 +67,37 @@ namespace DoanKhoaClient.Services
                 return new AuthResponse { Message = $"Lỗi kết nối: {ex.Message}" };
             }
         }
+        public async Task<AuthResponse> VerifyEmailAsync(string userId, string code)
+        {
+            try
+            {
+                var request = new
+                {
+                    UserId = userId,
+                    Code = code
+                };
 
+                var response = await _httpClient.PostAsJsonAsync("user/verify-email", request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = System.Text.Json.JsonSerializer.Deserialize<AuthResponse>(
+                        responseContent,
+                        new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    );
+                    return result;
+                }
+                else
+                {
+                    return new AuthResponse { Message = responseContent };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthResponse { Message = $"Lỗi kết nối: {ex.Message}" };
+            }
+        }
         public async Task<AuthResponse> LoginAsync(LoginRequest request)
         {
             try
