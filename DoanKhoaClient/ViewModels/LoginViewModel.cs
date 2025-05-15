@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using DoanKhoaClient.Helpers;
 namespace DoanKhoaClient.ViewModels
 {
     public partial class LoginViewModel : INotifyPropertyChanged
@@ -243,23 +243,15 @@ namespace DoanKhoaClient.ViewModels
                     };
                     App.Current.Properties["CurrentUser"] = currentUser;
 
-                    MessageBox.Show($"Chào mừng, {response.DisplayName}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"Chào mừng, {response.Role}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AccessControl.SetCurrentUser(response);
 
-                    // Điều hướng dựa trên vai trò
-                    if (response.Role == UserRole.Admin)
-                    {
-                        // Mở trang Dashboard Admin
-                        var adminDashboard = new AdminDashboardView();
-                        adminDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                        adminDashboard.Show();
-                    }
-                    else
-                    {
-                        // Mở trang thông thường cho người dùng
-                        var userDashboard = new HomePageView();
-                        userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                        userDashboard.Show();
-                    }
+
+                    // Mở trang cho người dùng thông thường
+                    var userDashboard = new HomePageView();
+                    userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    userDashboard.Show();
+
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)

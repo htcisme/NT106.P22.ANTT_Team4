@@ -7,8 +7,9 @@ namespace DoanKhoaServer.Models
 {
     public enum UserRole
     {
-        User,
-        Admin
+        All = -1,
+        User = 0,
+        Admin = 1
     }
     public class User
     {
@@ -24,7 +25,7 @@ namespace DoanKhoaServer.Models
         public string AvatarUrl { get; set; }
         public DateTime LastSeen { get; set; }
         public List<string> Conversations { get; set; } = new List<string>();
-        public UserRole Role { get; set; } = UserRole.User; // Default to regular user
+        public UserRole Role { get; set; } // Default to regular user
 
         // Existing two-factor auth properties
         public bool TwoFactorEnabled { get; set; }

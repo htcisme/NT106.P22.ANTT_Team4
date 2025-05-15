@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Net.WebSockets;
-
+using DoanKhoaClient.Models;
 
 namespace DoanKhoaClient.Views
 {
@@ -18,6 +18,8 @@ namespace DoanKhoaClient.Views
     {
         private ActivitiesViewModel _viewModel;
         private bool _isDarkMode;
+        private bool isAdminSubmenuOpen; // Add this field declaration
+
         public bool IsDarkMode
         {
             get => _isDarkMode;
@@ -30,6 +32,18 @@ namespace DoanKhoaClient.Views
         public HomePageView()
         {
             InitializeComponent();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
+
+
+
             ThemeManager.ApplyTheme(HomePage_Background);
 
         }
@@ -105,6 +119,40 @@ namespace DoanKhoaClient.Views
 
                 }
             }
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
         }
         private void FilterPopupBorder_Loaded(object sender, RoutedEventArgs e)
         {
