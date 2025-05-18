@@ -17,6 +17,7 @@ namespace DoanKhoaServer.Services
         private readonly IMongoCollection<Conversation> _conversationsCollection;
         private readonly IMongoCollection<Attachment> _attachmentsCollection;
         private readonly IMongoCollection<Activity> _activitiesCollection;
+        private readonly IMongoCollection<UserActivityStatus> _userActivityStatusesCollection;
 
         public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
         {
@@ -40,6 +41,9 @@ namespace DoanKhoaServer.Services
 
             _activitiesCollection = mongoDatabase.GetCollection<Activity>(
                 mongoDBSettings.Value.ActivitiesCollectionName);
+            _userActivityStatusesCollection = mongoDatabase.GetCollection<UserActivityStatus>(
+                mongoDBSettings.Value.UserActivityStatusesCollectionName);
+
 
             // Các dòng code hiện tại
 
@@ -401,5 +405,283 @@ namespace DoanKhoaServer.Services
 
         public async Task DeleteTaskItemAsync(string id) =>
             await _taskItemsCollection.DeleteOneAsync(x => x.Id == id);
+    
+
+    //UserActivityStatus methods
+    public async Task<List<dynamic>> GetActivitiesWithUserStatusAsync(string userId)
+        {
+            var activities = await _activitiesCollection.Find(_ => true).ToListAsync();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Nếu không có userId, trả về danh sách hoạt động mà không có trạng thái
+                return activities.Select(a => new
+                {
+                    a.Id,
+                    a.Title,
+                    a.Description,
+                    a.Type,
+                    a.Date,
+                    a.ImgUrl,
+                    a.CreatedAt,
+                    a.Status,
+                    ParticipantCount = a.ParticipantCount ?? 0,
+                    LikeCount = a.LikeCount ?? 0,
+                    IsParticipated = false,
+                    IsLiked = false
+                }).Cast<dynamic>().ToList();
+            }
+
+            // Lấy tất cả trạng thái hoạt động của người dùng này
+            var userStatuses = await _userActivityStatusesCollection
+                .Find(s => s.UserId == userId)
+                .ToListAsync();
+
+            // Tạo dictionary để tìm kiếm nhanh
+            var statusDict = userStatuses.ToDictionary(s => s.ActivityId);
+
+            // Tạo danh sách kết quả
+            var result = new List<dynamic>();
+            foreach (var activity in activities)
+            {
+                bool isParticipated = false;
+                bool isLiked = false;
+
+                // Tìm trạng thái của người dùng đối với hoạt động này
+                if (statusDict.TryGetValue(activity.Id, out var status))
+                {
+                    isParticipated = status.IsJoined;
+                    isLiked = status.IsFavorite;
+                }
+
+                // Thêm vào kết quả
+                result.Add(new
+                {
+                    activity.Id,
+                    activity.Title,
+                    activity.Description,
+                    activity.Type,
+                    activity.Date,
+                    activity.ImgUrl,
+                    activity.CreatedAt,
+                    activity.Status,
+                    ParticipantCount = activity.ParticipantCount ?? 0,
+                    LikeCount = activity.LikeCount ?? 0,
+                    IsParticipated = isParticipated,
+                    IsLiked = isLiked
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<bool> ToggleActivityParticipationAsync(string activityId, string userId)
+        {
+            try
+            {
+                // Tìm hoạt động
+                var activity = await _activitiesCollection.Find(a => a.Id == activityId).FirstOrDefaultAsync();
+                if (activity == null)
+                    return false;
+
+                // Tìm trạng thái hiện tại
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.UserId, userId)
+                );
+                var status = await _userActivityStatusesCollection.Find(filter).FirstOrDefaultAsync();
+
+                if (status == null)
+                {
+                    // Tạo mới trạng thái nếu chưa tồn tại
+                    status = new UserActivityStatus
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        UserId = userId,
+                        ActivityId = activityId,
+                        IsJoined = true,
+                        IsFavorite = false,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _userActivityStatusesCollection.InsertOneAsync(status);
+
+                    // Cập nhật số người tham gia
+                    var update = Builders<Activity>.Update.Inc(a => a.ParticipantCount, 1);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, update);
+
+                    return true;
+                }
+                else
+                {
+                    // Toggle trạng thái tham gia
+                    bool newStatus = !status.IsJoined;
+                    var update = Builders<UserActivityStatus>.Update
+                        .Set(s => s.IsJoined, newStatus)
+                        .Set(s => s.UpdatedAt, DateTime.UtcNow);
+                    await _userActivityStatusesCollection.UpdateOneAsync(filter, update);
+
+                    // Cập nhật số người tham gia
+                    int increment = newStatus ? 1 : -1;
+                    var activityUpdate = Builders<Activity>.Update.Inc(a => a.ParticipantCount, increment);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, activityUpdate);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ToggleActivityParticipationAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> ToggleActivityLikeAsync(string activityId, string userId)
+        {
+            try
+            {
+                // Tìm hoạt động
+                var activity = await _activitiesCollection.Find(a => a.Id == activityId).FirstOrDefaultAsync();
+                if (activity == null)
+                    return false;
+
+                // Tìm trạng thái hiện tại
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.UserId, userId)
+                );
+                var status = await _userActivityStatusesCollection.Find(filter).FirstOrDefaultAsync();
+
+                if (status == null)
+                {
+                    // Tạo mới trạng thái nếu chưa tồn tại
+                    status = new UserActivityStatus
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        UserId = userId,
+                        ActivityId = activityId,
+                        IsJoined = false,
+                        IsFavorite = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _userActivityStatusesCollection.InsertOneAsync(status);
+
+                    // Cập nhật số lượt thích
+                    var update = Builders<Activity>.Update.Inc(a => a.LikeCount, 1);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, update);
+
+                    return true;
+                }
+                else
+                {
+                    // Toggle trạng thái yêu thích
+                    bool newStatus = !status.IsFavorite;
+                    var update = Builders<UserActivityStatus>.Update
+                        .Set(s => s.IsFavorite, newStatus)
+                        .Set(s => s.UpdatedAt, DateTime.UtcNow);
+                    await _userActivityStatusesCollection.UpdateOneAsync(filter, update);
+
+                    // Cập nhật số lượt thích
+                    int increment = newStatus ? 1 : -1;
+                    var activityUpdate = Builders<Activity>.Update.Inc(a => a.LikeCount, increment);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, activityUpdate);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ToggleActivityLikeAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<Dictionary<string, bool>> GetUserActivityStatusesAsync(string userId)
+        {
+            try
+            {
+                var result = new Dictionary<string, bool>();
+
+                // Lấy tất cả trạng thái của người dùng
+                var statuses = await _userActivityStatusesCollection
+                    .Find(s => s.UserId == userId)
+                    .ToListAsync();
+
+                // Chuyển đổi sang định dạng cần thiết cho client
+                foreach (var status in statuses)
+                {
+                    result[$"{status.ActivityId}:participation"] = status.IsJoined;
+                    result[$"{status.ActivityId}:like"] = status.IsFavorite;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUserActivityStatusesAsync: {ex.Message}");
+                return new Dictionary<string, bool>();
+            }
+        }
+
+        public async Task DeleteUserActivityStatusesByActivityAsync(string activityId)
+        {
+            await _userActivityStatusesCollection.DeleteManyAsync(s => s.ActivityId == activityId);
+        }
+
+        public async Task<Activity> GetActivityByIdAsync(string id)
+        {
+            return await _activitiesCollection.Find(a => a.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<dynamic> GetActivityWithUserStatusAsync(string activityId, string userId)
+        {
+            var activity = await _activitiesCollection.Find(a => a.Id == activityId).FirstOrDefaultAsync();
+            if (activity == null)
+                return null;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new
+                {
+                    activity.Id,
+                    activity.Title,
+                    activity.Description,
+                    activity.Type,
+                    activity.Date,
+                    activity.ImgUrl,
+                    activity.CreatedAt,
+                    activity.Status,
+                    ParticipantCount = activity.ParticipantCount ?? 0,
+                    LikeCount = activity.LikeCount ?? 0,
+                    IsParticipated = false,
+                    IsLiked = false
+                };
+            }
+
+            // Tìm trạng thái của người dùng
+            var filter = Builders<UserActivityStatus>.Filter.And(
+                Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                Builders<UserActivityStatus>.Filter.Eq(s => s.UserId, userId)
+            );
+            var status = await _userActivityStatusesCollection.Find(filter).FirstOrDefaultAsync();
+
+            return new
+            {
+                activity.Id,
+                activity.Title,
+                activity.Description,
+                activity.Type,
+                activity.Date,
+                activity.ImgUrl,
+                activity.CreatedAt,
+                activity.Status,
+                ParticipantCount = activity.ParticipantCount ?? 0,
+                LikeCount = activity.LikeCount ?? 0,
+                IsParticipated = status?.IsJoined ?? false,
+                IsLiked = status?.IsFavorite ?? false
+            };
+        }
+
     }
 }

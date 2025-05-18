@@ -12,5 +12,6 @@ namespace DoanKhoaServer.Settings
         public string TaskSessionsCollectionName { get; set; }
         public string TaskProgramsCollectionName { get; set; }
         public string TaskItemsCollectionName { get; set; }
+        public string UserActivityStatusesCollectionName { get; set; }
     }
 }
