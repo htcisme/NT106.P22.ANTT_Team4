@@ -181,6 +181,61 @@ namespace DoanKhoaClient.Services
             }
         }
 
+        public async Task<bool> ToggleParticipationAsync(string activityId, string userId)
+        {
+            if (string.IsNullOrEmpty(activityId))
+                throw new ArgumentException("ActivityId cannot be null or empty", nameof(activityId));
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("UserId cannot be null or empty", nameof(userId));
+
+            try
+            {
+                var response = await _httpClient.PostAsync($"activity/{activityId}/participate?userId={userId}", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                LogResponseData($"Error in ToggleParticipationAsync: {ex.Message}");
+                throw new Exception($"Lỗi khi cập nhật trạng thái tham gia: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> ToggleLikeAsync(string activityId, string userId)
+        {
+            if (string.IsNullOrEmpty(activityId))
+                throw new ArgumentException("ActivityId cannot be null or empty", nameof(activityId));
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("UserId cannot be null or empty", nameof(userId));
+
+            try
+            {
+                var response = await _httpClient.PostAsync($"activity/{activityId}/like?userId={userId}", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                LogResponseData($"Error in ToggleLikeAsync: {ex.Message}");
+                throw new Exception($"Lỗi khi cập nhật trạng thái yêu thích: {ex.Message}");
+            }
+        }
+
+        public async Task<Dictionary<string, bool>> GetUserActivityStatusAsync(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"activity/user-status/{userId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<Dictionary<string, bool>>();
+                }
+                throw new Exception("Không thể lấy trạng thái hoạt động của người dùng");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy trạng thái hoạt động: {ex.Message}");
+            }
+        }
+
         // Phương thức trợ giúp để tránh lặp code
         private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, string errorMessage)
         {

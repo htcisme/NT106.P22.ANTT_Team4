@@ -129,6 +129,11 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveFilterTagCommand { get; }
         public ICommand ApplyFilterCommand { get; }
 
+        // Thống kê 50 ngày qua
+        public int ActivitiesCount50Days => Activities?.Count(a => a.Date >= DateTime.Now.AddDays(-50)) ?? 0;
+        public int ParticipantsCount50Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-50)).Sum(a => a.ParticipantCount) ?? 0;
+        public int LikesCount50Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-50)).Sum(a => a.LikeCount) ?? 0;
+
         public AdminActivitiesViewModel(ActivityService activityService = null)
         {
             _activityService = activityService ?? new ActivityService();
@@ -198,11 +203,13 @@ namespace DoanKhoaClient.ViewModels
                     .OrderByDescending(a => a.Date)
                     .ToList();
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Activities = new ObservableCollection<Activity>(sortedActivities);
-                    UpdateHasSelectedItems();
-                });
+                Activities = new ObservableCollection<Activity>(sortedActivities);
+                UpdateHasSelectedItems();
+                UpdateIsAllSelected();
+                // Notify các property thống kê
+                OnPropertyChanged(nameof(ActivitiesCount50Days));
+                OnPropertyChanged(nameof(ParticipantsCount50Days));
+                OnPropertyChanged(nameof(LikesCount50Days));
             }, "Không thể tải danh sách hoạt động");
         }
 

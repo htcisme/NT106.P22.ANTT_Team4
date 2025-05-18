@@ -17,6 +17,13 @@ namespace DoanKhoaServer.Models
         public string ImgUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public ActivityStatus Status { get; set; }
+
+        // Thêm các trường mới
+        [BsonDefaultValue(0)]
+        public int? ParticipantCount { get; set; } = 0;
+
+        [BsonDefaultValue(0)]
+        public int? LikeCount { get; set; } = 0;
     }
 
     public enum ActivityType
@@ -32,6 +39,7 @@ namespace DoanKhoaServer.Models
         Ongoing,
         Completed,
     }
+
     public static class ActivityTypeEnum
     {
         public static Array Values => Enum.GetValues(typeof(ActivityType));
