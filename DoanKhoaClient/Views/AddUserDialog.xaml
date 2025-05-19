@@ -1,0 +1,257 @@
+<Window
+    x:Class="DoanKhoaClient.Views.AddUserDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Thêm thành viên"
+    Width="500"
+    Height="770"
+    Background="#F5F5F5"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <!--  Define the StringNullOrEmptyToVisibilityConverter inline if not available  -->
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="ErrorTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E74C3C" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,2,0,5" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="15,8" />
+            <Setter Property="Background" Value="#3498DB" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border
+        Margin="15"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  Header  -->
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,15"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="#2C3E50"
+                Text="THÔNG TIN THÀNH VIÊN" />
+
+            <!--  Form Content  -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!--  Tên đăng nhập  -->
+                    <TextBlock FontWeight="Bold" Text="Tên đăng nhập:" />
+                    <TextBlock
+                        x:Name="UsernameErrorText"
+                        Margin="0,2,0,5"
+                        FontSize="12"
+                        FontWeight="Normal"
+                        Foreground="#E74C3C"
+                        Text="{Binding UsernameError}"
+                        Visibility="{Binding UsernameError, Converter={StaticResource BoolToVis}}" />
+                    <TextBox
+                        x:Name="UsernameBox"
+                        Margin="0,0,0,10"
+                        Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  Họ tên  -->
+                    <TextBlock FontWeight="Bold" Text="Họ tên:" />
+                    <TextBlock
+                        x:Name="DisplayNameErrorText"
+                        Margin="0,2,0,5"
+                        FontSize="12"
+                        FontWeight="Normal"
+                        Foreground="#E74C3C"
+                        Text="{Binding DisplayNameError}"
+                        Visibility="{Binding DisplayNameError, Converter={StaticResource BoolToVis}}" />
+                    <TextBox
+                        x:Name="DisplayNameBox"
+                        Margin="0,0,0,10"
+                        Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  Email  -->
+                    <TextBlock FontWeight="Bold" Text="Email:" />
+                    <TextBlock
+                        x:Name="EmailErrorText"
+                        Margin="0,2,0,5"
+                        FontSize="12"
+                        FontWeight="Normal"
+                        Foreground="#E74C3C"
+                        Text="{Binding EmailError}"
+                        Visibility="{Binding EmailError, Converter={StaticResource BoolToVis}}" />
+                    <TextBox
+                        x:Name="EmailBox"
+                        Margin="0,0,0,10"
+                        Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  Mật khẩu  -->
+                    <TextBlock FontWeight="Bold" Text="Mật khẩu:" />
+                    <TextBlock
+                        x:Name="PasswordErrorText"
+                        Margin="0,2,0,5"
+                        FontSize="12"
+                        FontWeight="Normal"
+                        Foreground="#E74C3C"
+                        Text="{Binding PasswordError}"
+                        Visibility="{Binding PasswordError, Converter={StaticResource BoolToVis}}" />
+                    <PasswordBox
+                        x:Name="PasswordBox"
+                        Margin="0,0,0,10"
+                        PasswordChanged="PasswordBox_PasswordChanged" />
+
+                    <!--  Vai trò  -->
+                    <TextBlock FontWeight="Bold" Text="Vai trò:" />
+                    <ComboBox
+                        x:Name="RoleBox"
+                        Margin="0,0,0,10"
+                        SelectionChanged="RoleBox_SelectionChanged">
+                        <ComboBoxItem
+                            Content="Người dùng"
+                            IsSelected="True"
+                            Tag="User" />
+                        <ComboBoxItem Content="Người quản trị" Tag="Admin" />
+                    </ComboBox>
+
+                    <!--  Mã Admin  -->
+                    <StackPanel Visibility="{Binding AdminCodeVisibility}">
+                        <TextBlock FontWeight="Bold" Text="Mã xác thực Admin:" />
+                        <TextBlock
+                            x:Name="AdminCodeErrorText"
+                            Margin="0,2,0,5"
+                            FontSize="12"
+                            FontWeight="Normal"
+                            Foreground="#E74C3C"
+                            Text="{Binding AdminCodeError}"
+                            Visibility="{Binding AdminCodeError, Converter={StaticResource BoolToVis}}" />
+                        <PasswordBox
+                            x:Name="AdminCodeBox"
+                            Margin="0,0,0,10"
+                            PasswordChanged="AdminCodeBox_PasswordChanged" />
+                        <TextBlock
+                            Margin="0,0,0,15"
+                            FontSize="11"
+                            FontStyle="Italic"
+                            FontWeight="Normal"
+                            Foreground="#7F8C8D"
+                            Text="Nhập mã xác thực để tạo tài khoản quản trị" />
+                    </StackPanel>
+
+                    <!--  Chức vụ  -->
+                    <TextBlock FontWeight="Bold" Text="Chức vụ:" />
+                    <ComboBox x:Name="PositionBox" Margin="0,0,0,10">
+                        <ComboBoxItem
+                            Content="Không chọn"
+                            IsSelected="True"
+                            Tag="None" />
+                        <ComboBoxItem Content="Đoàn viên" Tag="DoanVien" />
+                        <ComboBoxItem Content="Cộng tác viên Đoàn khoa" Tag="CongTacVien" />
+                        <ComboBoxItem Content="Ủy viên Ban Chấp hành Đoàn khoa mở rộng" Tag="UyVienBCHMoRong" />
+                        <ComboBoxItem Content="Ủy viên Ban Chấp hành Đoàn khoa" Tag="UyVienBCH" />
+                        <ComboBoxItem Content="Ủy viên Ban Thường vụ Đoàn khoa" Tag="UyVienBTV" />
+                    </ComboBox>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!--  Separator  -->
+            <Border
+                Grid.Row="2"
+                Margin="0,10"
+                BorderBrush="#EEEEEE"
+                BorderThickness="0,1,0,0" />
+
+            <!--  Buttons  -->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    Width="100"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="#BDBDBD"
+                    BorderThickness="1"
+                    Click="Cancel_Click"
+                    Content="Hủy"
+                    Foreground="#7F8C8D">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="#7F8C8D" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="#BDBDBD" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#EEEEEE" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button
+                    Grid.Column="1"
+                    Width="150"
+                    Click="Save_Click"
+                    Content="Lưu thông tin">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4" />
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

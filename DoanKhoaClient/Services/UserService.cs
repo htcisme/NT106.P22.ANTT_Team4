@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Runtime.ConstrainedExecution;
 
 namespace DoanKhoaClient.Services
 {
@@ -15,6 +17,7 @@ namespace DoanKhoaClient.Services
         private static Dictionary<string, bool> _participatedActivities = new Dictionary<string, bool>();
         private static Dictionary<string, bool> _likedActivities = new Dictionary<string, bool>();
         private readonly ActivityService _activityService;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public event EventHandler<UserActivityStatusChangedEventArgs> ActivityStatusChanged;
 
@@ -22,6 +25,10 @@ namespace DoanKhoaClient.Services
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
             _activityService = activityService ?? new ActivityService();
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
             // If we already have a current user in the App properties, set it
             if (App.Current.Properties.Contains("CurrentUser") &&
@@ -243,10 +250,14 @@ namespace DoanKhoaClient.Services
             try
             {
                 var response = await _httpClient.GetAsync("user/all");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"GetUsersAsync Response: {responseContent}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<List<User>>();
+                    var users = JsonSerializer.Deserialize<List<User>>(responseContent, _jsonOptions);
+                    Debug.WriteLine($"Parsed Users: {string.Join(", ", users.Select(u => $"{u.Username}: {u.Role}"))}");
+                    return users;
                 }
                 else
                 {
@@ -256,7 +267,98 @@ namespace DoanKhoaClient.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"GetUsersAsync Error: {ex}");
                 throw new Exception($"Failed to get users: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<User> UpdateUserAsync(string userId, User updatedUser)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"user/{userId}", updatedUser);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<User>();
+            else
+                throw new Exception(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<User> UpdateUserToAdminAsync(string userId, object updatedUserWithAdminCode)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"user/{userId}/promote-to-admin", updatedUserWithAdminCode);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<User>();
+            else
+                throw new Exception(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task DeleteUserAsync(string userId)
+        {
+            try
+            {
+                // Đảm bảo gửi token nếu có người dùng hiện tại đăng nhập
+                if (_currentUser != null)
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer");
+                }
+
+                var response = await _httpClient.DeleteAsync($"user/{userId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Error deleting user {userId}: {response.StatusCode} - {errorContent}");
+
+                    // Kiểm tra các mã trạng thái cụ thể để đưa ra thông báo lỗi có ý nghĩa
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                        throw new Exception("Không có quyền truy cập. Vui lòng đăng nhập lại.");
+                    else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                        throw new Exception("Bạn không có quyền xóa người dùng này.");
+                    else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        throw new Exception("Không tìm thấy người dùng.");
+                    else
+                        throw new Exception($"Lỗi: {errorContent}");
+                }
+                else
+                {
+                    Debug.WriteLine($"User {userId} deleted successfully.");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Network error when deleting user: {ex.Message}");
+                throw new Exception("Lỗi kết nối tới server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex) when (!(ex is HttpRequestException))
+            {
+                // Re-throw các Exception đã được customize ở trên
+                throw;
+            }
+        }
+
+        public async Task<User> CreateUserAsync(RegisterRequest request)
+        {
+            var response = await _httpClient.PostAsJsonAsync("user/register", request);
+            if (response.IsSuccessStatusCode)
+            {
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                if (authResponse != null && !string.IsNullOrEmpty(authResponse.Id))
+                {
+                    return new User
+                    {
+                        Id = authResponse.Id,
+                        Username = authResponse.Username,
+                        DisplayName = authResponse.DisplayName,
+                        Email = authResponse.Email,
+                        AvatarUrl = authResponse.AvatarUrl,
+                        Role = authResponse.Role,
+                    };
+                }
+                throw new Exception(authResponse?.Message ?? "Không thể tạo thành viên mới.");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Lỗi tạo thành viên: {error}");
             }
         }
     }
