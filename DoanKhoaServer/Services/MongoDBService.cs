@@ -135,10 +135,7 @@ namespace DoanKhoaServer.Services
             return await _attachmentsCollection.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Attachment>> GetAttachmentsByMessageIdAsync(string messageId)
-        {
-            return await _attachmentsCollection.Find(a => a.MessageId == messageId).ToListAsync();
-        }
+
 
         public async Task<List<Attachment>> GetAttachmentsByIdsAsync(List<string> attachmentIds)
         {
@@ -424,10 +421,10 @@ namespace DoanKhoaServer.Services
 
         public async Task DeleteTaskItemAsync(string id) =>
             await _taskItemsCollection.DeleteOneAsync(x => x.Id == id);
-    
 
-    //UserActivityStatus methods
-    public async Task<List<dynamic>> GetActivitiesWithUserStatusAsync(string userId)
+
+        //UserActivityStatus methods
+        public async Task<List<dynamic>> GetActivitiesWithUserStatusAsync(string userId)
         {
             var activities = await _activitiesCollection.Find(_ => true).ToListAsync();
 
@@ -667,7 +664,45 @@ namespace DoanKhoaServer.Services
         {
             return await _activitiesCollection.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
+        // Thêm vào MongoDBService.cs
+        public async Task<bool> MarkMessageAsSpamAsync(string messageId)
+        {
+            var update = Builders<Message>.Update.Set("IsSpam", true);
+            var result = await _messagesCollection.UpdateOneAsync(m => m.Id == messageId, update);
+            return result.ModifiedCount > 0;
+        }
 
+        public async Task<bool> UnmarkMessageAsSpamAsync(string messageId)
+        {
+            var update = Builders<Message>.Update.Set("IsSpam", false);
+            var result = await _messagesCollection.UpdateOneAsync(m => m.Id == messageId, update);
+            return result.ModifiedCount > 0;
+        }
+        public async Task<List<Attachment>> GetAttachmentsByMessageIdAsync(string messageId)
+        {
+            var filter = Builders<Attachment>.Filter.Eq(a => a.MessageId, messageId);
+            return await _attachmentsCollection.Find(filter).ToListAsync();
+        }
+
+        public async Task<bool> UpdateAttachmentAsync(Attachment attachment)
+        {
+            var filter = Builders<Attachment>.Filter.Eq(a => a.Id, attachment.Id);
+            var result = await _attachmentsCollection.ReplaceOneAsync(filter, attachment);
+            return result.ModifiedCount > 0;
+        }
+
+
+        public async Task<List<Message>> GetSpamMessagesAsync()
+        {
+            return await _messagesCollection.Find(m => m.IsSpam == true).ToListAsync();
+        }
+
+        public async Task<bool> RestoreMessageAsync(string messageId)
+        {
+            var update = Builders<Message>.Update.Set("IsSpam", false);
+            var result = await _messagesCollection.UpdateOneAsync(m => m.Id == messageId, update);
+            return result.ModifiedCount > 0;
+        }
         public async Task<dynamic> GetActivityWithUserStatusAsync(string activityId, string userId)
         {
             var activity = await _activitiesCollection.Find(a => a.Id == activityId).FirstOrDefaultAsync();

@@ -35,6 +35,7 @@ namespace DoanKhoaServer.Models
         public DateTime LastSeen { get; set; }
         public List<string> Conversations { get; set; } = new List<string>();
         public UserRole Role { get; set; } // Default to regular user
+                                           // Add these properties to the User clas
         public Position Position { get; set; } = Position.DoanVien;
         public int ActivitiesCount { get; set; } = 0;
 

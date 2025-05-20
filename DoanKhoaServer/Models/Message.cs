@@ -10,7 +10,7 @@ namespace DoanKhoaServer.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-
+        public bool IsSpam { get; set; } = false;
         public string ConversationId { get; set; }
         public string SenderId { get; set; }
         public string Content { get; set; }
