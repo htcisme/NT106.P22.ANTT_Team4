@@ -14,6 +14,8 @@ using Newtonsoft.Json.Linq;
 
 namespace DoanKhoaClient.Services
 {
+    public delegate void TaskItemsRefreshedHandler(object sender, EventArgs e);
+
     public class TaskService
     {
         private readonly HttpClient _httpClient;
@@ -29,6 +31,7 @@ namespace DoanKhoaClient.Services
         public delegate void TaskItemUpdatedHandler(TaskItem item);
         public event TaskItemUpdatedHandler TaskItemUpdated;
 
+        public event TaskItemsRefreshedHandler TaskItemsRefreshed;
         public TaskService()
         {
             _httpClient = new HttpClient
