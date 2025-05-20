@@ -18,5 +18,6 @@ namespace DoanKhoaClient.Views
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             ThemeManager.ToggleTheme(Register_Background);
         }
+
     }
 }

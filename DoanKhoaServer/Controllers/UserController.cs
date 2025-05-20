@@ -12,12 +12,16 @@ namespace DoanKhoaServer.Controllers
     public class UserController : ControllerBase
     {
         private readonly AuthService _authService;
-        private readonly MongoDBService _mongoDBService; // Add this field
-
+        private readonly MongoDBService _mongoDBService;
+        public class PromoteToAdminRequest
+        {
+            public User User { get; set; }
+            public string AdminCode { get; set; }
+        }
         public UserController(AuthService authService, MongoDBService mongoDBService)
         {
             _authService = authService;
-            _mongoDBService = mongoDBService; // Initialize the field
+            _mongoDBService = mongoDBService;
         }
 
         [HttpPost("register")]
@@ -36,7 +40,7 @@ namespace DoanKhoaServer.Controllers
                 if (request.Role == UserRole.Admin)
                 {
                     // Define your secret admin code - in a real app, this should be in a secure config
-                    const string ADMIN_SECRET_CODE = "DoankhoaMMT&TT";
+                    const string ADMIN_SECRET_CODE = "DoanKhoaMMT";
 
                     if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
                     {
@@ -177,7 +181,9 @@ namespace DoanKhoaServer.Controllers
                     u.DisplayName,
                     u.Email,
                     u.AvatarUrl,
-                    u.LastSeen
+                    u.LastSeen,
+                    u.Position,
+                    u.ActivitiesCount
                 }).ToList();
 
                 return Ok(userDtos);
@@ -218,7 +224,10 @@ namespace DoanKhoaServer.Controllers
                     user.Email,
                     user.AvatarUrl,
                     user.LastSeen,
-                    user.Conversations
+                    user.Conversations,
+                    user.Role,
+                    user.Position,
+                    user.ActivitiesCount
                 });
             }
             catch (Exception ex)
@@ -246,7 +255,8 @@ namespace DoanKhoaServer.Controllers
                     user.DisplayName,
                     user.Email,
                     user.AvatarUrl,
-                    user.LastSeen
+                    user.LastSeen,
+                    user.ActivitiesCount
                 });
             }
             catch (Exception ex)
@@ -270,10 +280,95 @@ namespace DoanKhoaServer.Controllers
                     u.DisplayName,
                     u.Email,
                     u.AvatarUrl,
-                    u.LastSeen
+                    u.LastSeen,
+                    u.Role,
+                    u.Position,
+                    u.ActivitiesCount
                 }).ToList();
 
                 return Ok(usersDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] User updatedUser)
+        {
+            try
+            {
+                var user = await _mongoDBService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+                // Cập nhật các trường cho phép chỉnh sửa
+                user.DisplayName = updatedUser.DisplayName;
+                user.Email = updatedUser.Email;
+                user.Role = updatedUser.Role;
+                user.Position = updatedUser.Position;
+
+                await _mongoDBService.UpdateUserAsync(user);
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                var user = await _mongoDBService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng");
+                }
+
+                await _mongoDBService.DeleteUserAsync(id);
+
+                return Ok(new { message = "Người dùng đã được xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}/promote-to-admin")]
+        public async Task<IActionResult> PromoteToAdmin(string id, [FromBody] PromoteToAdminRequest request)
+        {
+            try
+            {
+                // Validate admin code
+                const string ADMIN_SECRET_CODE = "DoanKhoaMMT"; // Nên đặt trong config
+                if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
+                {
+                    return BadRequest("Mã xác thực Admin không hợp lệ.");
+                }
+
+                var user = await _mongoDBService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng");
+                }
+
+                // Cập nhật người dùng thành Admin
+                user.Role = UserRole.Admin;
+                // Cập nhật các trường khác từ request.User
+                user.DisplayName = request.User.DisplayName;
+                user.Email = request.User.Email;
+                user.Position = request.User.Position;
+
+                await _mongoDBService.UpdateUserAsync(user);
+
+                return Ok(user);
             }
             catch (Exception ex)
             {

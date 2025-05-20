@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace DoanKhoaClient.Models
 {
@@ -9,6 +11,17 @@ namespace DoanKhoaClient.Models
         User = 0,
         Admin = 1
     }
+
+    public enum Position
+    {
+        None = -1,
+        DoanVien = 0,
+        CongTacVien = 1,
+        UyVienBCHMoRong = 2,
+        UyVienBCH = 3,
+        UyVienBTV = 4
+    }
+
     public class RegisterRequest
     {
         public string Username { get; set; }
@@ -45,7 +58,7 @@ namespace DoanKhoaClient.Models
         public bool RequiresEmailVerification { get; set; }
     }
 
-    public class User
+    public class User : INotifyPropertyChanged
     {
         public string Id { get; set; }
         public string Username { get; set; }
@@ -56,8 +69,21 @@ namespace DoanKhoaClient.Models
         public List<string> Conversations { get; set; } = new List<string>();
         public bool TwoFactorEnabled { get; set; }
         public UserRole Role { get; set; } = UserRole.User; // Default to regular user
+        public Position Position { get; set; } = Position.None;
         public bool EmailVerified { get; set; } = false;
         public string EmailVerificationCode { get; set; }
         public DateTime? EmailVerificationCodeExpiry { get; set; }
+        public int ActivitiesCount { get; set; } = 0;
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { _isSelected = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
