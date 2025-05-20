@@ -67,6 +67,11 @@ namespace DoanKhoaServer.Services
         public async Task CreateUserAsync(User user) =>
             await _usersCollection.InsertOneAsync(user);
 
+        public async Task DeleteUserAsync(string userId)
+        {
+            await _usersCollection.DeleteOneAsync(u => u.Id == userId);
+        }
+
         // Messages methods
         public async Task<List<Message>> GetMessagesByConversationIdAsync(string conversationId) =>
             await _messagesCollection.Find(x => x.ConversationId == conversationId)
@@ -284,6 +289,20 @@ namespace DoanKhoaServer.Services
 
         public async Task DeleteActivityAsync(string id)
         {
+            // Lấy tất cả trạng thái tham gia của user cho activity này
+            var joinedStatuses = await _userActivityStatusesCollection.Find(s => s.ActivityId == id && s.IsJoined).ToListAsync();
+            foreach (var status in joinedStatuses)
+            {
+                var user = await _usersCollection.Find(u => u.Id == status.UserId).FirstOrDefaultAsync();
+                if (user != null && user.ActivitiesCount > 0)
+                {
+                    user.ActivitiesCount--;
+                    await UpdateUserAsync(user);
+                }
+            }
+            // Xóa các trạng thái liên quan
+            await _userActivityStatusesCollection.DeleteManyAsync(s => s.ActivityId == id);
+            // Xóa activity
             await _activitiesCollection.DeleteOneAsync(x => x.Id == id);
         }
 
@@ -510,6 +529,13 @@ namespace DoanKhoaServer.Services
                     var update = Builders<Activity>.Update.Inc(a => a.ParticipantCount, 1);
                     await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, update);
 
+                    // Tăng ActivitiesCount cho user
+                    var user = await _usersCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
+                    if (user != null)
+                    {
+                        user.ActivitiesCount++;
+                        await UpdateUserAsync(user);
+                    }
                     return true;
                 }
                 else
@@ -526,6 +552,14 @@ namespace DoanKhoaServer.Services
                     var activityUpdate = Builders<Activity>.Update.Inc(a => a.ParticipantCount, increment);
                     await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, activityUpdate);
 
+                    // Tăng/giảm ActivitiesCount cho user
+                    var user = await _usersCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
+                    if (user != null)
+                    {
+                        user.ActivitiesCount += increment;
+                        if (user.ActivitiesCount < 0) user.ActivitiesCount = 0;
+                        await UpdateUserAsync(user);
+                    }
                     return true;
                 }
             }
