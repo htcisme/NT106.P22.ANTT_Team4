@@ -20,7 +20,7 @@ namespace DoanKhoaClient.Views
                 ProgramId = programId,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Status = TaskItemStatus.Pending
+                Status = TaskItemStatus.NotStarted,
             };
             DataContext = TaskItem;
 

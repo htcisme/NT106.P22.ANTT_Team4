@@ -1,24 +1,27 @@
 using DoanKhoaClient.Models;
+using DoanKhoaClient.Services;
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Diagnostics; 
 
 namespace DoanKhoaClient.Views
 {
     public partial class EditTaskItemDialog : Window
     {
-        public TaskItem TaskItem { get; private set; }
+        private readonly UserService _userService;
         private List<User> _users;
-        private readonly TaskItem _originalTaskItem;
+
+        public TaskItem TaskItem { get; private set; }
 
         public EditTaskItemDialog(TaskItem taskItem)
         {
             InitializeComponent();
-            _originalTaskItem = taskItem;
+            _userService = new UserService();
 
-            // Tạo bản sao để tránh thay đổi trực tiếp đến đối tượng gốc
+            // Tạo bản sao để tránh sửa trực tiếp
             TaskItem = new TaskItem
             {
                 Id = taskItem.Id,
@@ -26,6 +29,7 @@ namespace DoanKhoaClient.Views
                 Title = taskItem.Title,
                 Description = taskItem.Description,
                 Status = taskItem.Status,
+                Priority = taskItem.Priority,
                 DueDate = taskItem.DueDate,
                 CompletedAt = taskItem.CompletedAt,
                 AssignedToId = taskItem.AssignedToId,
@@ -36,49 +40,61 @@ namespace DoanKhoaClient.Views
 
             DataContext = TaskItem;
 
-            // Khởi tạo ComboBox trạng thái
+            // Khởi tạo danh sách trạng thái
             StatusComboBox.ItemsSource = Enum.GetValues(typeof(TaskItemStatus));
             StatusComboBox.SelectedItem = TaskItem.Status;
 
             // Tải danh sách người dùng
-            _ = LoadUsersAsync();
+            Loaded += async (s, e) => await LoadUsersAsync();
         }
 
         private async Task LoadUsersAsync()
         {
             try
             {
-                // Sử dụng HttpClient để lấy danh sách người dùng
-                using var httpClient = new System.Net.Http.HttpClient();
-                httpClient.BaseAddress = new Uri("http://localhost:5299/api/");
-                var response = await httpClient.GetAsync("user/all");
-                if (response.IsSuccessStatusCode)
-                {
-                    _users = await response.Content.ReadFromJsonAsync<List<User>>();
-                    AssigneeComboBox.ItemsSource = _users;
-                    AssigneeComboBox.DisplayMemberPath = "DisplayName";
+                _users = await _userService.GetUsersAsync();
 
-                    // Chọn người dùng hiện tại
-                    if (!string.IsNullOrEmpty(TaskItem.AssignedToId))
+                // Thêm tùy chọn "Không có người được giao"
+                var noneItem = new ComboBoxItem
+                {
+                    Content = "Không có người được giao",
+                    Tag = null
+                };
+                AssigneeComboBox.Items.Add(noneItem);
+
+                // Thêm danh sách người dùng
+                foreach (var user in _users)
+                {
+                    var item = new ComboBoxItem
                     {
-                        var selectedUser = _users.Find(u => u.Id == TaskItem.AssignedToId);
-                        if (selectedUser != null)
-                        {
-                            AssigneeComboBox.SelectedItem = selectedUser;
-                        }
-                    }
+                        Content = user.DisplayName,
+                        Tag = user
+                    };
+                    AssigneeComboBox.Items.Add(item);
+                }
+
+                // Chọn người dùng hiện tại hoặc "Không có người được giao"
+                if (string.IsNullOrEmpty(TaskItem.AssignedToId))
+                {
+                    AssigneeComboBox.SelectedIndex = 0;
                 }
                 else
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể tải danh sách người dùng: {errorContent}",
-                                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var userIndex = _users.FindIndex(u => u.Id == TaskItem.AssignedToId);
+                    if (userIndex >= 0)
+                    {
+                        AssigneeComboBox.SelectedIndex = userIndex + 1; // +1 vì có item "Không có người được giao"
+                    }
+                    else
+                    {
+                        AssigneeComboBox.SelectedIndex = 0;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}",
-                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -86,18 +102,46 @@ namespace DoanKhoaClient.Views
         {
             if (ValidateInput())
             {
-                // Trong SaveButton_Click:
-                if (StatusComboBox.SelectedItem is TaskItemStatus selectedStatus)
+                // Đảm bảo các trường quan trọng không bị null
+                if (string.IsNullOrEmpty(TaskItem.Id))
                 {
-                    TaskItem.Status = selectedStatus;
+                    MessageBox.Show("Lỗi: Task ID không được để trống",
+                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
-                // Lưu người được giao từ ComboBox
-                if (AssigneeComboBox.SelectedItem is User selectedUser)
+                if (string.IsNullOrEmpty(TaskItem.ProgramId))
                 {
-                    TaskItem.AssignedToId = selectedUser.Id;
-                    TaskItem.AssignedToName = selectedUser.DisplayName;
+                    MessageBox.Show("Lỗi: Program ID không được để trống",
+                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
+
+                // Cập nhật từ control
+                TaskItem.Status = (TaskItemStatus)StatusComboBox.SelectedItem;
+                TaskItem.UpdatedAt = DateTime.Now;
+
+                // Xử lý người được giao
+                if (AssigneeComboBox.SelectedItem is ComboBoxItem selectedItem)
+                {
+                    var selectedUser = selectedItem.Tag as User;
+                    if (selectedUser != null)
+                    {
+                        TaskItem.AssignedToId = selectedUser.Id;
+                        TaskItem.AssignedToName = selectedUser.DisplayName;
+                    }
+                    else if (AssigneeComboBox.SelectedIndex == 0)
+                    {
+                        TaskItem.AssignedToId = null;
+                        TaskItem.AssignedToName = null;
+                    }
+                }
+
+                // Log task item trước khi gửi để debug
+                Debug.WriteLine($"Saving task: {TaskItem.Id}");
+                Debug.WriteLine($"Title: {TaskItem.Title}");
+                Debug.WriteLine($"ProgramId: {TaskItem.ProgramId}");
+                Debug.WriteLine($"Status: {TaskItem.Status}");
 
                 DialogResult = true;
                 Close();
@@ -114,22 +158,15 @@ namespace DoanKhoaClient.Views
         {
             if (string.IsNullOrWhiteSpace(TaskItem.Title))
             {
-                MessageBox.Show("Vui lòng nhập tiêu đề công việc.", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Vui lòng nhập tiêu đề công việc.",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TaskItem.Description))
+            if (!TaskItem.DueDate.HasValue)
             {
-                MessageBox.Show("Vui lòng nhập mô tả công việc.", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (AssigneeComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Vui lòng chọn người được giao công việc.", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Vui lòng chọn ngày hạn cho công việc.",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 

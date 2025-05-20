@@ -32,7 +32,7 @@ namespace DoanKhoaServer.Controllers
 
             return taskItem;
         }
-        
+
         [HttpGet("program/{programId}")]
         public async Task<List<TaskItem>> GetByProgramId(string programId) =>
             await _mongoDBService.GetTaskItemsByProgramIdAsync(programId);

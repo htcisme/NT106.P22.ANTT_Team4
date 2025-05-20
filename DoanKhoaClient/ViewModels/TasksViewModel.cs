@@ -3,6 +3,7 @@ using DoanKhoaClient.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics; 
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -162,11 +163,19 @@ namespace DoanKhoaClient.ViewModels
             try
             {
                 IsLoading = true;
+
+                // Log để debug
+                Debug.WriteLine($"Loading tasks for program: {programId}");
+
                 var items = await _taskService.GetTaskItemsAsync(programId);
+
+                // Log kết quả để debug
+                Debug.WriteLine($"Loaded {items.Count} tasks");
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TaskItems = new ObservableCollection<TaskItem>(items.OrderByDescending(i => i.Status == TaskItemStatus.Pending)
-        .ThenBy(i => i.DueDate));
+                    // Đơn giản hóa cách sắp xếp có thể giúp tránh lỗi
+                    TaskItems = new ObservableCollection<TaskItem>(items);
                 });
             }
             catch (Exception ex)
