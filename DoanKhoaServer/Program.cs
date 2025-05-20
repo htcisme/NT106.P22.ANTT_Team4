@@ -15,7 +15,7 @@ builder.Services.AddSingleton<MongoDBService>();
 // Đăng ký AuthService
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddSingleton<OtpService>();
-
+builder.Services.AddSingleton<EmailService>();
 // Add controllers and SignalR
 builder.Services.AddControllers();
 builder.Services.AddSignalR();

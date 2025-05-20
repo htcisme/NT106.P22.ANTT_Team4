@@ -25,15 +25,16 @@ namespace DoanKhoaServer.DTOs
         public string Otp { get; set; }
     }
 
-public class AuthResponse
-{
-    public string Id { get; set; }
-    public string Username { get; set; }
-    public string DisplayName { get; set; }
-    public string Email { get; set; }
-    public string AvatarUrl { get; set; }
-    public bool RequiresTwoFactor { get; set; }
-    public UserRole Role { get; set; }
-    public string Message { get; set; } = ""; // Default initialization to avoid null
-}
+    public class AuthResponse
+    {
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
+        public string AvatarUrl { get; set; }
+        public bool RequiresTwoFactor { get; set; }
+        public UserRole Role { get; set; }
+        public string Message { get; set; } = ""; // Default initialization to avoid null
+        public bool RequiresEmailVerification { get; set; }
+    }
 }

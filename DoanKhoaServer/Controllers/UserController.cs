@@ -4,6 +4,11 @@ using DoanKhoaServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+public class VerifyEmailRequest
+{
+    public string UserId { get; set; }
+    public string Code { get; set; }
+}
 
 namespace DoanKhoaServer.Controllers
 {
@@ -29,18 +34,17 @@ namespace DoanKhoaServer.Controllers
                 if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password) ||
                     string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.DisplayName))
                 {
-                    return BadRequest("Vui lòng nhập đầy đủ thông tin.");
+                    return BadRequest("validation_error:Vui lòng nhập đầy đủ thông tin.");
                 }
 
                 // Admin validation
                 if (request.Role == UserRole.Admin)
                 {
-                    // Define your secret admin code - in a real app, this should be in a secure config
                     const string ADMIN_SECRET_CODE = "DoankhoaMMT&TT";
 
                     if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
                     {
-                        return BadRequest("Mã xác thực Admin không hợp lệ.");
+                        return BadRequest("admin_code_error:Mã xác thực Admin không hợp lệ.");
                     }
                 }
 
@@ -56,10 +60,11 @@ namespace DoanKhoaServer.Controllers
 
                 if (user == null)
                 {
+                    // Return specific error message
                     return BadRequest(message);
                 }
 
-                // Trả về kết quả thành công
+                // Registration successful, but email verification required
                 return Ok(new AuthResponse
                 {
                     Id = user.Id,
@@ -67,7 +72,43 @@ namespace DoanKhoaServer.Controllers
                     DisplayName = user.DisplayName,
                     Email = user.Email,
                     AvatarUrl = user.AvatarUrl,
-                    Role = user.Role, // Include role in response
+                    Role = user.Role,
+                    Message = "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+                    RequiresEmailVerification = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"server_error:{ex.Message}");
+            }
+        }
+
+        // Add this action method
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.UserId) || string.IsNullOrEmpty(request.Code))
+                {
+                    return BadRequest("Vui lòng nhập đầy đủ thông tin.");
+                }
+
+                var (user, message) = await _authService.VerifyEmail(request.UserId, request.Code);
+
+                if (user == null)
+                {
+                    return BadRequest(message);
+                }
+
+                return Ok(new AuthResponse
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    AvatarUrl = user.AvatarUrl,
+                    Role = user.Role,
                     Message = message
                 });
             }
@@ -76,7 +117,6 @@ namespace DoanKhoaServer.Controllers
                 return StatusCode(500, $"Lỗi server: {ex.Message}");
             }
         }
-
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {

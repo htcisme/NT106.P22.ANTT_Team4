@@ -10,17 +10,24 @@ namespace DoanKhoaServer.Services
     public class AuthService
     {
         private readonly MongoDBService _mongoDBService;
+        private readonly EmailService _emailService;
 
-        public AuthService(MongoDBService mongoDBService)
+        public AuthService(MongoDBService mongoDBService, EmailService emailService)
         {
             _mongoDBService = mongoDBService;
+            _emailService = emailService;
         }
-
+        private string GenerateVerificationCode()
+        {
+            // Generate a 6-digit code
+            Random random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
         public async Task<(User user, string message)> RegisterUser(
-    string username, 
-    string displayName, 
-    string email, 
-    string password, 
+    string username,
+    string displayName,
+    string email,
+    string password,
     bool enableTwoFactorAuth,
     UserRole role = UserRole.User)
         {
@@ -28,18 +35,21 @@ namespace DoanKhoaServer.Services
             var existingUser = await _mongoDBService.GetUserByUsernameAsync(username);
             if (existingUser != null)
             {
-                return (null, "Tên đăng nhập đã tồn tại.");
+                return (null, "duplicate_username");
             }
 
             // Kiểm tra xem email đã được sử dụng chưa
             var existingEmail = await _mongoDBService.GetUserByEmailAsync(email);
             if (existingEmail != null)
             {
-                return (null, "Email đã được sử dụng.");
+                return (null, "duplicate_email");
             }
 
             // Hash password
             var (hash, salt) = PasswordHelper.HashPassword(password);
+
+            // Generate email verification code
+            string verificationCode = GenerateVerificationCode();
 
             // Tạo user mới
             var newUser = new User
@@ -53,7 +63,12 @@ namespace DoanKhoaServer.Services
                 AvatarUrl = null,
                 LastSeen = DateTime.UtcNow,
                 TwoFactorEnabled = enableTwoFactorAuth,
-                Role = role // Role is already validated in the controller
+                Role = role, // Role is already validated in the controller
+
+                EmailVerified = false,
+                EmailVerificationCode = verificationCode,
+                EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(15)
+
             };
 
             // Nếu bật xác thực 2 lớp, tạo secret key
@@ -62,12 +77,55 @@ namespace DoanKhoaServer.Services
                 newUser.TwoFactorSecret = TotpHelper.GenerateSecretKey();
             }
 
+            // Send verification email
+            try
+            {
+                await _emailService.SendVerificationEmailAsync(email, displayName, verificationCode);
+            }
+            catch (Exception ex)
+            {
+                return (null, $"email_error:{ex.Message}");
+            }
+
             // Lưu vào database
             await _mongoDBService.CreateUserAsync(newUser);
 
-            return (newUser, "Đăng ký tài khoản thành công.");
+            return (newUser, "registration_success_verification_required");
         }
 
+        public async Task<(User user, string message)> VerifyEmail(string userId, string code)
+        {
+            var user = await _mongoDBService.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return (null, "Tài khoản không tồn tại.");
+            }
+
+            if (user.EmailVerified)
+            {
+                return (user, "Email đã được xác thực trước đó.");
+            }
+
+            if (user.EmailVerificationCodeExpiry < DateTime.UtcNow)
+            {
+                return (null, "Mã xác thực đã hết hạn.");
+            }
+
+            if (user.EmailVerificationCode != code)
+            {
+                return (null, "Mã xác thực không chính xác.");
+            }
+
+            // Update user as verified
+            user.EmailVerified = true;
+            user.EmailVerificationCode = null;
+            user.EmailVerificationCodeExpiry = null;
+
+            await _mongoDBService.UpdateUserAsync(user);
+
+            return (user, "Email đã được xác thực thành công.");
+        }
         public async Task<(User user, bool requiresTwoFactor, string message)> LoginUser(string username, string password)
         {
             // Tìm user theo username
