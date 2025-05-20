@@ -20,6 +20,8 @@ namespace DoanKhoaServer.Models
         public bool IsGroup { get; set; }
         public string CreatorId { get; set; }
         public List<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
+        public bool IsAdminOnly { get; set; }
+
     }
 
     public class GroupMember

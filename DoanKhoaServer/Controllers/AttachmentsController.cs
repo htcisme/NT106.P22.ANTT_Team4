@@ -25,28 +25,33 @@ namespace DoanKhoaServer.Controllers
         [HttpPost("upload")]
         public async Task<ActionResult<Attachment>> UploadFile([FromForm] AttachmentUploadModel model)
         {
-            if (model.File == null)
-                return BadRequest("No file provided");
-
             try
             {
-                // Tạo thư mục lưu trữ nếu chưa tồn tại
-                string uploadsFolder = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads");
+                if (model.File == null || model.File.Length == 0)
+                    return BadRequest("No file was uploaded.");
+
+                // Đảm bảo thư mục Uploads tồn tại
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                // Tạo tên file duy nhất
-                string uniqueFileName = $"{DateTime.Now.Ticks}_{Guid.NewGuid()}_{model.File.FileName}";
+                // Tạo tên file đơn giản với timestamp để tránh trùng lặp
+                string uniqueFileName = $"{Path.GetFileName(model.File.FileName)}";
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Lưu file vào hệ thống file
+                // Lưu file vào ổ đĩa
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await model.File.CopyToAsync(stream);
                 }
 
-                // Kiểm tra file có phải là hình ảnh không
+                // Xác định nếu file là hình ảnh
                 bool isImage = model.File.ContentType.StartsWith("image/");
+
+                // QUAN TRỌNG: Lưu URL với định dạng chuẩn /Uploads/filename
+                string fileUrl = $"/Uploads/{uniqueFileName}";
+
+                Console.WriteLine($"Uploaded file: {uniqueFileName}, Path: {filePath}, URL: {fileUrl}");
 
                 // Tạo bản ghi attachment
                 var attachment = new Attachment
@@ -55,19 +60,59 @@ namespace DoanKhoaServer.Controllers
                     FileName = model.File.FileName,
                     ContentType = model.File.ContentType,
                     FilePath = filePath,
+                    FileUrl = fileUrl,
                     FileSize = model.File.Length,
                     IsImage = isImage,
                     UploadDate = DateTime.UtcNow,
-                    UploaderId = model.UploaderId
+                    UploaderId = model.UploaderId,
+                    MessageId = model.MessageId,
+
+                    // Set default thumbnail values
+                    ThumbnailPath = isImage ?
+        Path.Combine(uploadsFolder, "default_thumbnail.png") :
+        Path.Combine(uploadsFolder, "default_file_thumbnail.png"),
+                    ThumbnailUrl = isImage ?
+        "/Uploads/default_thumbnail.png" :
+        "/Uploads/default_file_thumbnail.png"
                 };
 
                 // Lưu vào database
                 await _mongoDBService.SaveAttachmentAsync(attachment);
 
-                // Tạo URL để client có thể tải file
-                attachment.FileUrl = $"{Request.Scheme}://{Request.Host}/api/attachments/download/{attachment.Id}";
+                // Trả về đầy đủ URL cho client - chỉ để hiển thị ngay sau khi tải lên
+                attachment.FileUrl = $"{Request.Scheme}://{Request.Host}{fileUrl}";
 
                 return attachment;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading file: {ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("download/{fileName}")]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            try
+            {
+                // Tìm đường dẫn đầy đủ của file
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
+
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound($"File {fileName} not found");
+
+                // Xác định MIME type
+                string contentType = GetContentType(Path.GetExtension(fileName));
+
+                // Đọc file và trả về
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+
+                return File(memory, contentType, fileName);
             }
             catch (Exception ex)
             {
@@ -75,19 +120,23 @@ namespace DoanKhoaServer.Controllers
             }
         }
 
-        [HttpGet("download/{id}")]
-        public async Task<IActionResult> DownloadFile(string id)
+        private string GetContentType(string extension)
         {
-            var attachment = await _mongoDBService.GetAttachmentByIdAsync(id);
-
-            if (attachment == null)
-                return NotFound();
-
-            if (!System.IO.File.Exists(attachment.FilePath))
-                return NotFound("File not found on server");
-
-            var fileBytes = System.IO.File.ReadAllBytes(attachment.FilePath);
-            return File(fileBytes, attachment.ContentType, attachment.FileName);
+            switch (extension.ToLower())
+            {
+                case ".jpg":
+                case ".jpeg": return "image/jpeg";
+                case ".png": return "image/png";
+                case ".gif": return "image/gif";
+                case ".pdf": return "application/pdf";
+                case ".doc": return "application/msword";
+                case ".docx": return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                case ".xls": return "application/vnd.ms-excel";
+                case ".xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                case ".zip": return "application/zip";
+                case ".rar": return "application/x-rar-compressed";
+                default: return "application/octet-stream";
+            }
         }
 
         [HttpGet("{id}")]
@@ -105,9 +154,4 @@ namespace DoanKhoaServer.Controllers
         }
     }
 
-    public class AttachmentUploadModel
-    {
-        public Microsoft.AspNetCore.Http.IFormFile File { get; set; }
-        public string UploaderId { get; set; }
-    }
 }

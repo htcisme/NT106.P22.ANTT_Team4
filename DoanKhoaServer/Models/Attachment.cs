@@ -15,7 +15,6 @@ namespace DoanKhoaServer.Models
         public string FilePath { get; set; }
         public long FileSize { get; set; }
         public bool IsImage { get; set; }
-        public string MessageId { get; set; }
         public DateTime UploadDate { get; set; } = DateTime.UtcNow;
         public string UploaderId { get; set; }
 
@@ -25,5 +24,14 @@ namespace DoanKhoaServer.Models
         public string FileUrl { get; set; }
         [BsonIgnore]
         public string ThumbnailUrl { get; set; }
+        public string MessageId { get; set; }
+
+    }
+
+    public class AttachmentUploadModel
+    {
+        public IFormFile File { get; set; }
+        public string UploaderId { get; set; }
+        public string MessageId { get; set; }
     }
 }

@@ -26,78 +26,103 @@ namespace DoanKhoaServer.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<ActionResult<Attachment>> UploadFile([FromForm] AttachmentUploadModel model)
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded");
+            if (model.File == null)
+                return BadRequest("No file provided");
 
             try
             {
-                // Tạo thư mục nếu chưa tồn tại
-                var uploadsFolder = Path.Combine(_environment.ContentRootPath, "Uploads");
+                // Đảm bảo thư mục Uploads tồn tại
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                // Tạo tên file duy nhất
-                var fileName = Path.GetFileName(file.FileName);
-                var fileId = ObjectId.GenerateNewId().ToString();
-                var fileExtension = Path.GetExtension(fileName).ToLowerInvariant();
-                var storedFileName = $"{fileId}{fileExtension}";
-                var filePath = Path.Combine(uploadsFolder, storedFileName);
+                // Tạo tên file duy nhất bằng cách sử dụng timestamp và GUID
+                string uniqueFileName = $"{DateTime.Now.Ticks}_{Guid.NewGuid()}_{model.File.FileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 // Lưu file
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await file.CopyToAsync(fileStream);
+                    await model.File.CopyToAsync(stream);
                 }
 
-                // Kiểm tra xem có phải file hình ảnh không
-                var isImage = _allowedImageExtensions.Contains(fileExtension);
-                var thumbnailPath = string.Empty;
+                // Xác định nếu file là hình ảnh
+                bool isImage = model.File.ContentType.StartsWith("image/");
 
-                // Nếu là hình ảnh, tạo thumbnail
-                if (isImage)
-                {
-                    var thumbnailsFolder = Path.Combine(_environment.ContentRootPath, "Thumbnails");
-                    if (!Directory.Exists(thumbnailsFolder))
-                        Directory.CreateDirectory(thumbnailsFolder);
-
-                    thumbnailPath = Path.Combine(thumbnailsFolder, storedFileName);
-                    // TODO: Implement thumbnail generation logic
-                    // Ở đây có thể sử dụng thư viện như ImageSharp để tạo thumbnail
-                }
-
-                // Tạo đối tượng Attachment và lưu vào cơ sở dữ liệu
+                // Tạo đối tượng Attachment với thông tin URL cố định
                 var attachment = new Attachment
                 {
-                    Id = fileId,
-                    FileName = fileName,
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    FileName = model.File.FileName,
+                    ContentType = model.File.ContentType,
                     FilePath = filePath,
-                    FileUrl = $"/api/file/{fileId}",
-                    ContentType = file.ContentType,
-                    FileSize = file.Length,
-                    ThumbnailPath = thumbnailPath,
+                    // Lưu đường dẫn tương đối để có thể truy cập qua HTTP
+                    FileUrl = $"/api/attachments/download/{uniqueFileName}",
+                    FileSize = model.File.Length,
                     IsImage = isImage,
-                    UploadDate = DateTime.UtcNow
+                    UploadDate = DateTime.UtcNow,
+                    UploaderId = model.UploaderId
                 };
 
-                // Lưu thông tin file vào database
+                // Lưu vào database
                 await _mongoDBService.SaveAttachmentAsync(attachment);
 
-                return Ok(new
-                {
-                    Id = fileId,
-                    FileName = fileName,
-                    FileUrl = $"/api/file/{fileId}",
-                    ContentType = file.ContentType,
-                    FileSize = file.Length,
-                    IsImage = isImage,
-                    ThumbnailUrl = isImage ? $"/api/file/thumbnail/{fileId}" : null
-                });
+                return attachment;
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("download/{fileName}")]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            try
+            {
+                // Tìm đường dẫn đầy đủ của file
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
+
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound($"File {fileName} not found");
+
+                // Xác định MIME type
+                string contentType = GetContentType(Path.GetExtension(fileName));
+
+                // Đọc file và trả về
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+
+                return File(memory, contentType, Path.GetFileName(fileName));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        private string GetContentType(string extension)
+        {
+            switch (extension.ToLower())
+            {
+                case ".jpg":
+                case ".jpeg": return "image/jpeg";
+                case ".png": return "image/png";
+                case ".gif": return "image/gif";
+                case ".pdf": return "application/pdf";
+                case ".doc": return "application/msword";
+                case ".docx": return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                case ".xls": return "application/vnd.ms-excel";
+                case ".xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                case ".zip": return "application/zip";
+                case ".rar": return "application/x-rar-compressed";
+                default: return "application/octet-stream";
             }
         }
 
