@@ -1,103 +1,74 @@
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace DoanKhoaClient.Models
 {
-    // Đổi tên từ TaskStatus thành TaskItemStatus để tránh xung đột
-    public enum TaskItemStatus
+    public class TaskItem
     {
-        Pending,
-        InProgress,
-        Completed,
-        Canceled
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("dueDate")]
+        public DateTime? DueDate { get; set; }
+
+        [JsonProperty("assignedToId")]
+        public string AssignedToId { get; set; }
+
+        [JsonProperty("assignedToName")]
+        public string AssignedToName { get; set; }
+
+        [JsonProperty("programId")]
+        public string ProgramId { get; set; }
+
+        [JsonProperty("createdAt")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [JsonProperty("updatedAt")]
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        [JsonProperty("completedAt")]
+        public DateTime? CompletedAt { get; set; }
+
+        [JsonProperty("status")]
+        public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
+
+        [JsonProperty("priority")]
+        public TaskPriority Priority { get; set; } = TaskPriority.Medium;
     }
 
-    public class TaskItem : INotifyPropertyChanged
+    public enum TaskItemStatus
     {
-        private string _id;
-        private string _programId;
-        private string _title;
-        private string _description;
-        private TaskItemStatus _status; // Đã thay đổi kiểu từ TaskStatus sang TaskItemStatus
-        private DateTime _dueDate;
-        private DateTime? _completedAt;
-        private string _assignedToId;
-        private string _assignedToName;
-        private DateTime _createdAt;
-        private DateTime _updatedAt;
+        [Description("Chưa bắt đầu")]
+        NotStarted,
 
-        public string Id
-        {
-            get => _id;
-            set { _id = value; OnPropertyChanged(); }
-        }
+        [Description("Đang thực hiện")]
+        InProgress,
 
-        public string ProgramId
-        {
-            get => _programId;
-            set { _programId = value; OnPropertyChanged(); }
-        }
+        [Description("Hoàn thành")]
+        Completed,
 
-        public string Title
-        {
-            get => _title;
-            set { _title = value; OnPropertyChanged(); }
-        }
+        [Description("Hủy")]
+        Canceled,
 
-        public string Description
-        {
-            get => _description;
-            set { _description = value; OnPropertyChanged(); }
-        }
+        [Description("Tạm hoãn")]
+        Delayed,
 
-        public TaskItemStatus Status // Đã thay đổi kiểu từ TaskStatus sang TaskItemStatus
-        {
-            get => _status;
-            set { _status = value; OnPropertyChanged(); }
-        }
+        [Description("Chờ xử lý")]
+        Pending
+    }
 
-        public DateTime DueDate
-        {
-            get => _dueDate;
-            set { _dueDate = value; OnPropertyChanged(); }
-        }
-
-        public DateTime? CompletedAt
-        {
-            get => _completedAt;
-            set { _completedAt = value; OnPropertyChanged(); }
-        }
-
-        public string AssignedToId
-        {
-            get => _assignedToId;
-            set { _assignedToId = value; OnPropertyChanged(); }
-        }
-
-        public string AssignedToName
-        {
-            get => _assignedToName;
-            set { _assignedToName = value; OnPropertyChanged(); }
-        }
-
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set { _createdAt = value; OnPropertyChanged(); }
-        }
-
-        public DateTime UpdatedAt
-        {
-            get => _updatedAt;
-            set { _updatedAt = value; OnPropertyChanged(); }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+    public enum TaskPriority
+    {
+        Low,
+        Medium,
+        High,
+        Critical
     }
 }
