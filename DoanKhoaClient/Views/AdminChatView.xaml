@@ -27,10 +27,61 @@
         <converters:FileIconConverter x:Key="FileIconConverter"/>
         <converters:FileSizeConverter x:Key="FileSizeConverter"/>
         <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
+        <!-- Thêm vào Window.Resources trong AdminChatView.xaml -->
+        <Style x:Key="CurrentUserMessageStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#E3F2FD"/>
+            <Setter Property="BorderBrush"
+                    Value="#BBDEFB"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="10,0,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="50,5,10,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Right"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="4"
+                                      Opacity="0.2"
+                                      ShadowDepth="1"
+                                      Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
+        <Style x:Key="OtherUserMessageStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F5F5F5"/>
+            <Setter Property="BorderBrush"
+                    Value="#E0E0E0"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="0,10,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="10,5,50,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Left"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="4"
+                                      Opacity="0.2"
+                                      ShadowDepth="1"
+                                      Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <!-- Style cho menu item -->
         <Style x:Key="MenuItemStyle"
-                TargetType="{x:Type StackPanel}">
+               TargetType="{x:Type StackPanel}">
             <Setter Property="Cursor"
                     Value="Hand"/>
             <Setter Property="RenderTransformOrigin"
@@ -39,7 +90,7 @@
                 <Setter.Value>
                     <TransformGroup>
                         <ScaleTransform ScaleX="1"
-                                ScaleY="1"/>
+                                        ScaleY="1"/>
                         <TranslateTransform/>
                     </TransformGroup>
                 </Setter.Value>
@@ -85,7 +136,7 @@
         </Style>
 
         <Style x:Key="NavigationButtonStyle"
-                TargetType="{x:Type Button}">
+               TargetType="{x:Type Button}">
             <Setter Property="Background"
                     Value="Transparent"/>
             <Setter Property="BorderThickness"
@@ -102,7 +153,7 @@
         </Style>
 
         <Style x:Key="SendButtonStyle"
-                TargetType="{x:Type Button}">
+               TargetType="{x:Type Button}">
             <Setter Property="Background"
                     Value="Transparent"/>
             <Setter Property="BorderThickness"
@@ -114,7 +165,7 @@
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <ScaleTransform ScaleX="1"
-                            ScaleY="1"/>
+                                    ScaleY="1"/>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -180,14 +231,14 @@
     </Window.Triggers>
 
     <Grid x:Name="AdminChat_Background"
-            Opacity="0">
+          Opacity="0">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0"
-                    EndPoint="0.5,1">
+                                 EndPoint="0.5,1">
                 <GradientStop Offset="0.67"
-                        Color="#FFF6FCFF"/>
+                              Color="#FFF6FCFF"/>
                 <GradientStop Offset="1"
-                        Color="#FFDBF3FF"/>
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
 
@@ -196,7 +247,7 @@
             MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
             Stretch="Uniform">
             <Grid Width="1440"
-                    Height="1024">
+                  Height="1024">
                 <!-- Search Box -->
                 <TextBox
                     x:Name="AdminChat_tbSearch"
@@ -236,13 +287,13 @@
                     <Grid>
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0.5,0"
-                                    EndPoint="0.5,1">
+                                                 EndPoint="0.5,1">
                                 <GradientStop Offset="0.04"
-                                        Color="#FFF6FCFF"/>
+                                              Color="#FFF6FCFF"/>
                                 <GradientStop Offset="0.46"
-                                        Color="#FFDBF3FF"/>
+                                              Color="#FFDBF3FF"/>
                                 <GradientStop Offset="0.937"
-                                        Color="#FF87ACCD"/>
+                                              Color="#FF87ACCD"/>
                             </LinearGradientBrush>
                         </Grid.Background>
                     </Grid>
@@ -603,7 +654,7 @@
                                 CornerRadius="10,10,10,10">
                                 <Grid>
                                     <Grid Height="60"
-                                            VerticalAlignment="Top">
+                                          VerticalAlignment="Top">
                                         <Button
                                             Margin="0,0,10,0"
                                             Padding="8,5"
@@ -628,7 +679,7 @@
                                     </Grid>
 
                                     <ScrollViewer Margin="0,60,0,0"
-                                            VerticalScrollBarVisibility="Auto">
+                                                  VerticalScrollBarVisibility="Auto">
                                         <ListView
                                             Margin="15,0"
                                             Background="Transparent"
@@ -674,13 +725,152 @@
                             <!-- Chat box hoặc spam management bên phải -->
                             <Grid Grid.Column="1">
                                 <TabControl>
+                                    <!-- Cập nhật nội dung tin nhắn trong AdminChatView.xaml -->
                                     <TabItem Header="Tin nhắn">
-                                        <!-- Nội dung chat tương tự UserChatView -->
                                         <Border
                                             Background="White"
                                             Margin="10"
                                             CornerRadius="20">
-                                            <!-- Copy chat content từ UserChatView -->
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Messages Area -->
+                                                <ScrollViewer
+                                                    x:Name="AdminMessageScrollViewer"
+                                                    Grid.Row="0"
+                                                    Margin="10"
+                                                    VerticalScrollBarVisibility="Auto">
+                                                    <ItemsControl ItemsSource="{Binding Messages}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Grid Margin="10,5">
+                                                                    <!-- Current user messages (right-aligned) -->
+                                                                    <Border Style="{StaticResource CurrentUserMessageStyle}"
+                                                                            Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Content}"
+                                                                                       TextWrapping="Wrap"
+                                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
+
+                                                                            <!-- Image attachments -->
+                                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                                                <ItemsControl.ItemsPanel>
+                                                                                    <ItemsPanelTemplate>
+                                                                                        <WrapPanel/>
+                                                                                    </ItemsPanelTemplate>
+                                                                                </ItemsControl.ItemsPanel>
+                                                                                <ItemsControl.ItemTemplate>
+                                                                                    <DataTemplate>
+                                                                                        <ContentControl Content="{Binding}"
+                                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
+                                                                                                        Margin="2"/>
+                                                                                    </DataTemplate>
+                                                                                </ItemsControl.ItemTemplate>
+                                                                            </ItemsControl>
+
+                                                                            <!-- File attachments -->
+                                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                                                <ItemsControl.ItemTemplate>
+                                                                                    <DataTemplate>
+                                                                                        <ContentControl Content="{Binding}"
+                                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
+                                                                                                        Margin="2,2,2,0"/>
+                                                                                    </DataTemplate>
+                                                                                </ItemsControl.ItemTemplate>
+                                                                            </ItemsControl>
+
+                                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
+                                                                                       FontSize="10"
+                                                                                       Foreground="Gray"
+                                                                                       HorizontalAlignment="Right"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+
+                                                                    <!-- Other user messages (left-aligned) -->
+                                                                    <Border Style="{StaticResource OtherUserMessageStyle}"
+                                                                            Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding SenderName}"
+                                                                                       FontWeight="Bold"
+                                                                                       FontSize="12"/>
+                                                                            <TextBlock Text="{Binding Content}"
+                                                                                       TextWrapping="Wrap"
+                                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
+
+                                                                            <!-- Image attachments -->
+                                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                                                <ItemsControl.ItemsPanel>
+                                                                                    <ItemsPanelTemplate>
+                                                                                        <WrapPanel/>
+                                                                                    </ItemsPanelTemplate>
+                                                                                </ItemsControl.ItemsPanel>
+                                                                                <ItemsControl.ItemTemplate>
+                                                                                    <DataTemplate>
+                                                                                        <ContentControl Content="{Binding}"
+                                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
+                                                                                                        Margin="2"/>
+                                                                                    </DataTemplate>
+                                                                                </ItemsControl.ItemTemplate>
+                                                                            </ItemsControl>
+
+                                                                            <!-- File attachments -->
+                                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                                                <ItemsControl.ItemTemplate>
+                                                                                    <DataTemplate>
+                                                                                        <ContentControl Content="{Binding}"
+                                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
+                                                                                                        Margin="2,2,2,0"/>
+                                                                                    </DataTemplate>
+                                                                                </ItemsControl.ItemTemplate>
+                                                                            </ItemsControl>
+
+                                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
+                                                                                       FontSize="10"
+                                                                                       Foreground="Gray"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+
+                                                <!-- Input Area -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Height="56"
+                                                    Background="#FFDAE9F6"
+                                                    CornerRadius="0,0,20,20">
+                                                    <Grid>
+                                                        <TextBox
+                                                            Margin="15,0,65,0"
+                                                            VerticalAlignment="Center"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                                        <Button
+                                                            Width="40"
+                                                            Height="40"
+                                                            Margin="0,0,15,0"
+                                                            HorizontalAlignment="Right"
+                                                            Command="{Binding SendMessageCommand}"
+                                                            Style="{StaticResource SendButtonStyle}">
+                                                            <Image
+                                                                Width="19"
+                                                                Height="24"
+                                                                Source="/Views/Images/send.png"/>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
                                         </Border>
                                     </TabItem>
                                     <TabItem Header="Tin nhắn Spam">

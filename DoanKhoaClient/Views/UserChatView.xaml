@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
+    xmlns:selectors="clr-namespace:DoanKhoaClient.Selectors"
     Title="Chat"
     MinWidth="1024"
     MinHeight="768"
@@ -14,11 +15,9 @@
     WindowState="Maximized"
     mc:Ignorable="d">
 
-
-    <!--  Khai báo Converters  -->
+    <!-- Khai báo Converters -->
     <Window.Resources>
         <converters:TimeZoneConverter x:Key="TimeZoneConverter"/>
-
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
         <converters:CurrentUserConverter x:Key="CurrentUserConverter"/>
@@ -28,7 +27,9 @@
         <converters:FileIconConverter x:Key="FileIconConverter"/>
         <converters:FileSizeConverter x:Key="FileSizeConverter"/>
         <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
-        <!--  Thêm Style này vào Window.Resources  -->
+        <converters:StringToImageConverter x:Key="StringToImageConverter"/>
+
+        <!-- Thêm Style này vào Window.Resources -->
         <Style x:Key="MenuItemStyle"
                TargetType="{x:Type StackPanel}">
             <Setter Property="Cursor"
@@ -100,6 +101,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <ContextMenu x:Key="MessageContextMenu">
+            <MenuItem Header="Chỉnh sửa"
+                      Command="{Binding DataContext.EditMessageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}"/>
+            <MenuItem Header="Xóa"
+                      Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}"/>
+        </ContextMenu>
 
         <Style x:Key="SendButtonStyle"
                TargetType="{x:Type Button}">
@@ -176,6 +186,137 @@
                 </EventTrigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Sửa phần ImageAttachmentTemplate -->
+        <DataTemplate x:Key="ImageAttachmentTemplate">
+            <Border Margin="2"
+                    BorderBrush="#DDDDDD"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                <Grid>
+                    <TextBlock Text="{Binding FileName}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="Gray"
+                               TextWrapping="Wrap"
+                               Margin="5"/>
+
+                    <Image Source="{Binding FileUrl}"
+                           Stretch="Uniform"
+                           MaxHeight="200"
+                           MaxWidth="200"
+                           Loaded="AttachmentImage_Loaded"
+                           MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
+
+                    <TextBlock Text="{Binding FileName}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom"
+                               Background="#80000000"
+                               Foreground="White"
+                               Padding="3"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileAttachmentTemplate">
+            <Border Margin="2"
+                    Padding="8"
+                    Background="#F5F5F5"
+                    BorderBrush="#DDDDDD"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0"
+                           Source="{Binding ContentType, Converter={StaticResource FileIconConverter}}"
+                           Width="24"
+                           Height="24"
+                           Margin="0,0,8,0"/>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding FileName}"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"
+                                   FontSize="11"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+
+                    <!-- Replace InputBindings with actual Button -->
+                    <Button Grid.Column="2"
+                            Content="Tải xuống"
+                            Command="{Binding DataContext.DownloadFileCommand, 
+                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}"
+                            Click="DownloadButton_Click"
+                            Margin="8,0,0,0"
+                            Padding="8,3"
+                            Background="#87ACCD"
+                            Foreground="White"
+                            BorderThickness="0"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <selectors:AttachmentTemplateSelector x:Key="AttachmentTemplateSelector"
+                                              ImageTemplate="{StaticResource ImageAttachmentTemplate}"
+                                              FileTemplate="{StaticResource FileAttachmentTemplate}"/>
+        <!-- Thêm vào phần Window.Resources trong UserChatView.xaml -->
+        <Style x:Key="CurrentUserMessageStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#E3F2FD"/>
+            <Setter Property="BorderBrush"
+                    Value="#BBDEFB"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="10,0,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="50,5,10,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Right"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="4"
+                                      Opacity="0.2"
+                                      ShadowDepth="1"
+                                      Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="OtherUserMessageStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F5F5F5"/>
+            <Setter Property="BorderBrush"
+                    Value="#E0E0E0"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="0,10,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="10,5,50,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Left"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="4"
+                                      Opacity="0.2"
+                                      ShadowDepth="1"
+                                      Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
@@ -206,9 +347,9 @@
             </BeginStoryboard>
         </EventTrigger>
     </Window.Triggers>
-    <Grid x:Name="Chat_Background"
-          Opacity="0">
 
+    <Grid x:Name="Chat_Background"
+          Opacity="1">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0"
                                  EndPoint="0.5,1">
@@ -236,7 +377,8 @@
                         OpacityMask="#FF597CA2"
                         Source="/Views/Images/filter.png"/>
                 </ToggleButton>
-                <!--  Search Box  -->
+
+                <!-- Search Box -->
                 <TextBox
                     x:Name="UserChat_tbSearch1"
                     Width="307"
@@ -249,8 +391,7 @@
                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap"/>
 
-
-                <!--  Left Dashboard  -->
+                <!-- Left Dashboard -->
                 <Border
                     x:Name="UserChat_Dashboard1"
                     Width="288"
@@ -272,12 +413,8 @@
                                               Color="#FF87ACCD"/>
                             </LinearGradientBrush>
                         </Grid.Background>
-
-                        <!--  Logo và menu  -->
                     </Grid>
                 </Border>
-
-
 
                 <StackPanel
                     Margin="102,203,0,0"
@@ -305,7 +442,7 @@
                     </Button>
                 </StackPanel>
 
-                <!--  Chat Menu Item  -->
+                <!-- Chat Menu Item -->
                 <StackPanel
                     Margin="102,279,0,0"
                     HorizontalAlignment="Left"
@@ -334,7 +471,7 @@
                     </Button>
                 </StackPanel>
 
-                <!--  Activities Menu Item  -->
+                <!-- Activities Menu Item -->
                 <StackPanel
                     Margin="102,354,0,0"
                     HorizontalAlignment="Left"
@@ -361,7 +498,7 @@
                     </Button>
                 </StackPanel>
 
-                <!--  Members Menu Item  -->
+                <!-- Members Menu Item -->
                 <StackPanel
                     Margin="102,432,0,0"
                     HorizontalAlignment="Left"
@@ -388,7 +525,7 @@
                     </Button>
                 </StackPanel>
 
-                <!--  Tasks Menu Item  -->
+                <!-- Tasks Menu Item -->
                 <StackPanel
                     Margin="102,510,0,0"
                     HorizontalAlignment="Left"
@@ -414,6 +551,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+
                 <!-- Admin Button - Chỉ hiển thị cho admin -->
                 <Button
                     x:Name="SidebarAdminButton"
@@ -508,6 +646,7 @@
                             Foreground="#042354"/>
                     </Button>
                 </StackPanel>
+
                 <Image
                     x:Name="Task_iLogo"
                     Width="112.38"
@@ -516,7 +655,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Source="/Views/Images/header.png"/>
-                <!--  Social Media Icons  -->
+
+                <!-- Social Media Icons -->
                 <Image
                     x:Name="GroupTask_Design_iFacebook"
                     Width="24"
@@ -541,7 +681,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Source="/Views/Images/youtube.png"/>
-                <!--  Top Icons  -->
+
+                <!-- Top Icons -->
                 <StackPanel
                     Margin="0,46,40,0"
                     HorizontalAlignment="Right"
@@ -574,8 +715,6 @@
                     VerticalAlignment="Top"
                     Source="/Views/Images/search.png"/>
 
-
-
                 <Border
                     Width="366"
                     Height="864"
@@ -596,7 +735,7 @@
                     </Border.Background>
 
                     <Grid>
-                        <!--  Header với nút tạo nhóm và tìm bạn  -->
+                        <!-- Header với nút tạo nhóm và tìm bạn -->
                         <Grid Height="60"
                               VerticalAlignment="Top">
                             <Button
@@ -623,7 +762,7 @@
                                 ToolTip="Tìm bạn bè"/>
                         </Grid>
 
-                        <!--  Danh sách cuộc trò chuyện  -->
+                        <!-- Danh sách cuộc trò chuyện -->
                         <ScrollViewer Margin="0,60,0,0"
                                       VerticalScrollBarVisibility="Auto">
                             <ListView
@@ -634,7 +773,7 @@
                                 ItemsSource="{Binding Conversations}"
                                 SelectedItem="{Binding SelectedConversation}">
 
-                                <!--  Thêm style ở đây  -->
+                                <!-- Thêm style ở đây -->
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
                                         <Setter Property="Padding"
@@ -693,6 +832,7 @@
                                         </Setter>
                                     </Style>
                                 </ListView.ItemContainerStyle>
+
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Border
@@ -728,7 +868,8 @@
                         </ScrollViewer>
                     </Grid>
                 </Border>
-                <!--  Chat Box Container  -->
+
+                <!-- Chat Box Container -->
                 <Border
                     Width="634"
                     Height="864"
@@ -750,10 +891,9 @@
                         </LinearGradientBrush>
                     </Border.Background>
 
-
-                    <!--  Nội dung chat  -->
+                    <!-- Nội dung chat -->
                     <Grid>
-                        <!--  ChatBox Background  -->
+                        <!-- ChatBox Background -->
                         <Border
                             Margin="29,24,29,24"
                             Background="White"
@@ -765,7 +905,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!--  Header - Simplified  -->
+                                <!-- Header - Simplified -->
                                 <Border
                                     Grid.Row="0"
                                     Height="56"
@@ -789,7 +929,7 @@
                                     </Grid>
                                 </Border>
 
-                                <!--  Messages Area  -->
+                                <!-- Messages Area -->
                                 <ScrollViewer
                                     x:Name="MessageScrollViewer"
                                     Grid.Row="1"
@@ -799,11 +939,11 @@
                                         <ItemsControl.ItemContainerStyle>
                                             <Style TargetType="ContentPresenter">
                                                 <Setter Property="Opacity"
-                                                        Value="0"/>
+                                                        Value="1"/>
                                                 <Setter Property="RenderTransform">
                                                     <Setter.Value>
                                                         <TranslateTransform X="0"
-                                                                            Y="20"/>
+                                                                            Y="0"/>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
@@ -828,191 +968,101 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </ItemsControl.ItemContainerStyle>
+
+                                        <!-- Cập nhật ItemControl.ItemTemplate cho messages trong UserChatView.xaml -->
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid Margin="10,5">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <!--  Tin nhắn hệ thống  -->
-                                                    <Border
-                                                        Grid.Column="0"
-                                                        Grid.ColumnSpan="2"
-                                                        Padding="10,5"
-                                                        HorizontalAlignment="Center"
-                                                        Background="#FFE8E8E8"
-                                                        CornerRadius="10"
-                                                        Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter='system'}">
-                                                        <TextBlock
-                                                            FontStyle="Italic"
-                                                            Foreground="#FF666666"
-                                                            Text="{Binding Content}"
-                                                            TextWrapping="Wrap"/>
-                                                    </Border>
-
-                                                    <!--  Tin nhắn từ người khác  -->
-                                                    <Border
-                                                        Grid.Column="0"
-                                                        MaxWidth="275"
-                                                        Padding="15,10"
-                                                        HorizontalAlignment="Left"
-                                                        Background="#FFB9D4EB"
-                                                        CornerRadius="20,20,20,5"
-                                                        Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                                    <!-- Current user messages (right-aligned) -->
+                                                    <Border Style="{StaticResource CurrentUserMessageStyle}"
+                                                            Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
                                                         <StackPanel>
-                                                            <!--  Nội dung text  -->
-                                                            <TextBlock
-                                                                Text="{Binding Content}"
-                                                                TextWrapping="Wrap"
-                                                                Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
+                                                            <TextBlock Text="{Binding Content}"
+                                                                       TextWrapping="Wrap"
+                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
 
-                                                            <!--  Hiển thị hình ảnh và files  -->
-                                                            <ItemsControl Margin="0,5,0,0"
-                                                                          ItemsSource="{Binding Attachments}">
+                                                            <!-- Image attachments -->
+                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                                <ItemsControl.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <WrapPanel/>
+                                                                    </ItemsPanelTemplate>
+                                                                </ItemsControl.ItemsPanel>
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <!--  Hình ảnh  -->
-                                                                        <StackPanel>
-                                                                            <Image
-                                                                                MaxWidth="200"
-                                                                                MaxHeight="150"
-                                                                                Margin="0,5,0,5"
-                                                                                HorizontalAlignment="Left"
-                                                                                Source="{Binding FileUrl}"
-                                                                                Stretch="Uniform"
-                                                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                                                                            <!--  Files  -->
-                                                                            <Border
-                                                                                Margin="0,5,0,0"
-                                                                                Padding="5"
-                                                                                Background="#FFF0F0F0"
-                                                                                CornerRadius="5"
-                                                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
-                                                                                <Grid>
-                                                                                    <Grid.ColumnDefinitions>
-                                                                                        <ColumnDefinition Width="Auto"/>
-                                                                                        <ColumnDefinition Width="*"/>
-                                                                                    </Grid.ColumnDefinitions>
-
-                                                                                    <TextBlock
-                                                                                        Grid.Column="0"
-                                                                                        Width="24"
-                                                                                        Height="24"
-                                                                                        Margin="0,0,5,0"
-                                                                                        VerticalAlignment="Center"
-                                                                                        Background="#FFE0E0FF"
-                                                                                        FontWeight="Bold"
-                                                                                        Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
-                                                                                        TextAlignment="Center"/>
-
-                                                                                    <StackPanel Grid.Column="1">
-                                                                                        <TextBlock
-                                                                                            FontWeight="SemiBold"
-                                                                                            Text="{Binding FileName}"
-                                                                                            TextWrapping="Wrap"/>
-                                                                                        <TextBlock
-                                                                                            FontSize="10"
-                                                                                            Foreground="#FF666666"
-                                                                                            Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"/>
-                                                                                    </StackPanel>
-                                                                                </Grid>
-                                                                            </Border>
-                                                                        </StackPanel>
+                                                                        <ContentControl Content="{Binding}"
+                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
+                                                                                        Margin="2"/>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>
                                                             </ItemsControl>
 
-                                                            <!--  Timestamp  -->
-                                                            <TextBlock
-                                                                Margin="0,5,0,0"
-                                                                HorizontalAlignment="Right"
-                                                                FontSize="10"
-                                                                Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"/>
+                                                            <!-- File attachments -->
+                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <ContentControl Content="{Binding}"
+                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
+                                                                                        Margin="2,2,2,0"/>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+
+                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
+                                                                       FontSize="10"
+                                                                       Foreground="Gray"
+                                                                       HorizontalAlignment="Right"/>
                                                         </StackPanel>
+                                                        <Border.ContextMenu>
+                                                            <StaticResource ResourceKey="MessageContextMenu"/>
+                                                        </Border.ContextMenu>
                                                     </Border>
 
-                                                    <!--  Tin nhắn từ user hiện tại  -->
-                                                    <Border
-                                                        Grid.Column="1"
-                                                        MaxWidth="275"
-                                                        Padding="15,10"
-                                                        HorizontalAlignment="Right"
-                                                        Background="#FFD5E0E9"
-                                                        CornerRadius="20,20,5,20"
-                                                        Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                                    <!-- Other user messages (left-aligned) -->
+                                                    <Border Style="{StaticResource OtherUserMessageStyle}"
+                                                            Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
                                                         <StackPanel>
-                                                            <!--  Nội dung text  -->
-                                                            <TextBlock
-                                                                Text="{Binding Content}"
-                                                                TextWrapping="Wrap"
-                                                                Visibility="{Binding Content, Converter={StaticResource StringToBoolConverter}, ConverterParameter=Visibility}"/>
+                                                            <TextBlock Text="{Binding SenderName}"
+                                                                       FontWeight="Bold"
+                                                                       FontSize="12"/>
+                                                            <TextBlock Text="{Binding Content}"
+                                                                       TextWrapping="Wrap"
+                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
 
-                                                            <!--  Hiển thị hình ảnh và files  -->
-                                                            <ItemsControl Margin="0,5,0,0"
-                                                                          ItemsSource="{Binding Attachments}">
+                                                            <!-- Image attachments -->
+                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                                <ItemsControl.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <WrapPanel/>
+                                                                    </ItemsPanelTemplate>
+                                                                </ItemsControl.ItemsPanel>
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <!--  Hình ảnh  -->
-                                                                        <StackPanel>
-                                                                            <Image
-                                                                                MaxWidth="200"
-                                                                                MaxHeight="150"
-                                                                                Margin="0,5,0,5"
-                                                                                HorizontalAlignment="Left"
-                                                                                Source="{Binding FileUrl}"
-                                                                                Stretch="Uniform"
-                                                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                                                                            <!--  Files  -->
-                                                                            <Border
-                                                                                Margin="0,5,0,0"
-                                                                                Padding="5"
-                                                                                Background="#FFF0F0F0"
-                                                                                CornerRadius="5"
-                                                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}">
-                                                                                <Grid>
-                                                                                    <Grid.ColumnDefinitions>
-                                                                                        <ColumnDefinition Width="Auto"/>
-                                                                                        <ColumnDefinition Width="*"/>
-                                                                                    </Grid.ColumnDefinitions>
-
-                                                                                    <TextBlock
-                                                                                        Grid.Column="0"
-                                                                                        Width="24"
-                                                                                        Height="24"
-                                                                                        Margin="0,0,5,0"
-                                                                                        VerticalAlignment="Center"
-                                                                                        Background="#FFE0E0FF"
-                                                                                        FontWeight="Bold"
-                                                                                        Text="{Binding FileName, Converter={StaticResource FileIconConverter}}"
-                                                                                        TextAlignment="Center"/>
-
-                                                                                    <StackPanel Grid.Column="1">
-                                                                                        <TextBlock
-                                                                                            FontWeight="SemiBold"
-                                                                                            Text="{Binding FileName}"
-                                                                                            TextWrapping="Wrap"/>
-                                                                                        <TextBlock
-                                                                                            FontSize="10"
-                                                                                            Foreground="#FF666666"
-                                                                                            Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"/>
-                                                                                    </StackPanel>
-                                                                                </Grid>
-                                                                            </Border>
-                                                                        </StackPanel>
+                                                                        <ContentControl Content="{Binding}"
+                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
+                                                                                        Margin="2"/>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>
                                                             </ItemsControl>
 
-                                                            <!--  Timestamp  -->
-                                                            <TextBlock
-                                                                Margin="0,5,0,0"
-                                                                HorizontalAlignment="Right"
-                                                                FontSize="10"
-                                                                Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"/>
+                                                            <!-- File attachments -->
+                                                            <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <ContentControl Content="{Binding}"
+                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
+                                                                                        Margin="2,2,2,0"/>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+
+                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
+                                                                       FontSize="10"
+                                                                       Foreground="Gray"/>
                                                         </StackPanel>
                                                     </Border>
                                                 </Grid>
@@ -1021,7 +1071,7 @@
                                     </ItemsControl>
                                 </ScrollViewer>
 
-                                <!--  Input Area  -->
+                                <!-- Input Area -->
                                 <Grid Grid.Row="2"
                                       Margin="0,5,0,0">
                                     <Grid.RowDefinitions>
@@ -1029,7 +1079,7 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <!--  Panel hiển thị file đính kèm  -->
+                                    <!-- Panel hiển thị file đính kèm -->
                                     <Border
                                         Grid.Row="0"
                                         Background="#F0F5F9"
@@ -1087,7 +1137,7 @@
                                         </ScrollViewer>
                                     </Border>
 
-                                    <!--  Input và nút  -->
+                                    <!-- Input và nút -->
                                     <Border
                                         Grid.Row="1"
                                         Height="56"
@@ -1164,7 +1214,6 @@
                         </Border>
                     </Grid>
                 </Border>
-                <!--  Add this closing tag for the Chat Box Container  -->
             </Grid>
         </Viewbox>
     </Grid>

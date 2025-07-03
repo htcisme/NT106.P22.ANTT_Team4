@@ -235,8 +235,7 @@ namespace DoanKhoaServer.Controllers
                 return StatusCode(500, $"Server error: {ex.Message}");
             }
         }
-        // Thêm vào cuối class MessagesController
-        // Thêm phương thức này vào cuối MessagesController
+
         [HttpGet("checkfile")]
         public IActionResult CheckFile(string path)
         {

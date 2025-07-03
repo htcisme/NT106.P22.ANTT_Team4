@@ -15,10 +15,16 @@ using DoanKhoaClient.Views;
 using DoanKhoaClient.Services;
 using DoanKhoaClient.Helpers;
 using MongoDB.Bson;
+using DoanKhoaClient.Properties;
+using System.Windows.Media.Imaging; // Cho BitmapImage, BitmapCacheOption, BitmapCreateOptions
+using System.Windows.Controls; // Cho Image
+using System.Windows.Media; // Cho các lớp đồ họa khác
 namespace DoanKhoaClient.ViewModels
 {
     public class UserChatViewModel : INotifyPropertyChanged
     {
+        private Dictionary<string, List<Message>> _conversationMessagesCache = new Dictionary<string, List<Message>>();
+
         private readonly HttpClient _httpClient;
         private HubConnection _hubConnection;
         private string _currentMessage = string.Empty;
@@ -60,11 +66,59 @@ namespace DoanKhoaClient.ViewModels
             get => _selectedConversation;
             set
             {
-                _selectedConversation = value;
-                OnPropertyChanged();
-                if (_selectedConversation != null)
+                if (_selectedConversation != value)
                 {
-                    LoadMessages(_selectedConversation.Id);
+                    // Lưu giá trị cũ để so sánh
+                    var oldConversation = _selectedConversation;
+
+                    _selectedConversation = value;
+
+                    // Clear current messages before loading new ones
+                    Messages = new ObservableCollection<Message>();
+
+                    OnPropertyChanged();
+
+                    if (_selectedConversation != null)
+                    {
+                        // Log để debug
+                        System.Diagnostics.Debug.WriteLine($"Chuyển sang conversation: {_selectedConversation.Id}");
+
+                        // Rời khỏi nhóm cũ
+                        if (oldConversation != null && _hubConnection?.State == HubConnectionState.Connected)
+                        {
+                            Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await _hubConnection.InvokeAsync("LeaveGroup", oldConversation.Id);
+                                    System.Diagnostics.Debug.WriteLine($"Đã rời khỏi nhóm: {oldConversation.Id}");
+                                }
+                                catch (Exception ex)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"Lỗi khi rời nhóm: {ex.Message}");
+                                }
+                            });
+                        }
+
+                        // Tải tin nhắn
+                        Task.Run(async () =>
+                        {
+                            try
+                            {
+                                // Thêm bước kiểm tra cache trước khi tải
+                                await VerifyCacheIntegrity(_selectedConversation.Id);
+                                await LoadMessages(_selectedConversation.Id);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Lỗi khi tải tin nhắn: {ex.Message}");
+
+                                // Nếu có lỗi, thử tải lại từ server
+                                _conversationMessagesCache.Remove(_selectedConversation.Id);
+                                await LoadMessages(_selectedConversation.Id);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -146,7 +200,10 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveAttachmentCommand { get; private set; }
         public ICommand CreateGroupCommand { get; private set; }
         public ICommand ShowAttachmentsPanelCommand { get; private set; }
-
+        // Thêm vào phần khai báo command trong UserChatViewModel
+        public ICommand EditMessageCommand { get; private set; }
+        public ICommand DeleteMessageCommand { get; private set; }
+        public ICommand DownloadFileCommand { get; private set; }
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
 
@@ -161,27 +218,535 @@ namespace DoanKhoaClient.ViewModels
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
 
+            // Khởi tạo commands
             SendMessageCommand = new RelayCommand(SendMessage, CanSendMessage);
-            NewConversationCommand = new RelayCommand(CreateNewConversation);
+            NewConversationCommand = new RelayCommand(NewConversation);
             SelectFileCommand = new RelayCommand(SelectFile);
             SelectImageCommand = new RelayCommand(SelectImage);
             RemoveAttachmentCommand = new RelayCommand(RemoveAttachment);
             CreateGroupCommand = new RelayCommand(CreateGroup);
-            ShowAttachmentsPanelCommand = new RelayCommand(_ => IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen);
+            ShowAttachmentsPanelCommand = new RelayCommand(ShowAttachmentsPanel);
 
-            // Initialize Navigation Commands
+            EditMessageCommand = new RelayCommand(EditMessage);
+            DeleteMessageCommand = new RelayCommand(DeleteMessage);
+            DownloadFileCommand = new RelayCommand(DownloadFile);
+
             NavigateToHomeCommand = new RelayCommand(NavigateToHome);
             NavigateToChatCommand = new RelayCommand(NavigateToChat);
             NavigateToActivitiesCommand = new RelayCommand(NavigateToActivities);
             NavigateToMembersCommand = new RelayCommand(NavigateToMembers);
             NavigateToTasksCommand = new RelayCommand(NavigateToTasks);
 
-            LoadRealData();
+            // Tải dữ liệu
+            LoadData();
 
             // Kết nối SignalR
             ConnectToHub();
         }
 
+        private async void LoadData()
+        {
+            try
+            {
+                // Kiểm tra người dùng hiện tại
+                if (App.Current.Properties.Contains("CurrentUser"))
+                {
+                    CurrentUser = (User)App.Current.Properties["CurrentUser"];
+
+                    // Tải cuộc trò chuyện
+                    var conversationsResponse = await _httpClient.GetAsync($"conversations/user/{CurrentUser.Id}");
+                    if (conversationsResponse.IsSuccessStatusCode)
+                    {
+                        var conversations = await conversationsResponse.Content.ReadFromJsonAsync<List<Conversation>>();
+                        if (conversations != null)
+                        {
+                            Conversations = new ObservableCollection<Conversation>(conversations);
+
+                            // Hiển thị cuộc trò chuyện đầu tiên nếu có
+                            if (Conversations.Count > 0)
+                            {
+                                SelectedConversation = Conversations[0];
+                            }
+                        }
+                    }
+
+                    // Tải danh sách người dùng
+                    var usersResponse = await _httpClient.GetAsync("users");
+                    if (usersResponse.IsSuccessStatusCode)
+                    {
+                        var users = await usersResponse.Content.ReadFromJsonAsync<List<User>>();
+                        if (users != null)
+                        {
+                            Users = new ObservableCollection<User>(users.Where(u => u.Id != CurrentUser.Id));
+                        }
+                    }
+
+                    // Hiển thị menu Admin nếu là admin
+                    if (CurrentUser.Role == UserRole.Admin)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (Application.Current.MainWindow is UserChatView view)
+                            {
+                                view.SidebarAdminButton.Visibility = Visibility.Visible;
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    // Chuyển về trang đăng nhập nếu chưa đăng nhập
+                    NavigateToLogin();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void DownloadFile(object parameter)
+        {
+            if (parameter is Attachment attachment)
+            {
+                try
+                {
+                    // Hiện dialog lưu file
+                    var saveDialog = new Microsoft.Win32.SaveFileDialog
+                    {
+                        FileName = attachment.FileName,
+                        Filter = "All files (*.*)|*.*"
+                    };
+
+                    if (saveDialog.ShowDialog() == true)
+                    {
+                        string saveFilePath = saveDialog.FileName;
+
+                        // Kiểm tra xem file có tồn tại trên server local không
+                        string serverFilePath = FilePathService.GetServerFilePath(attachment.FileUrl);
+
+                        if (!string.IsNullOrEmpty(serverFilePath) && File.Exists(serverFilePath))
+                        {
+                            // Sao chép trực tiếp từ server folder
+                            File.Copy(serverFilePath, saveFilePath, true);
+                            MessageBox.Show($"Đã tải xuống {attachment.FileName} thành công",
+                                "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            // Fallback sang HTTP download
+                            string fileUrl = FilePathService.GetFullUrl(attachment.FileUrl);
+
+                            using (HttpClient client = new HttpClient())
+                            {
+                                using (var response = await client.GetAsync(fileUrl))
+                                {
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        using (var fileStream = new FileStream(saveFilePath, FileMode.Create, FileAccess.Write))
+                                        {
+                                            await response.Content.CopyToAsync(fileStream);
+                                        }
+
+                                        MessageBox.Show($"Đã tải xuống {attachment.FileName} thành công",
+                                            "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show($"Không thể tải file: {response.ReasonPhrase}",
+                                            "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải file: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async void DeleteMessage(object parameter)
+        {
+            if (parameter is Message message)
+            {
+                // Allow deletion only for the user's own messages
+                if (message.SenderId != CurrentUser?.Id)
+                {
+                    MessageBox.Show("Bạn chỉ có thể xóa tin nhắn của mình!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var result = MessageBox.Show("Bạn có chắc muốn xóa tin nhắn này?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        var response = await _httpClient.DeleteAsync($"messages/{message.Id}");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Remove message from UI
+                            Messages.Remove(message);
+
+                            // Notify via SignalR
+                            if (_hubConnection?.State == HubConnectionState.Connected)
+                            {
+                                await _hubConnection.InvokeAsync("DeleteMessage", message.Id, message.ConversationId);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể xóa tin nhắn. Vui lòng thử lại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+        private async void EditMessage(object parameter)
+        {
+            if (parameter is Message message)
+            {
+                // Chỉ cho phép chỉnh sửa tin nhắn của mình
+                if (message.SenderId != CurrentUser?.Id)
+                {
+                    MessageBox.Show("Bạn chỉ có thể chỉnh sửa tin nhắn của mình!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                // Chỉ cho phép sửa tin nhắn text
+                if (message.Type != MessageType.Text)
+                {
+                    MessageBox.Show("Chỉ có thể chỉnh sửa tin nhắn văn bản!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                var editDialog = new EditMessageDialog(message.Content);
+                if (editDialog.ShowDialog() == true)
+                {
+                    string editedContent = editDialog.EditedContent;
+
+                    // Cập nhật tin nhắn
+                    try
+                    {
+                        var response = await _httpClient.PutAsJsonAsync($"messages/{message.Id}", new { Content = editedContent });
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Cập nhật tin nhắn trong UI
+                            int index = Messages.IndexOf(message);
+                            if (index >= 0)
+                            {
+                                message.Content = editedContent;
+                                Messages[index] = message;
+
+                                // Thông báo sửa tin nhắn qua SignalR
+                                if (_hubConnection?.State == HubConnectionState.Connected)
+                                {
+                                    await _hubConnection.InvokeAsync("UpdateMessage", message.Id, editedContent);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể cập nhật tin nhắn. Vui lòng thử lại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi sửa tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+        private async Task RefreshMessages(string conversationId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
+                    if (messages != null)
+                    {
+
+                        System.Diagnostics.Debug.WriteLine($"Loaded {messages.Count} messages");
+
+                        // Tạo một danh sách tin nhắn mới để không ảnh hưởng đến danh sách hiện tại
+                        List<Message> processedMessages = new List<Message>();
+
+                        foreach (var message in messages)
+                        {
+                            // Tạo một bản sao của tin nhắn
+                            Message processedMessage = new Message
+                            {
+                                Id = message.Id,
+                                ConversationId = message.ConversationId,
+                                SenderId = message.SenderId,
+                                SenderName = message.SenderName,
+                                Content = message.Content,
+                                Timestamp = message.Timestamp,
+                                Type = message.Type,
+                                Attachments = new List<Attachment>()
+                            };
+
+                            // Xử lý các tệp đính kèm
+                            if (message.Attachments != null && message.Attachments.Count > 0)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Message {message.Id} has {message.Attachments.Count} attachments");
+
+                                // When processing attachments in RefreshMessages or other methods loading messages
+                                foreach (var attachment in message.Attachments)
+                                {
+                                    // Create processed attachment object
+                                    Attachment processedAttachment = new Attachment
+                                    {
+                                        Id = attachment.Id,
+                                        MessageId = string.IsNullOrEmpty(attachment.MessageId) ? message.Id : attachment.MessageId,
+                                        FileName = attachment.FileName,
+                                        ContentType = attachment.ContentType,
+                                        FilePath = attachment.FilePath,
+                                        FileSize = attachment.FileSize,
+                                        IsImage = attachment.ContentType?.StartsWith("image/") ?? false,
+                                        UploadDate = attachment.UploadDate,
+                                        UploaderId = attachment.UploaderId,
+                                        ThumbnailUrl = attachment.ThumbnailUrl
+                                    };
+
+                                    // CRITICAL FIX: Always ensure FileUrl is set
+                                    // If no FileUrl but we have FileName, construct a URL
+                                    if (string.IsNullOrEmpty(attachment.FileUrl) && !string.IsNullOrEmpty(attachment.FileName))
+                                    {
+                                        processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{attachment.FileName}";
+                                        System.Diagnostics.Debug.WriteLine($"Constructed missing URL from filename: {processedAttachment.FileUrl}");
+                                    }
+                                    else if (!string.IsNullOrEmpty(attachment.FileUrl))
+                                    {
+                                        // Use existing URL but ensure it's absolute
+                                        if (Uri.IsWellFormedUriString(attachment.FileUrl, UriKind.Absolute))
+                                        {
+                                            processedAttachment.FileUrl = attachment.FileUrl;
+                                        }
+                                        else
+                                        {
+                                            processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{Path.GetFileName(attachment.FileUrl)}";
+                                        }
+                                    }
+
+                                    // Add the processed attachment to the message
+                                    processedMessage.Attachments.Add(processedAttachment);
+                                }
+                            }
+
+                            processedMessages.Add(processedMessage);
+
+                        }
+                        _conversationMessagesCache[conversationId] = processedMessages;
+
+                        // Cập nhật UI nếu đây là conversation hiện tại
+                        if (_selectedConversation != null && _selectedConversation.Id == conversationId)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                // Chỉ cập nhật nếu có tin nhắn mới
+                                if (Messages.Count != processedMessages.Count)
+                                {
+                                    Messages = new ObservableCollection<Message>(processedMessages);
+                                    ScrollToLastMessage();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing messages: {ex.Message}");
+            }
+        }
+        private async Task LoadMessages(string conversationId)
+        {
+            try
+            {
+                // Thêm log để debug
+                System.Diagnostics.Debug.WriteLine($"[START] LoadMessages cho conversation: {conversationId}");
+
+                // Xóa cache để buộc tải lại từ server
+                if (_conversationMessagesCache.ContainsKey(conversationId))
+                {
+                    _conversationMessagesCache.Remove(conversationId);
+                    System.Diagnostics.Debug.WriteLine("Đã xóa cache cũ để tải mới");
+                }
+
+                // Tham gia SignalR hub
+                if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+                {
+                    await _hubConnection.InvokeAsync("JoinGroup", conversationId);
+                    System.Diagnostics.Debug.WriteLine($"Đã tham gia nhóm SignalR: {conversationId}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Cảnh báo: SignalR không được kết nối");
+                    // Thử kết nối lại
+                    await ConnectToHub();
+                }
+
+                // Tải tin nhắn từ API
+                System.Diagnostics.Debug.WriteLine($"Tải tin nhắn từ API: messages/conversation/{conversationId}");
+                var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
+                    System.Diagnostics.Debug.WriteLine($"API response success, tin nhắn nhận được: {(messages != null ? messages.Count : 0)}");
+
+                    if (messages != null && messages.Count > 0)
+                    {
+                        // Xử lý và tạo danh sách tin nhắn đã xử lý
+                        List<Message> processedMessages = new List<Message>();
+
+                        foreach (var message in messages)
+                        {
+                            // Tạo một bản sao của tin nhắn
+                            Message processedMessage = new Message
+                            {
+                                Id = message.Id,
+                                ConversationId = message.ConversationId,
+                                SenderId = message.SenderId,
+                                SenderName = message.SenderName,
+                                Content = message.Content,
+                                Timestamp = message.Timestamp,
+                                Type = message.Type,
+                                Attachments = new List<Attachment>()
+                            };
+
+                            // Xử lý các tệp đính kèm
+                            if (message.Attachments != null && message.Attachments.Count > 0)
+                            {
+                                foreach (var attachment in message.Attachments)
+                                {
+                                    // Tạo bản sao của attachment
+                                    var processedAttachment = new Attachment
+                                    {
+                                        Id = attachment.Id,
+                                        MessageId = string.IsNullOrEmpty(attachment.MessageId) ? message.Id : attachment.MessageId,
+                                        FileName = attachment.FileName,
+                                        ContentType = attachment.ContentType,
+                                        FilePath = attachment.FilePath,
+                                        FileSize = attachment.FileSize,
+                                        IsImage = attachment.IsImage,
+                                        UploadDate = attachment.UploadDate,
+                                        UploaderId = attachment.UploaderId,
+                                        ThumbnailUrl = attachment.ThumbnailUrl
+                                    };
+
+                                    // Xử lý FileUrl
+                                    if (!string.IsNullOrEmpty(attachment.FileUrl))
+                                    {
+                                        // Use existing URL but ensure it's absolute
+                                        if (Uri.IsWellFormedUriString(attachment.FileUrl, UriKind.Absolute))
+                                        {
+                                            processedAttachment.FileUrl = attachment.FileUrl;
+                                            System.Diagnostics.Debug.WriteLine($"Using absolute URL: {processedAttachment.FileUrl}");
+                                        }
+                                        else if (attachment.FileUrl.StartsWith("/Uploads/"))
+                                        {
+                                            processedAttachment.FileUrl = $"http://localhost:5299{attachment.FileUrl}";
+                                            System.Diagnostics.Debug.WriteLine($"Fixed relative URL with /Uploads/: {processedAttachment.FileUrl}");
+                                        }
+                                        else
+                                        {
+                                            string fileName = Path.GetFileName(attachment.FileUrl);
+                                            processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{fileName}";
+                                            System.Diagnostics.Debug.WriteLine($"Constructed URL from filename: {processedAttachment.FileUrl}");
+                                        }
+                                    }
+                                    else if (!string.IsNullOrEmpty(attachment.FileName))
+                                    {
+                                        // If FileUrl is empty but we have FileName, construct URL from filename
+                                        processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{attachment.FileName}";
+                                        System.Diagnostics.Debug.WriteLine($"Created URL from FileName: {processedAttachment.FileUrl}");
+                                    }
+                                    else if (processedAttachment.IsImage)
+                                    {
+                                        // Last resort - try using the attachment ID as filename
+                                        processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{attachment.Id}";
+                                        System.Diagnostics.Debug.WriteLine($"WARNING: Created fallback URL from ID: {processedAttachment.FileUrl}");
+                                    }
+
+                                    processedMessage.Attachments.Add(processedAttachment);
+                                }
+                            }
+
+                            // Thêm tin nhắn đã xử lý vào danh sách
+                            processedMessages.Add(processedMessage);
+                        }
+
+                        // Lưu vào cache và hiển thị
+                        _conversationMessagesCache[conversationId] = processedMessages;
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Messages = new ObservableCollection<Message>(processedMessages);
+                            ScrollToLastMessage();
+                            System.Diagnostics.Debug.WriteLine($"Đã hiển thị {Messages.Count} tin nhắn lên UI");
+                        });
+                    }
+                    else
+                    {
+                        // Hiển thị thông báo nếu không có tin nhắn
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Messages.Clear();
+                            System.Diagnostics.Debug.WriteLine("Không có tin nhắn trong cuộc trò chuyện này");
+                        });
+                    }
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"API error: {response.StatusCode} - {errorContent}");
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Messages.Clear();
+                        MessageBox.Show($"Không thể tải tin nhắn: {response.StatusCode} - {errorContent}",
+                                      "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    });
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[END] LoadMessages");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in LoadMessages: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Messages.Clear();
+                    MessageBox.Show($"Lỗi tải tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
+        }
+        private void ScrollToLastMessage()
+        {
+            // Method để cuộn xuống tin nhắn cuối cùng
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (Application.Current.MainWindow is UserChatView view)
+                {
+                    view.MessageScrollViewer.ScrollToEnd();
+                }
+            });
+        }
         private async Task ConnectToHub()
         {
             try
@@ -190,11 +755,54 @@ namespace DoanKhoaClient.ViewModels
                     .WithUrl("http://localhost:5299/chatHub")
                     .WithAutomaticReconnect()
                     .Build();
+                _hubConnection.On<string, string>("MessageUpdated", (messageId, newContent) =>
+                {
+                    try
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            var message = Messages.FirstOrDefault(m => m.Id == messageId);
+                            if (message != null)
+                            {
+                                message.Content = newContent;
+                                // Trigger refresh
+                                var index = Messages.IndexOf(message);
+                                Messages.Remove(message);
+                                Messages.Insert(index, message);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error handling MessageUpdated: {ex.Message}");
+                    }
+                });
 
+                _hubConnection.On<string>("MessageDeleted", (messageId) =>
+                {
+                    try
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            var message = Messages.FirstOrDefault(m => m.Id == messageId);
+                            if (message != null)
+                            {
+                                Messages.Remove(message);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error handling MessageDeleted: {ex.Message}");
+                    }
+                });
+                // Trong phương thức ConnectToHub
                 _hubConnection.On<Message>("ReceiveMessage", (message) =>
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine($"Nhận tin nhắn từ SignalR: {message.Id}, từ người dùng: {message.SenderName}");
+
                         // Kiểm tra xem tin nhắn là thông báo tạo nhóm không
                         bool isGroupCreatedMessage = message.Type == MessageType.System &&
                                                     message.Content.Contains("has been created");
@@ -216,6 +824,15 @@ namespace DoanKhoaClient.ViewModels
                                     if (!alreadyHasCreationMessage)
                                     {
                                         Messages.Add(message);
+
+                                        // Cập nhật cache tin nhắn
+                                        if (_conversationMessagesCache.ContainsKey(message.ConversationId))
+                                        {
+                                            if (!_conversationMessagesCache[message.ConversationId].Any(m => m.Id == message.Id))
+                                            {
+                                                _conversationMessagesCache[message.ConversationId].Add(message);
+                                            }
+                                        }
                                     }
                                 });
                             }
@@ -229,6 +846,21 @@ namespace DoanKhoaClient.ViewModels
                                 if (!Messages.Any(m => m.Id == message.Id) && message.SenderId != CurrentUser.Id)
                                 {
                                     Messages.Add(message);
+
+                                    // Cập nhật cache tin nhắn
+                                    if (_conversationMessagesCache.ContainsKey(message.ConversationId))
+                                    {
+                                        if (!_conversationMessagesCache[message.ConversationId].Any(m => m.Id == message.Id))
+                                        {
+                                            _conversationMessagesCache[message.ConversationId].Add(message);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _conversationMessagesCache[message.ConversationId] = new List<Message> { message };
+                                    }
+
+                                    System.Diagnostics.Debug.WriteLine($"Đã cập nhật cache: Conversation {message.ConversationId} có {_conversationMessagesCache[message.ConversationId].Count} tin nhắn");
                                 }
                             });
                         }
@@ -244,19 +876,22 @@ namespace DoanKhoaClient.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error handling received message: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine($"Error handling received message: {ex.Message}");
                     }
                 });
 
+                // Khởi động kết nối
                 await _hubConnection.StartAsync();
                 IsConnected = true;
+                System.Diagnostics.Debug.WriteLine("Đã kết nối với SignalR Hub");
             }
             catch (Exception ex)
             {
                 IsConnected = false;
-                MessageBox.Show($"Không thể kết nối đến máy chủ chat: {ex.Message}", "Lỗi Kết Nối", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"Lỗi khi kết nối SignalR: {ex.Message}");
             }
         }
+        // Thêm vào UserChatViewModel
 
         private void LoadDemoData()
         {
@@ -297,6 +932,44 @@ namespace DoanKhoaClient.ViewModels
             };
 
             Users = new ObservableCollection<User>(users);
+        }
+        // Thêm vào UserChatViewModel
+
+
+
+        // Thêm phương thức này vào class UserChatViewModel
+        private async Task VerifyCacheIntegrity(string conversationId)
+        {
+            try
+            {
+                if (!_conversationMessagesCache.ContainsKey(conversationId))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Cache không tồn tại cho conversation: {conversationId}");
+                    return;
+                }
+
+                var cachedCount = _conversationMessagesCache[conversationId].Count;
+
+                // Kiểm tra với server
+                var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}/count");
+                if (response.IsSuccessStatusCode)
+                {
+                    var serverCount = await response.Content.ReadFromJsonAsync<int>();
+                    System.Diagnostics.Debug.WriteLine($"Kiểm tra cache: Local={cachedCount}, Server={serverCount}");
+
+                    if (serverCount > cachedCount)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Phát hiện thiếu tin nhắn trong cache, tải lại từ server...");
+                        // Xóa cache hiện tại và tải lại
+                        _conversationMessagesCache.Remove(conversationId);
+                        await RefreshMessages(conversationId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi khi kiểm tra cache: {ex.Message}");
+            }
         }
         private async Task LoadRealData()
         {
@@ -364,6 +1037,103 @@ namespace DoanKhoaClient.ViewModels
                 MessageBox.Show($"Lỗi khởi tạo: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void NewConversation(object parameter)
+        {
+            try
+            {
+                var searchDialog = new FriendSearchDialog(CurrentUser); // Truyền CurrentUser vào
+                if (searchDialog.ShowDialog() == true && searchDialog.SelectedUser != null)
+                {
+                    var selectedUser = searchDialog.SelectedUser;
+
+                    // Tìm cuộc trò chuyện hiện có
+                    var existingConversation = Conversations.FirstOrDefault(c =>
+                        c.ParticipantIds.Contains(selectedUser.Id) &&
+                        c.ParticipantIds.Count == 2);
+
+                    if (existingConversation != null)
+                    {
+                        // Nếu đã tồn tại, chọn nó
+                        SelectedConversation = existingConversation;
+                    }
+                    else
+                    {
+                        // Tạo cuộc trò chuyện mới
+                        CreatePrivateConversation(selectedUser);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo cuộc trò chuyện mới: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Thêm phương thức để tạo cuộc trò chuyện riêng tư
+        private async void CreatePrivateConversation(User user)
+        {
+            try
+            {
+                // Tạo cuộc trò chuyện mới
+                var conversation = new Conversation
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    Title = "", // Không cần title cho chat riêng tư
+                    CreatorId = CurrentUser.Id,
+                    ParticipantIds = new List<string> { CurrentUser.Id, user.Id },
+                    ParticipantNames = new Dictionary<string, string>
+                    {
+                        { CurrentUser.Id, CurrentUser.DisplayName },
+                        { user.Id, user.DisplayName }
+                    },
+                    CreatedAt = DateTime.UtcNow,
+                    LastMessageTimestamp = DateTime.UtcNow
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("conversations", conversation);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdConversation = await response.Content.ReadFromJsonAsync<Conversation>();
+                    if (createdConversation != null)
+                    {
+                        // Thêm vào danh sách và chọn
+                        Conversations.Add(createdConversation);
+                        SelectedConversation = createdConversation;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không thể tạo cuộc trò chuyện. Vui lòng thử lại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Thêm phương thức ShowAttachmentsPanel còn thiếu
+        private void ShowAttachmentsPanel(object parameter)
+        {
+            IsAttachmentsPanelOpen = !IsAttachmentsPanelOpen;
+        }
+
+        // Thêm phương thức NavigateToLogin còn thiếu
+        private void NavigateToLogin()
+        {
+            // Chuyển về trang đăng nhập
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var loginView = new LoginView();
+                loginView.Show();
+
+                if (Application.Current.MainWindow != null)
+                {
+                    Application.Current.MainWindow.Close();
+                }
+            });
+        }
         private async void SelectFile(object parameter)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
@@ -414,6 +1184,8 @@ namespace DoanKhoaClient.ViewModels
                 }
             }
         }
+
+
 
         // Phương thức chọn hình ảnh
         private void SelectImage(object parameter)
@@ -576,71 +1348,6 @@ namespace DoanKhoaClient.ViewModels
             return ((!string.IsNullOrWhiteSpace(CurrentMessage) || SelectedAttachments.Count > 0) &&
                     SelectedConversation != null);
         }
-        private async Task LoadMessages(string conversationId)
-        {
-            try
-            {
-                if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
-                {
-                    try
-                    {
-                        await _hubConnection.InvokeAsync("JoinGroup", conversationId);
-                        Console.WriteLine($"Joined group {conversationId}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error joining group: {ex.Message}");
-                    }
-                }
-
-                Messages.Clear();
-
-                // Add debugging to see what's happening
-                System.Diagnostics.Debug.WriteLine($"Loading messages for conversation: {conversationId}");
-
-                // Use try-catch specifically for the API call to better handle errors
-                try
-                {
-                    var response = await _httpClient.GetAsync($"messages/conversation/{conversationId}");
-                    System.Diagnostics.Debug.WriteLine($"API response status: {response.StatusCode}");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var messages = await response.Content.ReadFromJsonAsync<List<Message>>();
-                        System.Diagnostics.Debug.WriteLine($"Retrieved {messages.Count} messages");
-
-                        if (messages != null && messages.Count > 0)
-                        {
-                            Messages = new ObservableCollection<Message>(messages);
-                            return; // Successfully loaded messages, exit method
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("Retrieved empty message list");
-                        }
-                    }
-                    else
-                    {
-                        string errorContent = await response.Content.ReadAsStringAsync();
-                        System.Diagnostics.Debug.WriteLine($"API error: {errorContent}");
-                    }
-                }
-                catch (Exception apiEx)
-                {
-                    System.Diagnostics.Debug.WriteLine($"API exception: {apiEx.Message}");
-                    // Don't show message box here, just log the error and continue with fallback
-                }
-
-                // Only reach here if API call failed or returned no messages
-                // In production, you might want to show empty message list instead of demo data
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi
-                MessageBox.Show($"Lỗi tải tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private async void SendMessage(object parameter)
         {
             // Kiểm tra điều kiện gửi
@@ -652,18 +1359,19 @@ namespace DoanKhoaClient.ViewModels
             {
                 var newMessage = new Message
                 {
-                    Id = Guid.NewGuid().ToString(), // ID tạm thời
+                    Id = ObjectId.GenerateNewId().ToString(),
                     ConversationId = SelectedConversation.Id,
                     SenderId = CurrentUser.Id,
+                    SenderName = CurrentUser.DisplayName,
                     Content = CurrentMessage,
-                    Timestamp = DateTimeHelper.GetVietnamTime(), // Thay cho DateTime.UtcNow
+                    Timestamp = DateTimeHelper.GetVietnamTime(),
                     Attachments = new List<Attachment>()
                 };
 
                 // Xác định loại tin nhắn
                 if (SelectedAttachments.Count > 0)
                 {
-                    bool allImages = SelectedAttachments.All(a => a.IsImage);
+                    bool allImages = SelectedAttachments.All(a => a.ContentType.StartsWith("image/"));
                     if (allImages && string.IsNullOrWhiteSpace(CurrentMessage))
                         newMessage.Type = MessageType.Image;
                     else if (!allImages && string.IsNullOrWhiteSpace(CurrentMessage))
@@ -674,10 +1382,15 @@ namespace DoanKhoaClient.ViewModels
 
                 // Tải các file đính kèm lên server
                 var serverAttachments = new List<Attachment>();
+
+                System.Diagnostics.Debug.WriteLine($"Sending message with {SelectedAttachments.Count} attachments");
+
                 foreach (var attachment in SelectedAttachments)
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine($"Processing attachment: {attachment.FileName}");
+
                         // Đọc nội dung file
                         var fileBytes = System.IO.File.ReadAllBytes(attachment.FileUrl);
 
@@ -687,7 +1400,9 @@ namespace DoanKhoaClient.ViewModels
                         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(attachment.ContentType);
                         content.Add(fileContent, "File", attachment.FileName);
                         content.Add(new StringContent(CurrentUser.Id), "UploaderId");
+                        content.Add(new StringContent(newMessage.Id), "MessageId");
 
+                        content.Add(new StringContent("default_thumbnail.png"), "ThumbnailFileName");
                         // Gửi file lên server
                         var response = await _httpClient.PostAsync("attachments/upload", content);
 
@@ -696,12 +1411,36 @@ namespace DoanKhoaClient.ViewModels
                             var uploadedAttachment = await response.Content.ReadFromJsonAsync<Attachment>();
                             if (uploadedAttachment != null)
                             {
+                                if (!Uri.IsWellFormedUriString(uploadedAttachment.FileUrl, UriKind.Absolute))
+                                {
+                                    string fileName = Path.GetFileName(uploadedAttachment.FileUrl);
+                                    uploadedAttachment.FileUrl = $"http://localhost:5299/Uploads/{fileName}";
+                                }
+
+                                if (!string.IsNullOrEmpty(uploadedAttachment.ThumbnailUrl) &&
+                                    !Uri.IsWellFormedUriString(uploadedAttachment.ThumbnailUrl, UriKind.Absolute))
+                                {
+                                    string thumbName = Path.GetFileName(uploadedAttachment.ThumbnailUrl);
+                                    uploadedAttachment.ThumbnailUrl = $"http://localhost:5299/Uploads/{thumbName}";
+                                }
+                                if (string.IsNullOrEmpty(uploadedAttachment.ThumbnailPath))
+                                {
+                                    uploadedAttachment.ThumbnailPath = uploadedAttachment.IsImage ?
+                                        "/Uploads/default_thumbnail.png" :
+                                        "/Uploads/default_file_thumbnail.png";
+                                }
+                                uploadedAttachment.MessageId = newMessage.Id;
+                                if (uploadedAttachment.ContentType.StartsWith("image/"))
+                                {
+                                    uploadedAttachment.IsImage = true;
+                                }
                                 serverAttachments.Add(uploadedAttachment);
                             }
                         }
                         else
                         {
-                            throw new Exception($"Không thể tải file {attachment.FileName}: {response.StatusCode}");
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            throw new Exception($"Không thể tải file {attachment.FileName}: {response.StatusCode} - {errorContent}");
                         }
                     }
                     catch (Exception ex)
@@ -713,32 +1452,81 @@ namespace DoanKhoaClient.ViewModels
                 // Cập nhật tin nhắn với các file đã tải lên
                 newMessage.Attachments = serverAttachments;
 
-                // Thêm tin nhắn vào danh sách hiển thị ngay lập tức
-                Messages.Add(newMessage);
+                // ===== THÊM MỚI: LƯU TIN NHẮN VÀO DATABASE =====
+                System.Diagnostics.Debug.WriteLine("Saving message to database via API...");
+                var saveResponse = await _httpClient.PostAsJsonAsync("messages", newMessage);
 
-                // Xóa tin nhắn hiện tại và danh sách file đã chọn
-                CurrentMessage = string.Empty;
-                SelectedAttachments.Clear();
-                IsAttachmentsPanelOpen = false;
-
-                // Gửi tin nhắn qua SignalR
-                if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+                if (!saveResponse.IsSuccessStatusCode)
                 {
-                    if (serverAttachments.Count > 0)
+                    var errorContent = await saveResponse.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"API error when saving message: {errorContent}");
+                    throw new Exception($"Không thể lưu tin nhắn: {errorContent}");
+                }
+
+                System.Diagnostics.Debug.WriteLine("Message successfully saved to database");
+                // ===== KẾT THÚC THÊM MỚI =====
+
+                // Thêm tin nhắn vào danh sách hiển thị ngay lập tức
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Messages.Add(newMessage);
+
+                    // Cập nhật LastActivity của conversation
+                    if (SelectedConversation != null)
                     {
-                        await _hubConnection.InvokeAsync("SendMessageWithAttachments",
-                            SelectedConversation.Id,
-                            CurrentUser.Id,
-                            newMessage.Content,
-                            serverAttachments,
-                            newMessage.Type);
+                        SelectedConversation.LastActivity = newMessage.Timestamp;
+                        SortConversations();
+                    }
+
+                    if (_conversationMessagesCache.ContainsKey(SelectedConversation.Id))
+                    {
+                        _conversationMessagesCache[SelectedConversation.Id].Add(newMessage);
                     }
                     else
                     {
-                        await _hubConnection.InvokeAsync("SendMessage",
-                            SelectedConversation.Id,
-                            CurrentUser.Id,
-                            newMessage.Content);
+                        _conversationMessagesCache[SelectedConversation.Id] = new List<Message> { newMessage };
+                    }
+
+                    // Xóa tin nhắn hiện tại và danh sách file đã chọn
+                    CurrentMessage = string.Empty;
+                    SelectedAttachments.Clear();
+                    IsAttachmentsPanelOpen = false;
+
+                    // Scroll to bottom
+                    ScrollToLastMessage();
+                });
+
+                // Giữ nguyên code SignalR của bạn
+                if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
+                {
+                    try
+                    {
+                        if (serverAttachments.Count > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Sending message with attachments via SignalR");
+                            await _hubConnection.InvokeAsync("SendMessageWithAttachments",
+                                SelectedConversation.Id,
+                                CurrentUser.Id,
+                                CurrentUser.DisplayName,
+                                newMessage.Content,
+                                serverAttachments,
+                                newMessage.Type);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("Sending text message via SignalR");
+                            await _hubConnection.InvokeAsync("SendMessage",
+                                SelectedConversation.Id,
+                                CurrentUser.Id,
+                                CurrentUser.DisplayName,
+                                newMessage.Content);
+                        }
+                        System.Diagnostics.Debug.WriteLine("Message sent successfully via SignalR");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"SignalR error: {ex.Message}");
+                        // Không throw exception ở đây vì tin nhắn đã được thêm vào UI
                     }
                 }
             }
