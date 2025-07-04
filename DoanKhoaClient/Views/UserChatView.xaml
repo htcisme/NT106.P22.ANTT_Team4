@@ -102,14 +102,27 @@
             </Setter>
         </Style>
 
-        <ContextMenu x:Key="MessageContextMenu">
+        <!-- <ContextMenu x:Key="MessageContextMenu">
             <MenuItem Header="Chỉnh sửa"
                       Command="{Binding DataContext.EditMessageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                      CommandParameter="{Binding}"/>
+                      CommandParameter="{Binding}">
+                <MenuItem.Icon>
+                    <Image Source="/Views/Images/edit.png"
+                           Width="16"
+                           Height="16"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Xóa"
                       Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                      CommandParameter="{Binding}"/>
-        </ContextMenu>
+                      CommandParameter="{Binding}">
+                <MenuItem.Icon>
+                    <Image Source="/Views/Images/delete.png"
+                           Width="16"
+                           Height="16"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+        </ContextMenu> -->
 
         <Style x:Key="SendButtonStyle"
                TargetType="{x:Type Button}">
@@ -319,9 +332,9 @@
         </Style>
     </Window.Resources>
 
-    <Window.DataContext>
+    <!-- <Window.DataContext>
         <vm:UserChatViewModel/>
-    </Window.DataContext>
+    </Window.DataContext> -->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
@@ -1014,9 +1027,45 @@
                                                                        FontSize="10"
                                                                        Foreground="Gray"
                                                                        HorizontalAlignment="Right"/>
+                                                            <TextBlock Text=" (đã chỉnh sửa)"
+                                                                       FontSize="10"
+                                                                       Foreground="Gray"
+                                                                       Visibility="{Binding IsEdited, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
                                                         </StackPanel>
+
+                                                        <!-- SỬA LẠI CONTEXT MENU Ở ĐÂY -->
                                                         <Border.ContextMenu>
-                                                            <StaticResource ResourceKey="MessageContextMenu"/>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="Chỉnh sửa"
+                                                                          Click="EditMessage_Click"
+                                                                          Tag="{Binding}">
+                                                                    <MenuItem.Icon>
+                                                                        <Image Source="/Views/Images/edit.png"
+                                                                                Width="16"
+                                                                                Height="16"/>
+                                                                    </MenuItem.Icon>
+                                                                </MenuItem>
+                                                                <MenuItem Header="Xóa"
+                                                                          Click="DeleteMessage_Click"
+                                                                          Tag="{Binding}">
+                                                                    <MenuItem.Icon>
+                                                                        <Image Source="/Views/Images/delete.png"
+                                                                                Width="16"
+                                                                                Height="16"/>
+                                                                    </MenuItem.Icon>
+                                                                </MenuItem>
+                                                                <Separator/>
+                                                                <MenuItem Header="Sao chép"
+                                                                          Click="CopyMessage_Click"
+                                                                          Tag="{Binding}">
+                                                                    <MenuItem.Icon>
+                                                                        <Image Source="/Views/Images/copy.png"
+                                                                                Width="16"
+                                                                                Height="16"/>
+                                                                    </MenuItem.Icon>
+                                                                </MenuItem>
+                                                            </ContextMenu>
                                                         </Border.ContextMenu>
                                                     </Border>
 

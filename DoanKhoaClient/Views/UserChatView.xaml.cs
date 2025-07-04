@@ -28,6 +28,7 @@ namespace DoanKhoaClient.Views
                 // Đặt giá trị ban đầu cho animations khi chạy thật
                 Chat_Background.Opacity = 0;
                 Chat_Background.Margin = new Thickness(0, 30, 0, 0);
+                this.DataContext = new UserChatViewModel();
             }
             if (AccessControl.IsAdmin())
             {
@@ -48,13 +49,74 @@ namespace DoanKhoaClient.Views
     UserAvatar.SetupAsUserAvatar();
 };
         }
+
+        private void EditMessage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is MenuItem menuItem && menuItem.Tag is Message message)
+                {
+                    if (DataContext is UserChatViewModel viewModel)
+                    {
+                        // Debug log
+                        System.Diagnostics.Debug.WriteLine($"Edit message clicked: {message.Id}, Content: {message.Content}");
+
+                        // Gọi command từ ViewModel
+                        if (viewModel.EditMessageCommand.CanExecute(message))
+                        {
+                            viewModel.EditMessageCommand.Execute(message);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Bạn không thể chỉnh sửa tin nhắn này!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi chỉnh sửa: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void DeleteMessage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is MenuItem menuItem && menuItem.Tag is Message message)
+                {
+                    if (DataContext is UserChatViewModel viewModel)
+                    {
+                        // Debug log
+                        System.Diagnostics.Debug.WriteLine($"Delete message clicked: {message.Id}, Content: {message.Content}");
+
+                        // Gọi command từ ViewModel
+                        if (viewModel.DeleteMessageCommand.CanExecute(message))
+                        {
+                            viewModel.DeleteMessageCommand.Execute(message);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Bạn không thể xóa tin nhắn này!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
                 if (sender is Image image)
                 {
-                    // Get URL from Tag or Source
                     string imageUrl = image.Tag as string;
 
                     if (string.IsNullOrEmpty(imageUrl) && image.Source is BitmapImage bitmapImage)
@@ -64,17 +126,136 @@ namespace DoanKhoaClient.Views
 
                     if (!string.IsNullOrEmpty(imageUrl))
                     {
-                        // Open image viewer window
-                        var imageViewer = new ImageViewerWindow(imageUrl);
-                        imageViewer.Show();
+                        // Tạo context menu cho ảnh
+                        var contextMenu = new ContextMenu();
+
+                        // Menu item xem ảnh
+                        var viewMenuItem = new MenuItem { Header = "Xem ảnh" };
+                        viewMenuItem.Click += (s, args) =>
+                        {
+                            try
+                            {
+                                var imageViewer = new ImageViewerWindow(imageUrl);
+                                imageViewer.Owner = this;
+                                imageViewer.Show();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Không thể mở ảnh: {ex.Message}", "Lỗi",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+                        };
+
+                        // Menu item tải xuống ảnh
+                        var downloadMenuItem = new MenuItem { Header = "Tải xuống" };
+                        downloadMenuItem.Click += async (s, args) =>
+                        {
+                            await DownloadImageAsync(imageUrl, image.DataContext as Attachment);
+                        };
+
+                        contextMenu.Items.Add(viewMenuItem);
+                        contextMenu.Items.Add(downloadMenuItem);
+
+                        // Hiển thị context menu
+                        contextMenu.IsOpen = true;
+                        contextMenu.PlacementTarget = image;
+                        contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error viewing image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private async Task DownloadImageAsync(string imageUrl, Attachment attachment)
+        {
+            try
+            {
+                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    FileName = attachment?.FileName ?? "image.jpg",
+                    Filter = "Image files (*.jpg, *.jpeg, *.png, *.gif)|*.jpg;*.jpeg;*.png;*.gif|All files (*.*)|*.*"
+                };
+
+                if (saveDialog.ShowDialog() == true)
+                {
+                    using (var client = new HttpClient())
+                    {
+                        client.Timeout = TimeSpan.FromMinutes(5);
+
+                        var response = await client.GetAsync(imageUrl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            using (var fileStream = new FileStream(saveDialog.FileName, FileMode.Create))
+                            {
+                                await response.Content.CopyToAsync(fileStream);
+                            }
+
+                            MessageBox.Show("Tải xuống ảnh thành công!", "Thành công",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Không thể tải ảnh: {response.StatusCode}", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải ảnh: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void CopyMessage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is MenuItem menuItem)
+                {
+                    Message message = null;
+
+                    // Thử lấy từ Tag trước
+                    if (menuItem.Tag is Message tagMessage)
+                    {
+                        message = tagMessage;
+                    }
+                    // Nếu không có thì thử từ DataContext
+                    else if (menuItem.DataContext is Message dataContextMessage)
+                    {
+                        message = dataContextMessage;
+                    }
+                    // Thử lấy từ PlacementTarget
+                    else if (menuItem.Parent is ContextMenu contextMenu &&
+                             contextMenu.PlacementTarget is FrameworkElement target &&
+                             target.DataContext is Message targetMessage)
+                    {
+                        message = targetMessage;
+                    }
+
+                    if (message != null && !string.IsNullOrEmpty(message.Content))
+                    {
+                        Clipboard.SetText(message.Content);
+                        MessageBox.Show("Đã sao chép tin nhắn!", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không có nội dung để sao chép!", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi sao chép: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(Chat_Background);
@@ -104,55 +285,30 @@ namespace DoanKhoaClient.Views
                 {
                     System.Diagnostics.Debug.WriteLine($"Loading image: {attachment.FileName}");
 
-                    // Check if FileUrl exists
-                    if (string.IsNullOrEmpty(attachment.FileUrl))
+                    if (!string.IsNullOrEmpty(attachment.FileUrl))
                     {
-                        System.Diagnostics.Debug.WriteLine("ERROR: Image has empty FileUrl");
-                        return;
+                        // Đảm bảo URL là absolute
+                        string imageUrl = attachment.FileUrl;
+                        if (!Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
+                        {
+                            imageUrl = $"http://localhost:5299/Uploads/{Path.GetFileName(imageUrl)}";
+                        }
+
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(imageUrl);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                        bitmap.EndInit();
+
+                        image.Source = bitmap;
+                        image.Tag = imageUrl;
                     }
-
-                    System.Diagnostics.Debug.WriteLine($"Image FileUrl: {attachment.FileUrl}");
-
-                    // Ensure URL is absolute
-                    string imageUrl = attachment.FileUrl;
-                    if (!Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
-                    {
-                        imageUrl = $"http://localhost:5299/Uploads/{Path.GetFileName(imageUrl)}";
-                        System.Diagnostics.Debug.WriteLine($"Converted to absolute URL: {imageUrl}");
-                    }
-
-                    // Force image to load with cache disabled
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(imageUrl);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-
-                    // Add handlers to track loading progress
-                    bitmap.DownloadCompleted += (s, args) =>
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Image downloaded successfully: {imageUrl}");
-                    };
-
-                    bitmap.DownloadFailed += (s, args) =>
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Image download failed: {imageUrl}");
-                    };
-
-                    bitmap.EndInit();
-
-                    // Set source and store URL for click handler
-                    image.Source = bitmap;
-                    image.Tag = imageUrl;
-
-                    // Make sure click handler is attached
-                    image.MouseLeftButtonDown -= Image_MouseLeftButtonDown;
-                    image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR loading image: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error loading image: {ex.Message}");
             }
         }
 

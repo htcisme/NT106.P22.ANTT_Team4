@@ -227,8 +227,8 @@ namespace DoanKhoaClient.ViewModels
             CreateGroupCommand = new RelayCommand(CreateGroup);
             ShowAttachmentsPanelCommand = new RelayCommand(ShowAttachmentsPanel);
 
-            EditMessageCommand = new RelayCommand(EditMessage);
-            DeleteMessageCommand = new RelayCommand(DeleteMessage);
+            EditMessageCommand = new RelayCommand<Message>(EditMessage, CanEditMessage);
+            DeleteMessageCommand = new RelayCommand<Message>(DeleteMessage, CanDeleteMessage);
             DownloadFileCommand = new RelayCommand(DownloadFile);
 
             NavigateToHomeCommand = new RelayCommand(NavigateToHome);
@@ -242,6 +242,15 @@ namespace DoanKhoaClient.ViewModels
 
             // Kết nối SignalR
             ConnectToHub();
+        }
+        private bool CanEditMessage(Message message)
+        {
+            return message != null && message.SenderId == CurrentUser?.Id;
+        }
+
+        private bool CanDeleteMessage(Message message)
+        {
+            return message != null && message.SenderId == CurrentUser?.Id;
         }
 
         private async void LoadData()
@@ -368,102 +377,123 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        private async void DeleteMessage(object parameter)
-        {
-            if (parameter is Message message)
-            {
-                // Allow deletion only for the user's own messages
-                if (message.SenderId != CurrentUser?.Id)
-                {
-                    MessageBox.Show("Bạn chỉ có thể xóa tin nhắn của mình!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
 
-                var result = MessageBox.Show("Bạn có chắc muốn xóa tin nhắn này?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
+        private async void EditMessage(Message message)
+        {
+            try
+            {
+                if (message == null) return;
+
+                var editDialog = new EditMessageDialog(message.Content)
                 {
-                    try
+                    Owner = Application.Current.MainWindow
+                };
+
+                if (editDialog.ShowDialog() == true)
+                {
+                    string newContent = editDialog.EditedContent;
+                    if (!string.IsNullOrWhiteSpace(newContent) && newContent != message.Content)
                     {
-                        var response = await _httpClient.DeleteAsync($"messages/{message.Id}");
+                        // SỬA LẠI: Gửi đúng format request với UserId (không phải Userld)
+                        var updateRequest = new
+                        {
+                            Content = newContent,
+                            UserId = CurrentUser.Id  // Đảm bảo đúng tên field và có giá trị
+                        };
+
+                        System.Diagnostics.Debug.WriteLine($"Sending edit request: Content={newContent}, UserId={CurrentUser.Id}");
+
+                        var response = await _httpClient.PutAsJsonAsync($"messages/{message.Id}", updateRequest);
 
                         if (response.IsSuccessStatusCode)
                         {
-                            // Remove message from UI
-                            Messages.Remove(message);
+                            // Cập nhật local
+                            message.Content = newContent;
+                            message.IsEdited = true;
 
-                            // Notify via SignalR
-                            if (_hubConnection?.State == HubConnectionState.Connected)
+                            // Thông báo qua SignalR để các client khác cập nhật
+                            if (_hubConnection != null && _hubConnection.State == HubConnectionState.Connected)
                             {
-                                await _hubConnection.InvokeAsync("DeleteMessage", message.Id, message.ConversationId);
+                                try
+                                {
+                                    await _hubConnection.InvokeAsync("UpdateMessage", message.Id, newContent);
+                                }
+                                catch (Exception signalREx)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"SignalR error: {signalREx.Message}");
+                                }
                             }
+
+                            MessageBox.Show("Tin nhắn đã được chỉnh sửa thành công!", "Thành công",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         else
                         {
-                            MessageBox.Show("Không thể xóa tin nhắn. Vui lòng thử lại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            System.Diagnostics.Debug.WriteLine($"Edit message failed: {response.StatusCode} - {errorContent}");
+                            MessageBox.Show($"Không thể chỉnh sửa tin nhắn: {errorContent}", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Lỗi khi xóa tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in EditMessage: {ex.Message}");
+                MessageBox.Show($"Lỗi khi chỉnh sửa tin nhắn: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private async void EditMessage(object parameter)
+        private async void DeleteMessage(Message message)
         {
-            if (parameter is Message message)
+            try
             {
-                // Chỉ cho phép chỉnh sửa tin nhắn của mình
-                if (message.SenderId != CurrentUser?.Id)
-                {
-                    MessageBox.Show("Bạn chỉ có thể chỉnh sửa tin nhắn của mình!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
+                if (message == null) return;
 
-                // Chỉ cho phép sửa tin nhắn text
-                if (message.Type != MessageType.Text)
-                {
-                    MessageBox.Show("Chỉ có thể chỉnh sửa tin nhắn văn bản!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa tin nhắn này?", "Xác nhận",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-                var editDialog = new EditMessageDialog(message.Content);
-                if (editDialog.ShowDialog() == true)
+                if (result == MessageBoxResult.Yes)
                 {
-                    string editedContent = editDialog.EditedContent;
+                    // SỬA LẠI: Gửi userId qua query parameter với URL đúng
+                    System.Diagnostics.Debug.WriteLine($"Deleting message: {message.Id}, UserId: {CurrentUser.Id}");
 
-                    // Cập nhật tin nhắn
-                    try
+                    var response = await _httpClient.DeleteAsync($"messages/{message.Id}?userId={CurrentUser.Id}");
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var response = await _httpClient.PutAsJsonAsync($"messages/{message.Id}", new { Content = editedContent });
+                        // Remove from local collection
+                        Messages.Remove(message);
 
-                        if (response.IsSuccessStatusCode)
+                        // Cập nhật cache
+                        if (_conversationMessagesCache.ContainsKey(message.ConversationId))
                         {
-                            // Cập nhật tin nhắn trong UI
-                            int index = Messages.IndexOf(message);
-                            if (index >= 0)
+                            var cachedMessages = _conversationMessagesCache[message.ConversationId];
+                            var messageToRemove = cachedMessages.FirstOrDefault(m => m.Id == message.Id);
+                            if (messageToRemove != null)
                             {
-                                message.Content = editedContent;
-                                Messages[index] = message;
-
-                                // Thông báo sửa tin nhắn qua SignalR
-                                if (_hubConnection?.State == HubConnectionState.Connected)
-                                {
-                                    await _hubConnection.InvokeAsync("UpdateMessage", message.Id, editedContent);
-                                }
+                                cachedMessages.Remove(messageToRemove);
                             }
                         }
-                        else
-                        {
-                            MessageBox.Show("Không thể cập nhật tin nhắn. Vui lòng thử lại!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+
+                        MessageBox.Show("Đã xóa tin nhắn thành công!", "Thành công",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show($"Lỗi khi sửa tin nhắn: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        System.Diagnostics.Debug.WriteLine($"Delete message failed: {response.StatusCode} - {errorContent}");
+                        MessageBox.Show($"Không thể xóa tin nhắn: {errorContent}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in DeleteMessage: {ex.Message}");
+                MessageBox.Show($"Lỗi khi xóa tin nhắn: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async Task RefreshMessages(string conversationId)
@@ -1706,6 +1736,50 @@ namespace DoanKhoaClient.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public class RelayCommand<T> : ICommand
+        {
+            private readonly Action<T> _execute;
+            private readonly Func<T, bool> _canExecute;
+
+            public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
+            {
+                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+                _canExecute = canExecute;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                if (parameter is T typedParameter)
+                {
+                    return _canExecute == null || _canExecute(typedParameter);
+                }
+                return _canExecute == null;
+            }
+
+            public void Execute(object parameter)
+            {
+                if (parameter is T typedParameter)
+                {
+                    _execute(typedParameter);
+                }
+                else if (parameter == null && !typeof(T).IsValueType)
+                {
+                    _execute(default(T));
+                }
+            }
+
+            public event EventHandler CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
+
+            public void RaiseCanExecuteChanged()
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         // RelayCommand implementation
