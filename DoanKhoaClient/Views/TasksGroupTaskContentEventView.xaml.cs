@@ -1,5 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DoanKhoaClient.Helpers;
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Services;
@@ -10,6 +16,9 @@ namespace DoanKhoaClient.Views
     {
         private readonly TaskSession _session;
         private readonly TaskService _taskService;
+        private List<TaskProgram> _programs; // THAY ĐỔI: Hiển thị TaskProgram thay vì TaskItem
+        private int _currentPage = 1;
+        private const int ProgramsPerPage = 5; // THAY ĐỔI: từ TasksPerPage thành ProgramsPerPage
 
         public TasksGroupTaskContentEventView(TaskSession session)
         {
@@ -17,87 +26,313 @@ namespace DoanKhoaClient.Views
             ThemeManager.ApplyTheme(GroupTask_Content_Event_Background);
             _session = session;
             _taskService = new TaskService();
-            LoadSessionData();
+            LoadSessionPrograms(); // THAY ĐỔI: method name
         }
 
-        private void LoadSessionData()
+        private async void LoadSessionPrograms() // THAY ĐỔI: method name và logic
         {
-            if (_session != null)
+            try
             {
                 // Cập nhật thông tin session
-                GroupTask_Event_lbManagerEventTeam.Content = _session.ManagerName;
-
-                // Cập nhật tiêu đề dựa trên session name
-                GroupTask_Event_lbHeadTasks1.Content = _session.Name;
-
-                // Cập nhật thông tin thời gian
-                if (_session.CreatedAt != default)
+                if (_session != null)
                 {
-                    GroupTask_Event_lbDetailsOpenTime.Content = _session.CreatedAt.ToString("dddd, d MMMM yyyy, h:mm tt");
+                    GroupTask_Event_lbManagerEventTeam.Content = _session.ManagerName ?? "Huỳnh Ngọc Ngân Tuyền";
+                    GroupTask_Event_lbSessionName.Content = _session.Name?.ToUpper() ?? "PHIÊN SỰ KIỆN TRUYỀN THÔNG";
                 }
 
-                if (_session.UpdatedAt != default)
-                {
-                    GroupTask_Event_lbDetailsCloseTime.Content = _session.UpdatedAt.ToString("dddd, d MMMM yyyy, h:mm tt");
-                }
+                // THAY ĐỔI: Lấy TaskPrograms theo sessionId và filter theo Type Event
+                var allPrograms = await _taskService.GetTaskProgramsAsync(_session?.Id ?? "");
+                _programs = allPrograms?.Where(p => p.Type == ProgramType.Event).ToList() ?? new List<TaskProgram>();
 
-                // Cập nhật mô tả sự kiện
-                GroupTask_Event_lbDescription.Content = GetEventDescription(_session);
+                UpdateProgramDisplay(); // THAY ĐỔI: method name
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateProgramDisplay() // THAY ĐỔI: method name và logic
+        {
+            ClearDynamicPrograms(); // THAY ĐỔI: method name
+
+            if (_programs?.Any() != true)
+            {
+                ShowNoProgramsMessage(); // THAY ĐỔI: method name
+                return;
+            }
+
+            var totalPages = (int)Math.Ceiling((double)_programs.Count / ProgramsPerPage);
+            var startIndex = (_currentPage - 1) * ProgramsPerPage;
+            var programsToShow = _programs.Skip(startIndex).Take(ProgramsPerPage).ToList();
+
+            foreach (var program in programsToShow)
+            {
+                CreateProgramCard(program); // THAY ĐỔI: method name và param
+            }
+
+            UpdateNavigationButtons(totalPages);
+        }
+
+        private void CreateProgramCard(TaskProgram program) // THAY ĐỔI: toàn bộ method
+        {
+            var programCard = new Border
+            {
+                Style = (Style)this.FindResource("TaskCardStyle"),
+                Width = 980,
+                Height = 140, // THAY ĐỔI: tăng height cho program info
+                Margin = new Thickness(0, 10, 0, 10),
+                Cursor = Cursors.Hand
+            };
+
+            var grid = new Grid
+            {
+                Margin = new Thickness(20)
+            };
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // Icon Container
+            var iconBorder = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(4, 35, 84)),
+                CornerRadius = new CornerRadius(10),
+                Width = 60,
+                Height = 60,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            Grid.SetColumn(iconBorder, 0);
+
+            try
+            {
+                var icon = new Image
+                {
+                    Source = new BitmapImage(new Uri("/Views/Images/active-tasks.png", UriKind.Relative)),
+                    Width = 30,
+                    Height = 30,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                iconBorder.Child = icon;
+            }
+            catch
+            {
+                var fallbackIcon = new Label
+                {
+                    Content = "🎉", // THAY ĐỔI: icon cho event program
+                    FontSize = 24,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Padding = new Thickness(0)
+                };
+                iconBorder.Child = fallbackIcon;
+            }
+
+            // Info Panel
+            var infoPanel = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(20, 0, 0, 0)
+            };
+            Grid.SetColumn(infoPanel, 1);
+
+            var programNameLabel = new Label
+            {
+                Content = program.Name ?? "Không có tên",
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Color.FromRgb(4, 35, 84)),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            var programDescLabel = new Label
+            {
+                Content = program.Description ?? "Không có mô tả",
+                FontSize = 14,
+                Foreground = new SolidColorBrush(Color.FromRgb(100, 100, 100)),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            var dateInfoLabel = new Label
+            {
+                Content = $"Thời gian: {program.StartDate:dd/MM/yyyy} - {program.EndDate:dd/MM/yyyy}",
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(150, 150, 150)),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            var statusInfoLabel = new Label
+            {
+                Content = $"Trạng thái: {GetProgramStatusText(program.Status)} | Người thực hiện: {program.ExecutorName ?? "Chưa phân công"}",
+                FontSize = 12,
+                Foreground = GetProgramStatusColor(program.Status),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            infoPanel.Children.Add(programNameLabel);
+            infoPanel.Children.Add(programDescLabel);
+            infoPanel.Children.Add(dateInfoLabel);
+            infoPanel.Children.Add(statusInfoLabel);
+
+            // Arrow Icon
+            try
+            {
+                var arrow = new Image
+                {
+                    Source = new BitmapImage(new Uri("/Views/Images/-down-list.png", UriKind.Relative)),
+                    Width = 20,
+                    Height = 20,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    RenderTransformOrigin = new Point(0.5, 0.5),
+                    RenderTransform = new RotateTransform(-90)
+                };
+                Grid.SetColumn(arrow, 2);
+                grid.Children.Add(arrow);
+            }
+            catch
+            {
+                var arrowLabel = new Label
+                {
+                    Content = "▶",
+                    FontSize = 16,
+                    Foreground = new SolidColorBrush(Color.FromRgb(4, 35, 84)),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 10, 0)
+                };
+                Grid.SetColumn(arrowLabel, 2);
+                grid.Children.Add(arrowLabel);
+            }
+
+            grid.Children.Add(iconBorder);
+            grid.Children.Add(infoPanel);
+            programCard.Child = grid;
+
+            // THAY ĐỔI: Click event để mở TasksGroupTaskDetailView với TaskProgram
+            programCard.MouseDown += (s, e) => OpenProgramDetail(program);
+
+            var tasksPanel = this.FindName("DynamicTasksPanel") as StackPanel;
+            tasksPanel?.Children.Add(programCard);
+        }
+
+        private void OpenProgramDetail(TaskProgram program) // THAY ĐỔI: method mới với TaskProgram
+        {
+            try
+            {
+                var detailView = new TasksGroupTaskDetailView(program);
+                detailView.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở chi tiết chương trình: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // THÊM: Helper methods cho Program Status
+        private string GetProgramStatusText(ProgramStatus status)
+        {
+            return status switch
+            {
+                ProgramStatus.NotStarted => "Chưa bắt đầu",
+                ProgramStatus.InProgress => "Đang thực hiện",
+                ProgramStatus.Completed => "Đã hoàn thành",
+                ProgramStatus.Canceled => "Đã hủy",
+                _ => "Không xác định"
+            };
+        }
+
+        private SolidColorBrush GetProgramStatusColor(ProgramStatus status)
+        {
+            return status switch
+            {
+                ProgramStatus.NotStarted => new SolidColorBrush(Color.FromRgb(108, 117, 125)),
+                ProgramStatus.InProgress => new SolidColorBrush(Color.FromRgb(0, 123, 255)),
+                ProgramStatus.Completed => new SolidColorBrush(Color.FromRgb(40, 167, 69)),
+                ProgramStatus.Canceled => new SolidColorBrush(Color.FromRgb(220, 53, 69)),
+                _ => new SolidColorBrush(Color.FromRgb(108, 117, 125))
+            };
+        }
+
+        private void ShowNoProgramsMessage() // THAY ĐỔI: method name và message
+        {
+            var noProgramsLabel = new Label
+            {
+                Content = "Chưa có chương trình sự kiện nào trong phiên này",
+                FontSize = 18,
+                Foreground = new SolidColorBrush(Color.FromRgb(108, 117, 125)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 50, 0, 0)
+            };
+
+            var tasksPanel = this.FindName("DynamicTasksPanel") as StackPanel;
+            tasksPanel?.Children.Add(noProgramsLabel);
+        }
+
+        private void UpdateNavigationButtons(int totalPages)
+        {
+            var pageInfoLabel = this.FindName("PageInfoLabel") as Label;
+            if (pageInfoLabel != null)
+            {
+                pageInfoLabel.Content = $"Trang {_currentPage} / {totalPages}";
+            }
+
+            var previousButton = this.FindName("PreviousPageButton") as Button;
+            var nextButton = this.FindName("NextPageButton") as Button;
+
+            if (previousButton != null)
+                previousButton.Visibility = _currentPage > 1 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (nextButton != null)
+                nextButton.Visibility = _currentPage < totalPages ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void PreviousPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                UpdateProgramDisplay(); // THAY ĐỔI: method name
+            }
+        }
+
+        private void NextPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var totalPages = (int)Math.Ceiling((double)_programs.Count / ProgramsPerPage); // THAY ĐỔI: variable name
+            if (_currentPage < totalPages)
+            {
+                _currentPage++;
+                UpdateProgramDisplay(); // THAY ĐỔI: method name
+            }
+        }
+
+        private void ClearDynamicPrograms() // THAY ĐỔI: method name
+        {
+            var tasksPanel = this.FindName("DynamicTasksPanel") as StackPanel;
+            tasksPanel?.Children.Clear();
         }
 
         public void RefreshContent()
         {
-            LoadSessionData();
+            LoadSessionPrograms(); // THAY ĐỔI: method name
         }
 
-        private string GetEventDescription(TaskSession session)
-        {
-            return $"Phiên làm việc sự kiện: {session.Name}\n" +
-                   $"Quản lý bởi: {session.ManagerName}\n" +
-                   $"Tạo ngày: {session.CreatedAt:dd/MM/yyyy}\n" +
-                   $"Cập nhật: {session.UpdatedAt:dd/MM/yyyy}";
-        }
-
-        private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(GroupTask_Content_Event_Background);
-        }
-
-        // Navigation handlers
-        private void SidebarHomeButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var homeView = new HomePageView();
-            homeView.Show();
-            this.Close();
-        }
-
-        private void SidebarChatButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var chatView = new UserChatView();
-            chatView.Show();
-            this.Close();
-        }
-
-        private void SidebarTasksButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var tasksView = new TasksView();
-            tasksView.Show();
-            this.Close();
-        }
-
-        private void SidebarActivitiesButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var activitiesView = new ActivitiesView();
-            activitiesView.Show();
-            this.Close();
-        }
-
-        private void SidebarMembersButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var membersView = new HomePageView();
-            membersView.Show();
-            this.Close();
         }
     }
 }

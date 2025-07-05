@@ -38,16 +38,16 @@ namespace DoanKhoaClient.Models
 
         [JsonProperty("type")]
         public ProgramType Type { get; set; } = ProgramType.Event; // Mặc định là Event
-        
+
         [JsonProperty("status")]
         public ProgramStatus Status { get; set; } = ProgramStatus.NotStarted;
     }
 
     public enum ProgramType
     {
-        Event,
-        Study,
-        Design
+        Study = 0,    // 0 - Học tập (Training Cuối kỳ có Type = 0)
+        Design = 1,   // 1 - Thiết kế
+        Event = 2     // 2 - Sự kiện
     }
 
     public enum ProgramStatus

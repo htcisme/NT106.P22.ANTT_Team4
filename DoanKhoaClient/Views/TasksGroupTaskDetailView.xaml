@@ -1,0 +1,165 @@
+<Window x:Name="LightTasks_GroupTask_DetailView"
+        x:Class="DoanKhoaClient.Views.TasksGroupTaskDetailView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DoanKhoaClient.Views"
+        mc:Ignorable="d"
+        Title="Chi Tiết Công Việc"
+        Height="1036"
+        Width="1440">
+    <Window.Resources>
+        <!-- Task Card Style -->
+        <Style x:Key="TaskCardStyle"
+                TargetType="Border">
+            <Setter Property="Background"
+                    Value="#FFDBF3FF"/>
+            <Setter Property="CornerRadius"
+                    Value="10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2"
+                            BlurRadius="5"
+                            Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                        Value="True">
+                    <Setter Property="Background"
+                            Value="#FFB3D9FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="ActionButtonStyle"
+                TargetType="Button">
+            <Setter Property="Background"
+                    Value="#FF042354"/>
+            <Setter Property="Foreground"
+                    Value="White"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="10,5"/>
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                        Value="True">
+                    <Setter Property="Background"
+                            Value="#FF0A3A70"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="GroupTask_Detail_Background"
+          Width="1440"
+          Height="1022.8">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1"
+                    StartPoint="0.5,0">
+                <GradientStop Color="#FFF6FCFF"
+                        Offset="0.596"/>
+                <GradientStop Color="#FFDBF3FF"
+                        Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- Header -->
+        <Label x:Name="GroupTask_Detail_lbTitle"
+               Content="CHI TIẾT CÔNG VIỆC"
+               HorizontalAlignment="Center"
+               Height="40"
+               Margin="0,50,0,0"
+               VerticalAlignment="Top"
+               FontSize="32"
+               Foreground="#042354"
+               FontWeight="Bold"/>
+
+        <!-- Back Button -->
+        <Button x:Name="BackButton"
+                Content="← Quay lại"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="50,50,0,0"
+                Width="120"
+                Height="40"
+                Style="{StaticResource ActionButtonStyle}"
+                Click="BackButton_Click"/>
+
+        <!-- Group Content Info -->
+        <Label x:Name="GroupContent_lbName"
+               Content="Tên Nhóm Công Việc"
+               HorizontalAlignment="Left"
+               Height="30"
+               Margin="50,120,0,0"
+               VerticalAlignment="Top"
+               FontSize="24"
+               Foreground="#042354"
+               FontWeight="Bold"/>
+
+        <Label x:Name="GroupContent_lbDescription"
+               Content="Mô tả nhóm công việc"
+               HorizontalAlignment="Left"
+               Height="60"
+               Margin="50,150,0,0"
+               VerticalAlignment="Top"
+               Width="1340"
+               FontSize="16"
+               Foreground="#666666"/>
+
+        <!-- Tasks List -->
+        <ScrollViewer x:Name="TasksScrollViewer"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Top"
+                      Margin="50,220,50,120"
+                      Width="1340"
+                      Height="682"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="DynamicTasksPanel"
+                        Orientation="Vertical">
+                <!-- Dynamic task cards sẽ được thêm vào đây -->
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Navigation Buttons -->
+        <Button x:Name="PreviousPageButton"
+                Content="← Trang trước"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Margin="50,925,0,45"
+                Width="120"
+                Height="35"
+                Style="{StaticResource ActionButtonStyle}"
+                Click="PreviousPageButton_Click"
+                Visibility="Collapsed"/>
+
+        <Button x:Name="NextPageButton"
+                Content="Trang sau →"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,925,50,45"
+                Width="120"
+                Height="35"
+                Style="{StaticResource ActionButtonStyle}"
+                Click="NextPageButton_Click"/>
+
+        <!-- Page Info -->
+        <Label x:Name="PageInfoLabel"
+               Content="Trang 1 / 1"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Bottom"
+               Margin="0,925,0,45"
+               Height="35"
+               FontSize="16"
+               Foreground="#042354"
+               VerticalContentAlignment="Center"/>
+    </Grid>
+</Window>
