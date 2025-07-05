@@ -1,17 +1,30 @@
 using DoanKhoaClient.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace DoanKhoaClient.Views
 {
-    public partial class EditTaskSessionDialog : Window
+    public partial class EditTaskSessionDialog : Window, INotifyPropertyChanged
     {
-        public TaskSession TaskSession { get; private set; }
+        private TaskSession _taskSession;
         private List<User> _users;
         private readonly TaskSession _originalTaskSession;
+
+        public TaskSession TaskSession
+        {
+            get => _taskSession;
+            set
+            {
+                _taskSession = value;
+                OnPropertyChanged();
+            }
+        }
 
         public EditTaskSessionDialog(TaskSession taskSession)
         {
@@ -23,23 +36,83 @@ namespace DoanKhoaClient.Views
             {
                 Id = taskSession.Id,
                 Name = taskSession.Name,
+                Type = taskSession.Type, // THÊM Type
                 ManagerId = taskSession.ManagerId,
                 ManagerName = taskSession.ManagerName,
                 CreatedAt = taskSession.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
 
-            DataContext = TaskSession;
+            DataContext = this;
 
-            // Tải danh sách người dùng
+            // Setup sau khi load
+            this.Loaded += EditTaskSessionDialog_Loaded;
+        }
+
+        private void EditTaskSessionDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Setup TypeComboBox
+            TypeComboBox.SelectionChanged += TypeComboBox_SelectionChanged;
+
+            // Set current type
+            SetCurrentType(TaskSession.Type);
+
+            // Load users
             _ = LoadUsersAsync();
+        }
+
+        private void SetCurrentType(TaskSessionType type)
+        {
+            switch (type)
+            {
+                case TaskSessionType.Event:
+                    TypeComboBox.SelectedIndex = 0;
+                    break;
+                case TaskSessionType.Study:
+                    TypeComboBox.SelectedIndex = 1;
+                    break;
+                case TaskSessionType.Design:
+                    TypeComboBox.SelectedIndex = 2;
+                    break;
+            }
+            UpdateTypeDescription(type);
+        }
+
+        private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TypeComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
+            {
+                var selectedType = (TaskSessionType)selectedItem.Tag;
+                TaskSession.Type = selectedType;
+                UpdateTypeDescription(selectedType);
+            }
+        }
+
+        private void UpdateTypeDescription(TaskSessionType type)
+        {
+            if (TypeDescription == null) return;
+
+            switch (type)
+            {
+                case TaskSessionType.Event:
+                    TypeDescription.Text = "Phiên làm việc dành cho tổ chức các sự kiện, hội thảo, workshop và các hoạt động cộng đồng.";
+                    break;
+                case TaskSessionType.Study:
+                    TypeDescription.Text = "Phiên làm việc dành cho các hoạt động học tập, nghiên cứu, đào tạo và phát triển kỹ năng.";
+                    break;
+                case TaskSessionType.Design:
+                    TypeDescription.Text = "Phiên làm việc dành cho các dự án thiết kế, sáng tạo nội dung và phát triển sản phẩm.";
+                    break;
+                default:
+                    TypeDescription.Text = "Chọn loại phiên làm việc để xem mô tả chi tiết.";
+                    break;
+            }
         }
 
         private async Task LoadUsersAsync()
         {
             try
             {
-                // Sử dụng HttpClient để lấy danh sách người dùng
                 using var httpClient = new System.Net.Http.HttpClient();
                 httpClient.BaseAddress = new Uri("http://localhost:5299/api/");
                 var response = await httpClient.GetAsync("user/all");
@@ -87,6 +160,9 @@ namespace DoanKhoaClient.Views
                 // Đảm bảo cập nhật thời gian
                 TaskSession.UpdatedAt = DateTime.Now;
 
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Updating TaskSession: Name={TaskSession.Name}, Type={TaskSession.Type}, ManagerName={TaskSession.ManagerName}");
+
                 DialogResult = true;
                 Close();
             }
@@ -104,6 +180,7 @@ namespace DoanKhoaClient.Views
             {
                 MessageBox.Show("Vui lòng nhập tên phiên làm việc.", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                NameTextBox.Focus();
                 return false;
             }
 
@@ -111,10 +188,18 @@ namespace DoanKhoaClient.Views
             {
                 MessageBox.Show("Vui lòng chọn người quản lý.", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                ManagerComboBox.Focus();
                 return false;
             }
 
             return true;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

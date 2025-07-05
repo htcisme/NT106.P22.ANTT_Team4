@@ -1,96 +1,154 @@
-using DoanKhoaClient.Models;
 using System;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using DoanKhoaClient.Models;
 
 namespace DoanKhoaClient.Views
 {
-    public partial class CreateTaskSessionDialog : Window
+    public partial class CreateTaskSessionDialog : Window, INotifyPropertyChanged
     {
-        public TaskSession TaskSession { get; private set; }
-        private List<User> _users;
+        private TaskSession _taskSession;
+
+        public TaskSession TaskSession
+        {
+            get => _taskSession;
+            set
+            {
+                _taskSession = value;
+                OnPropertyChanged();
+            }
+        }
 
         public CreateTaskSessionDialog()
         {
             InitializeComponent();
+
+            // Khởi tạo TaskSession mới với giá trị mặc định
             TaskSession = new TaskSession
             {
+                Name = "",
+                Type = TaskSessionType.Event, // Mặc định là Event
+                ManagerName = GetCurrentUserName(),
+                ManagerId = GetCurrentUserId(),
                 CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                Type = TaskSessionType.Event // Giá trị mặc định
+                UpdatedAt = DateTime.Now
             };
-            DataContext = TaskSession;
 
-            // Khởi tạo TypeComboBox
-            TypeComboBox.ItemsSource = Enum.GetValues(typeof(TaskSessionType));
-            TypeComboBox.SelectedItem = TaskSession.Type;
+            DataContext = this;
 
-            // Tải danh sách người dùng
-            _ = LoadUsersAsync();
+            // SỬA LẠI: Sử dụng Loaded event để đảm bảo controls đã được tạo
+            this.Loaded += CreateTaskSessionDialog_Loaded;
         }
 
-        private async Task LoadUsersAsync()
+        private void CreateTaskSessionDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Set up event handlers sau khi dialog đã load
+            TypeComboBox.SelectionChanged += TypeComboBox_SelectionChanged;
+
+            // Set default selection
+            TypeComboBox.SelectedIndex = 0; // Event
+            UpdateTypeDescription(TaskSessionType.Event);
+        }
+
+        private string GetCurrentUserName()
         {
             try
             {
-                // Lấy thông tin người dùng hiện tại từ App.Current.Properties
-                var currentUser = App.Current.Properties["CurrentUser"] as User;
-                if (currentUser == null)
+                if (App.Current.Properties.Contains("CurrentUser"))
                 {
-                    MessageBox.Show("Không thể lấy thông tin người dùng.", "Lỗi",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // Sử dụng HttpClient để lấy danh sách người dùng
-                using var httpClient = new System.Net.Http.HttpClient();
-                httpClient.BaseAddress = new Uri("http://localhost:5299/api/");
-                var response = await httpClient.GetAsync("user/all");
-                if (response.IsSuccessStatusCode)
-                {
-                    _users = await response.Content.ReadFromJsonAsync<List<User>>();
-                    ManagerComboBox.ItemsSource = _users;
-                    ManagerComboBox.DisplayMemberPath = "DisplayName";
-                }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể tải danh sách người dùng: {errorContent}",
-                                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var currentUser = (User)App.Current.Properties["CurrentUser"];
+                    return currentUser.DisplayName ?? currentUser.Username ?? "Unknown";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách người dùng: {ex.Message}",
-                                "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"Error getting current user: {ex.Message}");
+            }
+            return "Unknown Manager";
+        }
+
+        private string GetCurrentUserId()
+        {
+            try
+            {
+                if (App.Current.Properties.Contains("CurrentUser"))
+                {
+                    var currentUser = (User)App.Current.Properties["CurrentUser"];
+                    return currentUser.Id ?? "";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting current user ID: {ex.Message}");
+            }
+            return "";
+        }
+
+        private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TypeComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
+            {
+                var selectedType = (TaskSessionType)selectedItem.Tag;
+                TaskSession.Type = selectedType;
+                UpdateTypeDescription(selectedType);
+
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Type changed to: {selectedType}");
+            }
+        }
+
+        private void UpdateTypeDescription(TaskSessionType type)
+        {
+            // Đảm bảo TypeDescription đã được khởi tạo
+            if (TypeDescription == null) return;
+
+            switch (type)
+            {
+                case TaskSessionType.Event:
+                    TypeDescription.Text = "Phiên làm việc dành cho tổ chức các sự kiện, hội thảo, workshop và các hoạt động cộng đồng.";
+                    break;
+                case TaskSessionType.Study:
+                    TypeDescription.Text = "Phiên làm việc dành cho các hoạt động học tập, nghiên cứu, đào tạo và phát triển kỹ năng.";
+                    break;
+                case TaskSessionType.Design:
+                    TypeDescription.Text = "Phiên làm việc dành cho các dự án thiết kế, sáng tạo nội dung và phát triển sản phẩm.";
+                    break;
+                default:
+                    TypeDescription.Text = "Chọn loại phiên làm việc để xem mô tả chi tiết.";
+                    break;
             }
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ValidateInput())
+            // Validate input
+            if (string.IsNullOrWhiteSpace(TaskSession.Name))
             {
-                // Lưu manager từ ComboBox
-                if (ManagerComboBox.SelectedItem is User selectedUser)
-                {
-                    TaskSession.ManagerId = selectedUser.Id;
-                    TaskSession.ManagerName = selectedUser.DisplayName;
-                }
-
-                // Lưu type từ ComboBox
-                if (TypeComboBox.SelectedItem is TaskSessionType selectedType)
-                {
-                    TaskSession.Type = selectedType;
-                }
-
-                // Đảm bảo ID là null để server tự tạo
-                TaskSession.Id = null;
-
-                DialogResult = true;
-                Close();
+                MessageBox.Show("Vui lòng nhập tên phiên làm việc.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                NameTextBox.Focus();
+                return;
             }
+
+            if (string.IsNullOrWhiteSpace(TaskSession.ManagerName))
+            {
+                MessageBox.Show("Vui lòng nhập tên người quản lý.", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                ManagerNameTextBox.Focus();
+                return;
+            }
+
+            // Cập nhật thông tin cuối cùng
+            TaskSession.CreatedAt = DateTime.Now;
+            TaskSession.UpdatedAt = DateTime.Now;
+
+            // Debug log
+            System.Diagnostics.Debug.WriteLine($"Creating TaskSession: Name={TaskSession.Name}, Type={TaskSession.Type}, ManagerName={TaskSession.ManagerName}");
+
+            DialogResult = true;
+            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -99,25 +157,11 @@ namespace DoanKhoaClient.Views
             Close();
         }
 
-        private bool ValidateInput()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (string.IsNullOrWhiteSpace(TaskSession.Name))
-            {
-                MessageBox.Show("Vui lòng nhập tên phiên làm việc.", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (ManagerComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Vui lòng chọn người quản lý.", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            return true;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
-        // Xóa phương thức OkButton_Click ở đây vì nó gây xung đột và tham chiếu đến controls không tồn tại
     }
 }

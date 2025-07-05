@@ -63,14 +63,43 @@ namespace DoanKhoaClient.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-            public void PrepareForSending()
+        public void PrepareForSending()
         {
-            // Đảm bảo Id là null để server tạo mới
-            Id = "000000000000000000000000";  // 24 chữ số 0
+            // Đảm bảo Id là null để server tạo mới (nếu cần)
+            if (string.IsNullOrEmpty(Id))
+            {
+                Id = "000000000000000000000000";  // 24 chữ số 0
+            }
 
             // Đảm bảo timestamps
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
+
+            // Đảm bảo ManagerId có giá trị
+            if (string.IsNullOrEmpty(ManagerId))
+            {
+                ManagerId = GetCurrentUserId();
+            }
+
+            // Debug log
+            System.Diagnostics.Debug.WriteLine($"PrepareForSending - Name: {Name}, Type: {Type} (Value: {(int)Type}), ManagerName: {ManagerName}");
+        }
+
+        private string GetCurrentUserId()
+        {
+            try
+            {
+                if (App.Current.Properties.Contains("CurrentUser"))
+                {
+                    var currentUser = (User)App.Current.Properties["CurrentUser"];
+                    return currentUser.Id ?? "";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting current user ID: {ex.Message}");
+            }
+            return "";
         }
 
     }
