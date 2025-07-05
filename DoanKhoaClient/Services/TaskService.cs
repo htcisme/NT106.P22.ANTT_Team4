@@ -184,21 +184,34 @@ namespace DoanKhoaClient.Services
         {
             try
             {
+                Debug.WriteLine($"===== GET TASK PROGRAMS REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskprogram/session/{sessionId}");
+
                 var response = await _httpClient.GetAsync($"taskprogram/session/{sessionId}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<TaskProgram>>();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET TASK PROGRAMS RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+                Debug.WriteLine($"Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<List<TaskProgram>>();
+                    return result ?? new List<TaskProgram>();
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
+                    return new List<TaskProgram>();
+                }
             }
             catch (Exception ex)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show($"Lỗi khi lấy danh sách chương trình: {ex.Message}", "Lỗi",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                });
+                Debug.WriteLine($"===== GET TASK PROGRAMS EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
                 return new List<TaskProgram>();
             }
         }
-
         public async Task<TaskProgram> CreateTaskProgramAsync(TaskProgram program)
         {
             try
@@ -378,7 +391,110 @@ namespace DoanKhoaClient.Services
                 return new List<TaskItem>();
             }
         }
+        public async Task<List<GroupContent>> GetGroupContentsAsync(string sessionId)
+        {
+            try
+            {
+                Debug.WriteLine($"===== GET GROUP CONTENTS REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}groupcontent/session/{sessionId}");
 
+                var response = await _httpClient.GetAsync($"groupcontent/session/{sessionId}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET GROUP CONTENTS RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+                Debug.WriteLine($"Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<List<GroupContent>>();
+                    return result ?? new List<GroupContent>();
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
+                    return new List<GroupContent>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"===== GET GROUP CONTENTS EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
+                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"Lỗi khi lấy danh sách nhóm công việc: {ex.Message}", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+                return new List<GroupContent>();
+            }
+        }
+
+        public async Task<List<TaskItem>> GetTaskItemsByGroupContentAsync(string groupContentId)
+        {
+            try
+            {
+                Debug.WriteLine($"===== GET TASK ITEMS BY GROUP CONTENT REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskitem/groupcontent/{groupContentId}");
+
+                var response = await _httpClient.GetAsync($"taskitem/groupcontent/{groupContentId}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET TASK ITEMS BY GROUP CONTENT RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+                Debug.WriteLine($"Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+                    return result ?? new List<TaskItem>();
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
+                    return new List<TaskItem>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"===== GET TASK ITEMS BY GROUP CONTENT EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
+                return new List<TaskItem>();
+            }
+        }
+        public async Task<List<TaskItem>> GetTaskItemsByProgramAsync(string programId)
+        {
+            try
+            {
+                Debug.WriteLine($"===== GET TASK ITEMS BY PROGRAM REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskitem/program/{programId}");
+
+                var response = await _httpClient.GetAsync($"taskitem/program/{programId}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET TASK ITEMS BY PROGRAM RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+                Debug.WriteLine($"Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+                    return result ?? new List<TaskItem>();
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
+                    return new List<TaskItem>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"===== GET TASK ITEMS BY PROGRAM EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
+                return new List<TaskItem>();
+            }
+        }
         public async Task<TaskItem> CreateTaskItemAsync(TaskItem taskItem)
         {
             // Thêm semaphore để tránh trùng lặp request
