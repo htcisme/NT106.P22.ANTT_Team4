@@ -1,68 +1,130 @@
 <Window x:Class="DoanKhoaClient.Views.CreateTaskSessionDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:DoanKhoaClient.Models"
         Title="Tạo phiên làm việc mới"
-        Height="250"
-        Width="400"
+        Height="550"
+        Width="600"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
-    <Grid Margin="15">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid Margin="20">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <TextBlock Text="Tạo phiên làm việc mới"
-                   FontSize="16"
-                FontWeight="Bold"
-                   Margin="0,0,0,15"/>
+                <!-- Header -->
+                <TextBlock Grid.Row="0"
+                           Text="Tạo phiên làm việc mới"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
 
-        <StackPanel Grid.Row="1"
-                Margin="0,0,0,10">
-            <TextBlock Text="Tên phiên làm việc:"
-                    Margin="0,0,0,5"/>
-            <TextBox Text="{Binding Name}"
-                    Padding="5"/>
-        </StackPanel>
+                <!-- Tên phiên làm việc -->
+                <StackPanel Grid.Row="1"
+                                Margin="0,0,0,15">
+                        <Label Content="Tên phiên làm việc:"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,5"/>
+                        <TextBox x:Name="NameTextBox"
+                                 Text="{Binding TaskSession.Name, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="35"
+                                 FontSize="14"
+                                 Padding="10,8"
+                                 BorderBrush="#CCCCCC"
+                                 BorderThickness="1"/>
+                </StackPanel>
 
-        <StackPanel Grid.Row="2"
-                Margin="0,0,0,10">
-            <TextBlock Text="Người quản lý:"
-                    Margin="0,0,0,5"/>
-            <ComboBox x:Name="ManagerComboBox"
-                    Padding="5"
-                    Height="30"/>
-        </StackPanel>
+                <!-- Loại phiên làm việc -->
+                <StackPanel Grid.Row="2"
+                                Margin="0,0,0,15">
+                        <Label Content="Loại phiên làm việc:"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,5"/>
+                        <ComboBox x:Name="TypeComboBox"
+                                  Height="35"
+                                  FontSize="14"
+                                  Padding="10,8"
+                                  BorderBrush="#CCCCCC"
+                                  BorderThickness="1">
+                                <ComboBoxItem Content="Sự kiện"
+                                                Tag="{x:Static models:TaskSessionType.Event}"/>
+                                <ComboBoxItem Content="Học tập"
+                                                Tag="{x:Static models:TaskSessionType.Study}"/>
+                                <ComboBoxItem Content="Thiết kế"
+                                                Tag="{x:Static models:TaskSessionType.Design}"/>
+                        </ComboBox>
+                </StackPanel>
 
-        <StackPanel Grid.Row="4"
-                Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                Margin="0,15,0,0">
-            <Button Content="Huỷ"
-                    Width="80"
-                    Height="30"
-                    Margin="0,0,10,0"
-                    Click="CancelButton_Click"/>
-            <Button Content="Tạo mới"
-                    Width="80"
-                    Height="30"
-                    Background="#3498db"
-                    Foreground="White"
-                    Click="CreateButton_Click"/>
-        </StackPanel>
+                <!-- Người quản lý -->
+                <StackPanel Grid.Row="3"
+                                Margin="0,0,0,15">
+                        <Label Content="Người quản lý:"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,5"/>
+                        <TextBox x:Name="ManagerNameTextBox"
+                                 Text="{Binding TaskSession.ManagerName, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="35"
+                                 FontSize="14"
+                                 Padding="10,8"
+                                 BorderBrush="#CCCCCC"
+                                 BorderThickness="1"/>
+                </StackPanel>
 
-        <!-- Thêm trường Type vào dialog -->
+                <!-- Mô tả loại phiên làm việc -->
+                <StackPanel Grid.Row="4"
+                                Margin="0,0,0,15">
+                        <Label Content="Mô tả:"
+                                        FontWeight="Bold"
+                                        Margin="0,0,0,5"/>
+                </StackPanel>
 
-        <StackPanel Grid.Row="3"
-                Margin="0,0,0,10">
-            <TextBlock Text="Loại phiên làm việc:"
-                    Margin="0,0,0,5"/>
-            <ComboBox x:Name="TypeComboBox"
-                    Padding="5"
-                    Height="30"/>
-        </StackPanel>
-    </Grid>
+                <!-- Vùng hiển thị mô tả -->
+                <Border Grid.Row="5"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1"
+                        Background="#F9F9F9"
+                        Padding="15"
+                        Margin="0,0,0,20">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <TextBlock x:Name="TypeDescription"
+                                           FontStyle="Italic"
+                                           Foreground="#666666"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           LineHeight="20"
+                                           Text="Chọn loại phiên làm việc để xem mô tả chi tiết"/>
+                        </ScrollViewer>
+                </Border>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Row="6"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                        <Button Content="Tạo"
+                                Click="CreateButton_Click"
+                                IsDefault="True"
+                                Width="100"
+                                Height="40"
+                                Margin="0,0,15,0"
+                                Background="#FF042354"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="14"
+                                Cursor="Hand"/>
+                        <Button Content="Hủy"
+                                Click="CancelButton_Click"
+                                IsCancel="True"
+                                Width="100"
+                                Height="40"
+                                FontSize="14"
+                                Cursor="Hand"/>
+                </StackPanel>
+        </Grid>
 </Window>

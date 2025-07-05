@@ -296,6 +296,9 @@ namespace DoanKhoaClient.ViewModels
                 {
                     Window programsView = null;
 
+                    // Debug log để kiểm tra Type
+                    System.Diagnostics.Debug.WriteLine($"Opening session details for: {session.Name}, Type: {session.Type}");
+
                     switch (session.Type)
                     {
                         case TaskSessionType.Event:
@@ -308,7 +311,7 @@ namespace DoanKhoaClient.ViewModels
                             programsView = new AdminTaskGroupTaskDesignView(session);
                             break;
                         default:
-                            MessageBox.Show($"Không hỗ trợ loại phiên làm việc: {session.Type}",
+                            MessageBox.Show($"Không hỗ trợ loại phiên làm việc: {session.Type} (Value: {(int)session.Type})",
                                 "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                     }

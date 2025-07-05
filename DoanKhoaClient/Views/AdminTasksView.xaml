@@ -9,6 +9,14 @@
         Title="AdminTasksView"
         Height="1036"
         Width="1440">
+       <Window.Resources>
+              <!-- Existing resources -->
+
+              <!-- THÊM CONVERTER -->
+              <local:TaskSessionTypeToStringConverter x:Key="TaskSessionTypeToStringConverter"/>
+
+              <!-- Other resources -->
+       </Window.Resources>
        <Grid x:Name="Admin_Task_Background"
              Width="1440"
              Height="1022.8">
@@ -455,6 +463,22 @@
                                                  <DataTemplate>
                                                         <TextBlock Text="{Binding Name}"
                                                                    FontWeight="SemiBold"/>
+                                                 </DataTemplate>
+                                          </GridViewColumn.CellTemplate>
+                                   </GridViewColumn>
+                                   <GridViewColumn Header="Loại"
+                                                   Width="120">
+                                          <GridViewColumn.CellTemplate>
+                                                 <DataTemplate>
+                                                        <TextBlock>
+                                                               <TextBlock.Text>
+                                                                      <Binding Path="Type">
+                                                                             <Binding.Converter>
+                                                                                    <local:TaskSessionTypeToStringConverter/>
+                                                                             </Binding.Converter>
+                                                                      </Binding>
+                                                               </TextBlock.Text>
+                                                        </TextBlock>
                                                  </DataTemplate>
                                           </GridViewColumn.CellTemplate>
                                    </GridViewColumn>
