@@ -101,6 +101,27 @@ namespace DoanKhoaClient.Views
             adminActivitiesView.Show();
             this.Close();
         }
+
+        private void DesignTeam_Click(object sender, RoutedEventArgs e)
+        {
+            var designView = new TasksGroupTaskDesignView();
+            designView.Show();
+            // Không đóng window hiện tại để có thể quay lại
+        }
+
+        private void EventTeam_Click(object sender, RoutedEventArgs e)
+        {
+            var eventView = new TasksGroupTaskEventView();
+            eventView.Show();
+        }
+
+        private void StudyTeam_Click(object sender, RoutedEventArgs e)
+        {
+            var studyView = new TasksGroupTaskStudyView();
+            studyView.Show();
+        }
         // Thêm các phương thức FilterDropdownButton_Unchecked và FilterPopupBorder_Loaded đã có trong code
     }
+
+
 }

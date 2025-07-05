@@ -188,8 +188,12 @@ namespace DoanKhoaClient.ViewModels
                     {
                         Sessions.Insert(0, newSession);
                     });
+
                     MessageBox.Show("Phiên làm việc đã được tạo thành công.",
                         "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // THÊM: Refresh các TasksView đang mở
+                    RefreshTasksViews();
                 }
                 catch (Exception ex)
                 {
@@ -237,6 +241,9 @@ namespace DoanKhoaClient.ViewModels
 
                 MessageBox.Show("Phiên làm việc đã được cập nhật thành công.",
                     "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // THÊM: Refresh các TasksView đang mở
+                RefreshTasksViews();
             }
             catch (Exception ex)
             {
@@ -274,6 +281,9 @@ namespace DoanKhoaClient.ViewModels
 
                         MessageBox.Show("Phiên làm việc đã được xóa thành công.",
                             "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // THÊM: Refresh các TasksView đang mở
+                        RefreshTasksViews();
                     }
                     catch (Exception ex)
                     {
@@ -342,6 +352,45 @@ namespace DoanKhoaClient.ViewModels
                     MessageBox.Show($"Lỗi khi mở trang chi tiết: {ex.Message}",
                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+        private void RefreshTasksViews()
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        try
+                        {
+                            switch (window)
+                            {
+                                case TasksGroupTaskDesignView designView:
+                                    designView.RefreshSessions();
+                                    break;
+
+                                case TasksGroupTaskEventView eventView:
+                                    eventView.RefreshSessions();
+                                    break;
+
+                                case TasksGroupTaskStudyView studyView:
+                                    studyView.RefreshSessions();
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Error refreshing window {window.GetType().Name}: {ex.Message}");
+                        }
+                    }
+                });
+
+                System.Diagnostics.Debug.WriteLine("RefreshTasksViews completed successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in RefreshTasksViews: {ex.Message}");
             }
         }
 
