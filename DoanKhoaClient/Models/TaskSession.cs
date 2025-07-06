@@ -107,8 +107,8 @@ namespace DoanKhoaClient.Models
 
     public enum TaskSessionType
     {
-        Event,
-        Study,
-        Design
+        Study = 0,    // 0 - Học tập (Training Cuối kỳ có Type = 0)
+        Design = 1,   // 1 - Thiết kế  
+        Event = 2     // 2 - Sự kiện
     }
 }

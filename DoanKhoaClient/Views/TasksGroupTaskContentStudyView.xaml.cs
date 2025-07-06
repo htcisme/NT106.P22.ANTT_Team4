@@ -36,7 +36,7 @@ namespace DoanKhoaClient.Views
                 // Cập nhật thông tin session
                 if (_session != null)
                 {
-                    GroupTask_Study_lbManagerStudyTeam.Content = _session.ManagerName ?? "Trần Văn Nam";
+                    GroupTask_Study_lbManagerStudyTeam.Content = _session.ManagerName ?? "Đỗ Quang Trung";
                     GroupTask_Study_lbSessionName.Content = _session.Name?.ToUpper() ?? "PHIÊN HỌC TẬP VÀ NGHIÊN CỨU";
                 }
 

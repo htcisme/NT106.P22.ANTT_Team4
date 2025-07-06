@@ -531,7 +531,7 @@
                                        Foreground="#042354"
                                        Padding="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Thiết kế giao diện, poster, banner và tài liệu truyền thông"
+                            <TextBlock Text="Ban Thiết kế Đoàn khoa Mạng Máy tính và Truyền thông"
                                        FontFamily="Segoe UI"
                                        FontSize="13"
                                        Foreground="#888"
@@ -615,7 +615,7 @@
                                        Foreground="#042354"
                                        Padding="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Tổ chức sự kiện, truyền thông, PR và quản lý mạng xã hội"
+                            <TextBlock Text="Ban Truyền thông và Sự kiện Đoàn khoa Mạng Máy tính và Truyền thông"
                                        FontFamily="Segoe UI"
                                        FontSize="13"
                                        Foreground="#888"
@@ -699,7 +699,7 @@
                                        Foreground="#042354"
                                        Padding="5,0,0,0"/>
                             </StackPanel>
-                            <TextBlock Text="Học thuật, nghiên cứu, đào tạo và phát triển kỹ năng"
+                            <TextBlock Text="Ban Học tập Đoàn khoa Mạng Máy tính và Truyền thông"
                                        FontFamily="Segoe UI"
                                        FontSize="13"
                                        Foreground="#888"

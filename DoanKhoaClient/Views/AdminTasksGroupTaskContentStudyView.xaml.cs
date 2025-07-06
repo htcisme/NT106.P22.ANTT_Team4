@@ -13,14 +13,14 @@ namespace DoanKhoaClient.Views
         public AdminTasksGroupTaskContentStudyView(TaskProgram program)
         {
             InitializeComponent();
-            
+
             _viewModel = new TaskItemsViewModel(program);
             DataContext = _viewModel;
 
             // Áp dụng theme
             ThemeManager.ApplyTheme(Admin_GroupTask_Study_Background);
         }
-        
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             Close();

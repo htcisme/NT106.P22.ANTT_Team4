@@ -14,7 +14,7 @@ namespace DoanKhoaClient.Views
         {
             InitializeComponent();
 
-            _viewModel = new AdminTaskProgramsViewModel(session, ProgramType.Event);
+            _viewModel = new AdminTaskProgramsViewModel(session, ProgramType.Study);
             DataContext = _viewModel;
 
             ThemeManager.ApplyTheme(Admin_GroupTask_Study_Background);
