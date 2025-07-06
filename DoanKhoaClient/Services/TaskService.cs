@@ -138,26 +138,34 @@ namespace DoanKhoaClient.Services
             }
         }
 
-        public async Task<TaskProgram> GetTaskProgramByIdAsync(string id)
+        public async Task<TaskProgram> GetTaskProgramByIdAsync(string programId)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"taskprogram/{id}");
+                Debug.WriteLine($"===== GET TASK PROGRAM BY ID REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskprogram/{programId}");
 
-                // If program is not found, return null instead of throwing exception
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                var response = await _httpClient.GetAsync($"taskprogram/{programId}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET TASK PROGRAM BY ID RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<TaskProgram>();
+                    return result;
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
                     return null;
-
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<TaskProgram>();
+                }
             }
             catch (Exception ex)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show($"Lỗi khi lấy thông tin chương trình: {ex.Message}", "Lỗi",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                });
+                Debug.WriteLine($"===== GET TASK PROGRAM BY ID EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
                 return null;
             }
         }
@@ -356,6 +364,142 @@ namespace DoanKhoaClient.Services
             }
         }
 
+        public async Task<bool> SendTaskReminderAsync(string taskItemId)
+        {
+            try
+            {
+                Debug.WriteLine($"Sending manual reminder for task: {taskItemId}");
+
+                var response = await _httpClient.PostAsync($"taskitem/{taskItemId}/send-reminder", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                    Debug.WriteLine($"✅ Reminder sent successfully");
+                    return true;
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to send reminder: {error}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception sending reminder: {ex.Message}");
+                return false;
+            }
+        }
+
+        // ✅ THÊM: Test email
+        public async Task<bool> SendTestEmailAsync(string email, string name, string type)
+        {
+            try
+            {
+                Debug.WriteLine($"Sending test email: {type} to {email}");
+
+                var request = new
+                {
+                    Email = email,
+                    Name = name,
+                    Type = type
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("taskitem/test-email", request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"✅ Test email sent successfully");
+                    return true;
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to send test email: {error}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception sending test email: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<List<TaskItem>> GetTaskItemsByProgramIdAsync(string programId)
+        {
+            try
+            {
+                Debug.WriteLine($"===== TaskService.GetTaskItemsByProgramIdAsync =====");
+                Debug.WriteLine($"ProgramId: {programId}");
+
+                var response = await _httpClient.GetAsync($"taskitem/program/{programId}");
+                Debug.WriteLine($"Server response status: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Raw server response:\n{responseContent}");
+
+                    var taskItems = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+
+                    Debug.WriteLine($"✅ Parsed {taskItems?.Count ?? 0} task items:");
+                    if (taskItems != null)
+                    {
+                        foreach (var item in taskItems)
+                        {
+                            Debug.WriteLine($"  - '{item.Title}' - {item.AssignedToName} ({item.AssignedToEmail}) - Due: {item.DueDate:yyyy-MM-dd}");
+                        }
+                    }
+
+                    return taskItems ?? new List<TaskItem>();
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Server error: {response.StatusCode}");
+                    Debug.WriteLine($"Error content: {errorContent}");
+                    throw new HttpRequestException($"Server returned error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception in GetTaskItemsByProgramIdAsync: {ex.Message}");
+                throw;
+            }
+        }
+        // Thêm vào TaskService.cs
+        public async Task<List<TaskItem>> GetAllActiveTaskItemsAsync()
+        {
+            try
+            {
+                Debug.WriteLine($"===== GET ALL ACTIVE TASK ITEMS REQUEST =====");
+                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskitem/active");
+
+                var response = await _httpClient.GetAsync("taskitem/active");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"===== GET ALL ACTIVE TASK ITEMS RESPONSE =====");
+                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+                    return result ?? new List<TaskItem>();
+                }
+                else
+                {
+                    Debug.WriteLine($"API Error: {response.StatusCode}, Content: {responseContent}");
+                    return new List<TaskItem>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"===== GET ALL ACTIVE TASK ITEMS EXCEPTION =====");
+                Debug.WriteLine($"Error: {ex.Message}");
+                return new List<TaskItem>();
+            }
+        }
         // Cập nhật phương thức UpdateTaskProgramAsync để hỗ trợ người thực hiện
         public async Task DeleteTaskProgramAsync(string id)
         {
@@ -640,147 +784,57 @@ namespace DoanKhoaClient.Services
             }
         }
         // Và DeleteTaskItemAsync:
-        public async Task<bool> DeleteTaskItemAsync(string id)
+        public async Task<bool> DeleteTaskItemAsync(string taskItemId)
         {
             try
             {
-                Debug.WriteLine($"===== DELETE TASK ITEM REQUEST =====");
-                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskitem/{id}");
+                Debug.WriteLine($"Deleting TaskItem: {taskItemId}");
+                var response = await _httpClient.DeleteAsync($"taskitem/{taskItemId}");
 
-                // Thực hiện request
-                var response = await _httpClient.DeleteAsync($"taskitem/{id}");
-
-                // Log response
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"===== DELETE TASK ITEM RESPONSE =====");
-                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
-                Debug.WriteLine($"Content: {responseContent}");
-
-                // Xử lý response
                 if (response.IsSuccessStatusCode)
                 {
+                    Debug.WriteLine($"✅ TaskItem deleted");
                     return true;
                 }
                 else
                 {
-                    throw new Exception($"Server returned error: {response.StatusCode}, Message: {responseContent}");
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to delete TaskItem: {error}");
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"===== DELETE TASK ITEM EXCEPTION =====");
-                Debug.WriteLine($"Error: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                throw;
+                Debug.WriteLine($"❌ Exception deleting TaskItem: {ex.Message}");
+                return false;
             }
         }
-        public async Task<TaskItem> CompleteTaskItemAsync(string id)
+        public async Task<TaskItem> CompleteTaskItemAsync(string taskItemId)
         {
             try
             {
-                Debug.WriteLine($"===== COMPLETE TASK ITEM REQUEST =====");
-                Debug.WriteLine($"Endpoint: {_httpClient.BaseAddress}taskitem/{id}/complete");
+                Debug.WriteLine($"Completing TaskItem: {taskItemId}");
+                var response = await _httpClient.PostAsync($"taskitem/{taskItemId}/complete", null);
 
-                // Phương pháp 1: Thử sử dụng PUT thay vì POST
-                HttpResponseMessage response;
-
-                try
+                if (response.IsSuccessStatusCode)
                 {
-                    // Tạo empty content với JSON thay vì null
-                    var emptyContent = new StringContent("{}", System.Text.Encoding.UTF8, "application/json");
-                    response = await _httpClient.PutAsync($"taskitem/{id}/complete", emptyContent);
+                    var completedItem = await response.Content.ReadFromJsonAsync<TaskItem>();
+                    Debug.WriteLine($"✅ TaskItem completed");
+                    return completedItem;
                 }
-                catch (Exception ex)
+                else
                 {
-                    Debug.WriteLine($"PUT method failed: {ex.Message}, trying alternative approach");
-
-                    // Phương pháp 2: Cập nhật trạng thái task trực tiếp
-                    var task = await GetTaskItemAsync(id);
-                    if (task == null)
-                    {
-                        throw new Exception($"Task with ID {id} not found");
-                    }
-
-                    // Debug để xem giá trị Status hiện tại
-                    Debug.WriteLine($"Current task status: {task.Status}");
-
-                    // Trích xuất các giá trị enum có sẵn trong dự án
-                    var statusType = task.Status.GetType();
-                    Debug.WriteLine($"Status type: {statusType.FullName}");
-
-                    // Liệt kê tất cả các giá trị enum có thể có
-                    Debug.WriteLine("Available status values:");
-                    foreach (var value in Enum.GetValues(statusType))
-                    {
-                        Debug.WriteLine($"- {value}");
-                    }
-
-                    // Tìm giá trị "Done" hoặc "Completed" trong enum
-                    object doneValue = null;
-                    foreach (var value in Enum.GetValues(statusType))
-                    {
-                        string valueName = value.ToString().ToLower();
-                        if (valueName.Contains("done") || valueName.Contains("complete") || valueName.Contains("finish"))
-                        {
-                            doneValue = value;
-                            break;
-                        }
-                    }
-
-                    // Cập nhật trạng thái
-                    if (doneValue != null)
-                    {
-                        // Thêm ép kiểu tường minh từ object sang TaskItemStatus
-                        task.Status = (TaskItemStatus)doneValue;
-                        Debug.WriteLine($"Setting status to: {doneValue}");
-                    }
-                    else
-                    {
-                        // Nếu không tìm thấy giá trị phù hợp, thử gán bằng số (thường 2 = Done)
-                        try
-                        {
-                            // Thêm ép kiểu tường minh từ int sang TaskItemStatus
-                            task.Status = (TaskItemStatus)2;
-                            Debug.WriteLine("Setting status to numeric value: 2");
-                        }
-                        catch
-                        {
-                            Debug.WriteLine("Could not set status value");
-                        }
-                    }
-
-                    task.UpdatedAt = DateTime.Now;
-                    return await UpdateTaskItemAsync(id, task);
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to complete TaskItem: {error}");
+                    throw new HttpRequestException($"Failed to complete task item: {response.StatusCode} - {error}");
                 }
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"===== COMPLETE TASK ITEM RESPONSE =====");
-                Debug.WriteLine($"Status: {response.StatusCode} ({(int)response.StatusCode})");
-                Debug.WriteLine($"Content: {responseContent}");
-
-                response.EnsureSuccessStatusCode();
-
-                var result = JsonConvert.DeserializeObject<TaskItem>(responseContent);
-                OnTaskItemUpdated(result);
-                return result;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"===== COMPLETE TASK ITEM EXCEPTION =====");
-                Debug.WriteLine($"Error: {ex.Message}");
-                Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                // Hiển thị thông báo lỗi chi tiết hơn
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show($"Lỗi khi hoàn thành công việc: {ex.Message}",
-                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                });
-
+                Debug.WriteLine($"❌ Exception completing TaskItem: {ex.Message}");
                 throw;
             }
         }
-
         // Thêm phương thức lấy task theo ID nếu chưa có
         public async Task<TaskItem> GetTaskItemAsync(string id)
         {

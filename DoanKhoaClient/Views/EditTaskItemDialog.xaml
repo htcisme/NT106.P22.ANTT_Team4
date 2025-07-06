@@ -1,10 +1,16 @@
+<!-- filepath: d:\Study\UIT\Mang\DOANMANG\NT106.P22.ANTT_Team4\DoanKhoaClient\Views\EditTaskItemDialog.xaml -->
 <Window x:Class="DoanKhoaClient.Views.EditTaskItemDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Chỉnh sửa công việc" Height="450" Width="500"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Chỉnh sửa công việc"
+        Height="550"
+        Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
     <Grid Margin="15">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -18,42 +24,115 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Chỉnh sửa công việc" 
-                   FontSize="16" FontWeight="Bold" 
+        <TextBlock Text="Chỉnh sửa công việc"
+                   FontSize="16"
+                FontWeight="Bold"
                    Grid.ColumnSpan="2"
                    Margin="0,0,0,15"/>
 
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,10">
-            <TextBlock Text="Tiêu đề công việc:" Margin="0,0,0,5"/>
-            <TextBox Text="{Binding Title}" Padding="5"/>
+        <!-- Tiêu đề -->
+        <StackPanel Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10">
+            <TextBlock Text="Tiêu đề công việc:"
+                    Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Title}"
+                    Padding="5"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
-            <TextBlock Text="Mô tả:" Margin="0,0,0,5"/>
-            <TextBox Text="{Binding Description}" Padding="5" Height="100" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <!-- Mô tả -->
+        <StackPanel Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10">
+            <TextBlock Text="Mô tả:"
+                    Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Description}"
+                    Padding="5"
+                    Height="80"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,5,10">
-            <TextBlock Text="Ngày hạn:" Margin="0,0,0,5"/>
-            <DatePicker SelectedDate="{Binding DueDate}" Padding="5" Height="30"/>
+        <!-- Ngày hạn và Trạng thái -->
+        <StackPanel Grid.Row="3"
+                Grid.Column="0"
+                Margin="0,0,5,10">
+            <TextBlock Text="Ngày hạn:"
+                    Margin="0,0,0,5"/>
+            <DatePicker SelectedDate="{Binding DueDate}"
+                    Padding="5"
+                    Height="30"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,0,0,10">
-            <TextBlock Text="Trạng thái:" Margin="0,0,0,5"/>
-            <ComboBox x:Name="StatusComboBox" Padding="5" Height="30"/>
+        <StackPanel Grid.Row="3"
+                Grid.Column="1"
+                Margin="5,0,0,10">
+            <TextBlock Text="Trạng thái:"
+                    Margin="0,0,0,5"/>
+            <ComboBox x:Name="StatusComboBox"
+                    Padding="5"
+                    Height="30"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,0,10">
-            <TextBlock Text="Người được giao:" Margin="0,0,0,5"/>
-            <ComboBox x:Name="AssigneeComboBox" Padding="5" Height="30"/>
+        <!-- Người được giao -->
+        <StackPanel Grid.Row="4"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10">
+            <TextBlock Text="Người được giao:"
+                    Margin="0,0,0,5"/>
+            <ComboBox x:Name="AssigneeComboBox"
+                    Padding="5"
+                    Height="30"
+                      SelectionChanged="AssigneeComboBox_SelectionChanged"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" 
-                    HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Huỷ" Width="80" Height="30" 
-                    Margin="0,0,10,0" Click="CancelButton_Click"/>
-            <Button Content="Lưu" Width="80" Height="30" 
-                    Background="#3498db" Foreground="White" 
+        <!-- THÊM: Email người thực hiện -->
+        <StackPanel Grid.Row="5"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10">
+            <TextBlock Text="Email người thực hiện: *"
+                    Margin="0,0,0,5"
+                    Foreground="#e74c3c"/>
+            <Grid>
+                <TextBox x:Name="AssigneeEmailTextBox"
+                        Padding="5"
+                        Height="30"
+                         TextChanged="AssigneeEmailTextBox_TextChanged"/>
+                <TextBlock x:Name="EmailPlaceholder"
+                        Text="example@domain.com"
+                           Foreground="#999"
+                        Margin="7,7,0,0"
+                        IsHitTestVisible="False"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- THÊM: Priority -->
+        <StackPanel Grid.Row="6"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10">
+            <TextBlock Text="Mức độ ưu tiên:"
+                    Margin="0,0,0,5"/>
+            <ComboBox x:Name="PriorityComboBox"
+                    Padding="5"
+                    Height="30"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="8"
+                Grid.ColumnSpan="2"
+                Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                Margin="0,15,0,0">
+            <Button Content="Huỷ"
+                    Width="80"
+                    Height="30"
+                    Margin="0,0,10,0"
+                    Click="CancelButton_Click"/>
+            <Button Content="Lưu"
+                    Width="80"
+                    Height="30"
+                    Background="#3498db"
+                    Foreground="White"
                     Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>
