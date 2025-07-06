@@ -1,9 +1,12 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;        // ✅ THÊM: For ObservableCollection
+using System.ComponentModel;                 // ✅ THÊM: For INotifyPropertyChanged
+using System.Runtime.CompilerServices;       // ✅ THÊM: For CallerMemberName
 
 namespace DoanKhoaClient.Models
 {
-    public class TaskProgram
+    public class TaskProgram : INotifyPropertyChanged
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -19,6 +22,20 @@ namespace DoanKhoaClient.Models
 
         [JsonProperty("endDate")]
         public DateTime EndDate { get; set; }
+
+        private ObservableCollection<TaskItem> _taskItems;
+
+        // ✅ ADD: Collection of TaskItems
+        [JsonProperty("taskItems")]
+        public ObservableCollection<TaskItem> TaskItems
+        {
+            get => _taskItems ??= new ObservableCollection<TaskItem>();
+            set => SetProperty(ref _taskItems, value);
+        }
+
+        // ✅ ADD: Helper property
+        [JsonIgnore]
+        public int TaskItemsCount => TaskItems?.Count ?? 0;
 
         [JsonProperty("sessionId")]
         public string SessionId { get; set; }
@@ -41,6 +58,49 @@ namespace DoanKhoaClient.Models
 
         [JsonProperty("status")]
         public ProgramStatus Status { get; set; } = ProgramStatus.NotStarted;
+
+        // ✅ ADD: INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(backingStore, value))
+                return false;
+
+            backingStore = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        // ✅ ADD: Helper methods
+        public void AddTaskItem(TaskItem taskItem)
+        {
+            if (taskItem != null && !TaskItems.Contains(taskItem))
+            {
+                TaskItems.Add(taskItem);
+                taskItem.ProgramId = Id; // Ensure relationship
+                OnPropertyChanged(nameof(TaskItemsCount));
+            }
+        }
+
+        public void RemoveTaskItem(TaskItem taskItem)
+        {
+            if (TaskItems.Remove(taskItem))
+            {
+                OnPropertyChanged(nameof(TaskItemsCount));
+            }
+        }
+
+        public void ClearTaskItems()
+        {
+            TaskItems.Clear();
+            OnPropertyChanged(nameof(TaskItemsCount));
+        }
     }
 
     public enum ProgramType
