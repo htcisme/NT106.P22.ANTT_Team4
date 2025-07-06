@@ -692,7 +692,79 @@ namespace DoanKhoaClient.Services
                 throw;
             }
         }
+        public async Task<BulkReminderResponse> SendBulkTaskRemindersAsync(List<string> taskItemIds)
+        {
+            try
+            {
+                Debug.WriteLine($"===== Sending bulk reminders for {taskItemIds?.Count ?? 0} tasks =====");
 
+                if (taskItemIds == null || !taskItemIds.Any())
+                {
+                    throw new ArgumentException("Danh sách TaskItem không được để trống");
+                }
+
+                foreach (var id in taskItemIds)
+                {
+                    Debug.WriteLine($"  - TaskItem ID: {id}");
+                }
+
+                var request = new BulkReminderRequest
+                {
+                    TaskItemIds = taskItemIds
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("taskitem/send-bulk-reminders", request);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Server response: {response.StatusCode}");
+                Debug.WriteLine($"Response content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<BulkReminderResponse>();
+                    Debug.WriteLine($"✅ Bulk reminders completed:");
+                    Debug.WriteLine($"  - Total: {result.TotalProcessed}");
+                    Debug.WriteLine($"  - Success: {result.SuccessCount}");
+                    Debug.WriteLine($"  - Failed: {result.FailCount}");
+
+                    return result;
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to send bulk reminders: {error}");
+                    throw new HttpRequestException($"Failed to send bulk reminders: {response.StatusCode} - {error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception in SendBulkTaskRemindersAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        // ✅ THÊM: Bulk Reminder Models (Client)
+        public class BulkReminderRequest
+        {
+            public List<string> TaskItemIds { get; set; }
+        }
+
+        public class BulkReminderResponse
+        {
+            public int TotalProcessed { get; set; }
+            public int SuccessCount { get; set; }
+            public int FailCount { get; set; }
+            public List<BulkReminderResult> Results { get; set; }
+        }
+
+        public class BulkReminderResult
+        {
+            public string TaskItemId { get; set; }
+            public bool Success { get; set; }
+            public string Message { get; set; }
+            public string TaskTitle { get; set; }
+            public string AssignedToEmail { get; set; }
+        }
         public async Task<TaskItem> UpdateTaskItemAsync(string id, TaskItem taskItem)
         {
             if (string.IsNullOrEmpty(id))
