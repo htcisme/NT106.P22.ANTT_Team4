@@ -430,42 +430,80 @@ namespace DoanKhoaClient.Services
         {
             try
             {
-                Debug.WriteLine($"===== TaskService.GetTaskItemsByProgramIdAsync =====");
-                Debug.WriteLine($"ProgramId: {programId}");
+                Debug.WriteLine($"Getting TaskItems for programId: '{programId}'");
+                Debug.WriteLine($"API Endpoint: {_httpClient.BaseAddress}api/taskitem/program/{programId}");
 
-                var response = await _httpClient.GetAsync($"taskitem/program/{programId}");
-                Debug.WriteLine($"Server response status: {response.StatusCode}");
-
-                if (response.IsSuccessStatusCode)
+                // ✅ TRY MULTIPLE ENDPOINTS based on your API structure
+                var endpoints = new[]
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Raw server response:\n{responseContent}");
+            $"api/taskitem/program/{programId}",           // Most likely
+            $"api/taskprogram/{programId}/taskitems",      // Alternative 1
+            $"taskitem/program/{programId}",               // Alternative 2
+            $"taskprogram/{programId}/items",              // Alternative 3
+            $"api/taskitem?programId={programId}"          // Query parameter
+        };
 
-                    var taskItems = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
-
-                    Debug.WriteLine($"✅ Parsed {taskItems?.Count ?? 0} task items:");
-                    if (taskItems != null)
+                foreach (var endpoint in endpoints)
+                {
+                    try
                     {
-                        foreach (var item in taskItems)
+                        Debug.WriteLine($"Trying endpoint: {endpoint}");
+                        var response = await _httpClient.GetAsync(endpoint);
+
+                        if (response.IsSuccessStatusCode)
                         {
-                            Debug.WriteLine($"  - '{item.Title}' - {item.AssignedToName} ({item.AssignedToEmail}) - Due: {item.DueDate:yyyy-MM-dd}");
+                            var responseContent = await response.Content.ReadAsStringAsync();
+                            Debug.WriteLine($"✅ Success! Response from {endpoint}:");
+                            Debug.WriteLine($"Response length: {responseContent.Length} characters");
+
+                            var taskItems = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+                            Debug.WriteLine($"✅ Parsed {taskItems?.Count ?? 0} TaskItems from {endpoint}");
+
+                            if (taskItems != null && taskItems.Count > 0)
+                            {
+                                Debug.WriteLine("=== TASK ITEMS FROM API ===");
+                                foreach (var task in taskItems.Take(3))
+                                {
+                                    Debug.WriteLine($"Task: {task.Title}");
+                                    Debug.WriteLine($"  - ID: {task.Id}");
+                                    Debug.WriteLine($"  - Status: {task.Status}");
+                                    Debug.WriteLine($"  - DueDate: {task.DueDate?.ToString("yyyy-MM-dd HH:mm") ?? "NULL"}");
+                                    Debug.WriteLine($"  - AssignedToEmail: '{task.AssignedToEmail ?? "NULL"}'");
+                                    Debug.WriteLine($"  - ProgramId: {task.ProgramId}");
+                                    Debug.WriteLine("  ---");
+                                }
+
+                                if (taskItems.Count > 3)
+                                {
+                                    Debug.WriteLine($"... and {taskItems.Count - 3} more tasks");
+                                }
+                            }
+
+                            return taskItems ?? new List<TaskItem>();
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"⚠️ Endpoint {endpoint} returned: {response.StatusCode}");
+                            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                            {
+                                Debug.WriteLine("  - 404 Not Found, trying next endpoint...");
+                            }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"❌ Error with endpoint {endpoint}: {ex.Message}");
+                    }
+                }
 
-                    return taskItems ?? new List<TaskItem>();
-                }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"❌ Server error: {response.StatusCode}");
-                    Debug.WriteLine($"Error content: {errorContent}");
-                    throw new HttpRequestException($"Server returned error: {response.StatusCode}");
-                }
+                Debug.WriteLine($"❌ All endpoints failed for programId: {programId}");
+                return new List<TaskItem>();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"❌ Exception in GetTaskItemsByProgramIdAsync: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                return new List<TaskItem>();
             }
         }
         // Thêm vào TaskService.cs
