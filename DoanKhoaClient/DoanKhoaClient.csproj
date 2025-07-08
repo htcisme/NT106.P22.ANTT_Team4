@@ -16,6 +16,8 @@
  
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.69.0.3746" />
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />

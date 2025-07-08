@@ -20,6 +20,7 @@ namespace DoanKhoaClient.Views
         private bool _isDarkMode;
         private bool isAdminSubmenuOpen;
         private readonly TaskService _taskService;
+        private readonly GoogleCalendarService _googleCalendarService;
 
         public AdminTasksView()
         {
@@ -48,6 +49,8 @@ namespace DoanKhoaClient.Views
                 SidebarAdminButton.Visibility = Visibility.Collapsed;
                 AdminSubmenu.Visibility = Visibility.Collapsed;
             }
+            _googleCalendarService = new GoogleCalendarService();
+
         }
 
         // ✅ THÊM: Reminder Button Click Handler
@@ -113,108 +116,285 @@ namespace DoanKhoaClient.Views
 
             try
             {
-                Debug.WriteLine("===== CORRECT FLOW: Session → TaskProgram → TaskItem =====");
+                Debug.WriteLine("===== GETTING ALL TASK ITEMS - SIMPLIFIED =====");
 
-                // Get all sessions from ViewModel
-                if (_viewModel?.Sessions != null && _viewModel.Sessions.Count > 0)
+                // ✅ STEP 1: Get all TaskPrograms directly from API
+                var taskProgramService = new TaskProgramService();
+                var allPrograms = await taskProgramService.GetAllTaskProgramsAsync();
+
+                Debug.WriteLine($"Found {allPrograms?.Count ?? 0} TaskPrograms from API");
+
+                if (allPrograms != null && allPrograms.Count > 0)
                 {
-                    Debug.WriteLine($"Found {_viewModel.Sessions.Count} sessions");
-
-                    foreach (var session in _viewModel.Sessions)
+                    foreach (var program in allPrograms)
                     {
+                        Debug.WriteLine($"\n--- Processing Program: {program.Name} (ID: {program.Id}) ---");
+                        Debug.WriteLine($"Type: {program.Type}, Status: {program.Status}");
+                        Debug.WriteLine($"SessionId: {program.SessionId}");
+                        Debug.WriteLine($"ExecutorName: {program.ExecutorName}");
+
                         try
                         {
-                            Debug.WriteLine($"\n--- Processing Session: {session.Name} (Type: {session.Type}) ---");
+                            // ✅ STEP 2: Get TaskItems for each program using program.Id
+                            var taskItems = await _taskService.GetTaskItemsByProgramIdAsync(program.Id);
 
-                            // ✅ STEP 1: Get TaskProgram from Session
-                            var taskProgram = await GetTaskProgramFromSessionAsync(session);
+                            Debug.WriteLine($"Retrieved {taskItems?.Count ?? 0} TaskItems from program '{program.Name}'");
 
-                            if (taskProgram != null)
+                            if (taskItems != null && taskItems.Count > 0)
                             {
-                                Debug.WriteLine($"✅ Found TaskProgram: {taskProgram.Name} (ID: {taskProgram.Id})");
+                                allTaskItems.AddRange(taskItems);
 
-                                // ✅ STEP 2: Get TaskItems from TaskProgram
-                                var taskItems = await GetTaskItemsFromTaskProgramAsync(taskProgram);
-
-                                if (taskItems != null && taskItems.Count > 0)
+                                // Debug: Show sample tasks
+                                foreach (var task in taskItems.Take(2))
                                 {
-                                    Debug.WriteLine($"✅ Found {taskItems.Count} TaskItems in program '{taskProgram.Name}'");
-                                    allTaskItems.AddRange(taskItems);
-
-                                    // Debug: Show sample tasks
-                                    foreach (var task in taskItems.Take(3))
-                                    {
-                                        Debug.WriteLine($"   - {task.Title} (Status: {task.Status}, Due: {task.DueDate?.ToString("MM/dd") ?? "NULL"})");
-                                    }
-                                }
-                                else
-                                {
-                                    Debug.WriteLine($"⚠️ No TaskItems found in program '{taskProgram.Name}'");
+                                    Debug.WriteLine($"   - {task.Title} (Status: {task.Status}, Due: {task.DueDate?.ToString("MM/dd") ?? "NULL"}, Email: '{task.AssignedToEmail ?? "NULL"}')");
                                 }
                             }
                             else
                             {
-                                Debug.WriteLine($"❌ No TaskProgram found for session '{session.Name}'");
+                                Debug.WriteLine($"⚠️ No TaskItems found for program '{program.Name}'");
                             }
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"❌ Error processing session {session.Name}: {ex.Message}");
+                            Debug.WriteLine($"❌ Error getting TaskItems for program {program.Name}: {ex.Message}");
                         }
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("⚠️ No sessions found in ViewModel, trying fallback...");
-
-                    // ✅ FALLBACK: Get all TaskPrograms directly
-                    var allPrograms = await GetAllTaskProgramsAsync();
-                    Debug.WriteLine($"Fallback: Found {allPrograms?.Count ?? 0} TaskPrograms");
-
-                    if (allPrograms != null && allPrograms.Count > 0)
-                    {
-                        foreach (var program in allPrograms)
-                        {
-                            try
-                            {
-                                var taskItems = await GetTaskItemsFromTaskProgramAsync(program);
-                                if (taskItems != null && taskItems.Count > 0)
-                                {
-                                    allTaskItems.AddRange(taskItems);
-                                    Debug.WriteLine($"✅ Fallback: Added {taskItems.Count} tasks from '{program.Name}'");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine($"❌ Fallback error for program {program.Name}: {ex.Message}");
-                            }
-                        }
-                    }
+                    Debug.WriteLine("❌ No TaskPrograms found from API");
+                    MessageBox.Show("❌ Không tìm thấy TaskPrograms nào từ API!\n\n" +
+                                   "Possible issues:\n" +
+                                   "• API server không chạy\n" +
+                                   "• Database trống\n" +
+                                   "• Network connection lỗi\n\n" +
+                                   "Hãy kiểm tra server và thử lại.",
+                                   "No Programs Found", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"❌ CRITICAL Error in GetAllTaskItemsFromSessionsAsync: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                MessageBox.Show($"❌ Lỗi khi lấy TaskItems:\n\n{ex.Message}\n\n" +
+                               "Hãy kiểm tra:\n" +
+                               "• API server có chạy không\n" +
+                               "• Network connection\n" +
+                               "• Authentication",
+                               "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            // Remove duplicates
+            var uniqueTaskItems = allTaskItems
+                .Where(t => t != null && !string.IsNullOrEmpty(t.Id))
+                .GroupBy(t => t.Id)
+                .Select(g => g.First())
+                .ToList();
 
             Debug.WriteLine($"\n===== FINAL RESULT =====");
             Debug.WriteLine($"Total TaskItems collected: {allTaskItems.Count}");
-            return allTaskItems;
+            Debug.WriteLine($"Unique TaskItems after deduplication: {uniqueTaskItems.Count}");
+
+            return uniqueTaskItems;
+        }
+
+        private async void CalendarSyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("📅 Calendar Sync button clicked");
+
+                // Show loading
+                SetCalendarSyncLoadingState(true);
+                ShowStatus("🔄 Getting tasks for calendar sync...", "#17a2b8");
+
+                // Get all task items
+                var allTaskItems = await GetAllTaskItemsFromSessionsAsync();
+                Debug.WriteLine($"Retrieved {allTaskItems?.Count ?? 0} total tasks");
+
+                if (allTaskItems == null || allTaskItems.Count == 0)
+                {
+                    ShowStatus("⚠️ No tasks found for sync", "#ffc107");
+                    MessageBox.Show("❌ Không tìm thấy tasks nào để đồng bộ!\n\n" +
+                                   "Possible reasons:\n" +
+                                   "• No TaskPrograms exist\n" +
+                                   "• No TaskItems in programs\n" +
+                                   "• API connection issues\n\n" +
+                                   "Hãy kiểm tra TaskPrograms và TaskItems trước.",
+                                   "No Tasks Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Filter tasks for calendar sync
+                var eligibleTasks = allTaskItems.Where(t =>
+                    t.DueDate.HasValue &&
+                    t.Status != TaskItemStatus.Completed &&
+                    t.Status != TaskItemStatus.Canceled
+                ).ToList();
+
+                Debug.WriteLine($"Found {eligibleTasks.Count} eligible tasks for calendar sync");
+
+                if (eligibleTasks.Count == 0)
+                {
+                    ShowStatus("⚠️ No eligible tasks for sync", "#ffc107");
+                    MessageBox.Show($"📊 Không có tasks phù hợp cho Calendar Sync!\n\n" +
+                                   $"Từ {allTaskItems.Count} tasks:\n" +
+                                   $"• {allTaskItems.Count(t => !t.DueDate.HasValue)} tasks không có due date\n" +
+                                   $"• {allTaskItems.Count(t => t.Status == TaskItemStatus.Completed)} tasks đã hoàn thành\n" +
+                                   $"• {allTaskItems.Count(t => t.Status == TaskItemStatus.Canceled)} tasks đã hủy\n\n" +
+                                   $"✅ Điều kiện sync: có due date + chưa hoàn thành/hủy",
+                                   "No Eligible Tasks", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                // Show confirmation
+                var confirmMessage = BuildSimpleConfirmation(eligibleTasks);
+                var result = MessageBox.Show(confirmMessage,
+                    "Confirm Calendar Sync",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ShowStatus("🔄 Syncing with Google Calendar...", "#17a2b8");
+
+                    // Perform sync
+                    var syncResult = await _googleCalendarService.SyncTasksAsync(eligibleTasks);
+
+                    // Show results
+                    ShowSyncResults(syncResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Calendar sync error: {ex.Message}");
+                ShowStatus($"❌ Sync failed: {ex.Message}", "#dc3545");
+                MessageBox.Show($"❌ Calendar sync error:\n\n{ex.Message}",
+                    "Sync Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                SetCalendarSyncLoadingState(false);
+            }
+        }
+
+        // ✅ SIMPLE: Build confirmation message
+        private string BuildSimpleConfirmation(List<TaskItem> tasks)
+        {
+            var message = $"📅 Google Calendar Sync\n\n";
+            message += $"Sẽ tạo {tasks.Count} calendar events cho:\n\n";
+
+            foreach (var task in tasks.Take(5))
+            {
+                var dueDateStr = task.DueDate?.ToString("dd/MM HH:mm") ?? "TBD";
+                var assignee = task.AssignedToName ?? task.AssignedToEmail ?? "Unassigned";
+                message += $"📋 {task.Title}\n";
+                message += $"   ⏰ {dueDateStr} | 👤 {assignee}\n\n";
+            }
+
+            if (tasks.Count > 5)
+            {
+                message += $"... và {tasks.Count - 5} tasks khác\n\n";
+            }
+
+            message += $"🔔 Mỗi event sẽ có:\n";
+            message += $"• Email reminder 1 ngày trước\n";
+            message += $"• Popup reminder 1 giờ trước\n";
+            message += $"• Attendee là người được assign\n\n";
+            message += $"❓ Tiếp tục sync với Google Calendar?";
+
+            return message;
+        }
+
+        // ✅ SIMPLE: Show sync results  
+        private void ShowSyncResults(CalendarSyncResult result)
+        {
+            var message = $"✅ Calendar Sync Completed!\n\n";
+            message += $"📊 Results:\n";
+            message += $"• Created: {result.CreatedCount} events\n";
+            message += $"• Updated: {result.UpdatedCount} events\n";
+            message += $"• Skipped: {result.SkippedCount} tasks\n";
+            message += $"• Failed: {result.FailedCount} tasks\n";
+
+            if (result.Errors.Count > 0)
+            {
+                message += $"\n❌ Errors:\n";
+                message += string.Join("\n", result.Errors.Take(3));
+                if (result.Errors.Count > 3)
+                {
+                    message += $"\n... và {result.Errors.Count - 3} errors khác";
+                }
+            }
+
+            if (result.CreatedEvents.Count > 0)
+            {
+                message += $"\n\n🎉 {result.CreatedEvents.Count} events đã được tạo thành công!";
+            }
+
+            var icon = result.FailedCount == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning;
+            MessageBox.Show(message, "Sync Results", MessageBoxButton.OK, icon);
+
+            if (result.CreatedCount > 0)
+            {
+                ShowStatus($"✅ Synced {result.CreatedCount} tasks to calendar", "#28a745");
+            }
+            else
+            {
+                ShowStatus($"⚠️ No tasks synced", "#ffc107");
+            }
+        }
+
+        // ✅ ADD: Test connection button
+        private async void TestGoogleConnectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ShowStatus("🧪 Testing Google Calendar connection...", "#17a2b8");
+
+                var success = await _googleCalendarService.TestConnectionAsync();
+
+                if (success)
+                {
+                    ShowStatus("✅ Google Calendar connected!", "#28a745");
+                    MessageBox.Show("✅ Google Calendar connection successful!\n\n" +
+                                   "You can now use Calendar Sync feature.",
+                                   "Connection Test", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    ShowStatus("❌ Connection failed", "#dc3545");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowStatus($"❌ Test failed: {ex.Message}", "#dc3545");
+                MessageBox.Show($"❌ Connection test failed:\n\n{ex.Message}",
+                               "Test Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ✅ ADD: Calendar sync loading state
+        private void SetCalendarSyncLoadingState(bool isLoading)
+        {
+            CalendarSyncButtonBorder.Visibility = isLoading ? Visibility.Collapsed : Visibility.Visible;
+            CalendarSyncLoadingBorder.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
         }
         private async Task<TaskProgram> GetTaskProgramFromSessionAsync(TaskSession session)
         {
             try
             {
-                Debug.WriteLine($"Getting TaskProgram for session: {session.Name}");
-                Debug.WriteLine($"Session Type: {session.Type}");
-                Debug.WriteLine($"Session TaskProgramId: '{session.TaskProgramId ?? "NULL"}'");
+                MessageBox.Show($"Getting TaskProgram for session: {session.Name}");
+                MessageBox.Show($"Session Type: {session.Type}");
+                MessageBox.Show($"Session Id: '{session.Id ?? "NULL"}'");
 
                 // ✅ METHOD 1: If session has direct TaskProgram reference
-                if (!string.IsNullOrEmpty(session.TaskProgramId))
+                if (!string.IsNullOrEmpty(session.Id))
                 {
-                    Debug.WriteLine($"Session has TaskProgramId: {session.TaskProgramId}");
+                    Debug.WriteLine($"Session has Id: {session.Id}");
                     var taskProgramService = new TaskProgramService();
-                    var program = await taskProgramService.GetTaskProgramByIdAsync(session.TaskProgramId);
+                    var program = await taskProgramService.GetTaskProgramByIdAsync(session.Id);
 
                     if (program != null)
                     {
@@ -223,7 +403,7 @@ namespace DoanKhoaClient.Views
                     }
                     else
                     {
-                        Debug.WriteLine($"⚠️ TaskProgram not found for ID: {session.TaskProgramId}");
+                        Debug.WriteLine($"⚠️ TaskProgram not found for ID: {session.Id}");
                     }
                 }
 
@@ -239,8 +419,8 @@ namespace DoanKhoaClient.Views
                     {
                         Debug.WriteLine($"✅ Found TaskProgram by type mapping: {program.Name}");
 
-                        // ✅ UPDATE: Set TaskProgramId for future use
-                        session.TaskProgramId = program.Id;
+                        // ✅ UPDATE: Set Id for future use
+                        session.Id = program.Id;
 
                         return program;
                     }
@@ -264,8 +444,8 @@ namespace DoanKhoaClient.Views
                 {
                     Debug.WriteLine($"✅ Found TaskProgram by name matching: {matchingProgram.Name}");
 
-                    // ✅ UPDATE: Set TaskProgramId for future use
-                    session.TaskProgramId = matchingProgram.Id;
+                    // ✅ UPDATE: Set Id for future use
+                    session.Id = matchingProgram.Id;
 
                     return matchingProgram;
                 }
@@ -276,7 +456,7 @@ namespace DoanKhoaClient.Views
                 if (defaultProgram != null)
                 {
                     Debug.WriteLine($"✅ Created default TaskProgram: {defaultProgram.Name}");
-                    session.TaskProgramId = defaultProgram.Id;
+                    session.Id = defaultProgram.Id;
                     return defaultProgram;
                 }
 
@@ -356,7 +536,7 @@ namespace DoanKhoaClient.Views
 
                 // ✅ METHOD 1: Use existing TaskService method
                 var taskItems = await _taskService.GetTaskItemsByProgramIdAsync(taskProgram.Id);
-
+                MessageBox.Show($"Retrieved {taskItems.Count} TaskItems from TaskProgram {taskProgram.Name}");
                 if (taskItems != null && taskItems.Count > 0)
                 {
                     Debug.WriteLine($"✅ Retrieved {taskItems.Count} TaskItems from TaskProgram");
@@ -540,45 +720,185 @@ namespace DoanKhoaClient.Views
             var now = DateTime.Now;
             var overdueCount = tasks.Count(t => t.DueDate.HasValue && t.DueDate.Value < now);
             var upcomingCount = tasks.Count(t => t.DueDate.HasValue && t.DueDate.Value >= now);
+            var todayCount = tasks.Count(t => t.DueDate.HasValue && t.DueDate.Value.Date == now.Date);
 
-            var message = $"🔔 Sẽ gửi nhắc nhở cho {tasks.Count} công việc:\n\n";
+            var message = $"🔔 **Admin Panel - Gửi Nhắc Nhở Hàng Loạt**\n\n";
+            message += $"📊 **Tổng quan: {tasks.Count} công việc cần nhắc nhở**\n\n";
 
-            if (overdueCount > 0)
+            // ✅ ADD: Detailed breakdown
+            message += $"📈 **Phân loại theo thời gian:**\n";
+            if (overdueCount > 0) message += $"   ⚠️ Quá hạn: {overdueCount} công việc\n";
+            if (todayCount > 0) message += $"   📅 Hôm nay: {todayCount} công việc\n";
+            if (upcomingCount > 0) message += $"   🔜 Sắp tới (≤3 ngày): {upcomingCount} công việc\n";
+
+            // ✅ ADD: Status breakdown
+            var statusBreakdown = tasks.GroupBy(t => t.Status).ToDictionary(g => g.Key, g => g.Count());
+            message += $"\n📋 **Phân loại theo trạng thái:**\n";
+            foreach (var status in statusBreakdown)
             {
-                message += $"⚠️ Quá hạn: {overdueCount} công việc\n";
+                var statusIcon = GetStatusIcon(status.Key);
+                var statusText = GetStatusText(status.Key);
+                message += $"   {statusIcon} {statusText}: {status.Value} công việc\n";
             }
 
-            if (upcomingCount > 0)
+            // ✅ ADD: Priority breakdown
+            var priorityBreakdown = tasks.GroupBy(t => t.Priority).ToDictionary(g => g.Key, g => g.Count());
+            message += $"\n🎯 **Phân loại theo độ ưu tiên:**\n";
+            foreach (var priority in priorityBreakdown)
             {
-                message += $"📅 Sắp đến hạn: {upcomingCount} công việc\n";
+                var priorityIcon = GetPriorityIcon(priority.Key);
+                var priorityText = GetPriorityText(priority.Key);
+                message += $"   {priorityIcon} {priorityText}: {priority.Value} công việc\n";
             }
 
-            message += "\n📋 Danh sách:\n";
+            // ✅ ENHANCED: Detailed task list with more info
+            message += $"\n📋 **Danh sách chi tiết (hiển thị {Math.Min(10, tasks.Count)} đầu tiên):**\n";
 
-            foreach (var task in tasks.Take(8))
+            foreach (var task in tasks.Take(10))
             {
-                // ✅ FIX: Handle nullable DueDate
+                // ✅ Task header with priority and status
+                var priorityIcon = GetPriorityIcon(task.Priority);
+                var statusIcon = GetStatusIcon(task.Status);
+                message += $"\n🔸 **{task.Title}** {priorityIcon}{statusIcon}\n";
+
+                // ✅ Assignee info
+                var assigneeName = !string.IsNullOrWhiteSpace(task.AssignedToName) ? task.AssignedToName : "Chưa có tên";
+                message += $"   👤 **Người thực hiện:** {assigneeName}\n";
+                message += $"   📧 **Email:** {task.AssignedToEmail}\n";
+
+                // ✅ Due date with detailed timing
                 if (task.DueDate.HasValue)
                 {
-                    var status = task.DueDate.Value < now ? "⚠️ QUÁ HẠN" : "📅 SẮP TỚI";
-                    var dueDate = task.DueDate.Value.ToString("dd/MM");
-                    message += $"• {task.Title} → {task.AssignedToEmail} ({status} - {dueDate})\n";
+                    var dueDate = task.DueDate.Value;
+                    var timeSpan = dueDate - now;
+                    var daysUntil = timeSpan.Days;
+                    var hoursUntil = timeSpan.TotalHours;
+
+                    var dueDateText = dueDate.ToString("dd/MM/yyyy HH:mm");
+
+                    if (dueDate < now)
+                    {
+                        var daysOverdue = (now - dueDate).Days;
+                        var hoursOverdue = (now - dueDate).TotalHours;
+
+                        if (daysOverdue > 0)
+                        {
+                            message += $"   ⚠️ **Hạn chót:** {dueDateText} (QUÁ HẠN {daysOverdue} ngày)\n";
+                        }
+                        else
+                        {
+                            message += $"   ⚠️ **Hạn chót:** {dueDateText} (QUÁ HẠN {hoursOverdue:F1} giờ)\n";
+                        }
+                    }
+                    else if (dueDate.Date == now.Date)
+                    {
+                        message += $"   📅 **Hạn chót:** {dueDateText} (HÔM NAY - còn {hoursUntil:F1} giờ)\n";
+                    }
+                    else if (daysUntil <= 3)
+                    {
+                        message += $"   🔜 **Hạn chót:** {dueDateText} (còn {daysUntil} ngày)\n";
+                    }
+                    else
+                    {
+                        message += $"   📅 **Hạn chót:** {dueDateText} (còn {daysUntil} ngày)\n";
+                    }
                 }
                 else
                 {
-                    message += $"• {task.Title} → {task.AssignedToEmail} (📅 Chưa có hạn)\n";
+                    message += $"   📅 **Hạn chót:** Chưa có hạn\n";
+                }
+
+                // ✅ Additional info
+                var statusText = GetStatusText(task.Status);
+                var priorityText = GetPriorityText(task.Priority);
+                message += $"   📊 **Trạng thái:** {statusText} | **Ưu tiên:** {priorityText}\n";
+
+                // ✅ Program info (if available)
+                if (!string.IsNullOrWhiteSpace(task.ProgramId))
+                {
+                    message += $"   🏷️ **Chương trình:** {task.ProgramId}\n";
+                }
+
+                // ✅ Description preview
+                if (!string.IsNullOrWhiteSpace(task.Description))
+                {
+                    var descPreview = task.Description.Length > 50 ?
+                        task.Description.Substring(0, 50) + "..." :
+                        task.Description;
+                    message += $"   📝 **Mô tả:** {descPreview}\n";
                 }
             }
 
-            if (tasks.Count > 8)
+            if (tasks.Count > 10)
             {
-                message += $"... và {tasks.Count - 8} công việc khác\n";
+                message += $"\n... **và {tasks.Count - 10} công việc khác**\n";
             }
 
-            message += "\n❌ Lưu ý: Công việc đã hoàn thành hoặc bị hủy sẽ KHÔNG được gửi nhắc nhở.";
-            message += "\n\nBạn có muốn tiếp tục gửi nhắc nhở không?";
+            // ✅ ADD: Email notification details
+            message += $"\n📧 **Chi tiết email nhắc nhở:**\n";
+            message += $"   ✉️ Gửi tới: {tasks.Select(t => t.AssignedToEmail).Distinct().Count()} địa chỉ email khác nhau\n";
+            message += $"   📝 Nội dung: Thông tin chi tiết về công việc và hạn chót\n";
+            message += $"   ⏰ Thời gian gửi: Ngay bây giờ ({now:dd/MM/yyyy HH:mm})\n";
+
+            // ✅ ADD: Important notes
+            message += $"\n⚠️ **Lưu ý quan trọng:**\n";
+            message += $"   • Chỉ gửi cho công việc CHƯA hoàn thành/hủy\n";
+            message += $"   • Email sẽ chứa link quay lại hệ thống\n";
+            message += $"   • Người được assign sẽ nhận được thông báo chi tiết\n";
+            message += $"   • Hệ thống sẽ ghi lại lịch sử gửi nhắc nhở\n";
+
+            message += $"\n❓ **Bạn có muốn tiếp tục gửi {tasks.Count} nhắc nhở không?**";
 
             return message;
+        }
+
+        // ✅ ADD: Helper methods for icons and text
+        private string GetStatusIcon(TaskItemStatus status)
+        {
+            return status switch
+            {
+                TaskItemStatus.NotStarted => "⭕",
+                TaskItemStatus.InProgress => "🔄",
+                TaskItemStatus.Completed => "✅",
+                TaskItemStatus.Canceled => "❌",
+                _ => "❓"
+            };
+        }
+
+        private string GetStatusText(TaskItemStatus status)
+        {
+            return status switch
+            {
+                TaskItemStatus.NotStarted => "Chưa bắt đầu",
+                TaskItemStatus.InProgress => "Đang thực hiện",
+                TaskItemStatus.Completed => "Đã hoàn thành",
+                TaskItemStatus.Canceled => "Đã hủy",
+                _ => status.ToString()
+            };
+        }
+
+        private string GetPriorityIcon(TaskPriority priority)
+        {
+            return priority switch
+            {
+                TaskPriority.Low => "🟢",
+                TaskPriority.Medium => "🟡",
+                TaskPriority.High => "🟠",
+                TaskPriority.Critical => "🔴",
+                _ => "⚪"
+            };
+        }
+
+        private string GetPriorityText(TaskPriority priority)
+        {
+            return priority switch
+            {
+                TaskPriority.Low => "Thấp",
+                TaskPriority.Medium => "Trung bình",
+                TaskPriority.High => "Cao",
+                TaskPriority.Critical => "Khẩn cấp",
+                _ => priority.ToString()
+            };
         }
 
         // ✅ THÊM: Send reminders 

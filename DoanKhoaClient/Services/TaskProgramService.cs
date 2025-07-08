@@ -5,6 +5,7 @@ using System.Net.Http;                    // ✅ THÊM: For HttpClient
 using System.Net.Http.Json;               // ✅ THÊM: For ReadFromJsonAsync
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using DoanKhoaClient.Models;
 namespace DoanKhoaClient.Services
 {
@@ -93,24 +94,51 @@ namespace DoanKhoaClient.Services
         {
             try
             {
-                Debug.WriteLine("Getting all task programs...");
+                Debug.WriteLine("Getting all TaskPrograms from API");
+                MessageBox.Show($"API Endpoint: {_httpClient.BaseAddress}taskprogram");
+
+                // ✅ USE CORRECT ENDPOINT: /api/taskprogram
                 var response = await _httpClient.GetAsync("taskprogram");
 
                 if (response.IsSuccessStatusCode)
                 {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"API Response: {responseContent}");
+
                     var programs = await response.Content.ReadFromJsonAsync<List<TaskProgram>>();
-                    Debug.WriteLine($"✅ Retrieved {programs?.Count ?? 0} programs");
+                    Debug.WriteLine($"✅ Retrieved {programs?.Count ?? 0} TaskPrograms from API");
+
+                    if (programs != null && programs.Count > 0)
+                    {
+                        Debug.WriteLine("=== TASK PROGRAMS FROM API ===");
+                        foreach (var program in programs)
+                        {
+                            Debug.WriteLine($"Program: {program.Name}");
+                            Debug.WriteLine($"  - ID: {program.Id}");
+                            Debug.WriteLine($"  - SessionId: {program.SessionId}");
+                            Debug.WriteLine($"  - Type: {program.Type} ({(int)program.Type})");
+                            Debug.WriteLine($"  - Status: {program.Status} ({(int)program.Status})");
+                            Debug.WriteLine($"  - ExecutorName: {program.ExecutorName}");
+                            Debug.WriteLine($"  - StartDate: {program.StartDate:yyyy-MM-dd}");
+                            Debug.WriteLine($"  - EndDate: {program.EndDate:yyyy-MM-dd}");
+                            Debug.WriteLine("  ---");
+                        }
+                    }
+
                     return programs ?? new List<TaskProgram>();
                 }
                 else
                 {
-                    Debug.WriteLine($"❌ Failed to get programs: {response.StatusCode}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"❌ Failed to get TaskPrograms: {response.StatusCode}");
+                    Debug.WriteLine($"Error content: {errorContent}");
                     return new List<TaskProgram>();
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"❌ Exception getting programs: {ex.Message}");
+                Debug.WriteLine($"❌ Exception in GetAllTaskProgramsAsync: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
                 return new List<TaskProgram>();
             }
         }
