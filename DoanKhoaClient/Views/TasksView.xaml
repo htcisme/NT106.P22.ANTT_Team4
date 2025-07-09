@@ -106,8 +106,6 @@
             </Setter>
         </Style>
 
-
-
         <Style x:Key="SearchResultButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="Black" />
@@ -217,7 +215,7 @@
                     </Border.Background>
                 </Border>
 
-                <!--  GIỮ NGUYÊN TẤT CẢ PHẦN NAVIGATION VÀ HEADER  -->
+                <!--  Search Box and Navigation  -->
                 <TextBox
                     x:Name="Activities_tbSearch"
                     Width="307"
@@ -625,7 +623,7 @@
                     VerticalAlignment="Top"
                     Source="/Views/Images/youtube.png" />
 
-                <!--  TITLE VÀ LINE  -->
+                <!--  TITLE AND LINE  -->
                 <Label
                     x:Name="Task_lbInformationTasks"
                     Width="386"
@@ -657,7 +655,7 @@
                     </Rectangle.RenderTransform>
                 </Rectangle>
 
-                <!--  SỬA LẠI: TEAM CARDS - ĐẶT KÍCH THƯỚC CỤ THỂ CHO BUTTON  -->
+                <!--  TEAM CARDS  -->
                 <!--  Design Team Card  -->
                 <Button
                     x:Name="DesignTeamButton"
@@ -735,13 +733,6 @@
                                     Text="Thiết kế giao diện, poster, banner và tài liệu truyền thông" />
                             </StackPanel>
 
-                            <TextBlock Text="Ban Thiết kế Đoàn khoa Mạng Máy tính và Truyền thông"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
-
                             <!--  Arrow Icon  -->
                             <Image
                                 Grid.Column="2"
@@ -749,7 +740,7 @@
                                 Height="24"
                                 VerticalAlignment="Center"
                                 RenderTransformOrigin="0.5,0.5"
-                                Source="/Views/Images/-down-list.png">
+                               >
                                 <Image.RenderTransform>
                                     <RotateTransform Angle="-90" />
                                 </Image.RenderTransform>
@@ -834,12 +825,6 @@
                                     Foreground="#888"
                                     Text="Tổ chức sự kiện, truyền thông, PR và quản lý mạng xã hội" />
                             </StackPanel>
-                            <TextBlock Text="Ban Truyền thông và Sự kiện Đoàn khoa Mạng Máy tính và Truyền thông"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
 
                             <!--  Arrow Icon  -->
                             <Image
@@ -848,7 +833,7 @@
                                 Height="24"
                                 VerticalAlignment="Center"
                                 RenderTransformOrigin="0.5,0.5"
-                                Source="/Views/Images/-down-list.png">
+                               >
                                 <Image.RenderTransform>
                                     <RotateTransform Angle="-90" />
                                 </Image.RenderTransform>
@@ -934,27 +919,22 @@
                                     Text="Học thuật, nghiên cứu, đào tạo và phát triển kỹ năng" />
                             </StackPanel>
 
-                            <TextBlock Text="Ban Học tập Đoàn khoa Mạng Máy tính và Truyền thông"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
-
-                        <!-- Arrow Icon -->
-                        <Image Grid.Column="2"
-                               Source="/Views/Images/-down-list.png"
-                               Width="24"
-                               Height="24"
-                               VerticalAlignment="Center"
-                               RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <RotateTransform Angle="-90"/>
-                            </Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Border>
-            </Button>
+                            <!--  Arrow Icon  -->
+                            <Image
+                                Grid.Column="2"
+                                Width="24"
+                                Height="24"
+                                VerticalAlignment="Center"
+                                RenderTransformOrigin="0.5,0.5"
+                                >
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </Image.RenderTransform>
+                            </Image>
+                        </Grid>
+                    </Border>
+                </Button>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
