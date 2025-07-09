@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -92,22 +93,41 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
+                Debug.WriteLine($"===== AdminTaskProgramsViewModel.LoadProgramsAsync =====");
+                Debug.WriteLine($"Session ID: {Session?.Id}");
+                Debug.WriteLine($"Filter ProgramType: {_programType} (value: {(int)_programType})");
+
                 IsLoading = true;
-                var allPrograms = await _taskService.GetTaskProgramsAsync(Session.Id);
-                var filteredPrograms = allPrograms.Where(p => p.Type == _programType).OrderBy(p => p.StartDate).ToList();
+
+                var allPrograms = await _taskService.GetTaskProgramsAsync(Session?.Id ?? "");
+                Debug.WriteLine($"Total programs from server: {allPrograms?.Count ?? 0}");
+
+                if (allPrograms != null)
+                {
+                    foreach (var program in allPrograms)
+                    {
+                        Debug.WriteLine($"  - Program: '{program.Name}', Type: {program.Type} (value: {(int)program.Type}), ID: {program.Id}");
+                    }
+                }
+
+                var filteredPrograms = allPrograms?.Where(p => p.Type == _programType).OrderBy(p => p.StartDate).ToList() ?? new List<TaskProgram>();
+                Debug.WriteLine($"Filtered programs for {_programType}: {filteredPrograms.Count}");
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // Clear and repopulate instead of creating new collection
                     Programs.Clear();
                     foreach (var program in filteredPrograms)
                     {
                         Programs.Add(program);
+                        Debug.WriteLine($"  ✅ Added to UI: '{program.Name}' (Type: {program.Type})");
                     }
                 });
+
+                Debug.WriteLine($"✅ LoadProgramsAsync completed. Programs in UI: {Programs.Count}");
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"❌ Error in LoadProgramsAsync: {ex.Message}");
                 MessageBox.Show($"Lỗi khi tải danh sách chương trình: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -126,24 +146,74 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
-                var dialog = new CreateTaskProgramDialog(_session);
+                Debug.WriteLine($"===== AdminTaskProgramsViewModel: Creating Program =====");
+                Debug.WriteLine($"Target ProgramType: {_programType} (value: {(int)_programType})");
+                Debug.WriteLine($"Session: {Session?.Name} (ID: {Session?.Id})");
+
+                // SỬA: Tạo dialog chỉ để nhận input, KHÔNG gọi API
+                var dialog = new CreateTaskProgramDialog(_session, _programType, false); // Pass false để không auto-create
+
                 if (dialog.ShowDialog() == true)
                 {
+                    var programData = dialog.ProgramToCreate;
+
+                    Debug.WriteLine($"Dialog returned program data:");
+                    Debug.WriteLine($"  - Name: {programData.Name}");
+                    Debug.WriteLine($"  - Type: {programData.Type} (value: {(int)programData.Type})");
+                    Debug.WriteLine($"  - SessionId: {programData.SessionId}");
+
                     IsLoading = true;
-                    dialog.ProgramToCreate.Type = _programType;
-                    
-                    // Create the program but don't add it to the collection here
-                    await _taskService.CreateTaskProgramAsync(dialog.ProgramToCreate);
-                    
-                    // Simply reload all programs from the server
-                    await LoadProgramsAsync();
-                    
-                    MessageBox.Show("Chương trình đã được tạo thành công.",
-                        "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // SỬA: ViewModel hoàn toàn kiểm soát Type và gọi API
+                    programData.Type = _programType; // FORCE set Type đúng
+                    programData.SessionId = Session?.Id; // Ensure SessionId đúng
+
+                    Debug.WriteLine($"Final program data before API call:");
+                    Debug.WriteLine($"  - Name: {programData.Name}");
+                    Debug.WriteLine($"  - Type: {programData.Type} (value: {(int)programData.Type})");
+                    Debug.WriteLine($"  - SessionId: {programData.SessionId}");
+                    Debug.WriteLine($"  - Expected _programType: {_programType} (value: {(int)_programType})");
+
+                    // SỬA: ViewModel gọi API, không phải dialog
+                    var createdProgram = await _taskService.CreateTaskProgramAsync(programData);
+
+                    if (createdProgram != null)
+                    {
+                        Debug.WriteLine($"✅ API returned created program:");
+                        Debug.WriteLine($"  - ID: {createdProgram.Id}");
+                        Debug.WriteLine($"  - Name: {createdProgram.Name}");
+                        Debug.WriteLine($"  - Type: {createdProgram.Type} (value: {(int)createdProgram.Type})");
+
+                        // Verify Type is correct
+                        if (createdProgram.Type != _programType)
+                        {
+                            Debug.WriteLine($"❌ TYPE MISMATCH! Expected: {_programType} ({(int)_programType}), Got: {createdProgram.Type} ({(int)createdProgram.Type})");
+                            MessageBox.Show($"⚠️ Cảnh báo: Program được tạo với Type sai!\n\nMong đợi: {_programType} ({(int)_programType})\nThực tế: {createdProgram.Type} ({(int)createdProgram.Type})",
+                                "Type Mismatch", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"✅ Type verification passed!");
+                        }
+
+                        // Reload để cập nhật UI
+                        await LoadProgramsAsync();
+
+                        MessageBox.Show($"Chương trình '{createdProgram.Name}' đã được tạo thành công!\n\nLoại: {GetProgramTypeText(_programType)} ({(int)_programType})\nID: {createdProgram.Id}",
+                            "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("❌ API returned null");
+                        MessageBox.Show("Không thể tạo chương trình. API trả về null.", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"❌ Error in ExecuteCreateProgramAsync: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
                 MessageBox.Show($"Lỗi khi tạo chương trình: {ex.Message}",
                     "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -152,12 +222,21 @@ namespace DoanKhoaClient.ViewModels
                 IsLoading = false;
             }
         }
-
+        private string GetProgramTypeText(ProgramType type)
+        {
+            return type switch
+            {
+                ProgramType.Study => "Học tập",
+                ProgramType.Design => "Thiết kế",
+                ProgramType.Event => "Sự kiện",
+                _ => "Không xác định"
+            };
+        }
         private void ExecuteEditProgram(object param)
         {
             if (param is TaskProgram program)
             {
-                var selectedProgram = SelectedProgram; 
+                var selectedProgram = SelectedProgram;
                 var dialog = new EditTaskProgramDialog(_session, selectedProgram);
                 if (dialog.ShowDialog() == true)
                 {
