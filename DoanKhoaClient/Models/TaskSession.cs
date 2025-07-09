@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace DoanKhoaClient.Models
 {
@@ -14,48 +15,68 @@ namespace DoanKhoaClient.Models
         private TaskSessionType _type;
         private DateTime _createdAt;
         private DateTime _updatedAt;
+        private string _taskProgramId;        // ✅ ADD: New field
 
+        [JsonProperty("id")]
         public string Id
         {
             get => _id;
             set { _id = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("name")]
         public string Name
         {
             get => _name;
             set { _name = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("managerId")]
         public string ManagerId
         {
             get => _managerId;
             set { _managerId = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("managerName")]
         public string ManagerName
         {
             get => _managerName;
             set { _managerName = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("type")]
         public TaskSessionType Type
         {
             get => _type;
             set { _type = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("createdAt")]
         public DateTime CreatedAt
         {
             get => _createdAt;
             set { _createdAt = value; OnPropertyChanged(); }
         }
 
+        [JsonProperty("updatedAt")]
         public DateTime UpdatedAt
         {
             get => _updatedAt;
             set { _updatedAt = value; OnPropertyChanged(); }
         }
+
+        // ✅ ADD: TaskProgramId property
+        [JsonProperty("taskProgramId")]
+        public string TaskProgramId
+        {
+            get => _taskProgramId;
+            set { _taskProgramId = value; OnPropertyChanged(); }
+        }
+
+        // ✅ ADD: Navigation property (optional)
+        [JsonIgnore]
+        public TaskProgram TaskProgram { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -63,6 +84,7 @@ namespace DoanKhoaClient.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
         public void PrepareForSending()
         {
             // Đảm bảo Id là null để server tạo mới (nếu cần)
@@ -81,8 +103,26 @@ namespace DoanKhoaClient.Models
                 ManagerId = GetCurrentUserId();
             }
 
+            // ✅ ADD: Auto-set TaskProgramId based on Type if not set
+            if (string.IsNullOrEmpty(TaskProgramId))
+            {
+                TaskProgramId = GetDefaultProgramIdForType(Type);
+            }
+
             // Debug log
-            System.Diagnostics.Debug.WriteLine($"PrepareForSending - Name: {Name}, Type: {Type} (Value: {(int)Type}), ManagerName: {ManagerName}");
+            System.Diagnostics.Debug.WriteLine($"PrepareForSending - Name: {Name}, Type: {Type} (Value: {(int)Type}), TaskProgramId: {TaskProgramId}, ManagerName: {ManagerName}");
+        }
+
+        // ✅ ADD: Get default program ID based on session type
+        private string GetDefaultProgramIdForType(TaskSessionType type)
+        {
+            return type switch
+            {
+                TaskSessionType.Study => "study",
+                TaskSessionType.Design => "design",
+                TaskSessionType.Event => "event",
+                _ => null
+            };
         }
 
         private string GetCurrentUserId()
@@ -101,14 +141,12 @@ namespace DoanKhoaClient.Models
             }
             return "";
         }
-
     }
-
 
     public enum TaskSessionType
     {
-        Event,
-        Study,
-        Design
+        Study = 0,    // 0 - Học tập (Training Cuối kỳ có Type = 0)
+        Design = 1,   // 1 - Thiết kế  
+        Event = 2     // 2 - Sự kiện
     }
 }

@@ -75,12 +75,12 @@
         <Label x:Name="GroupTask_Detail_lbTitle"
                Content="CHI TIẾT CÔNG VIỆC"
                HorizontalAlignment="Center"
-               Height="40"
+               Height="55"
                Margin="0,50,0,0"
                VerticalAlignment="Top"
                FontSize="32"
                Foreground="#042354"
-               FontWeight="Bold"/>
+               FontWeight="Bold" Width="317"/>
 
         <!-- Back Button -->
         <Button x:Name="BackButton"
@@ -97,12 +97,12 @@
         <Label x:Name="GroupContent_lbName"
                Content="Tên Nhóm Công Việc"
                HorizontalAlignment="Left"
-               Height="30"
-               Margin="50,120,0,0"
+               Height="46"
+               Margin="50,104,0,0"
                VerticalAlignment="Top"
                FontSize="24"
                Foreground="#042354"
-               FontWeight="Bold"/>
+               FontWeight="Bold" Width="244"/>
 
         <Label x:Name="GroupContent_lbDescription"
                Content="Mô tả nhóm công việc"

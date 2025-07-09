@@ -735,6 +735,13 @@
                                     Text="Thiết kế giao diện, poster, banner và tài liệu truyền thông" />
                             </StackPanel>
 
+                            <TextBlock Text="Ban Thiết kế Đoàn khoa Mạng Máy tính và Truyền thông"
+                                       FontFamily="Segoe UI"
+                                       FontSize="13"
+                                       Foreground="#888"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+
                             <!--  Arrow Icon  -->
                             <Image
                                 Grid.Column="2"
@@ -827,6 +834,12 @@
                                     Foreground="#888"
                                     Text="Tổ chức sự kiện, truyền thông, PR và quản lý mạng xã hội" />
                             </StackPanel>
+                            <TextBlock Text="Ban Truyền thông và Sự kiện Đoàn khoa Mạng Máy tính và Truyền thông"
+                                       FontFamily="Segoe UI"
+                                       FontSize="13"
+                                       Foreground="#888"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
 
                             <!--  Arrow Icon  -->
                             <Image
@@ -921,22 +934,27 @@
                                     Text="Học thuật, nghiên cứu, đào tạo và phát triển kỹ năng" />
                             </StackPanel>
 
-                            <!--  Arrow Icon  -->
-                            <Image
-                                Grid.Column="2"
-                                Width="24"
-                                Height="24"
-                                VerticalAlignment="Center"
-                                RenderTransformOrigin="0.5,0.5"
-                                Source="/Views/Images/-down-list.png">
-                                <Image.RenderTransform>
-                                    <RotateTransform Angle="-90" />
-                                </Image.RenderTransform>
-                            </Image>
-                        </Grid>
-                    </Border>
-                </Button>
-            </Grid>
+                            <TextBlock Text="Ban Học tập Đoàn khoa Mạng Máy tính và Truyền thông"
+                                       FontFamily="Segoe UI"
+                                       FontSize="13"
+                                       Foreground="#888"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <!-- Arrow Icon -->
+                        <Image Grid.Column="2"
+                               Source="/Views/Images/-down-list.png"
+                               Width="24"
+                               Height="24"
+                               VerticalAlignment="Center"
+                               RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <RotateTransform Angle="-90"/>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Grid>
+                </Border>
+            </Button>
         </Grid>
     </Grid>
 </Window>

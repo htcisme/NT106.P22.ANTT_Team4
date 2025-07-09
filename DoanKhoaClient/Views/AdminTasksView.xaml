@@ -521,5 +521,136 @@
                             </ToolTip>
                      </ListView.ToolTip>
               </ListView>
+
+              <Border x:Name="ReminderButtonBorder"
+                      Width="180"
+                      Height="50"
+                      Margin="720,41,0,0"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Background="#ff6b35"
+                      CornerRadius="25"
+                      Cursor="Hand">
+                     <Button x:Name="ReminderButton"
+                             Width="180"
+                             Height="50"
+                             Background="Transparent"
+                             Foreground="White"
+                             BorderThickness="0"
+                             Click="ReminderButton_Click"
+                             Cursor="Hand"
+                             FontWeight="Bold"
+                             FontSize="16">
+                            <StackPanel Orientation="Horizontal">
+                                   <TextBlock Text="📧"
+                                              FontSize="20"
+                                              Margin="0,0,8,0"/>
+                                   <TextBlock Text="Gửi nhắc nhở"
+                                              VerticalAlignment="Center"/>
+                            </StackPanel>
+                     </Button>
+              </Border>
+
+              <!-- ✅ THÊM: Loading indicator cho reminder -->
+              <Border x:Name="ReminderLoadingBorder"
+                      Width="180"
+                      Height="50"
+                      Margin="720,41,0,0"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Background="#28a745"
+                      CornerRadius="25"
+                      Visibility="Collapsed">
+                     <StackPanel Orientation="Horizontal"
+                                 HorizontalAlignment="Center">
+                            <TextBlock Text="⏳"
+                                       FontSize="16"
+                                       Foreground="White"
+                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="Đang gửi..."
+                                       FontSize="14"
+                                       Foreground="White"
+                                       VerticalAlignment="Center"/>
+                     </StackPanel>
+              </Border>
+
+              <Border x:Name="CalendarSyncButtonBorder"
+                      Width="180"
+                            Height="40"
+                      Margin="1120,45,0,0"
+                      HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                      Background="#28a745"
+                      CornerRadius="20"
+                      Cursor="Hand">
+                     <Button x:Name="CalendarSyncButton"
+                             Width="180"
+                                   Height="40"
+                             Background="Transparent"
+                             Foreground="White"
+                             BorderThickness="0"
+                             Click="CalendarSyncButton_Click"
+                             Cursor="Hand"
+                             FontWeight="Bold"
+                             FontSize="12">
+                            <StackPanel Orientation="Horizontal">
+                                   <TextBlock Text="📅"
+                                              FontSize="16"
+                                              Margin="0,0,5,0"/>
+                                   <TextBlock Text="Sync Google Calendar"
+                                              VerticalAlignment="Center"/>
+                            </StackPanel>
+                     </Button>
+              </Border>
+
+              <!-- ✅ ADD: Calendar Sync Loading State -->
+              <Border x:Name="CalendarSyncLoadingBorder"
+                      Width="180"
+                            Height="40"
+                      Margin="1120,45,0,0"
+                      HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                      Background="#6c757d"
+                      CornerRadius="20"
+                      Visibility="Collapsed">
+                     <StackPanel Orientation="Horizontal"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <TextBlock Text="🔄"
+                                       FontSize="16"
+                                       Foreground="White"
+                                       Margin="0,0,5,0">
+                                   <TextBlock.RenderTransform>
+                                          <RotateTransform x:Name="CalendarLoadingRotation"/>
+                                   </TextBlock.RenderTransform>
+                                   <TextBlock.Triggers>
+                                          <EventTrigger RoutedEvent="Loaded">
+                                                 <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                               <DoubleAnimation Storyboard.TargetName="CalendarLoadingRotation"
+                                                                                Storyboard.TargetProperty="Angle"
+                                                                                From="0"
+                                                                             To="360"
+                                                                                Duration="0:0:2"/>
+                                                        </Storyboard>
+                                                 </BeginStoryboard>
+                                          </EventTrigger>
+                                   </TextBlock.Triggers>
+                            </TextBlock>
+                            <TextBlock Text="Đồng bộ..."
+                                       FontSize="12"
+                                       Foreground="White"
+                                       FontWeight="Bold"/>
+                     </StackPanel>
+              </Border>
+
+              <!-- ✅ THÊM: Status display -->
+              <TextBlock x:Name="StatusTextBlock"
+                         Margin="720,100,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         FontSize="14"
+                         FontWeight="Bold"
+                         Visibility="Collapsed"/>
        </Grid>
 </Window>

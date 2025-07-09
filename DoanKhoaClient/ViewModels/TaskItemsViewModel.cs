@@ -20,6 +20,8 @@ namespace DoanKhoaClient.ViewModels
         private TaskProgram _program;
         private bool _isLoading;
         private TaskItem _selectedTaskItem;
+        private ObservableCollection<TaskItem> _selectedTaskItems; // ✅ THÊM: Multi-select support
+
         private bool _isExecutingCommand = false;
         private DateTime _lastCommandExecutionTime = DateTime.MinValue;
         private readonly TimeSpan _commandDelayTime = TimeSpan.FromSeconds(1);
@@ -45,6 +47,20 @@ namespace DoanKhoaClient.ViewModels
                 OnPropertyChanged(nameof(TaskItems));
             }
         }
+        public ObservableCollection<TaskItem> SelectedTaskItems
+        {
+            get => _selectedTaskItems;
+            set
+            {
+                _selectedTaskItems = value;
+                OnPropertyChanged(nameof(SelectedTaskItems));
+                OnPropertyChanged(nameof(HasSelectedItems));
+                OnPropertyChanged(nameof(SelectedItemsCount));
+            }
+        }
+
+        public bool HasSelectedItems => SelectedTaskItems?.Count > 0;
+        public int SelectedItemsCount => SelectedTaskItems?.Count ?? 0;
 
         public bool IsLoading
         {
@@ -73,6 +89,12 @@ namespace DoanKhoaClient.ViewModels
         public ICommand DeleteTaskItemCommand { get; }
         public ICommand CompleteTaskItemCommand { get; }
         public ICommand RefreshCommand { get; }
+        public ICommand SendReminderCommand { get; }
+        public ICommand SendBulkReminderCommand { get; } // ✅ THÊM: Bulk reminder command
+        public ICommand TestEmailCommand { get; }
+        public ICommand SelectAllCommand { get; } // ✅ THÊM: Select all command
+        public ICommand ClearSelectionCommand { get; } // ✅ THÊM: Clear selection command
+
 
         public TaskItemsViewModel(TaskProgram program, TaskService taskService = null)
         {
@@ -80,6 +102,8 @@ namespace DoanKhoaClient.ViewModels
             Program = program;
             _taskService = taskService ?? new TaskService();
             TaskItems = new ObservableCollection<TaskItem>();
+            _selectedTaskItems = new ObservableCollection<TaskItem>(); // ✅ THÊM: Initialize
+
 
             // Khởi tạo commands
             CreateTaskItemCommand = new RelayCommand(_ => ExecuteCreateTaskItemAsync(), _ => !IsLoading && !_isExecutingCommand);
@@ -87,8 +111,38 @@ namespace DoanKhoaClient.ViewModels
             DeleteTaskItemCommand = new RelayCommand(param => ExecuteDeleteTaskItemAsync(param), CanExecuteTaskAction);
             CompleteTaskItemCommand = new RelayCommand(param => ExecuteCompleteTaskItemAsync(param), CanExecuteCompleteAction);
             RefreshCommand = new RelayCommand(async _ => await LoadTaskItemsAsync(), _ => !IsLoading && !_isExecutingCommand);
+            SelectAllCommand = new RelayCommand(_ => ExecuteSelectAll()); // ✅ FIX: Add parameter
+            ClearSelectionCommand = new RelayCommand(_ => ExecuteClearSelection()); // ✅ FIX: Add parameter
+                                                                                    // Đăng ký sự kiện với service
 
-            // Đăng ký sự kiện với service
+            SendReminderCommand = new RelayCommand(
+            async param =>
+            {
+                Debug.WriteLine($"SendReminderCommand executed with param: {param?.GetType().Name}");
+                await ExecuteSendReminderAsync(param as TaskItem);
+            },
+            param =>
+            {
+                var canExecute = CanExecuteTaskItemAction(param as TaskItem);
+                Debug.WriteLine($"SendReminderCommand CanExecute: {canExecute} for {(param as TaskItem)?.Title}");
+                return canExecute;
+            }
+        );
+
+            // ✅ THÊM: SendBulkReminderCommand - ĐOẠN NÀY ĐANG THIẾU!
+            SendBulkReminderCommand = new RelayCommand(
+                async _ =>
+                {
+                    Debug.WriteLine($"SendBulkReminderCommand executed with {SelectedItemsCount} items");
+                    await ExecuteSendBulkReminderAsync();
+                },
+                _ =>
+                {
+                    var canExecute = HasSelectedItems && !IsLoading;
+                    Debug.WriteLine($"SendBulkReminderCommand CanExecute: {canExecute} (HasSelectedItems: {HasSelectedItems}, IsLoading: {IsLoading})");
+                    return canExecute;
+                }
+            );
             _taskService.TaskItemUpdated += OnTaskItemUpdated;
 
             // Tải danh sách công việc đúng cách
@@ -143,6 +197,7 @@ namespace DoanKhoaClient.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     TaskItems.Clear();
+                    SelectedTaskItems.Clear();
                     foreach (var item in items)
                     {
                         TaskItems.Add(item);
@@ -161,7 +216,194 @@ namespace DoanKhoaClient.ViewModels
                 IsLoading = false;
             }
         }
+        private async Task ExecuteSendReminderAsync(TaskItem item)
+        {
+            try
+            {
+                Debug.WriteLine($"===== Sending Reminder for TaskItem =====");
+                Debug.WriteLine($"TaskItem ID: {item?.Id}");
+                Debug.WriteLine($"Title: {item?.Title}");
+                Debug.WriteLine($"AssignedToEmail: {item?.AssignedToEmail}");
 
+                if (item == null)
+                {
+                    MessageBox.Show("Vui lòng chọn một công việc để gửi nhắc nhở", "Cảnh báo",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(item.AssignedToEmail))
+                {
+                    MessageBox.Show($"Công việc '{item.Title}' chưa có email người thực hiện.\nVui lòng cập nhật email trước khi gửi nhắc nhở.",
+                        "Thiếu thông tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var result = MessageBox.Show(
+                    $"Gửi email nhắc nhở cho:\n\n" +
+                    $"📝 Công việc: {item.Title}\n" +
+                    $"👤 Người thực hiện: {item.AssignedToName}\n" +
+                    $"📧 Email: {item.AssignedToEmail}\n" +
+                    $"📅 Hạn chót: {item.DueDate:dd/MM/yyyy}\n\n" +
+                    $"Bạn có muốn gửi nhắc nhở không?",
+                    "Xác nhận gửi nhắc nhở",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    IsLoading = true;
+                    var success = await _taskService.SendTaskReminderAsync(item.Id);
+
+                    if (success)
+                    {
+                        Debug.WriteLine("✅ Reminder sent successfully");
+                        MessageBox.Show($"✅ Email nhắc nhở đã được gửi thành công!\n\nGửi tới: {item.AssignedToEmail}",
+                            "Gửi thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await LoadTaskItemsAsync();
+                    }
+                    else
+                    {
+                        Debug.WriteLine("❌ Failed to send reminder");
+                        MessageBox.Show($"❌ Không thể gửi email nhắc nhở.\n\nVui lòng kiểm tra cấu hình email.",
+                            "Gửi thất bại", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception in ExecuteSendReminderAsync: {ex.Message}");
+                MessageBox.Show($"❌ Lỗi khi gửi nhắc nhở: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        // ✅ THÊM: Bulk reminder implementation
+        private async Task ExecuteSendBulkReminderAsync()
+        {
+            try
+            {
+                Debug.WriteLine($"===== Sending Bulk Reminders =====");
+                Debug.WriteLine($"Selected items count: {SelectedTaskItems?.Count ?? 0}");
+
+                if (SelectedTaskItems == null || !SelectedTaskItems.Any())
+                {
+                    MessageBox.Show("Vui lòng chọn ít nhất một công việc để gửi nhắc nhở", "Cảnh báo",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Check for items without email
+                var itemsWithoutEmail = SelectedTaskItems.Where(x => string.IsNullOrWhiteSpace(x.AssignedToEmail)).ToList();
+                if (itemsWithoutEmail.Any())
+                {
+                    var itemNames = string.Join("\n", itemsWithoutEmail.Select(x => $"- {x.Title}"));
+                    MessageBox.Show($"Các công việc sau chưa có email người thực hiện:\n\n{itemNames}\n\nVui lòng cập nhật email trước khi gửi nhắc nhở.",
+                        "Thiếu thông tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Show confirmation
+                var selectedTitles = string.Join("\n", SelectedTaskItems.Select(x => $"- {x.Title} → {x.AssignedToEmail}"));
+                var result = MessageBox.Show(
+                    $"Gửi email nhắc nhở cho {SelectedTaskItems.Count} công việc:\n\n{selectedTitles}\n\nBạn có muốn tiếp tục không?",
+                    "Xác nhận gửi nhắc nhở hàng loạt",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    IsLoading = true;
+
+                    var taskIds = SelectedTaskItems.Select(x => x.Id).ToList();
+                    var bulkResult = await _taskService.SendBulkTaskRemindersAsync(taskIds);
+
+                    Debug.WriteLine($"✅ Bulk reminder completed:");
+                    Debug.WriteLine($"  - Total: {bulkResult.TotalProcessed}");
+                    Debug.WriteLine($"  - Success: {bulkResult.SuccessCount}");
+                    Debug.WriteLine($"  - Failed: {bulkResult.FailCount}");
+
+                    // Show detailed results
+                    var resultMessage = $"📊 Kết quả gửi nhắc nhở:\n\n" +
+                                      $"✅ Thành công: {bulkResult.SuccessCount}\n" +
+                                      $"❌ Thất bại: {bulkResult.FailCount}\n" +
+                                      $"📝 Tổng cộng: {bulkResult.TotalProcessed}";
+
+                    if (bulkResult.FailCount > 0)
+                    {
+                        var failedItems = bulkResult.Results
+                            .Where(x => !x.Success)
+                            .Select(x => $"- {x.TaskTitle}: {x.Message}")
+                            .Take(5); // Show first 5 failures
+
+                        resultMessage += $"\n\n❌ Các lỗi:\n{string.Join("\n", failedItems)}";
+
+                        if (bulkResult.FailCount > 5)
+                        {
+                            resultMessage += $"\n... và {bulkResult.FailCount - 5} lỗi khác";
+                        }
+                    }
+
+                    MessageBox.Show(resultMessage, "Kết quả gửi nhắc nhở",
+                        MessageBoxButton.OK,
+                        bulkResult.FailCount > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information);
+
+                    // Clear selection and refresh
+                    SelectedTaskItems.Clear();
+                    await LoadTaskItemsAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Exception in ExecuteSendBulkReminderAsync: {ex.Message}");
+                MessageBox.Show($"❌ Lỗi khi gửi nhắc nhở hàng loạt: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        // ✅ THÊM: Select all tasks
+        private void ExecuteSelectAll()
+        {
+            try
+            {
+                SelectedTaskItems.Clear();
+                foreach (var item in TaskItems)
+                {
+                    SelectedTaskItems.Add(item);
+                }
+                Debug.WriteLine($"Selected all {SelectedTaskItems.Count} tasks");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error selecting all: {ex.Message}");
+            }
+        }
+
+        // ✅ THÊM: Clear selection
+        private void ExecuteClearSelection()
+        {
+            try
+            {
+                SelectedTaskItems.Clear();
+                Debug.WriteLine("Cleared all selections");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error clearing selection: {ex.Message}");
+            }
+        }
+        private bool CanExecuteTaskItemAction(TaskItem item)
+        {
+            return item != null && !IsLoading;
+        }
         private async void ExecuteCreateTaskItemAsync()
         {
             // Chống click nhiều lần và debounce
