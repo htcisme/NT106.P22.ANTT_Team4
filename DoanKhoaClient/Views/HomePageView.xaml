@@ -13,34 +13,166 @@
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <Style x:Key="NavigationButtonStyle"
-               TargetType="{x:Type Button}">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Padding"
-                    Value="0"/>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter/>
+                        <ContentPresenter />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="MenuItemStyle"
-               TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="RenderTransformOrigin"
-                    Value="0.5,0.5"/>
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE3F6FF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActivityButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E3F2FD" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CarouselNavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#30FFFFFF" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Width" Value="25" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            x:Name="border"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="17.5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#B0FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#D0FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1"
-                                        ScaleY="1"/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -51,15 +183,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -69,67 +201,50 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Viewbox Stretch="Uniform">
+    <Grid Opacity="1">
         <Grid>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                    <GradientStop Offset="1" Color="#FFDBF3FF" />
+                </LinearGradientBrush>
+            </Grid.Background>
             <Grid x:Name="HomePage_Background">
-                <Grid.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                                         EndPoint="0.5,1">
-                        <GradientStop Offset="0.596"
-                                      Color="#FFF6FCFF"/>
-                        <GradientStop Offset="1"
-                                      Color="#FFDBF3FF"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
-                <Grid Width="1440"
-                      Height="1024">
-                    <TextBox
-                        x:Name="HomePage_tbSearch"
-                        Width="307"
-                        Height="50"
-                        Margin="370,41,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="#FFDBF3FF"
-                        BorderBrush="{x:Null}"
-                        Text=""
-                        TextWrapping="Wrap"/>
+                <Grid Width="1440" Height="1024">
                     <TextBox
                         x:Name="Activities_tbSearch"
                         Width="307"
                         Height="50"
-                        Margin="370,41,0,0"
-                        Padding="15,0,0,0"
+                        Margin="355,41,0,0"
+                        Padding="50,0,20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Center"
-                        Background="#FFDBF3FF"
-                        BorderBrush="{x:Null}"
-                        FontSize="17"
                         KeyDown="Activities_tbSearch_KeyDown"
-                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                        Style="{StaticResource SearchBoxStyle}"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
                     <Popup
                         IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
                         Placement="Bottom"
                         PlacementTarget="{Binding ElementName=Activities_tbSearch}"
                         StaysOpen="False">
                         <Border
+                            x:Name="SearchResultsBorder"
                             Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
                             Background="#FFEDF9FF"
                             BorderThickness="1"
@@ -138,42 +253,25 @@
                                 MaxHeight="200"
                                 Background="White"
                                 BorderThickness="0"
-                                ItemsSource="{Binding FilteredActivities}"
+                                ItemsSource="{Binding SearchResults, UpdateSourceTrigger=PropertyChanged}"
+                                ListBox.SelectionMode="Single"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Button
-                                            Height="44"
+                                            Height="30"
                                             MinWidth="220"
                                             Margin="0,4,0,4"
-                                            Padding="10"
-                                            HorizontalContentAlignment="Left"
-                                            Background="Transparent"
-                                            BorderThickness="0"
                                             Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"
                                             Content="{Binding Title}"
-                                            FontSize="13"
-                                            FontWeight="Bold"
-                                            Foreground="#12305E"/>
+                                            Style="{StaticResource SearchResultButtonStyle}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </Border>
                     </Popup>
-                    <ToggleButton
-                        x:Name="FilterDropdownButton"
-                        Margin="687,41,706,932"
-                        Background="#FFDBF3FF"
-                        BorderBrush="{x:Null}"
-                        Checked="FilterDropdownButton_Checked"
-                        Unchecked="FilterDropdownButton_Unchecked">
-                        <Image
-                            Width="33"
-                            Height="33"
-                            OpacityMask="#FF597CA2"
-                            Source="/Views/Images/filter.png"/>
-                    </ToggleButton>
+
                     <WrapPanel
                         Width="493"
                         Height="74"
@@ -229,7 +327,7 @@
                                         Storyboard.TargetProperty="Opacity"
                                         From="0"
                                         To="1"
-                                        Duration="0:0:0.2"/>
+                                        Duration="0:0:0.2" />
                                 </Storyboard>
                             </Popup.Resources>
                             <Border
@@ -243,36 +341,34 @@
                                         Margin="0,0,0,8"
                                         FontSize="16"
                                         FontWeight="Bold"
-                                        Text="Bộ lọc"/>
+                                        Text="Bộ lọc" />
                                     <TextBlock
                                         Margin="0,8,0,4"
                                         FontWeight="Bold"
-                                        Text="Loại hoạt động"/>
+                                        Text="Loại hoạt động" />
                                     <ItemsControl ItemsSource="{Binding ActivityTypeOptions}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox Content="{Binding Display}"
-                                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                                <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                    <Separator Margin="0,8"/>
+                                    <Separator Margin="0,8" />
                                     <TextBlock
                                         Margin="0,8,0,4"
                                         FontWeight="Bold"
-                                        Text="Trạng thái"/>
+                                        Text="Trạng thái" />
                                     <ItemsControl ItemsSource="{Binding ActivityStatusOptions}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox Content="{Binding Display}"
-                                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                                <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                     <Button
                                         Margin="0,12,0,0"
                                         Command="{Binding ApplyFilterCommand}"
-                                        Content="Lọc"/>
+                                        Content="Lọc" />
                                 </StackPanel>
                             </Border>
                         </Popup>
@@ -288,14 +384,10 @@
                         BorderBrush="Black"
                         CornerRadius="10,10,10,10">
                         <Border.Background>
-                            <LinearGradientBrush StartPoint="0.5,0"
-                                                 EndPoint="0.5,1">
-                                <GradientStop Offset="0.04"
-                                              Color="#FFF6FCFF"/>
-                                <GradientStop Offset="0.46"
-                                              Color="#FFDBF3FF"/>
-                                <GradientStop Offset="0.937"
-                                              Color="#FF87ACCD"/>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                                <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                                <GradientStop Offset="0.937" Color="#FF87ACCD" />
                             </LinearGradientBrush>
                         </Border.Background>
                     </Border>
@@ -307,12 +399,33 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         BorderBrush="Black"
-                        CornerRadius="10,10,10,10">
-                        <Border.Background>
-                            <ImageBrush ImageSource="/Views/Images/white.png"
-                                        Stretch="UniformToFill"/>
-                        </Border.Background>
+                        CornerRadius="10">
+
+                        <!--  Dùng Grid để xếp chồng ảnh + overlay  -->
+                        <Grid ClipToBounds="True">
+                            <!--  Ảnh nền  -->
+                            <Image
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ClipToBounds="True"
+                                Source="/Views/Images/user-hero.png"
+                                Stretch="UniformToFill">
+                                <Image.Effect>
+                                    <BlurEffect Radius="10" />
+                                </Image.Effect>
+                            </Image>
+
+                            <!--  Lớp phủ tối  -->
+                            <Rectangle
+                                Fill="#805A8192"
+                                RadiusX="10"
+                                RadiusY="10" />
+
+                            <!--  Bạn có thể thêm nội dung ở đây (Label, TextBlock, v.v.)  -->
+                        </Grid>
                     </Border>
+
+
                     <Border
                         Grid.ColumnSpan="2"
                         Width="691"
@@ -320,33 +433,362 @@
                         Margin="370,372,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Background="#FFEAF8FF"
-                        BorderBrush="Black"
-                        CornerRadius="10,10,10,10"/>
+                        CornerRadius="20,20,10,10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                                <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                                <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
                     <Border
-                        Grid.Column="1"
-                        Width="299"
+                        Grid.ColumnSpan="2"
+                        Width="691"
                         Height="611"
-                        Margin="1099,372,44,0"
+                        Margin="370,372,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        CornerRadius="10,10,10,10">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="36" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Header  -->
+                            <Label
+                                Grid.RowSpan="2"
+                                Margin="26,18,145,557"
+                                Content="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E" />
+                            <Label
+                                Grid.Row="1"
+                                Margin="26,21,291,475"
+                                FontSize="16"
+                                Foreground="#FF12305E">
+                                <TextBlock
+                                    Width="364"
+                                    Text="Khoa Mạng máy tính &amp; Truyền thông, Trường ĐH CNTT có trên 1400 đoàn viên, sinh viên chính quy đang học tập và sinh hoạt."
+                                    TextWrapping="Wrap" />
+                            </Label>
+                            <Label
+                                Grid.Row="1"
+                                Margin="26,93,291,359"
+                                FontSize="16"
+                                Foreground="#FF12305E">
+                                <TextBlock
+                                    Width="364"
+                                    Text="Với truyền thống, lịch sử hình thành và phát triển của mình, cho đến nay Đoàn TNCS Hồ Chí Minh khoa MMT&amp;TT đang quản lí 12 chi Đoàn trực thuộc, các ban chuyên môn và các đội nhóm chuyên trách."
+                                    TextWrapping="Wrap" />
+                            </Label>
+
+                            <!--  Carousel Section  -->
+                            <Grid Grid.Row="1" Margin="400,8,20,50">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="220" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Simple Image Display  -->
+                                <Grid Grid.Row="1" Height="230">
+                                    <!--  Current Active Image  -->
+                                    <Border
+                                        Width="180"
+                                        Height="180"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        ClipToBounds="True"
+                                        CornerRadius="10">
+
+                                        <Grid>
+                                            <!--  Dynamic Image Source  -->
+                                            <Image Stretch="UniformToFill">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[0].IsActive}" Value="True">
+                                                                <Setter Property="Source" Value="{Binding FeaturedActivities[0].ImgUrl}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[1].IsActive}" Value="True">
+                                                                <Setter Property="Source" Value="{Binding FeaturedActivities[1].ImgUrl}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[2].IsActive}" Value="True">
+                                                                <Setter Property="Source" Value="{Binding FeaturedActivities[2].ImgUrl}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+
+                                            <!--  Overlay  -->
+                                            <Rectangle Fill="#30000000" />
+
+                                            <!--  Dynamic Title  -->
+                                            <TextBlock
+                                                Margin="8"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Bottom"
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                Foreground="White"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[0].IsActive}" Value="True">
+                                                                <Setter Property="Text" Value="{Binding FeaturedActivities[0].Title}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[1].IsActive}" Value="True">
+                                                                <Setter Property="Text" Value="{Binding FeaturedActivities[1].Title}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding FeaturedActivities[2].IsActive}" Value="True">
+                                                                <Setter Property="Text" Value="{Binding FeaturedActivities[2].Title}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+
+                                    <!--  Navigation Arrows  -->
+                                    <Button
+                                        Margin="15,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding PreviousImageCommand}"
+                                        Style="{StaticResource CarouselNavigationButtonStyle}">
+                                        <TextBlock
+                                            FontSize="14"
+                                            Foreground="#FF12305E"
+                                            Text="◀" />
+                                    </Button>
+
+                                    <Button
+                                        Margin="0,0,15,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding NextImageCommand}"
+                                        Style="{StaticResource CarouselNavigationButtonStyle}">
+                                        <TextBlock
+                                            FontSize="14"
+                                            Foreground="#FF12305E"
+                                            Text="▶" />
+                                    </Button>
+                                </Grid>
+
+                                <!--  Pagination Dots  -->
+                                <StackPanel
+                                    Grid.Row="2"
+                                    Margin="0,15,0,0"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <ItemsControl ItemsSource="{Binding PaginationDots}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Ellipse Margin="3,0" Fill="{Binding Color}">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Setter Property="Width" Value="10" />
+                                                            <Setter Property="Height" Value="10" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                                    <Setter Property="Width" Value="14" />
+                                                                    <Setter Property="Height" Value="14" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+
+                            <Label
+                                Grid.Row="1"
+                                Width="550"
+                                Margin="0,230,0,263"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="#FF12305E">
+                                <TextBlock
+                                    Width="540"
+                                    Text="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG LÀ ĐƠN VỊ XUẤT SẮC DẪN ĐẦU TRONG CÔNG TÁC ĐOÀN VÀ PHONG TRÀO THANH NIÊN NĂM HỌC 2023 - 2024"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                            </Label>
+
+                            <Border
+                                Grid.Row="1"
+                                Width="341"
+                                Height="224"
+                                Margin="0,328,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                ClipToBounds="True"
+                                CornerRadius="50">
+                                <Image
+                                    Margin="0,-38,0,46"
+                                    Source="/Views/Images/achive.png"
+                                    Stretch="UniformToFill" />
+                            </Border>
+
+
+
+                            <Label
+                                Grid.Row="1"
+                                Margin="86,525,85,14"
+                                Content="ĐOÀN KẾT - TIÊN PHONG - TRÁCH NHIỆM - ĐỔI MỚI"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="#FFE4EFFF" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Cập nhật Tin tức mới nhất  -->
+                    <Border
+                        Width="299"
+                        Height="361"
+                        Margin="1099,372,42,0"
                         VerticalAlignment="Top"
                         Background="#FFEAF8FF"
                         BorderBrush="Black"
-                        CornerRadius="10,10,10,10">
-                        <Border
-                            Width="299"
-                            Height="36"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            Background="#FF12305E"
-                            BorderThickness="1">
-                            <Label
+                        CornerRadius="20,20,10,10">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="36" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Header  -->
+                            <Border
+                                Grid.Row="0"
+                                Background="#FF12305E"
+                                CornerRadius="10,10,0,0">
+                                <Label
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="TIN TỨC MỚI NHẤT"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="white" />
+                            </Border>
+
+                            <!--  Latest Activities  -->
+                            <StackPanel Grid.Row="1" Margin="15">
+                                <ItemsControl ItemsSource="{Binding LatestActivities}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                Margin="0,5,0,5"
+                                                Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource ActivityButtonStyle}">
+                                                <StackPanel Margin="5,10,5,10">
+                                                    <TextBlock
+                                                        FontSize="14"
+                                                        FontWeight="Bold"
+                                                        Foreground="#FF12305E"
+                                                        Text="{Binding Title}"
+                                                        TextWrapping="Wrap" />
+                                                    <TextBlock
+                                                        Margin="0,5,0,0"
+                                                        FontSize="12"
+                                                        Foreground="#6c757d"
+                                                        Text="{Binding Date, StringFormat='{}{0:dddd • dd/MM/yyyy}'}" />
+                                                </StackPanel>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border
+                        Width="299"
+                        Height="225"
+                        Margin="1099,758,42,0"
+                        VerticalAlignment="Top"
+                        Background="#FFEAF8FF"
+                        BorderBrush="Black"
+                        CornerRadius="20,20,10,10">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="36" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Header  -->
+                            <Border
+                                Grid.Row="0"
+                                Background="#FF12305E"
+                                CornerRadius="10,10,0,0">
+                                <Label
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="THÔNG TIN LIÊN HỆ"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="white" />
+                            </Border>
+                            <Button
+                                Grid.Row="1"
+                                Margin="26,14,30,151"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="TIN TỨC MỚI NHẤT"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="EmailButton_Click"
+                                Cursor="Hand">
+                                <TextBlock
+                                    FontSize="16"
+                                    Foreground="#FF12305E"
+                                    Text="doanthanhnien@suctremmt.com"
+                                    TextDecorations="Underline" />
+                            </Button>
+
+                            <Button
+                                Grid.Row="1"
+                                Margin="35,49,0,104"
+                                HorizontalAlignment="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="FacebookButton_Click"
+                                Cursor="Hand">
+                                <TextBlock
+                                    FontSize="16"
+                                    Foreground="#FF12305E"
+                                    Text="Mạng máy tính và Truyền thông"
+                                    TextDecorations="Underline" />
+                            </Button>
+                            <Label
+                                Grid.Row="1"
+                                Margin="0,88,0,29"
+                                HorizontalAlignment="Center"
                                 FontSize="16"
-                                FontWeight="Bold"
-                                Foreground="white"/>
-                        </Border>
+                                Foreground="#FF12305E">
+                                <TextBlock
+                                    Width="241"
+                                    Text="Trường Đại học Công nghệ Thông tin Khu phố 6, Phường Linh Xuân, Tp Hồ Chí Minh"
+                                    TextWrapping="Wrap" />
+                            </Label>
+                        </Grid>
                     </Border>
                     <Image
                         x:Name="HomePage_iUsers"
@@ -356,7 +798,7 @@
                         Margin="1358,46,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/generic avatar.png"/>
+                        Source="/Views/Images/generic avatar.png" />
                     <Image
                         x:Name="HomePage_iNotifications"
                         Width="40"
@@ -364,7 +806,7 @@
                         Margin="1297,46,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/light-notifications.png"/>
+                        Source="/Views/Images/light-notifications.png" />
                     <Image
                         x:Name="ThemeToggleButton"
                         Width="40"
@@ -373,15 +815,15 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         MouseDown="ThemeToggleButton_MouseDown"
-                        Source="/Views/Images/dark.png"/>
+                        Source="/Views/Images/dark.png" />
                     <Image
-                        x:Name="HomePage_iSearch"
-                        Width="40"
-                        Height="40"
-                        Margin="628,46,0,0"
+                        x:Name="LightHomePage_iSearch"
+                        Width="30"
+                        Height="30"
+                        Margin="368,51,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/search.png"/>
+                        Source="/Views/Images/search.png" />
                     <Image
                         x:Name="HomePage_iLogo"
                         Width="112.38"
@@ -389,7 +831,7 @@
                         Margin="131,71,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/header.png"/>
+                        Source="/Views/Images/header.png" />
                     <Label
                         x:Name="HomePage_lbFaculty"
                         Width="686.59"
@@ -399,9 +841,19 @@
                         VerticalAlignment="Top"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
+                        Background="{x:Null}"
                         Content="TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN - ĐHQG-HCM"
                         FontSize="22.5"
-                        Foreground="#042354"/>
+                        Foreground="White">
+                        <Label.Effect>
+                            <DropShadowEffect
+                                BlurRadius="5"
+                                Direction="315"
+                                Opacity="0.5"
+                                ShadowDepth="2"
+                                Color="Black" />
+                        </Label.Effect>
+                    </Label>
                     <Label
                         x:Name="HomePage_lbYouthUnion"
                         Width="677.26"
@@ -413,7 +865,16 @@
                         Content="ĐOÀN KHOA MẠNG MÁY TÍNH VÀ TRUYỀN THÔNG"
                         FontSize="24"
                         FontWeight="Bold"
-                        Foreground="#042354"/>
+                        Foreground="White">
+                        <Label.Effect>
+                            <DropShadowEffect
+                                BlurRadius="5"
+                                Direction="315"
+                                Opacity="0.5"
+                                ShadowDepth="2"
+                                Color="Black" />
+                        </Label.Effect>
+                    </Label>
                     <StackPanel>
                         <Button
                             x:Name="SidebarHomeButton"
@@ -427,15 +888,14 @@
                             Click="SidebarHomeButton_Click"
                             Cursor="Hand"
                             Style="{StaticResource NavigationButtonStyle}">
-                            <StackPanel Orientation="Horizontal"
-                                        Style="{StaticResource MenuItemStyle}">
+                            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                                 <Image
                                     x:Name="HomePage_iHome"
                                     Width="30"
                                     Height="30"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
-                                    Source="/Views/Images/active-home.png"/>
+                                    Source="/Views/Images/active-home.png" />
                                 <Label
                                     x:Name="HomePage_lbHome"
                                     Width="108"
@@ -448,7 +908,7 @@
                                     FontFamily="Segoe UI"
                                     FontSize="20"
                                     FontWeight="Bold"
-                                    Foreground="#597CA2"/>
+                                    Foreground="#597CA2" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -464,15 +924,14 @@
                         Click="SidebarChatButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal"
-                                    Style="{StaticResource MenuItemStyle}">
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
                                 x:Name="HomePage_iChat"
                                 Width="30"
                                 Height="30"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Source="/Views/Images/chat_bubble.png"/>
+                                Source="/Views/Images/chat_bubble.png" />
                             <Label
                                 x:Name="HomePage_lbChat"
                                 Width="108"
@@ -484,7 +943,7 @@
                                 Content="Chat"
                                 FontFamily="Segoe UI"
                                 FontSize="20"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -499,15 +958,14 @@
                         Click="SidebarActivitiesButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal"
-                                    Style="{StaticResource MenuItemStyle}">
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
                                 x:Name="HomePage_Activities"
                                 Width="30"
                                 Height="30"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Source="/Views/Images/activities.png"/>
+                                Source="/Views/Images/activities.png" />
                             <Label
                                 x:Name="HomePage_lbActivities"
                                 Width="108"
@@ -519,7 +977,7 @@
                                 Content="Activities"
                                 FontFamily="Segoe UI"
                                 FontSize="20"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -534,15 +992,14 @@
                         Click="SidebarMembersButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal"
-                                    Style="{StaticResource MenuItemStyle}">
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
                                 x:Name="HomePage_Task_iMembers"
                                 Width="30"
                                 Height="30"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Source="/Views/Images/members.png"/>
+                                Source="/Views/Images/members.png" />
                             <Label
                                 x:Name="HomePage_lbMembers"
                                 Width="108"
@@ -554,7 +1011,7 @@
                                 Content="Members"
                                 FontFamily="Segoe UI"
                                 FontSize="20"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -569,15 +1026,14 @@
                         Click="SidebarTasksButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal"
-                                    Style="{StaticResource MenuItemStyle}">
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
                                 x:Name="HomePage_iTasks"
                                 Width="30"
                                 Height="30"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Source="/Views/Images/tasks.png"/>
+                                Source="/Views/Images/tasks.png" />
                             <Label
                                 x:Name="HomePage_lbTasks"
                                 Width="108"
@@ -589,7 +1045,7 @@
                                 Content="Tasks"
                                 FontFamily="Segoe UI"
                                 FontSize="20"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -603,17 +1059,16 @@
                         BorderThickness="0"
                         Click="SidebarAdminButton_Click"
                         Cursor="Hand"
-                        Visibility="Collapsed"
-                        Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal"
-                                    Style="{StaticResource MenuItemStyle}">
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
                                 x:Name="HomePage_iAdmin"
                                 Width="30"
                                 Height="30"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Source="/Views/Images/admin_panel.png"/>
+                                Source="/Views/Images/admin_panel.png" />
                             <Label
                                 x:Name="HomePage_lbAdmin"
                                 Width="108"
@@ -625,11 +1080,11 @@
                                 Content="Admin"
                                 FontFamily="Segoe UI"
                                 FontSize="20"
-                                FontWeight="Bold"/>
+                                FontWeight="Bold" />
                         </StackPanel>
                     </Button>
 
-                    <!-- Admin submenu -->
+                    <!--  Admin submenu  -->
                     <StackPanel
                         x:Name="AdminSubmenu"
                         Margin="132,621,0,0"
@@ -639,50 +1094,50 @@
                         <Button
                             x:Name="AdminTaskButton"
                             Margin="0,5,0,5"
-                            Click="AdminTaskButton_Click"
                             Background="Transparent"
                             BorderThickness="0"
+                            Click="AdminTaskButton_Click"
                             Cursor="Hand">
                             <TextBlock
-                                Text="Quản lý công việc"
                                 FontSize="15"
-                                Foreground="#042354"/>
+                                Foreground="#042354"
+                                Text="Quản lý công việc" />
                         </Button>
                         <Button
                             x:Name="AdminMembersButton"
                             Margin="0,5,0,5"
-                            Click="AdminMembersButton_Click"
                             Background="Transparent"
                             BorderThickness="0"
+                            Click="AdminMembersButton_Click"
                             Cursor="Hand">
                             <TextBlock
-                                Text="Quản lý thành viên"
                                 FontSize="15"
-                                Foreground="#042354"/>
+                                Foreground="#042354"
+                                Text="Quản lý thành viên" />
                         </Button>
                         <Button
                             x:Name="AdminChatButton"
                             Margin="0,5,0,5"
-                            Click="AdminChatButton_Click"
                             Background="Transparent"
                             BorderThickness="0"
+                            Click="AdminChatButton_Click"
                             Cursor="Hand">
                             <TextBlock
-                                Text="Quản lý chat"
                                 FontSize="15"
-                                Foreground="#042354"/>
+                                Foreground="#042354"
+                                Text="Quản lý chat" />
                         </Button>
                         <Button
                             x:Name="AdminActivitiesButton"
                             Margin="0,5,0,5"
-                            Click="AdminActivitiesButton_Click"
                             Background="Transparent"
                             BorderThickness="0"
+                            Click="AdminActivitiesButton_Click"
                             Cursor="Hand">
                             <TextBlock
-                                Text="Quản lý hoạt động"
                                 FontSize="15"
-                                Foreground="#042354"/>
+                                Foreground="#042354"
+                                Text="Quản lý hoạt động" />
                         </Button>
                     </StackPanel>
                     <Image
@@ -692,7 +1147,7 @@
                         Margin="175,926,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/facebook.png"/>
+                        Source="/Views/Images/facebook.png" />
                     <Image
                         x:Name="HomePage_iInstagram"
                         Width="24"
@@ -700,7 +1155,7 @@
                         Margin="135,926,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/instagram.png"/>
+                        Source="/Views/Images/instagram.png" />
                     <Image
                         x:Name="HomePage_iYoutube"
                         Width="24"
@@ -708,26 +1163,11 @@
                         Margin="215,926,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/youtube.png"/>
+                        Source="/Views/Images/youtube.png" />
 
                 </Grid>
             </Grid>
-            <Border
-                Width="692"
-                Height="36"
-                Margin="369,372,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="#FF12305E"
-                BorderThickness="1">
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="HOẠT ĐỘNG GẦN ĐÂY"
-                    FontSize="16"
-                    FontWeight="Bold"
-                    Foreground="white"/>
-            </Border>
+
         </Grid>
-    </Viewbox>
+    </Grid>
 </Window>

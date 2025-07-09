@@ -18,18 +18,7 @@ using System.DirectoryServices;
 
 namespace DoanKhoaClient.ViewModels
 {
-    public class LightHomeViewModel
+    class HomePageViewModel
     {
-        public ICommand ShowDetailCommand { get; }
-
-        public LightHomeViewModel()
-        {
-            ShowDetailCommand = new RelayCommand(OnShowDetail);
-        }
-
-        private void OnShowDetail(object obj)
-        {
-            MessageBox.Show("Bạn vừa nhấn double click!");
-        }
     }
 }

@@ -12,13 +12,19 @@ using System.Runtime.CompilerServices;
 using System.Net.WebSockets;
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Extensions;
+using System.Windows.Threading;
+using System.Windows.Media;
+using System.Diagnostics;
+using System.Windows.Navigation;
+
+
 namespace DoanKhoaClient.Views
 {
-    public partial class HomePageView : Window
+    public partial class HomePageView : Window, INotifyPropertyChanged
     {
         private ActivitiesViewModel _viewModel;
         private bool _isDarkMode;
-        private bool isAdminSubmenuOpen; // Add this field declaration
+        private bool isAdminSubmenuOpen; 
 
         public bool IsDarkMode
         {
@@ -31,7 +37,13 @@ namespace DoanKhoaClient.Views
         }
         public HomePageView()
         {
+            _viewModel = new ActivitiesViewModel();
+            this.DataContext = _viewModel;
             InitializeComponent();
+            this.PreviewMouseDown += Window_PreviewMouseDown;
+            // Khởi tạo ViewModel và gán DataContext
+            
+
             if (AccessControl.IsAdmin())
             {
                 SidebarAdminButton.Visibility = Visibility.Visible;
@@ -47,7 +59,46 @@ namespace DoanKhoaClient.Views
             ThemeManager.ApplyTheme(HomePage_Background);
 
         }
+        private void EmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "mailto:doanthanhnien@suctremmt.com",
+                    UseShellExecute = true
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Không thể mở email: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
 
+        private void FacebookButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "https://www.facebook.com/uit.nc",
+                    UseShellExecute = true
+                };
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Không thể mở Facebook: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(HomePage_Background);
@@ -114,9 +165,7 @@ namespace DoanKhoaClient.Views
                 var viewModel = DataContext as ActivitiesViewModel;
                 if (viewModel != null)
                 {
-                    viewModel.FilterActivities();
-
-
+                    viewModel.SearchActivities();
                 }
             }
         }
@@ -179,6 +228,50 @@ namespace DoanKhoaClient.Views
                 parentObject = VisualTreeHelper.GetParent(parentObject);
             }
             return null;
+        }
+
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Kiểm tra xem người dùng có click bên ngoài search box không
+            if (!IsMouseOverSearchElements(e.OriginalSource as DependencyObject))
+            {
+                // Bỏ focus khỏi search box
+                Keyboard.ClearFocus();
+
+                // Đóng popup search results nếu đang mở
+                var viewModel = DataContext as ActivitiesViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.IsSearchResultOpen = false;
+                }
+
+                // Xóa focus khỏi search box
+                if (Activities_tbSearch.IsFocused)
+                {
+                    FocusManager.SetFocusedElement(this, null);
+                }
+            }
+        }
+
+        private bool IsMouseOverSearchElements(DependencyObject element)
+        {
+            // Kiểm tra xem click có phải trên search box hoặc search results không
+            while (element != null)
+            {
+                if (element == Activities_tbSearch ||
+                    (element is Border && element.GetValue(NameProperty)?.ToString() == "SearchResultsBorder"))
+                {
+                    return true;
+                }
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            // Cleanup ViewModel timer
+            _viewModel?.Cleanup();
+            base.OnClosed(e);
         }
     }
 }

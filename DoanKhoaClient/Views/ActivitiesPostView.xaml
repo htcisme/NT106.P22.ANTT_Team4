@@ -2,10 +2,10 @@
     x:Class="DoanKhoaClient.Views.ActivitiesPostView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:DoanKhoaClient.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:conv="clr-namespace:DoanKhoaClient.Converters"
     x:Name="Light_ActivitiesPostView"
     Title="ActivitiesPostView"
     MinWidth="1024"
@@ -75,6 +75,134 @@
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
+        </Style>
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE3F6FF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SortButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#7FFFFFFF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF12305E" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter Property="Foreground" Value="#FF12305E" />
+
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFB3E0F7" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF0A1D4A" />
+                                <Setter Property="Foreground" Value="#FF0A1D4A" />
+                                <Setter TargetName="border" Property="Effect" Value="{x:Null}" />
+                                <Setter TargetName="contentPresenter" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFB3E0F7" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="border" Property="Background" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <!--  Style cho sidebar button hover  -->
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
@@ -153,23 +281,21 @@
                 x:Name="Activities_tbSearch"
                 Width="307"
                 Height="50"
-                Margin="370,41,0,0"
-                Padding="15,0,0,0"
+                Margin="355,41,0,0"
+                Padding="50,0,20,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
-                Background="#FFDBF3FF"
-                BorderBrush="{x:Null}"
-                FontSize="17"
                 KeyDown="Activities_tbSearch_KeyDown"
+                Style="{StaticResource SearchBoxStyle}"
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
             <Popup
                 IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
                 Placement="Bottom"
                 PlacementTarget="{Binding ElementName=Activities_tbSearch}"
                 StaysOpen="False">
                 <Border
+                    x:Name="SearchResultsBorder"
                     Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
                     Background="#FFEDF9FF"
                     BorderThickness="1"
@@ -178,42 +304,25 @@
                         MaxHeight="200"
                         Background="White"
                         BorderThickness="0"
-                        ItemsSource="{Binding FilteredActivities}"
+                        ItemsSource="{Binding SearchResults, UpdateSourceTrigger=PropertyChanged}"
+                        ListBox.SelectionMode="Single"
                         ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Button
-                                    Height="44"
+                                    Height="30"
                                     MinWidth="220"
                                     Margin="0,4,0,4"
-                                    Padding="10"
-                                    HorizontalContentAlignment="Left"
-                                    Background="Transparent"
-                                    BorderThickness="0"
                                     Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding Title}"
-                                    FontSize="13"
-                                    FontWeight="Bold"
-                                    Foreground="#12305E" />
+                                    Style="{StaticResource SearchResultButtonStyle}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Border>
             </Popup>
-            <ToggleButton
-                x:Name="FilterDropdownButton"
-                Margin="687,41,706,932"
-                Background="#FFDBF3FF"
-                BorderBrush="{x:Null}"
-                Checked="FilterDropdownButton_Checked"
-                Unchecked="FilterDropdownButton_Unchecked">
-                <Image
-                    Width="33"
-                    Height="33"
-                    OpacityMask="#FF597CA2"
-                    Source="/Views/Images/filter.png" />
-            </ToggleButton>
+
             <WrapPanel
                 Width="493"
                 Height="74"
@@ -359,10 +468,10 @@
                 MouseDown="ThemeToggleButton_MouseDown"
                 Source="/Views/Images/dark.png" />
             <Image
-                x:Name="HomePage_iSearch"
-                Width="40"
-                Height="40"
-                Margin="628,46,0,0"
+                x:Name="LightHomePage_iSearch"
+                Width="30"
+                Height="30"
+                Margin="368,51,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Source="/Views/Images/search.png" />
@@ -574,14 +683,20 @@
 
             <!--  Nội dung bài đăng (Phần mới thêm)  -->
             <Border
-                Width="1028"
-                Height="850"
-                Margin="370,125,0,0"
+                Width="1042"
+                Height="864"
+                Margin="356,0,0,40"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="#FFDBF3FF"
-                BorderBrush="{x:Null}"
-                CornerRadius="10">
+                VerticalAlignment="Bottom"
+                Panel.ZIndex="-1"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <!--  Nút quay lại  -->
@@ -590,12 +705,9 @@
                             Height="36"
                             Margin="20,20,0,0"
                             HorizontalAlignment="Left"
-                            Background="#FF597CA2"
-                            BorderBrush="#FF304C69"
                             Click="BackButton_Click"
                             Content="Quay lại"
-                            FontWeight="Bold"
-                            Foreground="White">
+                            Style="{StaticResource SortButtonStyle}">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5" />
@@ -639,8 +751,7 @@
                             Margin="50,30,50,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            FontSize="16"
-                            FontWeight="SemiBold"
+                            FontSize="15"
                             Foreground="#12305E"
                             Text="{Binding Activity.Description}"
                             TextWrapping="Wrap" />
@@ -655,19 +766,25 @@
                                 Command="{Binding DataContext.ParticipateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding Activity.Id}">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock FontSize="20" Foreground="#597CA2" VerticalAlignment="Center">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="20"
+                                        Foreground="#597CA2">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="👤"/>
+                                                <Setter Property="Text" Value="👤" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Activity.IsParticipated}" Value="True">
-                                                        <Setter Property="Text" Value="✔"/>
+                                                        <Setter Property="Text" Value="✔" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding Activity.ParticipantCount}" />
+                                    <TextBlock
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Activity.ParticipantCount}" />
                                 </StackPanel>
                             </Button>
 
@@ -678,21 +795,24 @@
                                 Command="{Binding DataContext.LikeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding Activity.Id}">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock FontSize="20" VerticalAlignment="Center">
+                                    <TextBlock VerticalAlignment="Center" FontSize="20">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="♡"/>
-                                                <Setter Property="Foreground" Value="#597CA2"/>
+                                                <Setter Property="Text" Value="♡" />
+                                                <Setter Property="Foreground" Value="#597CA2" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Activity.IsLiked}" Value="True">
-                                                        <Setter Property="Text" Value="♥"/>
-                                                        <Setter Property="Foreground" Value="#E53935"/>
+                                                        <Setter Property="Text" Value="♥" />
+                                                        <Setter Property="Foreground" Value="#E53935" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding Activity.LikeCount}" />
+                                    <TextBlock
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Activity.LikeCount}" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>

@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Linq;
 using System.Threading;
+using System.Collections.ObjectModel;
+using DoanKhoaClient.Views;
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -16,10 +18,58 @@ namespace DoanKhoaClient.ViewModels
     {
         private readonly ActivityService _activityService;
         private readonly UserService _userService;
+        private ObservableCollection<Activity> _activities;
+
         private Activity _activity;
         private bool _isLoading;
         private string _errorMessage;
         private CancellationTokenSource _cts;
+        private ObservableCollection<Activity> _searchResults;
+        private string _searchText;
+        private ObservableCollection<SearchField> _searchFields;
+        private SearchField _selectedSearchField;
+        private bool _isSearchResultOpen;
+        private bool _isSearchDropdownOpen;
+        public bool IsSearchDropdownOpen
+        {
+            get => _isSearchDropdownOpen;
+            set { _isSearchDropdownOpen = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<Activity> Activities
+        {
+            get => _activities;
+            set { _activities = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<Activity> SearchResults
+        {
+            get => _searchResults;
+            set { _searchResults = value; OnPropertyChanged(); }
+        }
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                SearchActivities(); // Gọi hàm search riêng thay vì FilterActivities
+            }
+        }
+
+        public ObservableCollection<SearchField> SearchFields
+        {
+            get => _searchFields;
+            set { _searchFields = value; OnPropertyChanged(); }
+        }
+
+     
+        public bool IsSearchResultOpen
+        {
+            get => _isSearchResultOpen;
+            set { _isSearchResultOpen = value; OnPropertyChanged(); }
+        }
+
+
 
         public Activity Activity
         {
@@ -54,6 +104,8 @@ namespace DoanKhoaClient.ViewModels
         public ICommand ParticipateCommand { get; }
         public ICommand LikeCommand { get; }
         public ICommand BackCommand { get; }
+        public ICommand OpenActivityDetailCommand { get; }
+
 
         public ActivitiesPostViewModel(Activity activity, UserService userService = null, ActivityService activityService = null)
         {
@@ -61,6 +113,11 @@ namespace DoanKhoaClient.ViewModels
             _userService = userService ?? new UserService(_activityService);
             Activity = activity ?? throw new ArgumentNullException(nameof(activity));
             _cts = new CancellationTokenSource();
+
+            Activities = new ObservableCollection<Activity>();
+            SearchResults = new ObservableCollection<Activity>();
+
+            LoadActivitiesForSearch();
 
             // Set up commands
             ParticipateCommand = new RelayCommand(ExecuteParticipate, CanExecuteParticipate);
@@ -72,7 +129,24 @@ namespace DoanKhoaClient.ViewModels
 
             // Update activity status based on user's cached data
             UpdateActivityStatus();
+
+            OpenActivityDetailCommand = new RelayCommand(param => ExecuteOpenActivityDetail(param as Activity), param => param is Activity);
         }
+
+        private async void LoadActivitiesForSearch()
+        {
+            try
+            {
+                var activities = await _activityService.GetActivitiesAsync();
+                Activities = new ObservableCollection<Activity>(activities ?? new List<Activity>());
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break the UI
+                Activities = new ObservableCollection<Activity>();
+            }
+        }
+
 
         private void UserService_ActivityStatusChanged(object sender, UserActivityStatusChangedEventArgs e)
         {
@@ -231,6 +305,45 @@ namespace DoanKhoaClient.ViewModels
                 IsLoading = false;
             }
         }
+        private void ExecuteOpenActivityDetail(Activity activity)
+        {
+            if (activity == null) return;
+
+            // Đóng search results trước
+            IsSearchResultOpen = false;
+
+            // Nếu đang xem activity khác, mở window mới
+            if (activity.Id != Activity.Id)
+            {
+                var postView = new ActivitiesPostView(activity);
+                postView.Show();
+
+                // Đóng window hiện tại
+                Application.Current.Windows.OfType<Window>()
+                    .FirstOrDefault(w => w.DataContext == this)?.Close();
+            }
+        }
+
+        public void SearchActivities()
+        {
+            if (Activities == null) return;
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                var searchResults = Activities.Where(a =>
+                    a.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    a.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                SearchResults = new ObservableCollection<Activity>(searchResults);
+                IsSearchResultOpen = true;
+            }
+            else
+            {
+                SearchResults.Clear();
+                IsSearchResultOpen = false;
+            }
+        }
 
         private bool CanExecuteBack(object parameter)
         {
@@ -257,6 +370,12 @@ namespace DoanKhoaClient.ViewModels
 
             // Unsubscribe from events
             _userService.ActivityStatusChanged -= UserService_ActivityStatusChanged;
+        }
+
+        public class SearchField
+        {
+            public string DisplayName { get; set; }
+            public string Field { get; set; }
         }
     }
 }

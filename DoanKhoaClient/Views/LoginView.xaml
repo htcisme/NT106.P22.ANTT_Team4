@@ -128,8 +128,8 @@
                         Margin="25,0,0,0"
                         Padding="20"
                         HorizontalAlignment="Center"
-                        CornerRadius="100"
-                        Effect="{StaticResource StandardShadow}">
+                        CornerRadius="100">
+                        <!--Effect="{StaticResource StandardShadow}"-->
                         <!-- Use a single container (Grid) to hold all content -->
                         <Grid>
                             <Grid.RowDefinitions>

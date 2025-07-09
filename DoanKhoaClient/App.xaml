@@ -1,11 +1,10 @@
-﻿<!--  filepath: d:\PROJECT\NT106.P22.ANTT_Team4\DoanKhoaClient\App.xaml  -->
-<Application
+﻿<Application
     x:Class="DoanKhoaClient.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
     xmlns:local="clr-namespace:DoanKhoaClient"
-    StartupUri="Views/LoginView.xaml">
+    StartupUri="Views/HomepageView.xaml">
     <Application.Resources>
         <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
             <ResourceDictionary.MergedDictionaries>

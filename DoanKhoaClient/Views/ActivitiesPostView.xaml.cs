@@ -16,12 +16,15 @@ namespace DoanKhoaClient.Views
     public partial class ActivitiesPostView : Window
     {
         private readonly ActivitiesPostViewModel _viewModel;
+
         private readonly UserService _userService;
         private readonly ActivityService _activityService;
+
 
         public ActivitiesPostView(Activity activity)
         {
             InitializeComponent();
+            this.PreviewMouseDown += Window_PreviewMouseDown;
 
             // Khởi tạo các services
             _activityService = new ActivityService();
@@ -40,6 +43,42 @@ namespace DoanKhoaClient.Views
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(ActivitiesPost_Background);
+        }
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Kiểm tra xem người dùng có click bên ngoài search box không
+            if (!IsMouseOverSearchElements(e.OriginalSource as DependencyObject))
+            {
+                // Bỏ focus khỏi search box
+                Keyboard.ClearFocus();
+
+                // Đóng popup search results nếu đang mở
+                var viewModel = DataContext as ActivitiesPostViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.IsSearchResultOpen = false;
+                }
+
+                // Xóa focus khỏi search box
+                if (Activities_tbSearch.IsFocused)
+                {
+                    FocusManager.SetFocusedElement(this, null);
+                }
+            }
+        }
+        private bool IsMouseOverSearchElements(DependencyObject element)
+        {
+            // Kiểm tra xem click có phải trên search box hoặc search results không
+            while (element != null)
+            {
+                if (element == Activities_tbSearch ||
+                    (element is Border && element.GetValue(NameProperty)?.ToString() == "SearchResultsBorder"))
+                {
+                    return true;
+                }
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -130,11 +169,11 @@ namespace DoanKhoaClient.Views
         {
             if (e.Key == Key.Enter)
             {
-                // Xử lý chức năng tìm kiếm ở cấp ActivitiesViewModel
-                var activitiesViewModel = FindResource("ActivitiesViewModel") as ActivitiesViewModel;
-                if (activitiesViewModel != null)
+                // Sử dụng đúng ViewModel
+                var viewModel = DataContext as ActivitiesPostViewModel;
+                if (viewModel != null)
                 {
-                    activitiesViewModel.FilterActivities();
+                    viewModel.SearchActivities(); // Gọi SearchActivities thay vì FilterActivities
                 }
             }
         }
