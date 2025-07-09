@@ -395,33 +395,7 @@
         </Style>
     </Window.Resources>
 
-    <!-- <Window.DataContext>
-        <vm:UserChatViewModel/>
-    </Window.DataContext>-->
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="Window.Loaded">
-            <BeginStoryboard>
-                <Storyboard>
-                    <DoubleAnimation
-                        Storyboard.TargetName="Chat_Background"
-                        Storyboard.TargetProperty="Opacity"
-                        From="0"
-                        To="1"
-                        Duration="0:0:0.5" />
-                    <ThicknessAnimation
-                        Storyboard.TargetName="Chat_Background"
-                        Storyboard.TargetProperty="Margin"
-                        From="0,30,0,0"
-                        To="0,0,0,0"
-                        Duration="0:0:0.5">
-                        <ThicknessAnimation.EasingFunction>
-                            <QuadraticEase EasingMode="EaseOut" />
-                        </ThicknessAnimation.EasingFunction>
-                    </ThicknessAnimation>
-                </Storyboard>
-            </BeginStoryboard>
-        </EventTrigger>
-    </Window.Triggers>
+
 
 
 
@@ -433,10 +407,7 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <!-- <Viewbox
-            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-            MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-            Stretch="Uniform">-->
+
         <Grid Width="1440" Height="1024">
 
             <!--  Search Box  -->
@@ -448,6 +419,7 @@
                 Padding="50,0,20,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
+                KeyDown="Activities_tbSearch_KeyDown"
                 Style="{StaticResource SearchBoxStyle}"
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -484,26 +456,23 @@
                     </ListBox>
                 </Border>
             </Popup>
-
             <!--  Left Dashboard  -->
             <Border
-                x:Name="UserChat_Dashboard1"
+                x:Name="UserChat_Dashboard"
                 Width="288"
                 Height="942"
-                Margin="43,40,0,0"
+                Margin="43,0,0,0"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Top"
+                VerticalAlignment="Center"
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
-                <Grid>
-                    <Grid.Background>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                            <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                            <GradientStop Offset="0.937" Color="#FF87ACCD" />
-                        </LinearGradientBrush>
-                    </Grid.Background>
-                </Grid>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
             </Border>
 
             <StackPanel

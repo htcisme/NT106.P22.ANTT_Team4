@@ -19,6 +19,7 @@ using DoanKhoaClient.Properties;
 using System.Windows.Media.Imaging; // Cho BitmapImage, BitmapCacheOption, BitmapCreateOptions
 using System.Windows.Controls; // Cho Image
 using System.Windows.Media; // Cho các lớp đồ họa khác
+using System.Collections.Generic; // Add this for Dictionary and List
 namespace DoanKhoaClient.ViewModels
 {
     public class UserChatViewModel : INotifyPropertyChanged
@@ -37,6 +38,12 @@ namespace DoanKhoaClient.ViewModels
         private bool _isConnected;
         private ObservableCollection<Attachment> _selectedAttachments = new ObservableCollection<Attachment>();
         private bool _isAttachmentsPanelOpen = false;
+
+        // Add search-related properties similar to ActivitiesView
+        private ObservableCollection<DoanKhoaClient.Models.Activity> _searchResults = new ObservableCollection<DoanKhoaClient.Models.Activity>();
+        private bool _isSearchResultOpen = false;
+        private readonly ActivityService _activityService;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Properties
@@ -160,7 +167,8 @@ namespace DoanKhoaClient.ViewModels
             {
                 _searchText = value;
                 OnPropertyChanged();
-                SearchConversations();
+                // Update search behavior to work like ActivitiesView
+                SearchActivities();
             }
         }
 
@@ -173,6 +181,7 @@ namespace DoanKhoaClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
         public ObservableCollection<Attachment> SelectedAttachments
         {
             get => _selectedAttachments;
@@ -192,6 +201,28 @@ namespace DoanKhoaClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        // Add search-related properties
+        public ObservableCollection<DoanKhoaClient.Models.Activity> SearchResults
+        {
+            get => _searchResults;
+            set
+            {
+                _searchResults = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSearchResultOpen
+        {
+            get => _isSearchResultOpen;
+            set
+            {
+                _isSearchResultOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
         // Commands
         public ICommand SendMessageCommand { get; private set; }
         public ICommand NewConversationCommand { get; private set; }
@@ -207,6 +238,9 @@ namespace DoanKhoaClient.ViewModels
         private ICommand _searchFriendsCommand;
         public ICommand SearchFriendsCommand => _searchFriendsCommand ??= new RelayCommand(SearchFriends);
 
+        // Add OpenActivityDetailCommand like in ActivitiesView
+        public ICommand OpenActivityDetailCommand { get; private set; }
+
         // Navigation Commands
         public ICommand NavigateToHomeCommand { get; private set; }
         public ICommand NavigateToChatCommand { get; private set; }
@@ -217,6 +251,10 @@ namespace DoanKhoaClient.ViewModels
         public UserChatViewModel()
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299/api/") };
+            _activityService = new ActivityService(); // Initialize activity service
+
+            // Initialize search results collection
+            SearchResults = new ObservableCollection<DoanKhoaClient.Models.Activity>();
 
             // Khởi tạo commands
             SendMessageCommand = new RelayCommand(SendMessage, CanSendMessage);
@@ -231,6 +269,9 @@ namespace DoanKhoaClient.ViewModels
             DeleteMessageCommand = new RelayCommand<Message>(DeleteMessage, CanDeleteMessage);
             DownloadFileCommand = new RelayCommand(DownloadFile);
 
+            // Add OpenActivityDetailCommand
+            OpenActivityDetailCommand = new RelayCommand(param => ExecuteOpenActivityDetail(param as DoanKhoaClient.Models.Activity), param => param is DoanKhoaClient.Models.Activity);
+
             NavigateToHomeCommand = new RelayCommand(NavigateToHome);
             NavigateToChatCommand = new RelayCommand(NavigateToChat);
             NavigateToActivitiesCommand = new RelayCommand(NavigateToActivities);
@@ -243,6 +284,51 @@ namespace DoanKhoaClient.ViewModels
             // Kết nối SignalR
             ConnectToHub();
         }
+
+        // Add search functionality similar to ActivitiesView
+        private async void SearchActivities()
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    // Get activities from the service
+                    var activities = await _activityService.GetActivitiesAsync();
+
+                    if (activities != null)
+                    {
+                        var searchResults = activities.Where(a =>
+                            a.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                            a.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+
+                        SearchResults = new ObservableCollection<DoanKhoaClient.Models.Activity>(searchResults);
+                        IsSearchResultOpen = true;
+                    }
+                }
+                else
+                {
+                    SearchResults.Clear();
+                    IsSearchResultOpen = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error searching activities: {ex.Message}");
+                SearchResults.Clear();
+                IsSearchResultOpen = false;
+            }
+        }
+
+        // Add method to handle opening activity detail
+        private void ExecuteOpenActivityDetail(DoanKhoaClient.Models.Activity activity)
+        {
+            if (activity == null) return;
+            var postView = new ActivitiesPostView(activity);
+            postView.Show();
+            IsSearchResultOpen = false;
+        }
+
         private bool CanEditMessage(Message message)
         {
             return message != null && message.SenderId == CurrentUser?.Id;

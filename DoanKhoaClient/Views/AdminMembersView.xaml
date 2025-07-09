@@ -35,6 +35,57 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="3"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="0"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="FilterComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="#FF042354" />
             <Setter Property="Foreground" Value="#F6FCFF" />
@@ -89,731 +140,731 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
         <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
 
-    <Grid
-        x:Name="Admin_Members_Background"
-        Width="1440"
-        Height="1022.8">
+    <Grid x:Name="Admin_Members_Background" Opacity="1">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0.596" Color="#FFF6FCFF" />
                 <GradientStop Offset="1" Color="#FFDBF3FF" />
             </LinearGradientBrush>
         </Grid.Background>
-
-        <!--  Search Bar  -->
-        <TextBox
-            x:Name="Admin_Members_tbSearch"
-            Width="307"
-            Height="50"
-            Margin="370,41,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FFDBF3FF"
-            BorderBrush="{x:Null}"
-            Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
-            TextWrapping="Wrap" />
+        <Grid Width="1440" Height="1024">
 
 
 
-        <!--  Left Navigation Panel  -->
-        <Border
-            x:Name="Admin_Members_Dashboard"
-            Width="288"
-            Height="942"
-            Margin="43,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            BorderBrush="Black"
-            CornerRadius="10,10,10,10">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                    <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                    <GradientStop Offset="0.937" Color="#FF87ACCD" />
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
+            <!--  Left Navigation Panel  -->
+            <Border
+                x:Name="Admin_Members_Dashboard"
+                Width="288"
+                Height="942"
+                Margin="43,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                BorderBrush="Black"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
 
-        <!--  Header Icons  -->
-        <Image
-            x:Name="Admin_Members_iUsers"
-            Width="40"
-            Height="40"
-            Margin="1358,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/generic avatar.png" />
-        <Image
-            x:Name="Admin_Members_iNotifications"
-            Width="40"
-            Height="40"
-            Margin="1297,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/light-notifications.png" />
-        <Image
-            x:Name="ThemeToggleButton"
-            Width="40"
-            Height="40"
-            Margin="1236,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            MouseDown="ThemeToggleButton_MouseDown"
-            Source="/Views/Images/dark.png" />
-        <Image
-            x:Name="Admin_Members_iSearch"
-            Width="40"
-            Height="40"
-            Margin="628,46,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/search.png" />
+            <!--  Header Icons  -->
+            <Image
+                x:Name="Admin_Members_iUsers"
+                Width="40"
+                Height="40"
+                Margin="1358,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/generic avatar.png" />
+            <Image
+                x:Name="Admin_Members_iNotifications"
+                Width="40"
+                Height="40"
+                Margin="1297,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/light-notifications.png" />
+            <Image
+                x:Name="ThemeToggleButton"
+                Width="40"
+                Height="40"
+                Margin="1236,46,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                MouseDown="ThemeToggleButton_MouseDown"
+                Source="/Views/Images/dark.png" />
 
-        <!--  Logo  -->
-        <Image
-            x:Name="Admin_Members_iLogo"
-            Width="112.38"
-            Height="40"
-            Margin="131,71,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/header.png" />
+            <!--  Logo  -->
+            <Image
+                x:Name="Admin_Members_iLogo"
+                Width="112.38"
+                Height="40"
+                Margin="131,71,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/header.png" />
 
-        <!--  Navigation Menu Items  -->
-        <StackPanel>
+            <!--  Navigation Menu Items  -->
+            <StackPanel>
+                <Button
+                    x:Name="SidebarHomeButton"
+                    Width="160"
+                    Height="30"
+                    Margin="102,203,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SidebarHomeButton_Click"
+                    Cursor="Hand"
+                    Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iHome"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/active-home.png" />
+                        <Label
+                            x:Name="HomePage_lbHome"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Home"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="#597CA2" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
             <Button
-                x:Name="SidebarHomeButton"
+                x:Name="SidebarChatButton"
                 Width="160"
                 Height="30"
-                Margin="102,203,0,0"
+                Margin="102,279,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="SidebarHomeButton_Click"
+                Click="SidebarChatButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
                 <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
-                        x:Name="HomePage_iHome"
+                        x:Name="HomePage_iChat"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/active-home.png" />
+                        Source="/Views/Images/chat_bubble.png" />
                     <Label
-                        x:Name="HomePage_lbHome"
+                        x:Name="HomePage_lbChat"
                         Width="108"
                         Height="30"
                         Margin="30,0,0,0"
                         Padding="0,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Content="Home"
+                        Content="Chat"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"
-                        Foreground="#597CA2" />
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
-        </StackPanel>
-        <Button
-            x:Name="SidebarChatButton"
-            Width="160"
-            Height="30"
-            Margin="102,279,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="SidebarChatButton_Click"
-            Cursor="Hand"
-            Style="{StaticResource NavigationButtonStyle}">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
-                <Image
-                    x:Name="HomePage_iChat"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/chat_bubble.png" />
-                <Label
-                    x:Name="HomePage_lbChat"
-                    Width="108"
-                    Height="30"
-                    Margin="30,0,0,0"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Chat"
-                    FontFamily="Segoe UI"
-                    FontSize="20"
-                    FontWeight="Bold" />
-            </StackPanel>
-        </Button>
-        <Button
-            x:Name="SidebarActivitiesButton"
-            Width="160"
-            Height="30"
-            Margin="102,354,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="SidebarActivitiesButton_Click"
-            Cursor="Hand"
-            Style="{StaticResource NavigationButtonStyle}">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
-                <Image
-                    x:Name="HomePage_Activities"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/activities.png" />
-                <Label
-                    x:Name="HomePage_lbActivities"
-                    Width="108"
-                    Height="30"
-                    Margin="30,0,0,0"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Activities"
-                    FontFamily="Segoe UI"
-                    FontSize="20"
-                    FontWeight="Bold" />
-            </StackPanel>
-        </Button>
-        <Button
-            x:Name="SidebarMemberButton"
-            Width="160"
-            Height="30"
-            Margin="102,432,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="SidebarMembersButton_Click"
-            Cursor="Hand"
-            Style="{StaticResource NavigationButtonStyle}">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
-                <Image
-                    x:Name="HomePage_Task_iMembers"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/members.png" />
-                <Label
-                    x:Name="HomePage_lbMembers"
-                    Width="108"
-                    Height="30"
-                    Margin="30,0,0,0"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Members"
-                    FontFamily="Segoe UI"
-                    FontSize="20"
-                    FontWeight="Bold" />
-            </StackPanel>
-        </Button>
-        <Button
-            x:Name="SidebarTaskButton"
-            Width="160"
-            Height="30"
-            Margin="102,510,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="SidebarTasksButton_Click"
-            Cursor="Hand"
-            Style="{StaticResource NavigationButtonStyle}">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
-                <Image
-                    x:Name="HomePage_iTasks"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/tasks.png" />
-                <Label
-                    x:Name="HomePage_lbTasks"
-                    Width="108"
-                    Height="30"
-                    Margin="30,0,0,0"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Tasks"
-                    FontFamily="Segoe UI"
-                    FontSize="20"
-                    FontWeight="Bold" />
-            </StackPanel>
-        </Button>
-        <Button
-            x:Name="SidebarAdminButton"
-            Width="160"
-            Height="30"
-            Margin="102,586,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="SidebarAdminButton_Click"
-            Cursor="Hand"
-            Style="{StaticResource NavigationButtonStyle}"
-            Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
-                <Image
-                    x:Name="HomePage_iAdmin"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/admin_panel.png" />
-                <Label
-                    x:Name="HomePage_lbAdmin"
-                    Width="108"
-                    Height="30"
-                    Margin="30,0,0,0"
-                    Padding="0,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Admin"
-                    FontFamily="Segoe UI"
-                    FontSize="20"
-                    FontWeight="Bold" />
-            </StackPanel>
-        </Button>
-
-        <!--  Admin submenu  -->
-        <StackPanel
-            x:Name="AdminSubmenu"
-            Margin="132,621,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Visibility="Collapsed">
             <Button
-                x:Name="AdminTaskButton"
-                Margin="0,5,0,5"
+                x:Name="SidebarActivitiesButton"
+                Width="160"
+                Height="30"
+                Margin="102,354,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="AdminTaskButton_Click"
-                Cursor="Hand">
-                <TextBlock
-                    FontSize="15"
-                    Foreground="#042354"
-                    Text="Quản lý công việc" />
+                Click="SidebarActivitiesButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_Activities"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/activities.png" />
+                    <Label
+                        x:Name="HomePage_lbActivities"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Activities"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                </StackPanel>
             </Button>
             <Button
-                x:Name="AdminMembersButton"
-                Margin="0,5,0,5"
+                x:Name="SidebarMemberButton"
+                Width="160"
+                Height="30"
+                Margin="102,432,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="AdminMembersButton_Click"
-                Cursor="Hand">
-                <TextBlock
-                    FontSize="15"
-                    Foreground="#042354"
-                    Text="Quản lý thành viên" />
+                Click="SidebarMembersButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_Task_iMembers"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/members.png" />
+                    <Label
+                        x:Name="HomePage_lbMembers"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Members"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                </StackPanel>
             </Button>
             <Button
-                x:Name="AdminChatButton"
-                Margin="0,5,0,5"
+                x:Name="SidebarTaskButton"
+                Width="160"
+                Height="30"
+                Margin="102,510,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="AdminChatButton_Click"
-                Cursor="Hand">
-                <TextBlock
-                    FontSize="15"
-                    Foreground="#042354"
-                    Text="Quản lý chat" />
+                Click="SidebarTasksButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iTasks"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/tasks.png" />
+                    <Label
+                        x:Name="HomePage_lbTasks"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Tasks"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                </StackPanel>
             </Button>
             <Button
-                x:Name="AdminActivitiesButton"
-                Margin="0,5,0,5"
+                x:Name="SidebarAdminButton"
+                Width="160"
+                Height="30"
+                Margin="102,586,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="AdminActivitiesButton_Click"
-                Cursor="Hand">
-                <TextBlock
-                    FontSize="15"
-                    Foreground="#042354"
-                    Text="Quản lý hoạt động" />
+                Click="SidebarAdminButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}"
+                Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iAdmin"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/admin_panel.png" />
+                    <Label
+                        x:Name="HomePage_lbAdmin"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Admin"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                </StackPanel>
             </Button>
-        </StackPanel>
-        <!--  Social Media Icons  -->
-        <Image
-            x:Name="Admin_Members_iFacebook"
-            Width="24"
-            Height="24"
-            Margin="175,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/facebook.png" />
-        <Image
-            x:Name="Admin_Members_iInstagram"
-            Width="24"
-            Height="24"
-            Margin="135,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/instagram.png" />
-        <Image
-            x:Name="Admin_Members_iYoutube"
-            Width="24"
-            Height="24"
-            Margin="215,926,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Source="/Views/Images/youtube.png" />
 
-        <!--  Page Title  -->
-        <Label
-            x:Name="Admin_Members_lbInformation"
-            Width="386"
-            Height="40"
-            Margin="365,153,0,0"
-            Padding="0,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Left"
-            Content="QUẢN LÝ THÀNH VIÊN"
-            FontSize="32"
-            FontWeight="Bold"
-            Foreground="#042354" />
+            <!--  Admin submenu  -->
+            <StackPanel
+                x:Name="AdminSubmenu"
+                Margin="132,621,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Button
+                    x:Name="AdminTaskButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminTaskButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý công việc" />
+                </Button>
+                <Button
+                    x:Name="AdminMembersButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminMembersButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý thành viên" />
+                </Button>
+                <Button
+                    x:Name="AdminChatButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminChatButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý chat" />
+                </Button>
+                <Button
+                    x:Name="AdminActivitiesButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminActivitiesButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý hoạt động" />
+                </Button>
+            </StackPanel>
+            <!--  Social Media Icons  -->
+            <Image
+                x:Name="Admin_Members_iFacebook"
+                Width="24"
+                Height="24"
+                Margin="175,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/facebook.png" />
+            <Image
+                x:Name="Admin_Members_iInstagram"
+                Width="24"
+                Height="24"
+                Margin="135,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/instagram.png" />
+            <Image
+                x:Name="Admin_Members_iYoutube"
+                Width="24"
+                Height="24"
+                Margin="215,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/youtube.png" />
+            <Border
+                Width="1042"
+                Height="864"
+                Margin="356,0,0,40"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Panel.ZIndex="-1"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <!--  Page Title  -->
+            <Label
+                x:Name="Admin_Members_lbInformation"
+                Width="386"
+                Height="40"
+                Margin="387,151,0,0"
+                Padding="0,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Left"
+                Content="QUẢN LÝ THÀNH VIÊN"
+                FontSize="32"
+                FontWeight="Bold"
+                Foreground="#042354" />
 
-        <!--  Separator Line  -->
-        <Rectangle
-            Width="1020"
-            Height="1"
-            Margin="365,293,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            RenderTransformOrigin="0.5,0.5"
-            Stroke="Black">
-            <Rectangle.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleY="-1" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform />
-                </TransformGroup>
-            </Rectangle.RenderTransform>
-        </Rectangle>
+            <!--  Separator Line  -->
+            <Rectangle
+                Width="980"
+                Height="2"
+                Margin="387,293,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                RenderTransformOrigin="0.5,0.5"
+                Stroke="#FF042354">
+                <Rectangle.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1" />
+                        <SkewTransform />
+                        <RotateTransform Angle="0" />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </Rectangle.RenderTransform>
+            </Rectangle>
 
-        <!--  Action Buttons  -->
-        <Button
-            x:Name="AddMemberButton"
-            Width="147"
-            Height="40"
-            Margin="365,219,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FF042354"
-            Command="{Binding AddUserCommand}"
-            Content="Thêm thành viên"
-            FontSize="16"
-            FontWeight="Bold"
-            Foreground="#F6FCFF" />
+            <!--  Action Buttons  -->
+            <Button
+                x:Name="AddMemberButton"
+                Width="147"
+                Height="40"
+                Margin="397,219,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#FF042354"
+                Command="{Binding AddUserCommand}"
+                Content="Thêm thành viên"
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="#F6FCFF" />
 
-        <Button
-            x:Name="RefreshButton"
-            Width="147"
-            Height="40"
-            Margin="530,219,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#FF466CA7"
-            Command="{Binding RefreshCommand}"
-            Content="Làm mới"
-            FontSize="16"
-            FontWeight="Bold"
-            Foreground="#F6FCFF" />
+            <Button
+                x:Name="RefreshButton"
+                Width="147"
+                Height="40"
+                Margin="562,219,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#FF466CA7"
+                Command="{Binding RefreshCommand}"
+                Content="Làm mới"
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="#F6FCFF" />
 
-        <!--  Batch Action Buttons  -->
-        <Button
-            x:Name="BatchEditButton"
-            Width="147"
-            Height="40"
-            Margin="693,219,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#3498db"
-            Command="{Binding BatchEditCommand}"
-            Content="Sửa hàng loạt"
-            FontSize="16"
-            FontWeight="Bold"
-            Foreground="White" />
+            <!--  Batch Action Buttons  -->
+            <Button
+                x:Name="BatchEditButton"
+                Width="147"
+                Height="40"
+                Margin="725,219,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#3498db"
+                Command="{Binding BatchEditCommand}"
+                Content="Sửa hàng loạt"
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="White" />
 
-        <Button
-            x:Name="BatchDeleteButton"
-            Width="147"
-            Height="40"
-            Margin="852,219,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Background="#e74c3c"
-            Command="{Binding BatchDeleteCommand}"
-            Content="Xóa hàng loạt"
-            FontSize="16"
-            FontWeight="Bold"
-            Foreground="White" />
-        <!--  Filter Dropdown  -->
-        <ComboBox
-            Width="147"
-            Height="40"
-            Margin="1012,219,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            DisplayMemberPath="DisplayName"
-            FontSize="17"
-            FontWeight="Bold"
-            Foreground="#FF042354"
-            ItemsSource="{Binding Roles}"
-            SelectedItem="{Binding SelectedRole}"
-            Style="{StaticResource FilterComboBoxStyle}" />
+            <Button
+                x:Name="BatchDeleteButton"
+                Width="147"
+                Height="40"
+                Margin="884,219,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#e74c3c"
+                Command="{Binding BatchDeleteCommand}"
+                Content="Xóa hàng loạt"
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="White" />
+            <!--  Filter Dropdown  -->
+            <ComboBox
+                Width="147"
+                Height="40"
+                Margin="1044,219,0,0"
+                DisplayMemberPath="DisplayName"
+                FontSize="17"
+                FontWeight="Bold"
+                Foreground="#FF042354"
+                ItemsSource="{Binding Roles}"
+                SelectedItem="{Binding SelectedRole}"
+                Style="{StaticResource FilterComboBoxStyle}" />
 
-        <!--  Member List  -->
-        <!--  Member List Cải Tiến  -->
-        <ListView
-            x:Name="MembersListView"
-            Margin="370,330,55,41"
-            Background="White"
-            BorderBrush="#E0E0E0"
-            BorderThickness="1"
-            ItemsSource="{Binding FilteredUsers}"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            SelectedItem="{Binding SelectedUser}">
-            <ListView.Resources>
-                <!--  Style cho các button thao tác  -->
-                <Style x:Key="ActionButtonStyle" TargetType="Button">
-                    <Setter Property="Margin" Value="0,0,0,0" />
-                    <Setter Property="Padding" Value="10,5" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Cursor" Value="Hand" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border
-                                    Padding="{TemplateBinding Padding}"
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="4">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Opacity" Value="0.8" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.Resources>
+            <!--  Member List  -->
+            <!--  Member List Cải Tiến  -->
+            <ListView
+                x:Name="MembersListView"
+                Margin="386,334,69,70"
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                ItemsSource="{Binding FilteredUsers}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                SelectedItem="{Binding SelectedUser}">
+                <ListView.Resources>
+                    <!--  Style cho các button thao tác  -->
+                    <Style x:Key="ActionButtonStyle" TargetType="Button">
+                        <Setter Property="Margin" Value="0,0,0,0" />
+                        <Setter Property="Padding" Value="10,5" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        CornerRadius="4">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Resources>
 
-            <ListView.View>
-                <GridView>
-                    <!--  Checkbox chọn nhiều  -->
-                    <GridViewColumn Width="40">
-                        <GridViewColumn.Header>
-                            <CheckBox IsChecked="{Binding DataContext.IsAllSelected, RelativeSource={RelativeSource AncestorType=ListView}, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
-                        </GridViewColumn.Header>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <!--  Avatar/Hình đại diện  -->
-                    <GridViewColumn Width="60">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Width="40"
-                                    Height="40"
-                                    Background="#EEEEEE"
-                                    CornerRadius="20">
-                                    <Image Source="/Views/Images/generic avatar.png" Stretch="UniformToFill" />
-                                </Border>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                <ListView.View>
+                    <GridView>
+                        <!--  Checkbox chọn nhiều  -->
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.Header>
+                                <CheckBox IsChecked="{Binding DataContext.IsAllSelected, RelativeSource={RelativeSource AncestorType=ListView}, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <!--  Avatar/Hình đại diện  -->
+                        <GridViewColumn Width="60">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Width="40"
+                                        Height="40"
+                                        Background="#EEEEEE"
+                                        CornerRadius="20">
+                                        <Image Source="/Views/Images/generic avatar.png" Stretch="UniformToFill" />
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="110" Header="TÊN ĐĂNG NHẬP">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Text="{Binding Username}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="110" Header="TÊN ĐĂNG NHẬP">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Username}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="180" Header="HỌ TÊN">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="180" Header="HỌ TÊN">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="200" Header="EMAIL">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Email}"
-                                    TextTrimming="CharacterEllipsis"
-                                    ToolTip="{Binding Email}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-
-                    <GridViewColumn Width="75" Header="VAI TRÒ">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Padding="8,3"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Background="#F0F7FF"
-                                    CornerRadius="4">
+                        <GridViewColumn Width="200" Header="EMAIL">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
                                     <TextBlock
                                         VerticalAlignment="Center"
-                                        FontWeight="Medium"
-                                        Foreground="#042354"
-                                        Text="{Binding Role, Converter={StaticResource RoleToTextConverter}}" />
-                                </Border>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                                        Text="{Binding Email}"
+                                        TextTrimming="CharacterEllipsis"
+                                        ToolTip="{Binding Email}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="80" Header="TRẠNG THÁI">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                    <Ellipse
-                                        Width="10"
-                                        Height="10"
-                                        Margin="0,0,8,0">
-                                        <Ellipse.Style>
-                                            <Style TargetType="Ellipse">
-                                                <Setter Property="Fill" Value="#4CAF50" />
-                                                <!--  Green for online  -->
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                                                        <Setter Property="Fill" Value="#9E9E9E" />
-                                                        <!--  Gray for offline  -->
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Ellipse.Style>
-                                    </Ellipse>
-                                    <TextBlock VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Online" />
-                                                <Setter Property="Foreground" Value="#4CAF50" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                                                        <Setter Property="Text" Value="Offline" />
-                                                        <Setter Property="Foreground" Value="#9E9E9E" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="75" Header="VAI TRÒ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Padding="8,3"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="#F0F7FF"
+                                        CornerRadius="4">
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontWeight="Medium"
+                                            Foreground="#042354"
+                                            Text="{Binding Role, Converter={StaticResource RoleToTextConverter}}" />
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="110" Header="SỐ HOẠT ĐỘNG">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding ActivitiesCount}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="80" Header="TRẠNG THÁI">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                        <Ellipse
+                                            Width="10"
+                                            Height="10"
+                                            Margin="0,0,8,0">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="#4CAF50" />
+                                                    <!--  Green for online  -->
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                            <Setter Property="Fill" Value="#9E9E9E" />
+                                                            <!--  Gray for offline  -->
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="Online" />
+                                                    <Setter Property="Foreground" Value="#4CAF50" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                            <Setter Property="Text" Value="Offline" />
+                                                            <Setter Property="Foreground" Value="#9E9E9E" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="280" Header="THAO TÁC">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                    <Button
-                                        Width="50"
-                                        Height="29"
-                                        Margin="0,0,20,0"
-                                        Background="#2196F3"
-                                        Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                        CommandParameter="{Binding}"
-                                        Content="Sửa"
-                                        Foreground="White"
-                                        Style="{StaticResource ActionButtonStyle}" />
+                        <GridViewColumn Width="110" Header="SỐ HOẠT ĐỘNG">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding ActivitiesCount}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                                    <Button
-                                        Width="50"
-                                        Height="29"
-                                        Margin="0,0,20,0"
-                                        Background="#F44336"
-                                        Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                        CommandParameter="{Binding}"
-                                        Content="Xóa"
-                                        Foreground="White"
-                                        Style="{StaticResource ActionButtonStyle}" />
+                        <GridViewColumn Width="280" Header="THAO TÁC">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <Button
+                                            Width="50"
+                                            Height="29"
+                                            Margin="0,0,20,0"
+                                            Background="#2196F3"
+                                            Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Content="Sửa"
+                                            Foreground="White"
+                                            Style="{StaticResource ActionButtonStyle}" />
 
-                                    <Button
-                                        Width="63"
-                                        Height="29"
-                                        Background="#FF042354"
-                                        Command="{Binding DataContext.ViewUserDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                        CommandParameter="{Binding}"
-                                        Content="Chi tiết"
-                                        Foreground="White"
-                                        Style="{StaticResource ActionButtonStyle}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
+                                        <Button
+                                            Width="50"
+                                            Height="29"
+                                            Margin="0,0,20,0"
+                                            Background="#F44336"
+                                            Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Content="Xóa"
+                                            Foreground="White"
+                                            Style="{StaticResource ActionButtonStyle}" />
 
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="Padding" Value="12,10" />
-                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-                    <Setter Property="BorderBrush" Value="#EEEEEE" />
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#F5F9FF" />
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="#E3F2FD" />
-                            <Setter Property="BorderBrush" Value="#BBDEFB" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+                                        <Button
+                                            Width="63"
+                                            Height="29"
+                                            Background="#FF042354"
+                                            Command="{Binding DataContext.ViewUserDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Content="Chi tiết"
+                                            Foreground="White"
+                                            Style="{StaticResource ActionButtonStyle}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
 
-
-
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="12,10" />
+                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                        <Setter Property="BorderBrush" Value="#EEEEEE" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F9FF" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#E3F2FD" />
+                                <Setter Property="BorderBrush" Value="#BBDEFB" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
     </Grid>
 </Window>

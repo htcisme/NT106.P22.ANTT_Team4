@@ -584,38 +584,7 @@
                                     </Button>
                                 </Grid>
 
-                                <!--  Pagination Dots  -->
-                                <StackPanel
-                                    Grid.Row="2"
-                                    Margin="0,15,0,0"
-                                    HorizontalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <ItemsControl ItemsSource="{Binding PaginationDots}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Ellipse Margin="3,0" Fill="{Binding Color}">
-                                                    <Ellipse.Style>
-                                                        <Style TargetType="Ellipse">
-                                                            <Setter Property="Width" Value="10" />
-                                                            <Setter Property="Height" Value="10" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                                    <Setter Property="Width" Value="14" />
-                                                                    <Setter Property="Height" Value="14" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Ellipse.Style>
-                                                </Ellipse>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
+
                             </Grid>
 
                             <Label
