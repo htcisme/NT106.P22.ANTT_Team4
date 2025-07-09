@@ -52,9 +52,8 @@ namespace DoanKhoaClient.ViewModels
         private ObservableCollection<FilterOption<ActivityStatus>> _activityStatusOptions;
         private ObservableCollection<string> _selectedFilterTags;
         private bool _isSearchDropdownOpen;
-
-
     
+
         public ObservableCollection<DoanKhoaClient.Models.Activity> GetFilteredActivities(string keyword)
         {
             // Giả sử bạn có danh sách gốc là AllActivities
@@ -248,62 +247,29 @@ namespace DoanKhoaClient.ViewModels
         public ICommand ApplyFilterCommand { get; }
         public ICommand RemoveFilterTagCommand { get; }
         public ICommand LikeCommand { get; }
+        public ICommand PreviousImageCommand { get; }
+        public ICommand NextImageCommand { get; }
 
+        // Thay thế constructor hiện tại trong ActivitiesViewModel
         public ActivitiesViewModel(ActivityService activityService = null)
         {
             _activityService = activityService ?? new ActivityService();
+
+            // KHỞI TẠO TẤT CẢ COLLECTIONS TRƯỚC - QUAN TRỌNG
             Activities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
             LatestActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
+            SearchResults = new ObservableCollection<DoanKhoaClient.Models.Activity>(); // THÊM DÒNG NÀY
+            FilteredActivities = new ObservableCollection<DoanKhoaClient.Models.Activity>();
+            SelectedFilterTags = new ObservableCollection<string>();
+
+            // Khởi tạo Featured Activities và Carousel
             InitializeFeaturedActivities();
             InitializePaginationDots();
             InitializeCarouselTimer();
 
-            // Khởi tạo các trường tìm kiếm
-            SearchFields = new ObservableCollection<SearchField>
-            {
-                new SearchField { DisplayName = "Tất cả", Field = "All" },
-                new SearchField { DisplayName = "Tiêu đề", Field = "Title" },
-                new SearchField { DisplayName = "Mô tả", Field = "Description" },
-                new SearchField { DisplayName = "Loại", Field = "Type" },
-                new SearchField { DisplayName = "Trạng thái", Field = "Status" }
-            };
-            SelectedSearchField = SearchFields[0];
-
-            // Khởi tạo Type/Status filter có null
-            TypeFilterOptions = new ObservableCollection<NullableTypeItem>
-            {
-                new NullableTypeItem { Display = "Tất cả", Value = null },
-                new NullableTypeItem { Display = "Học thuật", Value = ActivityType.Academic },
-                new NullableTypeItem { Display = "Tình nguyện", Value = ActivityType.Volunteer },
-                new NullableTypeItem { Display = "Giải trí", Value = ActivityType.Entertainment }
-            };
-            StatusFilterOptions = new ObservableCollection<NullableStatusItem>
-            {
-                new NullableStatusItem { Display = "Tất cả", Value = null },
-                new NullableStatusItem { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming },
-                new NullableStatusItem { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing },
-                new NullableStatusItem { Display = "Đã diễn ra", Value = ActivityStatus.Completed }
-            };
-            SelectedTypeItem = TypeFilterOptions[0];
-            SelectedStatusItem = StatusFilterOptions[0];
-
-            // Khởi tạo cho bộ lọc dropdown
-            ActivityTypeOptions = new ObservableCollection<FilterOption<ActivityType>>
-            {
-                new FilterOption<ActivityType> { Display = "Học thuật", Value = ActivityType.Academic, IsChecked = false },
-                new FilterOption<ActivityType> { Display = "Tình nguyện", Value = ActivityType.Volunteer, IsChecked = false },
-                new FilterOption<ActivityType> { Display = "Giải trí", Value = ActivityType.Entertainment, IsChecked = false }
-            };
-
-            ActivityStatusOptions = new ObservableCollection<FilterOption<ActivityStatus>>
-            {
-                new FilterOption<ActivityStatus> { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming, IsChecked = false },
-                new FilterOption<ActivityStatus> { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing, IsChecked = false },
-                new FilterOption<ActivityStatus> { Display = "Đã diễn ra", Value = ActivityStatus.Completed, IsChecked = false }
-            };
-
-            SelectedFilterTags = new ObservableCollection<string>();
-
+            // KHỞI TẠO TẤT CẢ COMMANDS TRƯỚC - QUAN TRỌNG
+            PreviousImageCommand = new RelayCommand(_ => MoveToPreviousImage());
+            NextImageCommand = new RelayCommand(_ => MoveToNextImage());
             CreateActivityCommand = new RelayCommand(async _ => await ExecuteCreateActivityAsync(), _ => !IsLoading);
             EditActivityCommand = new RelayCommand(async param => await ExecuteEditActivityAsync(param as DoanKhoaClient.Models.Activity), param => !IsLoading && param is DoanKhoaClient.Models.Activity);
             DeleteActivityCommand = new RelayCommand(async param => await ExecuteDeleteActivityAsync(param as DoanKhoaClient.Models.Activity), param => !IsLoading && param is DoanKhoaClient.Models.Activity);
@@ -313,7 +279,89 @@ namespace DoanKhoaClient.ViewModels
             RemoveFilterTagCommand = new RelayCommand(param => ExecuteRemoveFilterTag(param as string));
             LikeCommand = new RelayCommand(ExecuteLike, CanExecuteLike);
 
+            // Khởi tạo các trường tìm kiếm
+            SearchFields = new ObservableCollection<SearchField>
+    {
+        new SearchField { DisplayName = "Tất cả", Field = "All" },
+        new SearchField { DisplayName = "Tiêu đề", Field = "Title" },
+        new SearchField { DisplayName = "Mô tả", Field = "Description" },
+        new SearchField { DisplayName = "Loại", Field = "Type" },
+        new SearchField { DisplayName = "Trạng thái", Field = "Status" }
+    };
+            SelectedSearchField = SearchFields[0];
+
+            // Khởi tạo Type/Status filter có null
+            TypeFilterOptions = new ObservableCollection<NullableTypeItem>
+    {
+        new NullableTypeItem { Display = "Tất cả", Value = null },
+        new NullableTypeItem { Display = "Học thuật", Value = ActivityType.Academic },
+        new NullableTypeItem { Display = "Tình nguyện", Value = ActivityType.Volunteer },
+        new NullableTypeItem { Display = "Giải trí", Value = ActivityType.Entertainment }
+    };
+            StatusFilterOptions = new ObservableCollection<NullableStatusItem>
+    {
+        new NullableStatusItem { Display = "Tất cả", Value = null },
+        new NullableStatusItem { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming },
+        new NullableStatusItem { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing },
+        new NullableStatusItem { Display = "Đã diễn ra", Value = ActivityStatus.Completed }
+    };
+            SelectedTypeItem = TypeFilterOptions[0];
+            SelectedStatusItem = StatusFilterOptions[0];
+
+            // Khởi tạo cho bộ lọc dropdown
+            ActivityTypeOptions = new ObservableCollection<FilterOption<ActivityType>>
+    {
+        new FilterOption<ActivityType> { Display = "Học thuật", Value = ActivityType.Academic, IsChecked = false },
+        new FilterOption<ActivityType> { Display = "Tình nguyện", Value = ActivityType.Volunteer, IsChecked = false },
+        new FilterOption<ActivityType> { Display = "Giải trí", Value = ActivityType.Entertainment, IsChecked = false }
+    };
+
+            ActivityStatusOptions = new ObservableCollection<FilterOption<ActivityStatus>>
+    {
+        new FilterOption<ActivityStatus> { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming, IsChecked = false },
+        new FilterOption<ActivityStatus> { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing, IsChecked = false },
+        new FilterOption<ActivityStatus> { Display = "Đã diễn ra", Value = ActivityStatus.Completed, IsChecked = false }
+    };
+
+            // Load data cuối cùng
             _ = LoadActivitiesAsync();
+        }
+        private void MoveToPreviousImage()
+        {
+            // Kiểm tra null safety
+            if (_carouselTimer == null || FeaturedActivities == null || PaginationDots == null ||
+                FeaturedActivities.Count == 0 || PaginationDots.Count == 0) return;
+
+            _carouselTimer.Stop();
+
+            // Deactivate current
+            FeaturedActivities[_currentFeaturedIndex].IsActive = false;
+            PaginationDots[_currentFeaturedIndex].IsActive = false;
+            PaginationDots[_currentFeaturedIndex].Color = new SolidColorBrush(Color.FromRgb(219, 236, 247));
+
+            // Move to previous
+            _currentFeaturedIndex = (_currentFeaturedIndex - 1 + FeaturedActivities.Count) % FeaturedActivities.Count;
+
+            // Activate new
+            FeaturedActivities[_currentFeaturedIndex].IsActive = true;
+            PaginationDots[_currentFeaturedIndex].IsActive = true;
+            PaginationDots[_currentFeaturedIndex].Color = new SolidColorBrush(Color.FromRgb(89, 124, 162));
+
+            _carouselTimer.Start();
+        }
+
+        private void MoveToNextImage()
+        {
+            if (_carouselTimer == null) return;
+
+            _carouselTimer.Stop();
+            _ = CarouselTransitionAsync();
+            _carouselTimer.Start();
+        }
+        public void Cleanup()
+        {
+            _carouselTimer?.Stop();
+            _carouselTimer = null;
         }
 
         private void ExecuteApplyFilter()
@@ -429,43 +477,32 @@ namespace DoanKhoaClient.ViewModels
         private void InitializeCarouselTimer()
         {
             _carouselTimer = new DispatcherTimer();
-            _carouselTimer.Interval = TimeSpan.FromSeconds(4);
+            _carouselTimer.Interval = TimeSpan.FromSeconds(5);
             _carouselTimer.Tick += async (s, e) => await CarouselTransitionAsync();
             _carouselTimer.Start();
         }
 
         private async Task CarouselTransitionAsync()
         {
-            if (FeaturedActivities.Count < 3) return;
+            // Null safety checks
+            if (FeaturedActivities == null || PaginationDots == null ||
+                FeaturedActivities.Count == 0 || PaginationDots.Count == 0) return;
 
-            // Store current state
-            var currentActiveIndex = FeaturedActivities.IndexOf(FeaturedActivities.FirstOrDefault(f => f.IsActive));
-            var nextActiveIndex = (currentActiveIndex + 1) % FeaturedActivities.Count;
+            // Deactivate current
+            FeaturedActivities[_currentFeaturedIndex].IsActive = false;
+            PaginationDots[_currentFeaturedIndex].IsActive = false;
+            PaginationDots[_currentFeaturedIndex].Color = new SolidColorBrush(Color.FromRgb(219, 236, 247));
 
-            // Move the last item to the beginning
-            var lastItem = FeaturedActivities[FeaturedActivities.Count - 1];
-            FeaturedActivities.RemoveAt(FeaturedActivities.Count - 1);
-            FeaturedActivities.Insert(0, lastItem);
+            // Move to next
+            _currentFeaturedIndex = (_currentFeaturedIndex + 1) % FeaturedActivities.Count;
 
-            // Update active states
-            for (int i = 0; i < FeaturedActivities.Count; i++)
-            {
-                FeaturedActivities[i].IsActive = (i == 0);
-            }
+            // Small delay for smooth transition
+            await Task.Delay(200);
 
-            // Update dots
-            for (int i = 0; i < PaginationDots.Count; i++)
-            {
-                PaginationDots[i].IsActive = (i == 0);
-                PaginationDots[i].Color = (i == 0)
-                    ? new SolidColorBrush(Color.FromRgb(89, 124, 162))
-                    : new SolidColorBrush(Color.FromRgb(219, 236, 247));
-            }
-
-            // Move the last dot to the beginning
-            var lastDot = PaginationDots[PaginationDots.Count - 1];
-            PaginationDots.RemoveAt(PaginationDots.Count - 1);
-            PaginationDots.Insert(0, lastDot);
+            // Activate new
+            FeaturedActivities[_currentFeaturedIndex].IsActive = true;
+            PaginationDots[_currentFeaturedIndex].IsActive = true;
+            PaginationDots[_currentFeaturedIndex].Color = new SolidColorBrush(Color.FromRgb(89, 124, 162));
         }
 
         public async Task LoadActivitiesAsync()

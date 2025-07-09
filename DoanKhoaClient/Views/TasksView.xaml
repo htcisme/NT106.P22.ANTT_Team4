@@ -13,97 +13,259 @@
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <Style x:Key="MenuItemStyle"
-               TargetType="StackPanel">
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="#1A12305E"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="TeamCardStyle"
-               TargetType="Border">
-            <Setter Property="Background"
-                    Value="#FFDBF3FF"/>
-            <Setter Property="CornerRadius"
-                    Value="15"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="Effect">
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <DropShadowEffect ShadowDepth="3"
-                                      BlurRadius="8"
-                                      Opacity="0.3"
-                                      Color="#042354"/>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
+                    </TransformGroup>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="#FFB3D9FF"/>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1.05"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="3"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                To="1"
+                                Duration="0:0:0.1" />
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                To="0"
+                                Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TeamCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFDBF3FF" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        BlurRadius="8"
+                        Opacity="0.3"
+                        ShadowDepth="3"
+                        Color="#042354" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFB3D9FF" />
                     <Setter Property="Effect">
                         <Setter.Value>
-                            <DropShadowEffect ShadowDepth="5"
-                                              BlurRadius="12"
-                                              Opacity="0.5"
-                                              Color="#042354"/>
+                            <DropShadowEffect
+                                BlurRadius="12"
+                                Opacity="0.5"
+                                ShadowDepth="5"
+                                Color="#042354" />
                         </Setter.Value>
                     </Setter>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="NavigationButtonStyle"
-               TargetType="Button">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="#1A12305E"/>
-                </Trigger>
-            </Style.Triggers>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE3F6FF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
-    <Viewbox Stretch="Uniform">
-        <Grid x:Name="Task_Background"
-              Width="1440"
-              Height="1022.8">
+    <Grid>
+        <Grid x:Name="Task_Background">
             <Grid.Background>
-                <LinearGradientBrush StartPoint="0.5,0"
-                                     EndPoint="0.5,1">
-                    <GradientStop Offset="0.596"
-                                  Color="#FFF6FCFF"/>
-                    <GradientStop Offset="1"
-                                  Color="#FFDBF3FF"/>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                    <GradientStop Offset="1" Color="#FFDBF3FF" />
                 </LinearGradientBrush>
             </Grid.Background>
+            <Grid Width="1440" Height="1024">
+                <Border
+                    Width="1042"
+                    Height="864"
+                    Margin="356,0,0,40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Panel.ZIndex="-1"
+                    CornerRadius="10,10,10,10">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                            <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                            <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
 
-            <!-- GIỮ NGUYÊN TẤT CẢ PHẦN NAVIGATION VÀ HEADER -->
-            <TextBox x:Name="Task_tbSearch"
-                     Width="307"
-                     Height="50"
-                     Margin="370,41,0,0"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top"
-                     Background="#FFDBF3FF"
-                     BorderBrush="{x:Null}"
-                     Text=""
-                     TextWrapping="Wrap"/>
+                <!--  GIỮ NGUYÊN TẤT CẢ PHẦN NAVIGATION VÀ HEADER  -->
+                <TextBox
+                    x:Name="Activities_tbSearch"
+                    Width="307"
+                    Height="50"
+                    Margin="355,41,0,0"
+                    Padding="50,0,20,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    KeyDown="Activities_tbSearch_KeyDown"
+                    Style="{StaticResource SearchBoxStyle}"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Border x:Name="Task_Dashboard"
+                <Popup
+                    IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
+                    Placement="Bottom"
+                    PlacementTarget="{Binding ElementName=Activities_tbSearch}"
+                    StaysOpen="False">
+                    <Border
+                        x:Name="SearchResultsBorder"
+                        Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
+                        Background="#FFEDF9FF"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <ListBox
+                            MaxHeight="200"
+                            Background="White"
+                            BorderThickness="0"
+                            ItemsSource="{Binding SearchResults, UpdateSourceTrigger=PropertyChanged}"
+                            ListBox.SelectionMode="Single"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Height="30"
+                                        MinWidth="220"
+                                        Margin="0,4,0,4"
+                                        Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Content="{Binding Title}"
+                                        Style="{StaticResource SearchResultButtonStyle}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Popup>
+
+                <Border
+                    x:Name="Activities_Dashboard"
                     Width="288"
                     Height="942"
                     Margin="43,0,0,0"
@@ -111,61 +273,63 @@
                     VerticalAlignment="Center"
                     BorderBrush="Black"
                     CornerRadius="10,10,10,10">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                                         EndPoint="0.5,1">
-                        <GradientStop Offset="0.04"
-                                      Color="#FFF6FCFF"/>
-                        <GradientStop Offset="0.46"
-                                      Color="#FFDBF3FF"/>
-                        <GradientStop Offset="0.937"
-                                      Color="#FF87ACCD"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                            <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                            <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
 
-            <!-- Navigation Icons -->
-            <Image x:Name="Task_iUsers"
-                   Grid.Column="1"
-                   Width="40"
-                   Height="40"
-                   Margin="1358,46,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/generic avatar.png"/>
-            <Image x:Name="Task_iNotifications"
-                   Width="40"
-                   Height="40"
-                   Margin="1297,46,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/light-notifications.png"/>
-            <Image x:Name="ThemeToggleButton"
-                   Width="40"
-                   Height="40"
-                   Margin="1236,46,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   MouseDown="ThemeToggleButton_MouseDown"
-                   Source="/Views/Images/dark.png"/>
-            <Image x:Name="Task_iSearch"
-                   Width="40"
-                   Height="40"
-                   Margin="628,46,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/search.png"/>
-            <Image x:Name="Task_iLogo"
-                   Width="112.38"
-                   Height="40"
-                   Margin="131,71,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/header.png"/>
+                <!--  Navigation Icons  -->
+                <Image
+                    x:Name="Task_iUsers"
+                    Grid.Column="1"
+                    Width="40"
+                    Height="40"
+                    Margin="1358,46,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/generic avatar.png" />
+                <Image
+                    x:Name="Task_iNotifications"
+                    Width="40"
+                    Height="40"
+                    Margin="1297,46,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/light-notifications.png" />
+                <Image
+                    x:Name="ThemeToggleButton"
+                    Width="40"
+                    Height="40"
+                    Margin="1236,46,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    MouseDown="ThemeToggleButton_MouseDown"
+                    Source="/Views/Images/dark.png" />
+                <Image
+                    x:Name="LightHomePage_iSearch"
+                    Width="30"
+                    Height="30"
+                    Margin="368,51,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/search.png" />
+                <Image
+                    x:Name="Task_iLogo"
+                    Width="112.38"
+                    Height="40"
+                    Margin="131,71,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/header.png" />
 
-            <!-- Navigation Buttons -->
-            <StackPanel>
-                <Button x:Name="SidebarHomeButton"
+                <!--  Navigation Buttons  -->
+                <StackPanel>
+                    <Button
+                        x:Name="SidebarHomeButton"
                         Width="160"
                         Height="30"
                         Margin="102,203,0,0"
@@ -176,30 +340,32 @@
                         Click="SidebarHomeButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
-                    <StackPanel Orientation="Horizontal"
-                                Style="{StaticResource MenuItemStyle}">
-                        <Image x:Name="HomePage_iHome"
-                               Width="30"
-                               Height="30"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Top"
-                               Source="/Views/Images/home.png"/>
-                        <Label x:Name="HomePage_lbHome"
-                               Width="108"
-                               Height="30"
-                               Margin="30,0,0,0"
-                               Padding="0,0,0,0"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Top"
-                               Content="Home"
-                               FontFamily="Segoe UI"
-                               FontSize="20"
-                               FontWeight="Bold"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                            <Image
+                                x:Name="HomePage_iHome"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Source="/Views/Images/home.png" />
+                            <Label
+                                x:Name="HomePage_lbHome"
+                                Width="108"
+                                Height="30"
+                                Margin="30,0,0,0"
+                                Padding="0,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="Home"
+                                FontFamily="Segoe UI"
+                                FontSize="20"
+                                FontWeight="Bold" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
 
-            <Button x:Name="SidebarChatButton"
+                <Button
+                    x:Name="SidebarChatButton"
                     Width="160"
                     Height="30"
                     Margin="102,279,0,0"
@@ -210,29 +376,31 @@
                     Click="SidebarChatButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
-                    <Image x:Name="HomePage_iChat"
-                           Width="30"
-                           Height="30"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Views/Images/chat_bubble.png"/>
-                    <Label x:Name="HomePage_lbChat"
-                           Width="108"
-                           Height="30"
-                           Margin="30,0,0,0"
-                           Padding="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Chat"
-                           FontFamily="Segoe UI"
-                           FontSize="20"
-                           FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iChat"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/chat_bubble.png" />
+                        <Label
+                            x:Name="HomePage_lbChat"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Chat"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
 
-            <Button x:Name="SidebarActivitiesButton"
+                <Button
+                    x:Name="SidebarActivitiesButton"
                     Width="160"
                     Height="30"
                     Margin="102,354,0,0"
@@ -243,30 +411,31 @@
                     Click="SidebarActivitiesButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
-                    <Image x:Name="HomePage_Activities"
-                           Width="30"
-                           Height="30"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Views/Images/active-activities.png"/>
-                    <Label x:Name="HomePage_lbActivities"
-                           Width="108"
-                           Height="30"
-                           Margin="30,0,0,0"
-                           Padding="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Activities"
-                           FontFamily="Segoe UI"
-                           FontSize="20"
-                           FontWeight="Bold"
-                           Foreground="#597CA2"/>
-                </StackPanel>
-            </Button>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_Activities"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/activities.png" />
+                        <Label
+                            x:Name="HomePage_lbActivities"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Activities"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
 
-            <Button x:Name="SidebarMemberButton"
+                <Button
+                    x:Name="SidebarMemberButton"
                     Width="160"
                     Height="30"
                     Margin="102,432,0,0"
@@ -277,29 +446,31 @@
                     Click="SidebarMembersButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
-                    <Image x:Name="HomePage_Task_iMembers"
-                           Width="30"
-                           Height="30"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Views/Images/members.png"/>
-                    <Label x:Name="HomePage_lbMembers"
-                           Width="108"
-                           Height="30"
-                           Margin="30,0,0,0"
-                           Padding="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Members"
-                           FontFamily="Segoe UI"
-                           FontSize="20"
-                           FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_Task_iMembers"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/members.png" />
+                        <Label
+                            x:Name="HomePage_lbMembers"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Members"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
 
-            <Button x:Name="SidebarTaskButton"
+                <Button
+                    x:Name="SidebarTaskButton"
                     Width="160"
                     Height="30"
                     Margin="102,510,0,0"
@@ -307,33 +478,36 @@
                     VerticalAlignment="Top"
                     Background="Transparent"
                     BorderThickness="0"
-                    MouseDown="SidebarTasksButton_Click"
                     Cursor="Hand"
+                    MouseDown="SidebarTasksButton_Click"
                     Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
-                    <Image x:Name="HomePage_iTasks"
-                           Width="30"
-                           Height="30"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Views/Images/tasks.png"/>
-                    <Label x:Name="HomePage_lbTasks"
-                           Width="108"
-                           Height="30"
-                           Margin="30,0,0,0"
-                           Padding="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Tasks"
-                           FontFamily="Segoe UI"
-                           FontSize="20"
-                           FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iTasks"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/active-tasks.png" />
+                        <Label
+                            x:Name="HomePage_lbTasks"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Tasks"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="#597CA2" />
+                    </StackPanel>
+                </Button>
 
-            <!-- Admin Button -->
-            <Button x:Name="SidebarAdminButton"
+                <!--  Admin Button  -->
+                <Button
+                    x:Name="SidebarAdminButton"
                     Width="160"
                     Height="30"
                     Margin="102,586,0,0"
@@ -343,383 +517,426 @@
                     BorderThickness="0"
                     Click="SidebarAdminButton_Click"
                     Cursor="Hand"
-                    Visibility="Collapsed"
-                    Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
-                    <Image x:Name="HomePage_iAdmin"
-                           Width="30"
-                           Height="30"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Source="/Views/Images/admin_panel.png"/>
-                    <Label x:Name="HomePage_lbAdmin"
-                           Width="108"
-                           Height="30"
-                           Margin="30,0,0,0"
-                           Padding="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"
-                           Content="Admin"
-                           FontFamily="Segoe UI"
-                           FontSize="20"
-                           FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
+                    Style="{StaticResource NavigationButtonStyle}"
+                    Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                        <Image
+                            x:Name="HomePage_iAdmin"
+                            Width="30"
+                            Height="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Source="/Views/Images/admin_panel.png" />
+                        <Label
+                            x:Name="HomePage_lbAdmin"
+                            Width="108"
+                            Height="30"
+                            Margin="30,0,0,0"
+                            Padding="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Admin"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
 
-            <!-- Admin submenu -->
-            <StackPanel x:Name="AdminSubmenu"
-                        Margin="132,621,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Visibility="Collapsed">
-                <Button x:Name="AdminTaskButton"
+                <!--  Admin submenu  -->
+                <StackPanel
+                    x:Name="AdminSubmenu"
+                    Margin="132,621,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Visibility="Collapsed">
+                    <Button
+                        x:Name="AdminTaskButton"
                         Margin="0,5,0,5"
+                        Background="Transparent"
+                        BorderThickness="0"
                         Click="AdminTaskButton_Click"
+                        Cursor="Hand">
+                        <TextBlock
+                            FontSize="15"
+                            Foreground="#042354"
+                            Text="Quản lý công việc" />
+                    </Button>
+                    <Button
+                        x:Name="AdminMembersButton"
+                        Margin="0,5,0,5"
                         Background="Transparent"
                         BorderThickness="0"
-                        Cursor="Hand">
-                    <TextBlock Text="Quản lý công việc"
-                               FontSize="15"
-                               Foreground="#042354"/>
-                </Button>
-                <Button x:Name="AdminMembersButton"
-                        Margin="0,5,0,5"
                         Click="AdminMembersButton_Click"
+                        Cursor="Hand">
+                        <TextBlock
+                            FontSize="15"
+                            Foreground="#042354"
+                            Text="Quản lý thành viên" />
+                    </Button>
+                    <Button
+                        x:Name="AdminChatButton"
+                        Margin="0,5,0,5"
                         Background="Transparent"
                         BorderThickness="0"
-                        Cursor="Hand">
-                    <TextBlock Text="Quản lý thành viên"
-                               FontSize="15"
-                               Foreground="#042354"/>
-                </Button>
-                <Button x:Name="AdminChatButton"
-                        Margin="0,5,0,5"
                         Click="AdminChatButton_Click"
-                        Background="Transparent"
-                        BorderThickness="0"
                         Cursor="Hand">
-                    <TextBlock Text="Quản lý chat"
-                               FontSize="15"
-                               Foreground="#042354"/>
-                </Button>
-                <Button x:Name="AdminActivitiesButton"
+                        <TextBlock
+                            FontSize="15"
+                            Foreground="#042354"
+                            Text="Quản lý chat" />
+                    </Button>
+                    <Button
+                        x:Name="AdminActivitiesButton"
                         Margin="0,5,0,5"
-                        Click="AdminActivitiesButton_Click"
                         Background="Transparent"
                         BorderThickness="0"
+                        Click="AdminActivitiesButton_Click"
                         Cursor="Hand">
-                    <TextBlock Text="Quản lý hoạt động"
-                               FontSize="15"
-                               Foreground="#042354"/>
-                </Button>
-            </StackPanel>
+                        <TextBlock
+                            FontSize="15"
+                            Foreground="#042354"
+                            Text="Quản lý hoạt động" />
+                    </Button>
+                </StackPanel>
 
-            <!-- Social Media Icons -->
-            <Image x:Name="Task_iFacebook"
-                   Width="24"
-                   Height="24"
-                   Margin="175,926,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/facebook.png"/>
-            <Image x:Name="Task_iInstagram"
-                   Width="24"
-                   Height="24"
-                   Margin="135,926,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/instagram.png"/>
-            <Image x:Name="Task_iYoutube"
-                   Width="24"
-                   Height="24"
-                   Margin="215,926,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Source="/Views/Images/youtube.png"/>
+                <!--  Social Media Icons  -->
+                <Image
+                    x:Name="Task_iFacebook"
+                    Width="24"
+                    Height="24"
+                    Margin="175,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/facebook.png" />
+                <Image
+                    x:Name="Task_iInstagram"
+                    Width="24"
+                    Height="24"
+                    Margin="135,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/instagram.png" />
+                <Image
+                    x:Name="Task_iYoutube"
+                    Width="24"
+                    Height="24"
+                    Margin="215,926,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Source="/Views/Images/youtube.png" />
 
-            <!-- TITLE VÀ LINE -->
-            <Label x:Name="Task_lbInformationTasks"
-                   Width="386"
-                   Height="40"
-                   Margin="365,153,0,0"
-                   Padding="0,0,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   HorizontalContentAlignment="Left"
-                   Content="THÔNG TIN CÔNG VIỆC"
-                   FontSize="32"
-                   FontWeight="Bold"
-                   Foreground="#042354"/>
-            <Rectangle Width="1020"
-                       Height="1"
-                       Margin="365,226,0,0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       RenderTransformOrigin="0.5,0.5"
-                       Stroke="Black">
-                <Rectangle.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleY="-1"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Rectangle.RenderTransform>
-            </Rectangle>
+                <!--  TITLE VÀ LINE  -->
+                <Label
+                    x:Name="Task_lbInformationTasks"
+                    Width="386"
+                    Height="40"
+                    Margin="401,153,0,0"
+                    Padding="0,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Left"
+                    Content="THÔNG TIN CÔNG VIỆC"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Foreground="#042354" />
+                <Rectangle
+                    Width="950"
+                    Height="1"
+                    Margin="402,226,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="Black">
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="-1" />
+                            <SkewTransform />
+                            <RotateTransform Angle="-0.086" />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
 
-            <!-- SỬA LẠI: TEAM CARDS - ĐẶT KÍCH THƯỚC CỤ THỂ CHO BUTTON -->
-            <!-- Design Team Card -->
-            <Button x:Name="DesignTeamButton"
+                <!--  SỬA LẠI: TEAM CARDS - ĐẶT KÍCH THƯỚC CỤ THỂ CHO BUTTON  -->
+                <!--  Design Team Card  -->
+                <Button
+                    x:Name="DesignTeamButton"
                     Width="940"
                     Height="130"
-                    Margin="364,280,0,0"
+                    Margin="400,280,0,0"
+                    Padding="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Background="Transparent"
                     BorderThickness="0"
                     Click="DesignTeam_Click"
-                    Cursor="Hand"
-                    Padding="0">
-                <Border Style="{StaticResource TeamCardStyle}"
+                    Cursor="Hand">
+                    <Border
                         Width="940"
-                        Height="130">
-                    <Grid Margin="25">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        Height="130"
+                        Style="{StaticResource TeamCardStyle}">
+                        <Grid Margin="25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Team Icon -->
-                        <Border Grid.Column="0"
-                                Background="#042354"
-                                CornerRadius="12"
+                            <!--  Team Icon  -->
+                            <Border
+                                Grid.Column="0"
                                 Width="80"
                                 Height="80"
-                                VerticalAlignment="Center">
-                            <Image Source="/Views/Images/tasks.png"
-                                   Width="40"
-                                   Height="40"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                        </Border>
-
-                        <!-- Team Info -->
-                        <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Background="#FFF4F8FF"
+                                CornerRadius="12">
+                                <Image
+                                    Width="40"
+                                    Height="40"
+                                    HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Margin="25,0">
-                            <Label x:Name="Task_lbDesignTeam"
-                                   Content="Ban Thiết kế"
-                                   FontFamily="Segoe UI"
-                                   FontSize="24"
-                                   FontWeight="Bold"
-                                   Foreground="#042354"
-                                   Padding="0"/>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,8,0,0">
-                                <TextBlock Text="Manager: "
-                                           FontFamily="Segoe UI"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Foreground="#666"
-                                           VerticalAlignment="Center"/>
-                                <Label x:Name="Task_lbManagerDesignTeam"
-                                       Content="Hoàng Bảo Phước"
-                                       FontFamily="Segoe UI"
-                                       FontSize="16"
-                                       Foreground="#042354"
-                                       Padding="5,0,0,0"/>
+                                    Source="/Views/Images/active-tasks.png" />
+                            </Border>
+
+                            <!--  Team Info  -->
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="25,0"
+                                VerticalAlignment="Center">
+                                <Label
+                                    x:Name="Task_lbDesignTeam"
+                                    Padding="0"
+                                    Content="Ban Thiết kế"
+                                    FontFamily="Segoe UI"
+                                    FontSize="24"
+                                    FontWeight="Bold"
+                                    Foreground="#042354" />
+                                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="#666"
+                                        Text="Manager: " />
+                                    <Label
+                                        x:Name="Task_lbManagerDesignTeam"
+                                        Padding="5,0,0,0"
+                                        Content="Hoàng Bảo Phước"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        Foreground="#042354" />
+                                </StackPanel>
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    FontFamily="Segoe UI"
+                                    FontSize="13"
+                                    Foreground="#888"
+                                    Text="Thiết kế giao diện, poster, banner và tài liệu truyền thông" />
                             </StackPanel>
-                            <TextBlock Text="Thiết kế giao diện, poster, banner và tài liệu truyền thông"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
 
-                        <!-- Arrow Icon -->
-                        <Image Grid.Column="2"
-                               Source="/Views/Images/-down-list.png"
-                               Width="24"
-                               Height="24"
-                               VerticalAlignment="Center"
-                               RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <RotateTransform Angle="-90"/>
-                            </Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Border>
-            </Button>
+                            <!--  Arrow Icon  -->
+                            <Image
+                                Grid.Column="2"
+                                Width="24"
+                                Height="24"
+                                VerticalAlignment="Center"
+                                RenderTransformOrigin="0.5,0.5"
+                                Source="/Views/Images/-down-list.png">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </Image.RenderTransform>
+                            </Image>
+                        </Grid>
+                    </Border>
+                </Button>
 
-            <!-- Event Team Card -->
-            <Button x:Name="EventTeamButton"
+                <!--  Event Team Card  -->
+                <Button
+                    x:Name="EventTeamButton"
                     Width="940"
                     Height="130"
-                    Margin="364,430,0,0"
+                    Margin="400,450,0,0"
+                    Padding="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Background="Transparent"
                     BorderThickness="0"
                     Click="EventTeam_Click"
-                    Cursor="Hand"
-                    Padding="0">
-                <Border Style="{StaticResource TeamCardStyle}"
+                    Cursor="Hand">
+                    <Border
                         Width="940"
-                        Height="130">
-                    <Grid Margin="25">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        Height="130"
+                        Style="{StaticResource TeamCardStyle}">
+                        <Grid Margin="25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Team Icon -->
-                        <Border Grid.Column="0"
-                                Background="#042354"
-                                CornerRadius="12"
+                            <!--  Team Icon  -->
+                            <Border
+                                Grid.Column="0"
                                 Width="80"
                                 Height="80"
-                                VerticalAlignment="Center">
-                            <Image Source="/Views/Images/active-activities.png"
-                                   Width="40"
-                                   Height="40"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                        </Border>
-
-                        <!-- Team Info -->
-                        <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Background="#FFF4F8FF"
+                                CornerRadius="12">
+                                <Image
+                                    Width="40"
+                                    Height="40"
+                                    HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Margin="25,0">
-                            <Label x:Name="Task_lbMediaEventTeam"
-                                   Content="Ban Truyền thông và Sự kiện"
-                                   FontFamily="Segoe UI"
-                                   FontSize="24"
-                                   FontWeight="Bold"
-                                   Foreground="#042354"
-                                   Padding="0"/>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,8,0,0">
-                                <TextBlock Text="Manager: "
-                                           FontFamily="Segoe UI"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Foreground="#666"
-                                           VerticalAlignment="Center"/>
-                                <Label x:Name="Task_lbManagerMediaEventTeam"
-                                       Content="Huỳnh Ngọc Ngân Tuyền"
-                                       FontFamily="Segoe UI"
-                                       FontSize="16"
-                                       Foreground="#042354"
-                                       Padding="5,0,0,0"/>
+                                    Source="/Views/Images/active-activities.png" />
+                            </Border>
+
+                            <!--  Team Info  -->
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="25,0"
+                                VerticalAlignment="Center">
+                                <Label
+                                    x:Name="Task_lbMediaEventTeam"
+                                    Padding="0"
+                                    Content="Ban Truyền thông và Sự kiện"
+                                    FontFamily="Segoe UI"
+                                    FontSize="24"
+                                    FontWeight="Bold"
+                                    Foreground="#042354" />
+                                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="#666"
+                                        Text="Manager: " />
+                                    <Label
+                                        x:Name="Task_lbManagerMediaEventTeam"
+                                        Padding="5,0,0,0"
+                                        Content="Huỳnh Ngọc Ngân Tuyền"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        Foreground="#042354" />
+                                </StackPanel>
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    FontFamily="Segoe UI"
+                                    FontSize="13"
+                                    Foreground="#888"
+                                    Text="Tổ chức sự kiện, truyền thông, PR và quản lý mạng xã hội" />
                             </StackPanel>
-                            <TextBlock Text="Tổ chức sự kiện, truyền thông, PR và quản lý mạng xã hội"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
 
-                        <!-- Arrow Icon -->
-                        <Image Grid.Column="2"
-                               Source="/Views/Images/-down-list.png"
-                               Width="24"
-                               Height="24"
-                               VerticalAlignment="Center"
-                               RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <RotateTransform Angle="-90"/>
-                            </Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Border>
-            </Button>
+                            <!--  Arrow Icon  -->
+                            <Image
+                                Grid.Column="2"
+                                Width="24"
+                                Height="24"
+                                VerticalAlignment="Center"
+                                RenderTransformOrigin="0.5,0.5"
+                                Source="/Views/Images/-down-list.png">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </Image.RenderTransform>
+                            </Image>
+                        </Grid>
+                    </Border>
+                </Button>
 
-            <!-- Study Team Card -->
-            <Button x:Name="StudyTeamButton"
+                <!--  Study Team Card  -->
+                <Button
+                    x:Name="StudyTeamButton"
                     Width="940"
                     Height="130"
-                    Margin="364,580,0,0"
+                    Margin="400,620,0,0"
+                    Padding="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Background="Transparent"
                     BorderThickness="0"
                     Click="StudyTeam_Click"
-                    Cursor="Hand"
-                    Padding="0">
-                <Border Style="{StaticResource TeamCardStyle}"
+                    Cursor="Hand">
+                    <Border
                         Width="940"
-                        Height="130">
-                    <Grid Margin="25">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        Height="130"
+                        Style="{StaticResource TeamCardStyle}">
+                        <Grid Margin="25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Team Icon -->
-                        <Border Grid.Column="0"
-                                Background="#042354"
-                                CornerRadius="12"
+                            <!--  Team Icon  -->
+                            <Border
+                                Grid.Column="0"
                                 Width="80"
                                 Height="80"
-                                VerticalAlignment="Center">
-                            <Image Source="/Views/Images/members.png"
-                                   Width="40"
-                                   Height="40"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                        </Border>
-
-                        <!-- Team Info -->
-                        <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Background="#FFF4F8FF"
+                                CornerRadius="12">
+                                <Image
+                                    Width="40"
+                                    Height="40"
+                                    HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Margin="25,0">
-                            <Label x:Name="Task_lbStudyTeam"
-                                   Content="Ban Học tập"
-                                   FontFamily="Segoe UI"
-                                   FontSize="24"
-                                   FontWeight="Bold"
-                                   Foreground="#042354"
-                                   Padding="0"/>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,8,0,0">
-                                <TextBlock Text="Manager: "
-                                           FontFamily="Segoe UI"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Foreground="#666"
-                                           VerticalAlignment="Center"/>
-                                <Label x:Name="Task_lbManagerStudyTeam"
-                                       Content="Đỗ Quang Trung"
-                                       FontFamily="Segoe UI"
-                                       FontSize="16"
-                                       Foreground="#042354"
-                                       Padding="5,0,0,0"/>
-                            </StackPanel>
-                            <TextBlock Text="Học thuật, nghiên cứu, đào tạo và phát triển kỹ năng"
-                                       FontFamily="Segoe UI"
-                                       FontSize="13"
-                                       Foreground="#888"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
+                                    Source="/Views/Images/active-members.png" />
+                            </Border>
 
-                        <!-- Arrow Icon -->
-                        <Image Grid.Column="2"
-                               Source="/Views/Images/-down-list.png"
-                               Width="24"
-                               Height="24"
-                               VerticalAlignment="Center"
-                               RenderTransformOrigin="0.5,0.5">
-                            <Image.RenderTransform>
-                                <RotateTransform Angle="-90"/>
-                            </Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Border>
-            </Button>
+                            <!--  Team Info  -->
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="25,0"
+                                VerticalAlignment="Center">
+                                <Label
+                                    x:Name="Task_lbStudyTeam"
+                                    Padding="0"
+                                    Content="Ban Học tập"
+                                    FontFamily="Segoe UI"
+                                    FontSize="24"
+                                    FontWeight="Bold"
+                                    Foreground="#042354" />
+                                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="#666"
+                                        Text="Manager: " />
+                                    <Label
+                                        x:Name="Task_lbManagerStudyTeam"
+                                        Padding="5,0,0,0"
+                                        Content="Đỗ Quang Trung"
+                                        FontFamily="Segoe UI"
+                                        FontSize="16"
+                                        Foreground="#042354" />
+                                </StackPanel>
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    FontFamily="Segoe UI"
+                                    FontSize="13"
+                                    Foreground="#888"
+                                    Text="Học thuật, nghiên cứu, đào tạo và phát triển kỹ năng" />
+                            </StackPanel>
+
+                            <!--  Arrow Icon  -->
+                            <Image
+                                Grid.Column="2"
+                                Width="24"
+                                Height="24"
+                                VerticalAlignment="Center"
+                                RenderTransformOrigin="0.5,0.5"
+                                Source="/Views/Images/-down-list.png">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </Image.RenderTransform>
+                            </Image>
+                        </Grid>
+                    </Border>
+                </Button>
+            </Grid>
         </Grid>
-    </Viewbox>
+    </Grid>
 </Window>

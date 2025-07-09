@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     xmlns:selectors="clr-namespace:DoanKhoaClient.Selectors"
+    xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
     Title="Chat"
     MinWidth="1024"
     MinHeight="768"
@@ -15,33 +15,79 @@
     WindowState="Maximized"
     mc:Ignorable="d">
 
-    <!-- Khai báo Converters -->
+    <!--  Khai báo Converters  -->
     <Window.Resources>
-        <converters:TimeZoneConverter x:Key="TimeZoneConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
-        <converters:CurrentUserConverter x:Key="CurrentUserConverter"/>
-        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter"/>
-        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter"/>
-        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter"/>
-        <converters:FileIconConverter x:Key="FileIconConverter"/>
-        <converters:FileSizeConverter x:Key="FileSizeConverter"/>
-        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
-        <converters:StringToImageConverter x:Key="StringToImageConverter"/>
+        <converters:TimeZoneConverter x:Key="TimeZoneConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+        <converters:CurrentUserConverter x:Key="CurrentUserConverter" />
+        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter" />
+        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter" />
+        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter" />
+        <converters:FileIconConverter x:Key="FileIconConverter" />
+        <converters:FileSizeConverter x:Key="FileSizeConverter" />
+        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter" />
+        <converters:StringToImageConverter x:Key="StringToImageConverter" />
 
-        <!-- Thêm Style này vào Window.Resources -->
-        <Style x:Key="MenuItemStyle"
-               TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="RenderTransformOrigin"
-                    Value="0.5,0.5"/>
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE3F6FF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Thêm Style này vào Window.Resources  -->
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1"
-                                        ScaleY="1"/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -52,15 +98,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -70,33 +116,61 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="NavigationButtonStyle"
-               TargetType="{x:Type Button}">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Padding"
-                    Value="0"/>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter/>
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -122,22 +196,16 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-        </ContextMenu> -->
+        </ContextMenu>-->
 
-        <Style x:Key="SendButtonStyle"
-               TargetType="{x:Type Button}">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="RenderTransformOrigin"
-                    Value="0.5,0.5"/>
+        <Style x:Key="SendButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <ScaleTransform ScaleX="1"
-                                    ScaleY="1"/>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -147,11 +215,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1.2"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1.2"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -161,11 +229,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -175,11 +243,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="0.9"
-                                Duration="0:0:0.05"/>
+                                Duration="0:0:0.05" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="0.9"
-                                Duration="0:0:0.05"/>
+                                Duration="0:0:0.05" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -189,144 +257,139 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1.2"
-                                Duration="0:0:0.05"/>
+                                Duration="0:0:0.05" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1.2"
-                                Duration="0:0:0.05"/>
+                                Duration="0:0:0.05" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <!-- Sửa phần ImageAttachmentTemplate -->
+        <!--  Sửa phần ImageAttachmentTemplate  -->
         <DataTemplate x:Key="ImageAttachmentTemplate">
-            <Border Margin="2"
-                    BorderBrush="#DDDDDD"
-                    BorderThickness="1"
-                    CornerRadius="5">
+            <Border
+                Margin="2"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1"
+                CornerRadius="5">
                 <Grid>
-                    <TextBlock Text="{Binding FileName}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="Gray"
-                               TextWrapping="Wrap"
-                               Margin="5"/>
+                    <TextBlock
+                        Margin="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="Gray"
+                        Text="{Binding FileName}"
+                        TextWrapping="Wrap" />
 
-                    <Image Source="{Binding FileUrl}"
-                           Stretch="Uniform"
-                           MaxHeight="200"
-                           MaxWidth="200"
-                           Loaded="AttachmentImage_Loaded"
-                           MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
+                    <Image
+                        MaxWidth="200"
+                        MaxHeight="200"
+                        Loaded="AttachmentImage_Loaded"
+                        MouseLeftButtonDown="Image_MouseLeftButtonDown"
+                        Source="{Binding FileUrl}"
+                        Stretch="Uniform" />
 
-                    <TextBlock Text="{Binding FileName}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Bottom"
-                               Background="#80000000"
-                               Foreground="White"
-                               Padding="3"/>
+                    <TextBlock
+                        Padding="3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Background="#80000000"
+                        Foreground="White"
+                        Text="{Binding FileName}" />
                 </Grid>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="FileAttachmentTemplate">
-            <Border Margin="2"
-                    Padding="8"
-                    Background="#F5F5F5"
-                    BorderBrush="#DDDDDD"
-                    BorderThickness="1"
-                    CornerRadius="4">
+            <Border
+                Margin="2"
+                Padding="8"
+                Background="#F5F5F5"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1"
+                CornerRadius="4">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="0"
-                           Source="{Binding ContentType, Converter={StaticResource FileIconConverter}}"
-                           Width="24"
-                           Height="24"
-                           Margin="0,0,8,0"/>
+                    <Image
+                        Grid.Column="0"
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,8,0"
+                        Source="{Binding ContentType, Converter={StaticResource FileIconConverter}}" />
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Text="{Binding FileName}"
-                                   FontWeight="SemiBold"
-                                   TextWrapping="Wrap"/>
-                        <TextBlock Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"
-                                   FontSize="11"
-                                   Foreground="Gray"/>
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="{Binding FileName}"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="Gray"
+                            Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}" />
                     </StackPanel>
 
-                    <!-- Replace InputBindings with actual Button -->
-                    <Button Grid.Column="2"
-                            Content="Tải xuống"
-                            Command="{Binding DataContext.DownloadFileCommand, 
-                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            CommandParameter="{Binding}"
-                            Click="DownloadButton_Click"
-                            Margin="8,0,0,0"
-                            Padding="8,3"
-                            Background="#87ACCD"
-                            Foreground="White"
-                            BorderThickness="0"/>
+                    <!--  Replace InputBindings with actual Button  -->
+                    <Button
+                        Grid.Column="2"
+                        Margin="8,0,0,0"
+                        Padding="8,3"
+                        Background="#87ACCD"
+                        BorderThickness="0"
+                        Click="DownloadButton_Click"
+                        Command="{Binding DataContext.DownloadFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding}"
+                        Content="Tải xuống"
+                        Foreground="White" />
                 </Grid>
             </Border>
         </DataTemplate>
-        <selectors:AttachmentTemplateSelector x:Key="AttachmentTemplateSelector"
-                                              ImageTemplate="{StaticResource ImageAttachmentTemplate}"
-                                              FileTemplate="{StaticResource FileAttachmentTemplate}"/>
-        <!-- Thêm vào phần Window.Resources trong UserChatView.xaml -->
-        <Style x:Key="CurrentUserMessageStyle"
-               TargetType="Border">
-            <Setter Property="Background"
-                    Value="#E3F2FD"/>
-            <Setter Property="BorderBrush"
-                    Value="#BBDEFB"/>
-            <Setter Property="BorderThickness"
-                    Value="1"/>
-            <Setter Property="CornerRadius"
-                    Value="10,0,10,10"/>
-            <Setter Property="Padding"
-                    Value="10"/>
-            <Setter Property="Margin"
-                    Value="50,5,10,5"/>
-            <Setter Property="HorizontalAlignment"
-                    Value="Right"/>
+        <selectors:AttachmentTemplateSelector
+            x:Key="AttachmentTemplateSelector"
+            FileTemplate="{StaticResource FileAttachmentTemplate}"
+            ImageTemplate="{StaticResource ImageAttachmentTemplate}" />
+        <!--  Thêm vào phần Window.Resources trong UserChatView.xaml  -->
+        <Style x:Key="CurrentUserMessageStyle" TargetType="Border">
+            <Setter Property="Background" Value="#E3F2FD" />
+            <Setter Property="BorderBrush" Value="#BBDEFB" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10,0,10,10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="50,5,10,5" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="4"
-                                      Opacity="0.2"
-                                      ShadowDepth="1"
-                                      Color="#000000"/>
+                    <DropShadowEffect
+                        BlurRadius="4"
+                        Opacity="0.2"
+                        ShadowDepth="1"
+                        Color="#000000" />
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="OtherUserMessageStyle"
-               TargetType="Border">
-            <Setter Property="Background"
-                    Value="#F5F5F5"/>
-            <Setter Property="BorderBrush"
-                    Value="#E0E0E0"/>
-            <Setter Property="BorderThickness"
-                    Value="1"/>
-            <Setter Property="CornerRadius"
-                    Value="0,10,10,10"/>
-            <Setter Property="Padding"
-                    Value="10"/>
-            <Setter Property="Margin"
-                    Value="10,5,50,5"/>
-            <Setter Property="HorizontalAlignment"
-                    Value="Left"/>
+        <Style x:Key="OtherUserMessageStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F5F5F5" />
+            <Setter Property="BorderBrush" Value="#E0E0E0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="0,10,10,10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="10,5,50,5" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="4"
-                                      Opacity="0.2"
-                                      ShadowDepth="1"
-                                      Color="#000000"/>
+                    <DropShadowEffect
+                        BlurRadius="4"
+                        Opacity="0.2"
+                        ShadowDepth="1"
+                        Color="#000000" />
                 </Setter.Value>
             </Setter>
         </Style>
@@ -334,18 +397,17 @@
 
     <!-- <Window.DataContext>
         <vm:UserChatViewModel/>
-    </Window.DataContext> -->
+    </Window.DataContext>-->
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
                 <Storyboard>
-                    <!--  Sửa lỗi bằng cách thêm Storyboard.TargetName cho animation opacity  -->
                     <DoubleAnimation
                         Storyboard.TargetName="Chat_Background"
                         Storyboard.TargetProperty="Opacity"
                         From="0"
                         To="1"
-                        Duration="0:0:0.5"/>
+                        Duration="0:0:0.5" />
                     <ThicknessAnimation
                         Storyboard.TargetName="Chat_Background"
                         Storyboard.TargetProperty="Margin"
@@ -353,7 +415,7 @@
                         To="0,0,0,0"
                         Duration="0:0:0.5">
                         <ThicknessAnimation.EasingFunction>
-                            <QuadraticEase EasingMode="EaseOut"/>
+                            <QuadraticEase EasingMode="EaseOut" />
                         </ThicknessAnimation.EasingFunction>
                     </ThicknessAnimation>
                 </Storyboard>
@@ -361,909 +423,904 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Grid x:Name="Chat_Background"
-          Opacity="1">
+
+
+    <Grid x:Name="Chat_Background" Opacity="1">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0"
-                                 EndPoint="0.5,1">
-                <GradientStop Offset="0.67"
-                              Color="#FFF6FCFF"/>
-                <GradientStop Offset="1"
-                              Color="#FFDBF3FF"/>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0.67" Color="#FFF6FCFF" />
+                <GradientStop Offset="1" Color="#FFDBF3FF" />
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Viewbox
+        <!-- <Viewbox
             MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
             MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-            Stretch="Uniform">
-            <Grid Width="1440"
-                  Height="1024">
-                <ToggleButton
-                    x:Name="FilterDropdownButton"
-                    Margin="687,41,706,932"
-                    Background="#FFDBF3FF"
-                    BorderBrush="{x:Null}">
-                    <Image
-                        Width="33"
-                        Height="33"
-                        OpacityMask="#FF597CA2"
-                        Source="/Views/Images/filter.png"/>
-                </ToggleButton>
+            Stretch="Uniform">-->
+        <Grid Width="1440" Height="1024">
 
-                <!-- Search Box -->
-                <TextBox
-                    x:Name="UserChat_tbSearch1"
-                    Width="307"
-                    Height="50"
-                    Margin="370,41,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Background="#FFDBF3FF"
-                    BorderBrush="{x:Null}"
-                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap"/>
+            <!--  Search Box  -->
+            <TextBox
+                x:Name="Activities_tbSearch"
+                Width="307"
+                Height="50"
+                Margin="355,41,0,0"
+                Padding="50,0,20,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Style="{StaticResource SearchBoxStyle}"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-                <!-- Left Dashboard -->
+            <Popup
+                IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=Activities_tbSearch}"
+                StaysOpen="False">
                 <Border
-                    x:Name="UserChat_Dashboard1"
-                    Width="288"
-                    Height="942"
-                    Margin="43,40,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    BorderBrush="Black"
-                    CornerRadius="10,10,10,10">
-                    <Grid>
-                        <Grid.Background>
-                            <LinearGradientBrush StartPoint="0.5,0"
-                                                 EndPoint="0.5,1">
-                                <GradientStop Offset="0.04"
-                                              Color="#FFF6FCFF"/>
-                                <GradientStop Offset="0.46"
-                                              Color="#FFDBF3FF"/>
-                                <GradientStop Offset="0.937"
-                                              Color="#FF87ACCD"/>
-                            </LinearGradientBrush>
-                        </Grid.Background>
-                    </Grid>
+                    x:Name="SearchResultsBorder"
+                    Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
+                    Background="#FFEDF9FF"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <ListBox
+                        MaxHeight="200"
+                        Background="White"
+                        BorderThickness="0"
+                        ItemsSource="{Binding SearchResults, UpdateSourceTrigger=PropertyChanged}"
+                        ListBox.SelectionMode="Single"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Height="30"
+                                    MinWidth="220"
+                                    Margin="0,4,0,4"
+                                    Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding Title}"
+                                    Style="{StaticResource SearchResultButtonStyle}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Border>
+            </Popup>
 
-                <StackPanel
-                    Margin="102,203,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Style="{StaticResource MenuItemStyle}">
-                    <Button Command="{Binding NavigateToHomeCommand}"
-                            Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Width="30"
-                                Height="30"
-                                Source="/Views/Images/home.png"/>
-                            <Label
-                                Width="108"
-                                Height="30"
-                                Margin="33,0,0,0"
-                                Padding="0,0,0,0"
-                                Content="Home"
-                                FontFamily="Segoe UI"
-                                FontSize="20"
-                                FontWeight="Bold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+            <!--  Left Dashboard  -->
+            <Border
+                x:Name="UserChat_Dashboard1"
+                Width="288"
+                Height="942"
+                Margin="43,40,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                BorderBrush="Black"
+                CornerRadius="10,10,10,10">
+                <Grid>
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                            <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                            <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
+            </Border>
 
-                <!-- Chat Menu Item -->
-                <StackPanel
-                    Margin="102,279,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Style="{StaticResource MenuItemStyle}">
-                    <Button Command="{Binding NavigateToChatCommand}"
-                            Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Width="30"
-                                Height="30"
-                                OpacityMask="Black"
-                                Source="/Views/Images/active-chat_bubble.png"/>
-                            <Label
-                                Width="108"
-                                Height="30"
-                                Margin="33,0,0,0"
-                                Padding="0,0,0,0"
-                                Content="Chat"
-                                FontFamily="Segoe UI"
-                                FontSize="20"
-                                FontWeight="Bold"
-                                Foreground="#597CA2"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <!-- Activities Menu Item -->
-                <StackPanel
-                    Margin="102,354,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Style="{StaticResource MenuItemStyle}">
-                    <Button Command="{Binding NavigateToActivitiesCommand}"
-                            Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Width="30"
-                                Height="30"
-                                Source="/Views/Images/activities.png"/>
-                            <Label
-                                Width="108"
-                                Height="30"
-                                Margin="33,0,0,0"
-                                Padding="0,0,0,0"
-                                Content="Activities"
-                                FontFamily="Segoe UI"
-                                FontSize="20"
-                                FontWeight="Bold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <!-- Members Menu Item -->
-                <StackPanel
-                    Margin="102,432,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Style="{StaticResource MenuItemStyle}">
-                    <Button Command="{Binding NavigateToMembersCommand}"
-                            Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Width="30"
-                                Height="30"
-                                Source="/Views/Images/members.png"/>
-                            <Label
-                                Width="108"
-                                Height="30"
-                                Margin="33,0,0,0"
-                                Padding="0,0,0,0"
-                                Content="Members"
-                                FontFamily="Segoe UI"
-                                FontSize="20"
-                                FontWeight="Bold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <!-- Tasks Menu Item -->
-                <StackPanel
-                    Margin="102,510,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Style="{StaticResource MenuItemStyle}">
-                    <Button Command="{Binding NavigateToTasksCommand}"
-                            Style="{StaticResource NavigationButtonStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image
-                                Width="30"
-                                Height="30"
-                                Source="/Views/Images/tasks.png"/>
-                            <Label
-                                Width="108"
-                                Height="30"
-                                Margin="33,0,0,0"
-                                Padding="0,0,0,0"
-                                Content="Tasks"
-                                FontFamily="Segoe UI"
-                                FontSize="20"
-                                FontWeight="Bold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <!-- Admin Button - Chỉ hiển thị cho admin -->
-                <Button
-                    x:Name="SidebarAdminButton"
-                    Width="160"
-                    Height="30"
-                    Margin="102,586,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Click="SidebarAdminButton_Click"
-                    Cursor="Hand"
-                    Visibility="Collapsed"
-                    Style="{StaticResource NavigationButtonStyle}">
-                    <StackPanel Orientation="Horizontal"
-                                Style="{StaticResource MenuItemStyle}">
+            <StackPanel
+                Margin="102,203,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Style="{StaticResource MenuItemStyle}">
+                <Button Command="{Binding NavigateToHomeCommand}" Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
                         <Image
-                            x:Name="HomePage_iAdmin"
                             Width="30"
                             Height="30"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Source="/Views/Images/admin_panel.png"/>
+                            Source="/Views/Images/home.png" />
                         <Label
-                            x:Name="HomePage_lbAdmin"
                             Width="108"
                             Height="30"
-                            Margin="30,0,0,0"
+                            Margin="33,0,0,0"
                             Padding="0,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Content="Admin"
+                            Content="Home"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold"/>
+                            FontWeight="Bold" />
                     </StackPanel>
                 </Button>
+            </StackPanel>
 
-                <!-- Admin submenu -->
-                <StackPanel
-                    x:Name="AdminSubmenu"
-                    Margin="132,621,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Visibility="Collapsed">
-                    <Button
-                        x:Name="AdminTaskButton"
-                        Margin="0,5,0,5"
-                        Click="AdminTaskButton_Click"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
-                        <TextBlock
-                            Text="Quản lý công việc"
-                            FontSize="15"
-                            Foreground="#042354"/>
-                    </Button>
-                    <Button
-                        x:Name="AdminMembersButton"
-                        Margin="0,5,0,5"
-                        Click="AdminMembersButton_Click"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
-                        <TextBlock
-                            Text="Quản lý thành viên"
-                            FontSize="15"
-                            Foreground="#042354"/>
-                    </Button>
-                    <Button
-                        x:Name="AdminChatButton"
-                        Margin="0,5,0,5"
-                        Click="AdminChatButton_Click"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
-                        <TextBlock
-                            Text="Quản lý chat"
-                            FontSize="15"
-                            Foreground="#042354"/>
-                    </Button>
-                    <Button
-                        x:Name="AdminActivitiesButton"
-                        Margin="0,5,0,5"
-                        Click="AdminActivitiesButton_Click"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand">
-                        <TextBlock
-                            Text="Quản lý hoạt động"
-                            FontSize="15"
-                            Foreground="#042354"/>
-                    </Button>
+            <!--  Chat Menu Item  -->
+            <StackPanel
+                Margin="102,279,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Style="{StaticResource MenuItemStyle}">
+                <Button Command="{Binding NavigateToChatCommand}" Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            OpacityMask="Black"
+                            Source="/Views/Images/active-chat_bubble.png" />
+                        <Label
+                            Width="108"
+                            Height="30"
+                            Margin="33,0,0,0"
+                            Padding="0,0,0,0"
+                            Content="Chat"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="#597CA2" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!--  Activities Menu Item  -->
+            <StackPanel
+                Margin="102,354,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Style="{StaticResource MenuItemStyle}">
+                <Button Command="{Binding NavigateToActivitiesCommand}" Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="/Views/Images/activities.png" />
+                        <Label
+                            Width="108"
+                            Height="30"
+                            Margin="33,0,0,0"
+                            Padding="0,0,0,0"
+                            Content="Activities"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!--  Members Menu Item  -->
+            <StackPanel
+                Margin="102,432,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Style="{StaticResource MenuItemStyle}">
+                <Button Command="{Binding NavigateToMembersCommand}" Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="/Views/Images/members.png" />
+                        <Label
+                            Width="108"
+                            Height="30"
+                            Margin="33,0,0,0"
+                            Padding="0,0,0,0"
+                            Content="Members"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!--  Tasks Menu Item  -->
+            <StackPanel
+                Margin="102,510,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Style="{StaticResource MenuItemStyle}">
+                <Button Command="{Binding NavigateToTasksCommand}" Style="{StaticResource NavigationButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="/Views/Images/tasks.png" />
+                        <Label
+                            Width="108"
+                            Height="30"
+                            Margin="33,0,0,0"
+                            Padding="0,0,0,0"
+                            Content="Tasks"
+                            FontFamily="Segoe UI"
+                            FontSize="20"
+                            FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!--  Admin Button - Chỉ hiển thị cho admin  -->
+            <Button
+                x:Name="SidebarAdminButton"
+                Width="160"
+                Height="30"
+                Margin="102,586,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarAdminButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}"
+                Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iAdmin"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/admin_panel.png" />
+                    <Label
+                        x:Name="HomePage_lbAdmin"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Admin"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
                 </StackPanel>
+            </Button>
 
+            <!--  Admin submenu  -->
+            <StackPanel
+                x:Name="AdminSubmenu"
+                Margin="132,621,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Button
+                    x:Name="AdminTaskButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminTaskButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý công việc" />
+                </Button>
+                <Button
+                    x:Name="AdminMembersButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminMembersButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý thành viên" />
+                </Button>
+                <Button
+                    x:Name="AdminChatButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminChatButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý chat" />
+                </Button>
+                <Button
+                    x:Name="AdminActivitiesButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminActivitiesButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý hoạt động" />
+                </Button>
+            </StackPanel>
+
+            <Image
+                x:Name="Task_iLogo"
+                Width="112.38"
+                Height="40"
+                Margin="131,71,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/header.png" />
+
+            <!--  Social Media Icons  -->
+            <Image
+                x:Name="GroupTask_Design_iFacebook"
+                Width="24"
+                Height="24"
+                Margin="175,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/facebook.png" />
+            <Image
+                x:Name="GroupTask_Design_iInstagram"
+                Width="24"
+                Height="24"
+                Margin="135,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/instagram.png" />
+            <Image
+                x:Name="GroupTask_Design_iYoutube"
+                Width="24"
+                Height="24"
+                Margin="215,926,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/youtube.png" />
+
+            <!--  Top Icons  -->
+            <StackPanel
+                Margin="0,46,40,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
                 <Image
-                    x:Name="Task_iLogo"
-                    Width="112.38"
+                    x:Name="ThemeToggleButton"
+                    Width="40"
                     Height="40"
-                    Margin="131,71,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/header.png"/>
-
-                <!-- Social Media Icons -->
-                <Image
-                    x:Name="GroupTask_Design_iFacebook"
-                    Width="24"
-                    Height="24"
-                    Margin="175,926,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/facebook.png"/>
-                <Image
-                    x:Name="GroupTask_Design_iInstagram"
-                    Width="24"
-                    Height="24"
-                    Margin="135,926,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/instagram.png"/>
-                <Image
-                    x:Name="GroupTask_Design_iYoutube"
-                    Width="24"
-                    Height="24"
-                    Margin="215,926,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/youtube.png"/>
-
-                <!-- Top Icons -->
-                <StackPanel
-                    Margin="0,46,40,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal">
-                    <Image
-                        x:Name="ThemeToggleButton"
-                        Width="40"
-                        Height="40"
-                        Margin="0,0,20,0"
-                        MouseDown="ThemeToggleButton_MouseDown"
-                        Source="/Views/Images/dark.png"/>
-                    <Image
-                        Width="40"
-                        Height="40"
-                        Margin="0,0,20,0"
-                        Source="/Views/Images/light-notifications.png"/>
-                    <Image
-                        x:Name="UserAvatar"
-                        Width="40"
-                        Height="40"
-                        Source="/Views/Images/generic avatar.png"/>
-                </StackPanel>
-
+                    Margin="0,0,20,0"
+                    MouseDown="ThemeToggleButton_MouseDown"
+                    Source="/Views/Images/dark.png" />
                 <Image
                     Width="40"
                     Height="40"
-                    Margin="628,46,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Source="/Views/Images/search.png"/>
+                    Margin="0,0,20,0"
+                    Source="/Views/Images/light-notifications.png" />
+                <Image
+                    x:Name="UserAvatar"
+                    Width="40"
+                    Height="40"
+                    Source="/Views/Images/generic avatar.png" />
+            </StackPanel>
 
-                <Border
-                    Width="366"
-                    Height="864"
-                    Margin="370,119,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    CornerRadius="10,10,10,10">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0.5,0"
-                                             EndPoint="0.5,1">
-                            <GradientStop Offset="0.04"
-                                          Color="#FFF6FCFF"/>
-                            <GradientStop Offset="0.46"
-                                          Color="#FFDBF3FF"/>
-                            <GradientStop Offset="0.937"
-                                          Color="#FF87ACCD"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
+            <Image
+                x:Name="LightHomePage_iSearch"
+                Width="30"
+                Height="30"
+                Margin="368,51,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="/Views/Images/search.png" />
 
-                    <Grid>
-                        <!-- Header với nút tạo nhóm và tìm bạn -->
-                        <Grid Height="60"
-                              VerticalAlignment="Top">
-                            <Button
-                                Margin="0,0,10,0"
-                                Padding="8,5"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Background="#87ACCD"
-                                BorderThickness="0"
-                                Command="{Binding CreateGroupCommand}"
-                                Content="Tạo nhóm mới"
-                                Foreground="White"/>
+            <Border
+                Width="366"
+                Height="864"
+                Margin="370,119,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
 
-                            <Button
-                                Margin="15,0,0,0"
-                                Padding="10,5"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Background="#87ACCD"
-                                BorderThickness="0"
-                                Command="{Binding SearchFriendsCommand}"
-                                Content="Tìm bạn bè"
-                                Foreground="White"
-                                ToolTip="Tìm bạn bè"/>
-                        </Grid>
+                <Grid>
+                    <!--  Header với nút tạo nhóm và tìm bạn  -->
+                    <Grid Height="60" VerticalAlignment="Top">
+                        <Button
+                            Margin="0,0,10,0"
+                            Padding="8,5"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Background="#87ACCD"
+                            BorderThickness="0"
+                            Command="{Binding CreateGroupCommand}"
+                            Content="Tạo nhóm mới"
+                            Foreground="White" />
 
-                        <!-- Danh sách cuộc trò chuyện -->
-                        <ScrollViewer Margin="0,60,0,0"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ListView
-                                Width="340"
-                                Margin="15,0"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                ItemsSource="{Binding Conversations}"
-                                SelectedItem="{Binding SelectedConversation}">
-
-                                <!-- Thêm style ở đây -->
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Padding"
-                                                Value="0"/>
-                                        <Setter Property="Background"
-                                                Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                    <Border
-                                                        x:Name="Border"
-                                                        Background="{TemplateBinding Background}"
-                                                        BorderThickness="0"
-                                                        CornerRadius="10"
-                                                        SnapsToDevicePixels="True">
-                                                        <Grid>
-                                                            <ContentPresenter/>
-                                                        </Grid>
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver"
-                                                                 Value="True">
-                                                            <Setter TargetName="Border"
-                                                                    Property="Background"
-                                                                    Value="#E5F1FF"/>
-                                                            <Setter TargetName="Border"
-                                                                    Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect
-                                                                        BlurRadius="5"
-                                                                        Opacity="0.2"
-                                                                        ShadowDepth="1"
-                                                                        Color="#000000"/>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected"
-                                                                 Value="True">
-                                                            <Setter TargetName="Border"
-                                                                    Property="Background"
-                                                                    Value="#D2E5FF"/>
-                                                            <Setter TargetName="Border"
-                                                                    Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect
-                                                                        BlurRadius="5"
-                                                                        Opacity="0.2"
-                                                                        ShadowDepth="1"
-                                                                        Color="#000000"/>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border
-                                            Width="336"
-                                            Height="70"
-                                            Margin="0,5"
-                                            Background="#FFDAE9F6"
-                                            CornerRadius="10">
-                                            <Grid>
-                                                <Image
-                                                    Width="44"
-                                                    Height="44"
-                                                    Margin="10,0,0,0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center"
-                                                    Source="/Views/Images/account_circle.png"/>
-                                                <Label
-                                                    Margin="60,10,0,0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Top"
-                                                    Content="{Binding Converter={StaticResource ConversationTitleConverter}}"/>
-                                                <Label
-                                                    Margin="0,10,10,0"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Content="{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
-                                                    FontSize="10"/>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </ScrollViewer>
+                        <Button
+                            Margin="15,0,0,0"
+                            Padding="10,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Background="#87ACCD"
+                            BorderThickness="0"
+                            Command="{Binding SearchFriendsCommand}"
+                            Content="Tìm bạn bè"
+                            Foreground="White"
+                            ToolTip="Tìm bạn bè" />
                     </Grid>
-                </Border>
 
-                <!-- Chat Box Container -->
-                <Border
-                    Width="634"
-                    Height="864"
-                    Margin="764,119,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    CornerRadius="10,10,10,10">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0.5,0"
-                                             EndPoint="0.5,1">
-                            <GradientStop Offset="1"
-                                          Color="#FF87ACCD"/>
-                            <GradientStop Offset="0.46"
-                                          Color="#FFDBF3FF"/>
-                            <GradientStop Offset="0.54"
-                                          Color="#FFDBF3FF"/>
-                            <GradientStop Offset="0"
-                                          Color="#FF87ACCD"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
+                    <!--  Danh sách cuộc trò chuyện  -->
+                    <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Auto">
+                        <ListView
+                            Width="340"
+                            Margin="15,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemsSource="{Binding Conversations}"
+                            SelectedItem="{Binding SelectedConversation}">
 
-                    <!-- Nội dung chat -->
-                    <Grid>
-                        <!-- ChatBox Background -->
-                        <Border
-                            Margin="29,24,29,24"
-                            Background="White"
-                            CornerRadius="20,20,20,20">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                            <!--  Thêm style ở đây  -->
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <Border
+                                                    x:Name="Border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderThickness="0"
+                                                    CornerRadius="10"
+                                                    SnapsToDevicePixels="True">
+                                                    <Grid>
+                                                        <ContentPresenter />
+                                                    </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Border" Property="Background" Value="#E5F1FF" />
+                                                        <Setter TargetName="Border" Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect
+                                                                    BlurRadius="5"
+                                                                    Opacity="0.2"
+                                                                    ShadowDepth="1"
+                                                                    Color="#000000" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="Border" Property="Background" Value="#D2E5FF" />
+                                                        <Setter TargetName="Border" Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect
+                                                                    BlurRadius="5"
+                                                                    Opacity="0.2"
+                                                                    ShadowDepth="1"
+                                                                    Color="#000000" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
 
-                                <!-- Header - Simplified -->
-                                <Border
-                                    Grid.Row="0"
-                                    Height="56"
-                                    Background="#FFDAE9F6"
-                                    CornerRadius="20,20,0,0">
-                                    <Grid>
-                                        <StackPanel
-                                            Margin="26,0,0,0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal">
-                                            <Image
-                                                Width="30"
-                                                Height="30"
-                                                Source="/Views/Images/account_circle.png"/>
-                                            <Label
-                                                Margin="13,0,0,0"
-                                                Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
-                                                FontSize="15"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Messages Area -->
-                                <ScrollViewer
-                                    x:Name="MessageScrollViewer"
-                                    Grid.Row="1"
-                                    Margin="0,5"
-                                    VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding Messages}">
-                                        <ItemsControl.ItemContainerStyle>
-                                            <Style TargetType="ContentPresenter">
-                                                <Setter Property="Opacity"
-                                                        Value="1"/>
-                                                <Setter Property="RenderTransform">
-                                                    <Setter.Value>
-                                                        <TranslateTransform X="0"
-                                                                            Y="0"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <EventTrigger RoutedEvent="Loaded">
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation
-                                                                    Storyboard.TargetProperty="Opacity"
-                                                                    To="1"
-                                                                    Duration="0:0:0.3"/>
-                                                                <DoubleAnimation
-                                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                                    To="0"
-                                                                    Duration="0:0:0.3">
-                                                                    <DoubleAnimation.EasingFunction>
-                                                                        <QuadraticEase EasingMode="EaseOut"/>
-                                                                    </DoubleAnimation.EasingFunction>
-                                                                </DoubleAnimation>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </EventTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ItemsControl.ItemContainerStyle>
-
-                                        <!-- Cập nhật ItemControl.ItemTemplate cho messages trong UserChatView.xaml -->
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid Margin="10,5">
-                                                    <!-- Current user messages (right-aligned) -->
-                                                    <Border Style="{StaticResource CurrentUserMessageStyle}"
-                                                            Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
-                                                        <StackPanel>
-                                                            <TextBlock Text="{Binding Content}"
-                                                                       TextWrapping="Wrap"
-                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
-
-                                                            <!-- Image attachments -->
-                                                            <ItemsControl ItemsSource="{Binding Attachments}"
-                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
-                                                                <ItemsControl.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <WrapPanel/>
-                                                                    </ItemsPanelTemplate>
-                                                                </ItemsControl.ItemsPanel>
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <ContentControl Content="{Binding}"
-                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
-                                                                                        Margin="2"/>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-
-                                                            <!-- File attachments -->
-                                                            <ItemsControl ItemsSource="{Binding Attachments}"
-                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <ContentControl Content="{Binding}"
-                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
-                                                                                        Margin="2,2,2,0"/>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-
-                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
-                                                                       FontSize="10"
-                                                                       Foreground="Gray"
-                                                                       HorizontalAlignment="Right"/>
-                                                            <TextBlock Text=" (đã chỉnh sửa)"
-                                                                       FontSize="10"
-                                                                       Foreground="Gray"
-                                                                       Visibility="{Binding IsEdited, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                                                        </StackPanel>
-
-                                                        <!-- SỬA LẠI CONTEXT MENU Ở ĐÂY -->
-                                                        <Border.ContextMenu>
-                                                            <ContextMenu>
-                                                                <MenuItem Header="Chỉnh sửa"
-                                                                          Click="EditMessage_Click"
-                                                                          Tag="{Binding}">
-                                                                    <MenuItem.Icon>
-                                                                        <Image Source="/Views/Images/edit.png"
-                                                                                Width="16"
-                                                                                Height="16"/>
-                                                                    </MenuItem.Icon>
-                                                                </MenuItem>
-                                                                <MenuItem Header="Xóa"
-                                                                          Click="DeleteMessage_Click"
-                                                                          Tag="{Binding}">
-                                                                    <MenuItem.Icon>
-                                                                        <Image Source="/Views/Images/delete.png"
-                                                                                Width="16"
-                                                                                Height="16"/>
-                                                                    </MenuItem.Icon>
-                                                                </MenuItem>
-                                                                <Separator/>
-                                                                <MenuItem Header="Sao chép"
-                                                                          Click="CopyMessage_Click"
-                                                                          Tag="{Binding}">
-                                                                    <MenuItem.Icon>
-                                                                        <Image Source="/Views/Images/copy.png"
-                                                                                Width="16"
-                                                                                Height="16"/>
-                                                                    </MenuItem.Icon>
-                                                                </MenuItem>
-                                                            </ContextMenu>
-                                                        </Border.ContextMenu>
-                                                    </Border>
-
-                                                    <!-- Other user messages (left-aligned) -->
-                                                    <Border Style="{StaticResource OtherUserMessageStyle}"
-                                                            Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
-                                                        <StackPanel>
-                                                            <TextBlock Text="{Binding SenderName}"
-                                                                       FontWeight="Bold"
-                                                                       FontSize="12"/>
-                                                            <TextBlock Text="{Binding Content}"
-                                                                       TextWrapping="Wrap"
-                                                                       Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
-
-                                                            <!-- Image attachments -->
-                                                            <ItemsControl ItemsSource="{Binding Attachments}"
-                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
-                                                                <ItemsControl.ItemsPanel>
-                                                                    <ItemsPanelTemplate>
-                                                                        <WrapPanel/>
-                                                                    </ItemsPanelTemplate>
-                                                                </ItemsControl.ItemsPanel>
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <ContentControl Content="{Binding}"
-                                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"
-                                                                                        Margin="2"/>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-
-                                                            <!-- File attachments -->
-                                                            <ItemsControl ItemsSource="{Binding Attachments}"
-                                                                          Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <ContentControl Content="{Binding}"
-                                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"
-                                                                                        Margin="2,2,2,0"/>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-
-                                                            <TextBlock Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"
-                                                                       FontSize="10"
-                                                                       Foreground="Gray"/>
-                                                        </StackPanel>
-                                                    </Border>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
-
-                                <!-- Input Area -->
-                                <Grid Grid.Row="2"
-                                      Margin="0,5,0,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <!-- Panel hiển thị file đính kèm -->
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <Border
-                                        Grid.Row="0"
-                                        Background="#F0F5F9"
-                                        BorderBrush="#D0E5F5"
-                                        BorderThickness="0,0,0,1"
-                                        Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <ScrollViewer
-                                            MaxHeight="100"
-                                            HorizontalScrollBarVisibility="Auto"
-                                            VerticalScrollBarVisibility="Disabled">
-                                            <ItemsControl Margin="10"
-                                                          ItemsSource="{Binding SelectedAttachments}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <WrapPanel/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Border
-                                                            Margin="0,0,10,5"
-                                                            Padding="5"
-                                                            Background="#E0EAF5"
-                                                            CornerRadius="5">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                    <ColumnDefinition Width="Auto"/>
-                                                                </Grid.ColumnDefinitions>
-
-                                                                <TextBlock
-                                                                    Grid.Column="0"
-                                                                    Width="16"
-                                                                    Height="16"
-                                                                    Margin="0,0,5,0"
-                                                                    Text="📁"/>
-                                                                <TextBlock
-                                                                    Grid.Column="1"
-                                                                    MaxWidth="100"
-                                                                    Text="{Binding FileName}"
-                                                                    TextTrimming="CharacterEllipsis"/>
-                                                                <Button
-                                                                    Grid.Column="2"
-                                                                    Margin="5,0,0,0"
-                                                                    Padding="3,0"
-                                                                    Command="{Binding DataContext.RemoveAttachmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                                    CommandParameter="{Binding}"
-                                                                    Content="×"/>
-                                                            </Grid>
-                                                        </Border>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </ScrollViewer>
-                                    </Border>
-
-                                    <!-- Input và nút -->
-                                    <Border
-                                        Grid.Row="1"
-                                        Height="56"
+                                        Width="336"
+                                        Height="70"
+                                        Margin="0,5"
                                         Background="#FFDAE9F6"
-                                        CornerRadius="0,0,20,20">
+                                        CornerRadius="10">
                                         <Grid>
-                                            <StackPanel
+                                            <Image
+                                                Width="44"
+                                                Height="44"
                                                 Margin="10,0,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
-                                                Orientation="Horizontal">
+                                                Source="/Views/Images/account_circle.png" />
+                                            <Label
+                                                Margin="60,10,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Content="{Binding Converter={StaticResource ConversationTitleConverter}}" />
+                                            <Label
+                                                Margin="0,10,10,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                Content="{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
+                                                FontSize="10" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!--  Chat Box Container  -->
+            <Border
+                Width="634"
+                Height="864"
+                Margin="764,119,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="1" Color="#FF87ACCD" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.54" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <!--  Nội dung chat  -->
+                <Grid>
+                    <!--  ChatBox Background  -->
+                    <Border
+                        Margin="29,24,29,24"
+                        Background="White"
+                        CornerRadius="20,20,20,20">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Header - Simplified  -->
+                            <Border
+                                Grid.Row="0"
+                                Height="56"
+                                Background="#FFDAE9F6"
+                                CornerRadius="20,20,0,0">
+                                <Grid>
+                                    <StackPanel
+                                        Margin="26,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <Image
+                                            Width="30"
+                                            Height="30"
+                                            Source="/Views/Images/account_circle.png" />
+                                        <Label
+                                            Margin="13,0,0,0"
+                                            Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
+                                            FontSize="15" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!--  Messages Area  -->
+                            <ScrollViewer
+                                x:Name="MessageScrollViewer"
+                                Grid.Row="1"
+                                Margin="0,5"
+                                VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Messages}">
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <TranslateTransform X="0" Y="0" />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="Opacity"
+                                                                To="1"
+                                                                Duration="0:0:0.3" />
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                                To="0"
+                                                                Duration="0:0:0.3">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <QuadraticEase EasingMode="EaseOut" />
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+
+                                    <!--  Cập nhật ItemControl.ItemTemplate cho messages trong UserChatView.xaml  -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="10,5">
+                                                <!--  Current user messages (right-aligned)  -->
+                                                <Border Style="{StaticResource CurrentUserMessageStyle}" Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                                    <StackPanel>
+                                                        <TextBlock
+                                                            Text="{Binding Content}"
+                                                            TextWrapping="Wrap"
+                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}" />
+
+                                                        <!--  Image attachments  -->
+                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <ContentControl
+                                                                        Margin="2"
+                                                                        Content="{Binding}"
+                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+
+                                                        <!--  File attachments  -->
+                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <ContentControl
+                                                                        Margin="2,2,2,0"
+                                                                        Content="{Binding}"
+                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+
+                                                        <TextBlock
+                                                            HorizontalAlignment="Right"
+                                                            FontSize="10"
+                                                            Foreground="Gray"
+                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}" />
+                                                        <TextBlock
+                                                            FontSize="10"
+                                                            Foreground="Gray"
+                                                            Text=" (đã chỉnh sửa)"
+                                                            Visibility="{Binding IsEdited, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                                    </StackPanel>
+
+                                                    <!--  SỬA LẠI CONTEXT MENU Ở ĐÂY  -->
+                                                    <Border.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem
+                                                                Click="EditMessage_Click"
+                                                                Header="Chỉnh sửa"
+                                                                Tag="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Image
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Source="/Views/Images/edit.png" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                            <MenuItem
+                                                                Click="DeleteMessage_Click"
+                                                                Header="Xóa"
+                                                                Tag="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Image
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Source="/Views/Images/delete.png" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                            <Separator />
+                                                            <MenuItem
+                                                                Click="CopyMessage_Click"
+                                                                Header="Sao chép"
+                                                                Tag="{Binding}">
+                                                                <MenuItem.Icon>
+                                                                    <Image
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Source="/Views/Images/copy.png" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                        </ContextMenu>
+                                                    </Border.ContextMenu>
+                                                </Border>
+
+                                                <!--  Other user messages (left-aligned)  -->
+                                                <Border Style="{StaticResource OtherUserMessageStyle}" Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                                    <StackPanel>
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontWeight="Bold"
+                                                            Text="{Binding SenderName}" />
+                                                        <TextBlock
+                                                            Text="{Binding Content}"
+                                                            TextWrapping="Wrap"
+                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}" />
+
+                                                        <!--  Image attachments  -->
+                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <ContentControl
+                                                                        Margin="2"
+                                                                        Content="{Binding}"
+                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+
+                                                        <!--  File attachments  -->
+                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <ContentControl
+                                                                        Margin="2,2,2,0"
+                                                                        Content="{Binding}"
+                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}" />
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+
+                                                        <TextBlock
+                                                            FontSize="10"
+                                                            Foreground="Gray"
+                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <!--  Input Area  -->
+                            <Grid Grid.Row="2" Margin="0,5,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Panel hiển thị file đính kèm  -->
+                                <Border
+                                    Grid.Row="0"
+                                    Background="#F0F5F9"
+                                    BorderBrush="#D0E5F5"
+                                    BorderThickness="0,0,0,1"
+                                    Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ScrollViewer
+                                        MaxHeight="100"
+                                        HorizontalScrollBarVisibility="Auto"
+                                        VerticalScrollBarVisibility="Disabled">
+                                        <ItemsControl Margin="10" ItemsSource="{Binding SelectedAttachments}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Margin="0,0,10,5"
+                                                        Padding="5"
+                                                        Background="#E0EAF5"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                Width="16"
+                                                                Height="16"
+                                                                Margin="0,0,5,0"
+                                                                Text="📁" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                MaxWidth="100"
+                                                                Text="{Binding FileName}"
+                                                                TextTrimming="CharacterEllipsis" />
+                                                            <Button
+                                                                Grid.Column="2"
+                                                                Margin="5,0,0,0"
+                                                                Padding="3,0"
+                                                                Command="{Binding DataContext.RemoveAttachmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="×" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
+
+                                <!--  Input và nút  -->
+                                <Border
+                                    Grid.Row="1"
+                                    Height="56"
+                                    Background="#FFDAE9F6"
+                                    CornerRadius="0,0,20,20">
+                                    <Grid>
+                                        <StackPanel
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal">
+                                            <Button
+                                                Width="30"
+                                                Height="30"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Command="{Binding ShowAttachmentsPanelCommand}">
+                                                <Image
+                                                    Width="18"
+                                                    Height="18"
+                                                    Source="/Views/Images/add_circle.png" />
+                                            </Button>
+
+                                            <StackPanel
+                                                Margin="15,0,0,0"
+                                                Orientation="Horizontal"
+                                                Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Button
-                                                    Width="30"
-                                                    Height="30"
+                                                    Margin="0,0,10,0"
                                                     Background="Transparent"
                                                     BorderThickness="0"
-                                                    Command="{Binding ShowAttachmentsPanelCommand}">
+                                                    Command="{Binding SelectImageCommand}"
+                                                    ToolTip="Thêm hình ảnh">
                                                     <Image
                                                         Width="18"
                                                         Height="18"
-                                                        Source="/Views/Images/add_circle.png"/>
+                                                        Source="/Views/Images/image.png" />
                                                 </Button>
-
-                                                <StackPanel
-                                                    Margin="15,0,0,0"
-                                                    Orientation="Horizontal"
-                                                    Visibility="{Binding IsAttachmentsPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                    <Button
-                                                        Margin="0,0,10,0"
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Command="{Binding SelectImageCommand}"
-                                                        ToolTip="Thêm hình ảnh">
-                                                        <Image
-                                                            Width="18"
-                                                            Height="18"
-                                                            Source="/Views/Images/image.png"/>
-                                                    </Button>
-                                                    <Button
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Command="{Binding SelectFileCommand}"
-                                                        ToolTip="Thêm file">
-                                                        <Image
-                                                            Width="18"
-                                                            Height="18"
-                                                            Source="/Views/Images/document.png"/>
-                                                    </Button>
-                                                </StackPanel>
+                                                <Button
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Command="{Binding SelectFileCommand}"
+                                                    ToolTip="Thêm file">
+                                                    <Image
+                                                        Width="18"
+                                                        Height="18"
+                                                        Source="/Views/Images/document.png" />
+                                                </Button>
                                             </StackPanel>
-                                            <TextBox
-                                                Margin="80,0,50,0"
-                                                VerticalAlignment="Center"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </StackPanel>
+                                        <TextBox
+                                            Margin="80,0,50,0"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}" />
 
-                                            <Button
-                                                Width="40"
-                                                Height="40"
-                                                Margin="0,0,10,0"
-                                                HorizontalAlignment="Right"
-                                                Command="{Binding SendMessageCommand}"
-                                                Style="{StaticResource SendButtonStyle}">
-                                                <Image
-                                                    Width="19"
-                                                    Height="24"
-                                                    Source="/Views/Images/send.png"/>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
-                                </Grid>
+                                        <Button
+                                            Width="40"
+                                            Height="40"
+                                            Margin="0,0,10,0"
+                                            HorizontalAlignment="Right"
+                                            Command="{Binding SendMessageCommand}"
+                                            Style="{StaticResource SendButtonStyle}">
+                                            <Image
+                                                Width="19"
+                                                Height="24"
+                                                Source="/Views/Images/send.png" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
                             </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-            </Grid>
-        </Viewbox>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+        <!-- </Viewbox> -->
     </Grid>
 </Window>

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DoanKhoaClient.Extensions;
+
 namespace DoanKhoaClient.Views
 {
     public partial class ActivitiesView : Window, INotifyPropertyChanged
@@ -26,15 +27,19 @@ namespace DoanKhoaClient.Views
                 OnPropertyChanged();
             }
         }
+
         private bool isAdminSubmenuOpen = false;
         public ActivitiesView()
         {
             InitializeComponent();
-            ThemeManager.ApplyTheme(Activities_Background);
-            IsDarkMode = ThemeManager.IsDarkMode;
+            this.PreviewMouseDown += Window_PreviewMouseDown;
             _viewModel = new ActivitiesViewModel();
             this.DataContext = _viewModel;
+
+            ThemeManager.ApplyTheme(Activities_Background);
+            IsDarkMode = ThemeManager.IsDarkMode;
             LightHomePage_iUsers.SetupAsUserAvatar();
+
             if (AccessControl.IsAdmin())
             {
                 SidebarAdminButton.Visibility = Visibility.Visible;
@@ -46,12 +51,50 @@ namespace DoanKhoaClient.Views
             }
 
             this.SizeChanged += (sender, e) =>
-{
-    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-    {
-        this.WindowState = WindowState.Normal;
-    }
-};
+            {
+                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+                {
+                    this.WindowState = WindowState.Normal;
+                }
+            };
+        }
+
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Kiểm tra xem người dùng có click bên ngoài search box không
+            if (!IsMouseOverSearchElements(e.OriginalSource as DependencyObject))
+            {
+                // Bỏ focus khỏi search box
+                Keyboard.ClearFocus();
+
+                // Đóng popup search results nếu đang mở
+                var viewModel = DataContext as ActivitiesViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.IsSearchResultOpen = false;
+                }
+
+                // Xóa focus khỏi search box
+                if (Activities_tbSearch.IsFocused)
+                {
+                    FocusManager.SetFocusedElement(this, null);
+                }
+            }
+        }
+
+        private bool IsMouseOverSearchElements(DependencyObject element)
+        {
+            // Kiểm tra xem click có phải trên search box hoặc search results không
+            while (element != null)
+            {
+                if (element == Activities_tbSearch ||
+                    (element is Border && element.GetValue(NameProperty)?.ToString() == "SearchResultsBorder"))
+                {
+                    return true;
+                }
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
         }
 
         private void ThemeToggleButton_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -121,6 +164,8 @@ namespace DoanKhoaClient.Views
                 _viewModel.IsFilterDropdownOpen = false;
             }
         }
+
+
 
         private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
         {
@@ -236,13 +281,6 @@ namespace DoanKhoaClient.Views
         private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
         {
             var win = new UserChatView();
-            win.Show();
-            this.Close();
-        }
-
-        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new ActivitiesView();
             win.Show();
             this.Close();
         }

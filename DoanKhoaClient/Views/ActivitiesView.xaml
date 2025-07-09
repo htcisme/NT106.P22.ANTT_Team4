@@ -130,7 +130,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFC1D4DE" />
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#E3F2FD" />
@@ -140,6 +143,25 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="FadeInImageStyle" TargetType="Image">
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Image.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Opacity"
+                                From="0"
+                                To="1"
+                                Duration="0:0:0.5" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+
         <Style x:Key="ActivitiesTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="30" />
             <Setter Property="FontWeight" Value="Bold" />
@@ -155,13 +177,79 @@
         <Style x:Key="ActivitiesDateStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#6c757d" />
         </Style>
-        <Style x:Key="SortButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FF12305E" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="18" />
+
+        <Style x:Key="FilterToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#7FFFFFFF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Padding" Value="15,8" />
-            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF12305E" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter
+                                    x:Name="contentPresenter"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                                <Path
+                                    x:Name="arrow"
+                                    Grid.Column="1"
+                                    Width="8"
+                                    Height="5"
+                                    Margin="5,0,5,0"
+                                    Data="M 0,0 L 4,4 L 8,0"
+                                    Stroke="{TemplateBinding Foreground}"
+                                    StrokeThickness="2" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFF2F9FE" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="arrow" Property="Stroke" Value="White" />
+                                <Setter TargetName="arrow" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180" CenterX="4" CenterY="2" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FF0A1D4A" />
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="White" />
+                                <Setter TargetName="arrow" Property="Stroke" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SortButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#7FFFFFFF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF12305E" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -169,23 +257,88 @@
                         <Border
                             x:Name="border"
                             Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1A3C78" />
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter Property="Foreground" Value="#FF12305E" />
 
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0A1D4A" />
-
+                                <Setter TargetName="border" Property="Background" Value="#FFB3E0F7" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF0A1D4A" />
+                                <Setter Property="Foreground" Value="#FF0A1D4A" />
+                                <Setter TargetName="border" Property="Effect" Value="{x:Null}" />
+                                <Setter TargetName="contentPresenter" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1" />
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE3F6FF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
         <Style x:Key="HighlightTitleDarkModeStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#FF12305E" />
@@ -195,32 +348,61 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-    </Window.Resources>
 
-    <Viewbox Stretch="Uniform">
+        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </Window.Resources>
+    <Grid x:Name="Activities_Background" Opacity="1">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid>
-            <Grid x:Name="Activities_Background">
-                <Grid.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="0.596" Color="#FFF6FCFF" />
-                        <GradientStop Offset="1" Color="#FFDBF3FF" />
-                    </LinearGradientBrush>
-                </Grid.Background>
+            <Grid>
                 <Grid Width="1440" Height="1024">
                     <TextBox
                         x:Name="Activities_tbSearch"
                         Width="307"
                         Height="50"
-                        Margin="370,41,0,0"
-                        Padding="15,0,0,0"
+                        Margin="355,41,0,0"
+                        Padding="50,0,20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Center"
-                        Background="#FFDBF3FF"
-                        BorderBrush="{x:Null}"
-                        FontSize="17"
                         KeyDown="Activities_tbSearch_KeyDown"
+                        Style="{StaticResource SearchBoxStyle}"
                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
                     <Popup
@@ -229,6 +411,7 @@
                         PlacementTarget="{Binding ElementName=Activities_tbSearch}"
                         StaysOpen="False">
                         <Border
+                            x:Name="SearchResultsBorder"
                             Width="{Binding ElementName=Activities_tbSearch, Path=ActualWidth}"
                             Background="#FFEDF9FF"
                             BorderThickness="1"
@@ -238,29 +421,25 @@
                                 Background="White"
                                 BorderThickness="0"
                                 ItemsSource="{Binding SearchResults, UpdateSourceTrigger=PropertyChanged}"
+                                ListBox.SelectionMode="Single"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Button
-                                            Height="44"
+                                            Height="30"
                                             MinWidth="220"
                                             Margin="0,4,0,4"
-                                            Padding="10"
-                                            HorizontalContentAlignment="Left"
-                                            Background="Transparent"
-                                            BorderThickness="0"
                                             Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"
                                             Content="{Binding Title}"
-                                            FontSize="13"
-                                            FontWeight="Bold"
-                                            Foreground="#12305E" />
+                                            Style="{StaticResource SearchResultButtonStyle}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </Border>
                     </Popup>
 
+                    <!--  Filter and Sort Buttons  -->
                     <WrapPanel
                         Width="493"
                         Height="74"
@@ -325,7 +504,6 @@
                                 </StackPanel>
                             </Border>
                         </Popup>
-
                     </WrapPanel>
                     <Border
                         x:Name="Activities_Dashboard"
@@ -374,9 +552,9 @@
 
                     <Image
                         x:Name="LightHomePage_iSearch"
-                        Width="40"
-                        Height="40"
-                        Margin="628,46,0,0"
+                        Width="30"
+                        Height="30"
+                        Margin="368,51,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         MouseDown="LightHomePage_iSearch_MouseDown"
@@ -468,7 +646,6 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         BorderThickness="0"
-                        Click="SidebarActivitiesButton_Click"
                         Cursor="Hand"
                         Style="{StaticResource NavigationButtonStyle}">
                         <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
@@ -538,8 +715,8 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         BorderThickness="0"
+                        Click="SidebarTasksButton_Click"
                         Cursor="Hand"
-                        MouseDown="SidebarTasksButton_Click"
                         Style="{StaticResource NavigationButtonStyle}">
                         <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                             <Image
@@ -683,9 +860,8 @@
 
                     <StackPanel x:Name="Activities_hightlight">
                         <TextBlock
-                            Margin="370,120,0,0"
+                            Margin="390,140,0,0"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
                             FontSize="30"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
@@ -694,7 +870,7 @@
                     </StackPanel>
 
                     <TextBlock
-                        Margin="370,165,0,0"
+                        Margin="390,179,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         FontSize="20"
@@ -713,7 +889,7 @@
                     </TextBlock>
 
                     <StackPanel
-                        Margin="370,230,0,0"
+                        Margin="390,230,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
@@ -721,7 +897,6 @@
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
-
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -734,11 +909,16 @@
                                             Background="#e6e6e6"
                                             CornerRadius="8">
                                             <Grid>
-                                                <Image Source="{Binding ImgUrl}" Stretch="UniformToFill">
-                                                    <Image.RenderTransform>
-                                                        <TranslateTransform X="0" />
-                                                    </Image.RenderTransform>
-                                                </Image>
+                                                <Border ClipToBounds="True" CornerRadius="8">
+                                                    <Image
+                                                        Source="{Binding ImgUrl}"
+                                                        Stretch="UniformToFill"
+                                                        Style="{StaticResource FadeInImageStyle}">
+                                                        <Image.RenderTransform>
+                                                            <TranslateTransform X="0" />
+                                                        </Image.RenderTransform>
+                                                    </Image>
+                                                </Border>
                                             </Grid>
                                         </Border>
                                         <TextBlock
@@ -759,7 +939,6 @@
                                     </StackPanel>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding IsActive}" Value="True">
-
                                             <DataTrigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
@@ -789,73 +968,11 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <StackPanel
-                        Margin="650,485,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <ItemsControl ItemsSource="{Binding PaginationDots}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
 
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Ellipse
-                                        Width="10"
-                                        Height="10"
-                                        Margin="0,0,5,0"
-                                        Fill="{Binding Color}">
-                                        <Ellipse.RenderTransform>
-                                            <ScaleTransform x:Name="DotScale" ScaleX="1" ScaleY="1" />
-                                        </Ellipse.RenderTransform>
-                                    </Ellipse>
-                                    <DataTemplate.Triggers>
-                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetName="DotScale"
-                                                            Storyboard.TargetProperty="ScaleX"
-                                                            To="1.2"
-                                                            Duration="0:0:0.3" />
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetName="DotScale"
-                                                            Storyboard.TargetProperty="ScaleY"
-                                                            To="1.2"
-                                                            Duration="0:0:0.3" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetName="DotScale"
-                                                            Storyboard.TargetProperty="ScaleX"
-                                                            To="1"
-                                                            Duration="0:0:0.3" />
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetName="DotScale"
-                                                            Storyboard.TargetProperty="ScaleY"
-                                                            To="1"
-                                                            Duration="0:0:0.3" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
 
                     <Border
                         Width="370"
-                        Margin="0,160,42,0"
+                        Margin="0,160,54,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         BorderBrush="{x:Null}"
@@ -906,24 +1023,18 @@
                         Orientation="Horizontal">
                         <Button
                             x:Name="sortByButton"
-                            Width="248"
+                            Width="186"
                             Height="42"
                             Click="sortByButton_Click"
-                            Content="Sắp xếp theo"
+                            Content="Ngày đăng"
                             Style="{StaticResource SortButtonStyle}" />
                         <ToggleButton
                             x:Name="FilterDropdownButton"
                             Margin="20,0,0,0"
-                            Background="{x:Null}"
-                            BorderBrush="{x:Null}"
                             Checked="FilterDropdownButton_Checked"
-                            Unchecked="FilterDropdownButton_Unchecked">
-                            <Image
-                                Width="33"
-                                Height="33"
-                                Source="/Views/Images/filter.png" />
-                        </ToggleButton>
-
+                            Content="Bộ lọc"
+                            Style="{StaticResource FilterToggleButtonStyle}"
+                            Unchecked="FilterDropdownButton_Unchecked" />
                     </StackPanel>
 
                     <Popup
@@ -981,29 +1092,35 @@
                         </Border>
                     </Popup>
                     <Border
-                        Width="1040"
-                        Height="880"
+                        Width="1042"
+                        Height="864"
                         Margin="356,0,0,40"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
                         Panel.ZIndex="-1"
-                        Background="#FFDBF3FF"
-                        CornerRadius="10,10,10,10" />
+                        CornerRadius="10,10,10,10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                                <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                                <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
                     <Border
                         Width="1028"
                         Height="400"
-                        Margin="370,372,0,40"
+                        Margin="362,0,0,48"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Background="#FFDBF3FF"
                         BorderBrush="Black"
                         CornerRadius="10,10,10,10" />
                     <!--  List activities  -->
                     <Border
-                        Margin="370,580,62,60"
-                        Padding="10,10,10,10"
+                        Margin="368,570,60,60"
+                        Padding="5,5,5,5"
                         CornerRadius="10">
-                        <ScrollViewer Padding="15,25" VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer Padding="5,5" VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding FilteredActivities, UpdateSourceTrigger=PropertyChanged}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -1011,7 +1128,7 @@
                                             Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"
                                             Style="{StaticResource ActivityButtonStyle}">
-                                            <Grid Margin="0,15,0,15">
+                                            <Grid Margin="15,15,15,15">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="80" />
                                                     <ColumnDefinition Width="*" />
@@ -1049,6 +1166,5 @@
                 </Grid>
             </Grid>
         </Grid>
-    </Viewbox>
-
+    </Grid>
 </Window>
