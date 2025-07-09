@@ -30,6 +30,11 @@ namespace DoanKhoaClient.Views
         public MembersView()
         {
             InitializeComponent();
+
+            this.PreviewMouseDown += Window_PreviewMouseDown;
+            _viewModel = new ActivitiesViewModel();
+            this.DataContext = _viewModel;
+
             ThemeManager.ApplyTheme(Members_Background);
             LightHomePage_iUsers.SetupAsUserAvatar();
             if (AccessControl.IsAdmin())
@@ -42,14 +47,50 @@ namespace DoanKhoaClient.Views
                 AdminSubmenu.Visibility = Visibility.Collapsed;
             }
             this.SizeChanged += (sender, e) =>
-{
-    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-    {
-        this.WindowState = WindowState.Normal;
-    }
-};
+            {
+                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+                {
+                    this.WindowState = WindowState.Normal;
+                }
+            };
+        }
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Kiểm tra xem người dùng có click bên ngoài search box không
+            if (!IsMouseOverSearchElements(e.OriginalSource as DependencyObject))
+            {
+                // Bỏ focus khỏi search box
+                Keyboard.ClearFocus();
+
+                // Đóng popup search results nếu đang mở
+                var viewModel = DataContext as ActivitiesViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.IsSearchResultOpen = false;
+                }
+
+                // Xóa focus khỏi search box
+                if (Activities_tbSearch.IsFocused)
+                {
+                    FocusManager.SetFocusedElement(this, null);
+                }
+            }
         }
 
+        private bool IsMouseOverSearchElements(DependencyObject element)
+        {
+            // Kiểm tra xem click có phải trên search box hoặc search results không
+            while (element != null)
+            {
+                if (element == Activities_tbSearch ||
+                    (element is Border && element.GetValue(NameProperty)?.ToString() == "SearchResultsBorder"))
+                {
+                    return true;
+                }
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
+        }
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(Members_Background);
@@ -70,12 +111,6 @@ namespace DoanKhoaClient.Views
             this.Close();
         }
 
-        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new MembersView();
-            win.Show();
-            this.Close();
-        }
 
         private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
         {
@@ -95,7 +130,9 @@ namespace DoanKhoaClient.Views
         }
         private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var homePage = new HomePageView();
+            homePage.Show();
+            this.Close();
         }
         private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
         {

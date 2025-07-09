@@ -9,6 +9,9 @@ using System.Net.Http;
 using System.IO;
 using DoanKhoaClient.Services;
 using DoanKhoaClient.ViewModels;
+using System.Windows.Media;
+using System;
+
 namespace DoanKhoaClient.Views
 {
     public partial class UserChatView : Window
@@ -17,19 +20,14 @@ namespace DoanKhoaClient.Views
         public UserChatView()
         {
             InitializeComponent();
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-            {
-                // Đặt mọi thứ ở trạng thái cuối của animation
-                Chat_Background.Opacity = 1;
-                Chat_Background.Margin = new Thickness(0);
-            }
-            else
-            {
-                // Đặt giá trị ban đầu cho animations khi chạy thật
-                Chat_Background.Opacity = 0;
-                Chat_Background.Margin = new Thickness(0, 30, 0, 0);
-                this.DataContext = new UserChatViewModel();
-            }
+
+            // REMOVE ANIMATION - Set final state directly like ActivitiesView
+            Chat_Background.Opacity = 1;
+            Chat_Background.Margin = new Thickness(0);
+
+            // Initialize DataContext
+            this.DataContext = new UserChatViewModel();
+
             if (AccessControl.IsAdmin())
             {
                 SidebarAdminButton.Visibility = Visibility.Visible;
@@ -39,15 +37,74 @@ namespace DoanKhoaClient.Views
                 SidebarAdminButton.Visibility = Visibility.Collapsed;
                 AdminSubmenu.Visibility = Visibility.Collapsed;
             }
+
             ThemeManager.ApplyTheme(Chat_Background);
+
             this.SizeChanged += (sender, e) =>
-{
-    if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
-    {
-        this.WindowState = WindowState.Normal;
-    }
-    UserAvatar.SetupAsUserAvatar();
-};
+            {
+                if (this.ActualWidth < this.MinWidth || this.ActualHeight < this.MinHeight)
+                {
+                    this.WindowState = WindowState.Normal;
+                }
+                UserAvatar.SetupAsUserAvatar();
+            };
+
+            // Add mouse down event handler for closing search results like in ActivitiesView
+            this.PreviewMouseDown += Window_PreviewMouseDown;
+        }
+
+        // Add method to handle mouse clicks outside search area (similar to ActivitiesView)
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Kiểm tra xem người dùng có click bên ngoài search box không
+            if (!IsMouseOverSearchElements(e.OriginalSource as DependencyObject))
+            {
+                // Bỏ focus khỏi search box
+                Keyboard.ClearFocus();
+
+                // Đóng popup search results nếu đang mở
+                var viewModel = DataContext as UserChatViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.IsSearchResultOpen = false;
+                }
+
+                // Xóa focus khỏi search box
+                if (Activities_tbSearch.IsFocused)
+                {
+                    FocusManager.SetFocusedElement(this, null);
+                }
+            }
+        }
+
+        private bool IsMouseOverSearchElements(DependencyObject element)
+        {
+            // Kiểm tra xem click có phải trên search box hoặc search results không
+            while (element != null)
+            {
+                if (element == Activities_tbSearch ||
+                    (element is Border && element.GetValue(NameProperty)?.ToString() == "SearchResultsBorder"))
+                {
+                    return true;
+                }
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
+        }
+
+        // Add KeyDown event handler for search box (similar to ActivitiesView)
+        private void Activities_tbSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                var viewModel = DataContext as UserChatViewModel;
+                if (viewModel != null)
+                {
+                    // The search will be triggered automatically by the SearchText property binding
+                    // But we can manually trigger it here if needed
+                    viewModel.IsSearchResultOpen = !string.IsNullOrWhiteSpace(viewModel.SearchText);
+                }
+            }
         }
 
         private void EditMessage_Click(object sender, RoutedEventArgs e)
