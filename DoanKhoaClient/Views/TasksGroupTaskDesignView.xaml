@@ -9,263 +9,287 @@
         Title="TasksGroupTaskDesignView"
         Height="1036"
         Width="1440">
-        <Grid x:Name="GroupTask_Design_Background"
-              Width="1440"
-              Height="1022.8">
-                <Grid.Background>
-                        <LinearGradientBrush EndPoint="0.5,1"
-                                             StartPoint="0.5,0">
-                                <GradientStop Color="#FFF6FCFF"
-                                              Offset="0.596"/>
-                                <GradientStop Color="#FFDBF3FF"
-                                              Offset="1"/>
-                        </LinearGradientBrush>
-                </Grid.Background>
-                <TextBox x:Name="GroupTask_Design_tbSearch"
-                         HorizontalAlignment="Left"
-                         Margin="370,41,0,0"
-                         TextWrapping="Wrap"
-                         Text=""
+       <Window.Resources>
+              <!-- THÊM: Styles cho dynamic content -->
+              <Style x:Key="SessionCardStyle"
+                     TargetType="Border">
+                     <Setter Property="Background"
+                             Value="#FFDBF3FF"/>
+                     <Setter Property="CornerRadius"
+                             Value="10"/>
+                     <Setter Property="Effect">
+                            <Setter.Value>
+                                   <DropShadowEffect ShadowDepth="2"
+                                                     BlurRadius="5"
+                                                     Opacity="0.3"/>
+                            </Setter.Value>
+                     </Setter>
+                     <Style.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                   <Setter Property="Background"
+                                           Value="#FFB3D9FF"/>
+                            </Trigger>
+                     </Style.Triggers>
+              </Style>
+       </Window.Resources>
+       <Grid x:Name="GroupTask_Design_Background"
+             Width="1440"
+             Height="1022.8">
+              <Grid.Background>
+                     <LinearGradientBrush EndPoint="0.5,1"
+                                          StartPoint="0.5,0">
+                            <GradientStop Color="#FFF6FCFF"
+                                          Offset="0.596"/>
+                            <GradientStop Color="#FFDBF3FF"
+                                          Offset="1"/>
+                     </LinearGradientBrush>
+              </Grid.Background>
+              <TextBox x:Name="GroupTask_Design_tbSearch"
+                       HorizontalAlignment="Left"
+                       Margin="370,41,0,0"
+                       TextWrapping="Wrap"
+                       Text=""
+                       VerticalAlignment="Top"
+                       Width="307"
+                       Height="50"
+                       Background="#FFDBF3FF"
+                       BorderBrush="{x:Null}"/>
+              <Border x:Name="GroupTask_Design_Dashboard"
+                      BorderBrush="Black"
+                      HorizontalAlignment="Left"
+                      Height="942"
+                      Margin="43,0,0,0"
+                      VerticalAlignment="Center"
+                      Width="288"
+                      CornerRadius="10,10,10,10">
+                     <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1"
+                                                 StartPoint="0.5,0">
+                                   <GradientStop Color="#FFF6FCFF"
+                                                 Offset="0.04"/>
+                                   <GradientStop Color="#FFDBF3FF"
+                                                 Offset="0.46"/>
+                                   <GradientStop Color="#FF87ACCD"
+                                                 Offset="0.937"/>
+                            </LinearGradientBrush>
+                     </Border.Background>
+              </Border>
+              <Image x:Name="GroupTask_Design_iUsers"
+                     Grid.Column="1"
+                     HorizontalAlignment="Left"
+                     Height="40"
+                     Margin="1358,46,0,0"
+                     VerticalAlignment="Top"
+                     Width="40"
+                     Source="/Views/Images/generic avatar.png"/>
+              <Image x:Name="GroupTask_Design_iNotifications"
+                     HorizontalAlignment="Left"
+                     Height="40"
+                     Margin="1297,46,0,0"
+                     VerticalAlignment="Top"
+                     Width="40"
+                     Source="/Views/Images/light-notifications.png"/>
+              <Image x:Name="ThemeToggleButton"
+                     HorizontalAlignment="Left"
+                     Height="40"
+                     Margin="1236,46,0,0"
+                     VerticalAlignment="Top"
+                     Width="40"
+                     Source="/Views/Images/dark.png"
+                     MouseDown="ThemeToggleButton_MouseDown"/>
+              <Image x:Name="GroupTask_Design_iSearch"
+                     HorizontalAlignment="Left"
+                     Height="40"
+                     Margin="628,46,0,0"
+                     VerticalAlignment="Top"
+                     Width="40"
+                     Source="/Views/Images/search.png"/>
+              <Image x:Name="GroupTask_Design_iLogo"
+                     HorizontalAlignment="Left"
+                     Height="40"
+                     Margin="131,71,0,0"
+                     VerticalAlignment="Top"
+                     Width="112.38"
+                     Source="/Views/Images/header.png"/>
+              <Image x:Name="GroupTask_Design_iHome"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="102,203,0,0"
+                     VerticalAlignment="Top"
+                     Width="30"
+                     Source="/Views/Images/home.png"/>
+              <Image x:Name="GroupTask_Design_iChat"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="102,279,0,0"
+                     VerticalAlignment="Top"
+                     Width="30"
+                     Source="/Views/Images/chat_bubble.png"/>
+              <Image x:Name="GroupTask_Design_iActivities"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="102,354,0,0"
+                     VerticalAlignment="Top"
+                     Width="30"
+                     Source="/Views/Images/activities.png"/>
+              <Image x:Name="GroupTask_Design_iMembers"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="102,432,0,0"
+                     VerticalAlignment="Top"
+                     Width="30"
+                     Source="/Views/Images/members.png"/>
+              <Image x:Name="GroupTask_Design_iTasks"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="102,510,0,0"
+                     VerticalAlignment="Top"
+                     Width="30"
+                     Source="/Views/Images/active-tasks.png"/>
+              <Label x:Name="GroupTask_Design_lbHome"
+                     Content="Home"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="165,203,0,0"
+                     VerticalAlignment="Top"
+                     Width="108"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"/>
+              <Label x:Name="GroupTask_Design_lbChat"
+                     Content="Chat"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="165,279,0,0"
+                     VerticalAlignment="Top"
+                     Width="108"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"/>
+              <Label x:Name="GroupTask_Design_lbActivities"
+                     Content="Activities"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="165,354,0,0"
+                     VerticalAlignment="Top"
+                     Width="108"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"/>
+              <Label x:Name="GroupTask_Design_lbMembers"
+                     Content="Members"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="165,432,0,0"
+                     VerticalAlignment="Top"
+                     Width="108"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"/>
+              <Label x:Name="GroupTask_Design_lbTasks"
+                     Content="Tasks"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="165,510,0,0"
+                     VerticalAlignment="Top"
+                     Width="108"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"
+                     RenderTransformOrigin="0.527,3.278"
+                     Foreground="#597CA2"/>
+              <Image x:Name="GroupTask_Design_iFacebook"
+                     HorizontalAlignment="Left"
+                     Height="24"
+                     Margin="175,926,0,0"
+                     VerticalAlignment="Top"
+                     Width="24"
+                     Source="/Views/Images/facebook.png"/>
+              <Image x:Name="GroupTask_Design_iInstagram"
+                     HorizontalAlignment="Left"
+                     Height="24"
+                     Margin="135,926,0,0"
+                     VerticalAlignment="Top"
+                     Width="24"
+                     Source="/Views/Images/instagram.png"/>
+              <Image x:Name="GroupTask_Design_iYoutube"
+                     HorizontalAlignment="Left"
+                     Height="24"
+                     Margin="215,926,0,0"
+                     VerticalAlignment="Top"
+                     Width="24"
+                     Source="/Views/Images/youtube.png"/>
+              <Label x:Name="GroupTask_Design_lbInformationTeam"
+                     Content="BAN THIẾT KẾ"
+                     HorizontalAlignment="Left"
+                     HorizontalContentAlignment="Left"
+                     Height="40"
+                     Margin="365,147,0,0"
+                     VerticalAlignment="Top"
+                     Width="236"
+                     FontSize="32"
+                     Foreground="#042354"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"/>
+              <!-- Divider và Manager info giữ nguyên -->
+              <Rectangle HorizontalAlignment="Left"
+                         Height="1"
+                         Margin="365,250,0,0"
+                         Stroke="Black"
                          VerticalAlignment="Top"
-                         Width="307"
-                         Height="50"
-                         Background="#FFDBF3FF"
-                         BorderBrush="{x:Null}"/>
-                <Border x:Name="GroupTask_Design_Dashboard"
-                        BorderBrush="Black"
-                        HorizontalAlignment="Left"
-                        Height="942"
-                        Margin="43,0,0,0"
-                        VerticalAlignment="Center"
-                        Width="288"
-                        CornerRadius="10,10,10,10">
-                        <Border.Background>
-                                <LinearGradientBrush EndPoint="0.5,1"
-                                                     StartPoint="0.5,0">
-                                        <GradientStop Color="#FFF6FCFF"
-                                                      Offset="0.04"/>
-                                        <GradientStop Color="#FFDBF3FF"
-                                                      Offset="0.46"/>
-                                        <GradientStop Color="#FF87ACCD"
-                                                      Offset="0.937"/>
-                                </LinearGradientBrush>
-                        </Border.Background>
-                </Border>
-                <Image x:Name="GroupTask_Design_iUsers"
-                       Grid.Column="1"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1358,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/generic avatar.png"/>
-                <Image x:Name="GroupTask_Design_iNotifications"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1297,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/light-notifications.png"/>
-                <Image x:Name="ThemeToggleButton"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="1236,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/dark.png"
-                       MouseDown="ThemeToggleButton_MouseDown"/>
-                <Image x:Name="GroupTask_Design_iSearch"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="628,46,0,0"
-                       VerticalAlignment="Top"
-                       Width="40"
-                       Source="/Views/Images/search.png"/>
-                <Image x:Name="GroupTask_Design_iLogo"
-                       HorizontalAlignment="Left"
-                       Height="40"
-                       Margin="131,71,0,0"
-                       VerticalAlignment="Top"
-                       Width="112.38"
-                       Source="/Views/Images/header.png"/>
-                <Image x:Name="GroupTask_Design_iHome"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/home.png"/>
-                <Image x:Name="GroupTask_Design_iChat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/chat_bubble.png"/>
-                <Image x:Name="GroupTask_Design_iActivities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/activities.png"/>
-                <Image x:Name="GroupTask_Design_iMembers"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/members.png"/>
-                <Image x:Name="GroupTask_Design_iTasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="102,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="30"
-                       Source="/Views/Images/active-tasks.png"/>
-                <Label x:Name="GroupTask_Design_lbHome"
-                       Content="Home"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,203,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="GroupTask_Design_lbChat"
-                       Content="Chat"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,279,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="GroupTask_Design_lbActivities"
-                       Content="Activities"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,354,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="GroupTask_Design_lbMembers"
-                       Content="Members"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,432,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <Label x:Name="GroupTask_Design_lbTasks"
-                       Content="Tasks"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="165,510,0,0"
-                       VerticalAlignment="Top"
-                       Width="108"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       RenderTransformOrigin="0.527,3.278"
-                       Foreground="#597CA2"/>
-                <Image x:Name="GroupTask_Design_iFacebook"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="175,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/facebook.png"/>
-                <Image x:Name="GroupTask_Design_iInstagram"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="135,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/instagram.png"/>
-                <Image x:Name="GroupTask_Design_iYoutube"
-                       HorizontalAlignment="Left"
-                       Height="24"
-                       Margin="215,926,0,0"
-                       VerticalAlignment="Top"
-                       Width="24"
-                       Source="/Views/Images/youtube.png"/>
-                <Label x:Name="GroupTask_Design_lbInformationTeam"
-                       Content="BAN THIẾT KẾ"
-                       HorizontalAlignment="Left"
-                       HorizontalContentAlignment="Left"
-                       Height="40"
-                       Margin="365,147,0,0"
-                       VerticalAlignment="Top"
-                       Width="236"
-                       FontSize="32"
-                       Foreground="#042354"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"/>
-                <!-- Divider và Manager info giữ nguyên -->
-                <Rectangle HorizontalAlignment="Left"
-                           Height="1"
-                           Margin="365,250,0,0"
-                           Stroke="Black"
-                           VerticalAlignment="Top"
-                           Width="1020"
-                           RenderTransformOrigin="0.5,0.5">
-                        <Rectangle.RenderTransform>
-                                <TransformGroup>
-                                        <ScaleTransform ScaleY="-1"/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                </TransformGroup>
-                        </Rectangle.RenderTransform>
-                </Rectangle>
-                <Label Content="Manager:"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="365,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="92"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
-                <Label x:Name="GroupTask_Design_lbManagerDesignTeam"
-                       Content="Hoàng Bảo Phước"
-                       HorizontalAlignment="Left"
-                       Height="30"
-                       Margin="462,199,0,0"
-                       VerticalAlignment="Top"
-                       Width="180"
-                       FontFamily="Segoe UI"
-                       FontSize="20"
-                       Padding="0,0,0,0"
-                       Foreground="#042354"/>
+                         Width="1020"
+                         RenderTransformOrigin="0.5,0.5">
+                     <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                   <ScaleTransform ScaleY="-1"/>
+                                   <SkewTransform/>
+                                   <RotateTransform/>
+                                   <TranslateTransform/>
+                            </TransformGroup>
+                     </Rectangle.RenderTransform>
+              </Rectangle>
+              <Label Content="Manager:"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="365,199,0,0"
+                     VerticalAlignment="Top"
+                     Width="92"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     Padding="0,0,0,0"
+                     Foreground="#042354"/>
+              <Label x:Name="GroupTask_Design_lbManagerDesignTeam"
+                     Content="Hoàng Bảo Phước"
+                     HorizontalAlignment="Left"
+                     Height="30"
+                     Margin="462,199,0,0"
+                     VerticalAlignment="Top"
+                     Width="180"
+                     FontFamily="Segoe UI"
+                     FontSize="20"
+                     Padding="0,0,0,0"
+                     Foreground="#042354"/>
 
-                <!-- Dynamic Content Area -->
-                <ScrollViewer x:Name="ContentScrollViewer"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              Margin="365,280,55,50"
-                              Width="1020"
-                              Height="692"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel x:Name="DynamicContentPanel"
-                                    Orientation="Vertical">
-                                <!-- Dynamic sessions sẽ được thêm vào đây -->
-                        </StackPanel>
-                </ScrollViewer>
-        </Grid>
+              <!-- Dynamic Content Area -->
+              <ScrollViewer x:Name="ContentScrollViewer"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="365,280,55,50"
+                            Width="1020"
+                            Height="692"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Disabled">
+                     <StackPanel x:Name="DynamicContentPanel"
+                                 Orientation="Vertical">
+                            <!-- Dynamic sessions sẽ được thêm vào đây -->
+                     </StackPanel>
+              </ScrollViewer>
+       </Grid>
 </Window>
