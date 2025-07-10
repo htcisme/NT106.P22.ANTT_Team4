@@ -14,6 +14,33 @@
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+
+
+
+        <!--  Style for comment input  -->
+        <Style x:Key="CommentInputStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="MaxHeight" Value="100" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer
+                            x:Name="PART_ContentHost"
+                            Focusable="false"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -165,6 +192,96 @@
                                         <TranslateTransform Y="1" />
                                     </Setter.Value>
                                 </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CommentContainerStyle" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Padding" Value="15,10" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="#EAF6FF" />
+            <Style.Triggers>
+                <!--  Different style for replies  -->
+                <DataTrigger Binding="{Binding IsReply}" Value="True">
+                    <Setter Property="Background" Value="#F0F8FF" />
+                    <Setter Property="BorderBrush" Value="#E3F2FD" />
+                    <Setter Property="BorderThickness" Value="2,0,0,0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="CommentActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFE3F2FD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FFBBDEFB" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Reply indicator style  -->
+        <Style x:Key="ReplyIndicatorStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#FF888888" />
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="Margin" Value="0,0,0,5" />
+        </Style>
+
+        <!--  Time display style  -->
+        <Style x:Key="TimeDisplayStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#6c757d" />
+            <Setter Property="Margin" Value="10,0,0,0" />
+        </Style>
+
+        <!--  User name style  -->
+        <Style x:Key="UserNameStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#FF042354" />
+        </Style>
+
+        <!--  Rest of your existing styles...  -->
+        <Style x:Key="CommentButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFE3F2FD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FFBBDEFB" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -824,90 +941,352 @@
                             VerticalAlignment="Top"
                             Fill="#FF042354" />
 
+                        <!--  Thay thế phần Comment section trong ActivitiesPostView.xaml  -->
+
                         <!--  Comment section  -->
                         <StackPanel Margin="50,30,50,30" VerticalAlignment="Bottom">
                             <TextBlock
-                                Margin="0,0,0,10"
+                                Margin="0,0,0,15"
                                 FontSize="18"
                                 FontWeight="Bold"
                                 Foreground="#042354"
                                 Text="Bình luận" />
-                            <!--  Comment 1 (demo)  -->
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border
-                                    Grid.Column="0"
-                                    Width="40"
-                                    Height="40"
-                                    Background="#E6E6E6"
-                                    CornerRadius="20" />
-                                <Border
-                                    Grid.Column="1"
-                                    Margin="10,0,00,0"
-                                    Padding="15,10"
-                                    Background="#EAF6FF"
-                                    CornerRadius="8">
-                                    <StackPanel>
-                                        <TextBlock
-                                            Margin="0,0,0,5"
-                                            FontWeight="SemiBold"
-                                            Foreground="#FF042354"
-                                            Text="Đỗ Quang Trung" />
-                                        <TextBlock Margin="0,0,0,5" Text="Cmt đầu" />
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock
-                                                Cursor="Hand"
-                                                Foreground="#0E4C92"
-                                                Text="Thích" />
-                                            <TextBlock
-                                                Margin="15,0,0,0"
-                                                Cursor="Hand"
-                                                Foreground="#0E4C92"
-                                                Text="Phản hồi" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-                                <StackPanel
-                                    Grid.Column="2"
-                                    Margin="10,0,0,0"
-                                    Orientation="Horizontal">
+
+                            <!--  Loading indicator for comments  -->
+                            <TextBlock
+                                Margin="0,0,0,10"
+                                FontSize="14"
+                                Foreground="#6c757d"
+                                Text="Đang tải bình luận..."
+                                Visibility="{Binding IsLoadingComments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <!--  Comments list  -->
+                            <!--  Replace the Comments ItemsControl in ActivitiesPostView.xaml  -->
+
+                            <!--  Comments list with improved reply visualization  -->
+                            <ItemsControl ItemsSource="{Binding Comments}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,15">
+                                            <Grid.ColumnDefinitions>
+                                                <!--  Indentation column for replies  -->
+                                                <ColumnDefinition Width="{Binding IndentLevel, Converter={StaticResource IndentToWidthConverter}}" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Reply indicator line  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Width="2"
+                                                Margin="0,0,10,0"
+                                                HorizontalAlignment="Right"
+                                                Background="#FFE0E0E0"
+                                                Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                            <!--  User avatar  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="40"
+                                                Height="40"
+                                                Background="#E6E6E6"
+                                                CornerRadius="20">
+                                                <Image
+                                                    Source="{Binding UserAvatar}"
+                                                    Stretch="UniformToFill"
+                                                    Visibility="{Binding UserAvatar, Converter={StaticResource StringToVisibilityConverter}}" />
+                                            </Border>
+
+                                            <!--  Comment content  -->
+                                            <Border
+                                                Grid.Column="2"
+                                                Margin="10,0,10,0"
+                                                Padding="15,10"
+                                                CornerRadius="8">
+                                                <!--  Different background for replies  -->
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#EAF6FF" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReply}" Value="True">
+                                                                <Setter Property="Background" Value="#F0F8FF" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+
+                                                <StackPanel>
+                                                    <!--  Reply indicator header  -->
+                                                    <StackPanel
+                                                        Margin="0,0,0,5"
+                                                        Orientation="Horizontal"
+                                                        Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontStyle="Italic"
+                                                            Foreground="#FF888888"
+                                                            Text="↳ Phản hồi" />
+                                                    </StackPanel>
+
+                                                    <!--  User name and time  -->
+                                                    <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                                                        <TextBlock
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#FF042354"
+                                                            Text="{Binding UserDisplayName}" />
+
+                                                        <!--  Comment type indicator  -->
+                                                        <Border
+                                                            Margin="8,0,8,0"
+                                                            Padding="4,1"
+                                                            CornerRadius="3"
+                                                            Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Background" Value="#FFE3F2FD" />
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <TextBlock
+                                                                FontSize="10"
+                                                                FontWeight="Medium"
+                                                                Foreground="#FF1976D2"
+                                                                Text="Phản hồi" />
+                                                        </Border>
+
+                                                        <!--  Time with tooltip showing detailed time  -->
+                                                        <TextBlock
+                                                            Margin="10,0,0,0"
+                                                            FontSize="12"
+                                                            Foreground="#6c757d"
+                                                            Text="{Binding TimeAgo}"
+                                                            ToolTip="{Binding DetailedTime}" />
+                                                    </StackPanel>
+
+                                                    <!--  Comment text  -->
+                                                    <TextBlock
+                                                        Margin="0,0,0,8"
+                                                        Text="{Binding Content}"
+                                                        TextWrapping="Wrap" />
+
+                                                    <!--  Action buttons  -->
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <!--  Like button  -->
+                                                        <Button
+                                                            Margin="0,0,15,0"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Command="{Binding DataContext.LikeCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Cursor="Hand">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock FontSize="12">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Text" Value="♡" />
+                                                                            <Setter Property="Foreground" Value="#0E4C92" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsLiked}" Value="True">
+                                                                                    <Setter Property="Text" Value="♥" />
+                                                                                    <Setter Property="Foreground" Value="#E53935" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                                <TextBlock
+                                                                    Margin="4,0,0,0"
+                                                                    FontSize="12"
+                                                                    Foreground="#0E4C92"
+                                                                    Text="Thích" />
+                                                                <TextBlock
+                                                                    Margin="4,0,0,0"
+                                                                    FontSize="12"
+                                                                    Foreground="#0E4C92"
+                                                                    Text="{Binding LikeCount}"
+                                                                    Visibility="{Binding LikeCount, Converter={StaticResource GreaterThanZeroToVisibilityConverter}}" />
+                                                            </StackPanel>
+                                                        </Button>
+
+                                                        <!--  Reply button - Hide for replies to prevent nested replies  -->
+                                                        <Button
+                                                            Margin="0,0,15,0"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Command="{Binding DataContext.ReplyToCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Cursor="Hand"
+                                                            Visibility="{Binding IsReply, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="#0E4C92"
+                                                                Text="Phản hồi" />
+                                                        </Button>
+
+                                                        <!--  Delete button (only for comment owner)  -->
+                                                        <Button
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Cursor="Hand"
+                                                            Visibility="{Binding IsOwner, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="#E53935"
+                                                                Text="Xóa" />
+                                                        </Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!--  Options menu  -->
+                                            <StackPanel
+                                                Grid.Column="3"
+                                                Orientation="Horizontal"
+                                                Visibility="{Binding IsOwner, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock
+                                                    VerticalAlignment="Top"
+                                                    Cursor="Hand"
+                                                    FontSize="16"
+                                                    FontWeight="Bold"
+                                                    Foreground="#6c757d"
+                                                    Text="⋯" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!--  Reply indicator  -->
+                            <Border
+                                Margin="0,10,0,10"
+                                Padding="10,5"
+                                Background="#FFE3F2FD"
+                                CornerRadius="5"
+                                Visibility="{Binding ReplyingToComment, Converter={StaticResource NullToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
                                     <TextBlock
-                                        VerticalAlignment="Top"
-                                        Cursor="Hand"
-                                        FontSize="20"
+                                        FontSize="12"
+                                        Foreground="#FF12305E"
+                                        Text="Đang phản hồi: " />
+                                    <TextBlock
+                                        FontSize="12"
                                         FontWeight="Bold"
-                                        Text="..." />
+                                        Foreground="#FF12305E"
+                                        Text="{Binding ReplyingToComment.UserDisplayName}" />
+                                    <Button
+                                        Margin="10,0,0,0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{Binding CancelReplyCommand}"
+                                        Content="Hủy"
+                                        FontSize="12"
+                                        Foreground="#E53935" />
                                 </StackPanel>
-                            </Grid>
+                            </Border>
+
                             <!--  Comment input  -->
                             <Grid Margin="0,20,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+
+                                <!--  Current user avatar  -->
                                 <Border
                                     Grid.Column="0"
                                     Width="40"
                                     Height="40"
                                     Background="#E6E6E6"
-                                    CornerRadius="20" />
+                                    CornerRadius="20">
+                                    <!--  You can bind this to current user's avatar  -->
+                                </Border>
+
+                                <!--  Comment input box  -->
                                 <Border
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
+                                    Margin="10,0,10,0"
                                     Padding="15,10"
                                     Background="#EAF6FF"
                                     CornerRadius="8">
-                                    <TextBlock
+                                    <TextBox
+                                        x:Name="CommentTextBox"
                                         VerticalAlignment="Center"
-                                        Foreground="#6c757d"
-                                        Text="Bình luận dưới tên..." />
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="14"
+                                        Text="{Binding NewCommentText, UpdateSourceTrigger=PropertyChanged}"
+                                        TextWrapping="Wrap">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Style.Triggers>
+                                                    <Trigger Property="Text" Value="">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <VisualBrush
+                                                                    AlignmentX="Left"
+                                                                    AlignmentY="Center"
+                                                                    Stretch="None">
+                                                                    <VisualBrush.Visual>
+                                                                        <TextBlock
+                                                                            FontSize="14"
+                                                                            Foreground="#6c757d"
+                                                                            Text="Viết bình luận..." />
+                                                                    </VisualBrush.Visual>
+                                                                </VisualBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </Border>
+
+                                <!--  Post button  -->
+                                <Button
+                                    Grid.Column="2"
+                                    Padding="12,8"
+                                    Background="#FF12305E"
+                                    BorderThickness="0"
+                                    Command="{Binding PostCommentCommand}"
+                                    Foreground="White"
+                                    IsEnabled="{Binding NewCommentText, Converter={StaticResource StringNotEmptyToBoolConverter}}">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border
+                                                            Padding="{TemplateBinding Padding}"
+                                                            Background="{TemplateBinding Background}"
+                                                            CornerRadius="5">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#FF4A6483" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter Property="Background" Value="#FF3C536C" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsEnabled" Value="False">
+                                                                <Setter Property="Background" Value="#FFCCCCCC" />
+                                                                <Setter Property="Foreground" Value="#FF888888" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                    <TextBlock Text="Đăng" />
+                                </Button>
                             </Grid>
                         </StackPanel>
+
                     </StackPanel>
                 </ScrollViewer>
             </Border>

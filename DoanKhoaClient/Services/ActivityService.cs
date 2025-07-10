@@ -46,16 +46,15 @@ namespace DoanKhoaClient.Services
 
         public async Task<DoanKhoaClient.Models.Activity> CreateActivityAsync(DoanKhoaClient.Models.Activity activity, CancellationToken cancellationToken = default)
         {
+            Console.WriteLine($"[DEBUG] Activity.Id = {activity.Id}");
+
             if (activity == null)
             {
                 throw new ArgumentNullException(nameof(activity), "Activity cannot be null");
             }
 
-            // Tạo một bản sao để tránh thay đổi đối tượng gốc
             var activityToSend = new DoanKhoaClient.Models.Activity
             {
-                // Đảm bảo ID là null để server tự tạo
-                Id = null,
                 Title = activity.Title,
                 Description = activity.Description,
                 Type = activity.Type,

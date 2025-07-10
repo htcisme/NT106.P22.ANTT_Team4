@@ -69,7 +69,9 @@ namespace DoanKhoaClient.Views
 
         private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var homeView = new HomePageView();
+            homeView.Show();
+            this.Close();
         }
 
         private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
