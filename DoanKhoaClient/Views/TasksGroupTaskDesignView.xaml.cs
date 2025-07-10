@@ -241,7 +241,7 @@ namespace DoanKhoaClient.Views
         {
             try
             {
-                var contentView = new TasksGroupTaskContentEventView(session);
+                var contentView = new TasksGroupTaskContentDesignView(session);
                 contentView.Show();
             }
             catch (Exception ex)

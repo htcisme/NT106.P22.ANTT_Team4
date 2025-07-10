@@ -174,55 +174,85 @@ namespace DoanKhoaClient.Views
             {
                 if (sender is Image image)
                 {
-                    string imageUrl = image.Tag as string;
-
-                    if (string.IsNullOrEmpty(imageUrl) && image.Source is BitmapImage bitmapImage)
+                    // 1. Chỉ tạo ContextMenu MỘT LẦN nếu nó chưa tồn tại
+                    if (image.ContextMenu == null)
                     {
-                        imageUrl = bitmapImage.UriSource?.ToString();
-                    }
-
-                    if (!string.IsNullOrEmpty(imageUrl))
-                    {
-                        // Tạo context menu cho ảnh
                         var contextMenu = new ContextMenu();
+                        // Giữ menu mở cho đến khi click ra ngoài
+                        contextMenu.StaysOpen = true;
 
                         // Menu item xem ảnh
                         var viewMenuItem = new MenuItem { Header = "Xem ảnh" };
-                        viewMenuItem.Click += (s, args) =>
-                        {
-                            try
-                            {
-                                var imageViewer = new ImageViewerWindow(imageUrl);
-                                imageViewer.Owner = this;
-                                imageViewer.Show();
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show($"Không thể mở ảnh: {ex.Message}", "Lỗi",
-                                    MessageBoxButton.OK, MessageBoxImage.Error);
-                            }
-                        };
+                        viewMenuItem.Click += ViewImage_Click; // Sử dụng handler riêng
+                        contextMenu.Items.Add(viewMenuItem);
 
                         // Menu item tải xuống ảnh
                         var downloadMenuItem = new MenuItem { Header = "Tải xuống" };
-                        downloadMenuItem.Click += async (s, args) =>
-                        {
-                            await DownloadImageAsync(imageUrl, image.DataContext as Attachment);
-                        };
-
-                        contextMenu.Items.Add(viewMenuItem);
+                        downloadMenuItem.Click += DownloadImage_Click; // Sử dụng handler riêng
                         contextMenu.Items.Add(downloadMenuItem);
 
-                        // Hiển thị context menu
-                        contextMenu.IsOpen = true;
-                        contextMenu.PlacementTarget = image;
-                        contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+                        // Gán menu vào ảnh để tái sử dụng
+                        image.ContextMenu = contextMenu;
+                    }
+
+                    // 2. Cập nhật DataContext để các MenuItem biết đang thao tác trên ảnh nào
+                    image.ContextMenu.DataContext = image.DataContext;
+
+                    // 3. Mở ContextMenu
+                    image.ContextMenu.PlacementTarget = image;
+                    image.ContextMenu.IsOpen = true;
+
+                    // 4. Đánh dấu sự kiện đã được xử lý để ngăn menu bị đóng ngay lập tức
+                    e.Handled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở menu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ✅ ADD: Handler riêng cho việc xem ảnh
+        private void ViewImage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Lấy thông tin attachment từ DataContext của MenuItem
+                if (sender is MenuItem menuItem && menuItem.DataContext is Attachment attachment)
+                {
+                    if (!string.IsNullOrEmpty(attachment.FileUrl))
+                    {
+                        var imageViewer = new ImageViewerWindow(attachment.FileUrl);
+                        imageViewer.Owner = this;
+                        imageViewer.Show();
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Không thể mở ảnh: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ✅ ADD: Handler riêng cho việc tải ảnh
+        private async void DownloadImage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Lấy thông tin attachment từ DataContext của MenuItem
+                if (sender is MenuItem menuItem && menuItem.DataContext is Attachment attachment)
+                {
+                    if (!string.IsNullOrEmpty(attachment.FileUrl))
+                    {
+                        await DownloadImageAsync(attachment.FileUrl, attachment);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải ảnh: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
