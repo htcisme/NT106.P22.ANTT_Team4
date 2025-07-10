@@ -660,12 +660,12 @@
                             </Border>
 
                             <!--  Latest Activities  -->
-                            <StackPanel Grid.Row="1" Margin="15">
+                            <StackPanel Grid.Row="1" Margin="10">
                                 <ItemsControl ItemsSource="{Binding LatestActivities}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Button
-                                                Margin="0,5,0,5"
+                                                Margin="0,0,0,5"
                                                 Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource ActivityButtonStyle}">

@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using DoanKhoaClient.Models;
 using DoanKhoaClient.Extensions;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace DoanKhoaClient.Views
 {
@@ -19,6 +21,7 @@ namespace DoanKhoaClient.Views
         private readonly ActivitiesPostViewModel _viewModel;
         private readonly UserService _userService;
         private readonly ActivityService _activityService;
+        private bool isAdminSubmenuOpen = false;
 
         public ActivitiesPostView(Activity activity)
         {
@@ -38,6 +41,15 @@ namespace DoanKhoaClient.Views
             // Setup user avatar
             HomePage_iUsers.SetupAsUserAvatar();
 
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
             // Áp dụng theme
             ThemeManager.ApplyTheme(ActivitiesPost_Background);
 
@@ -184,6 +196,39 @@ namespace DoanKhoaClient.Views
 
             var win = new TasksView();
             win.Show();
+            this.Close();
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
             this.Close();
         }
 

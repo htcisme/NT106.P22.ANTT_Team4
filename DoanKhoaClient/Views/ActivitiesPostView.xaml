@@ -773,6 +773,97 @@
                         FontWeight="Bold" />
                 </StackPanel>
             </Button>
+            <Button
+                x:Name="SidebarAdminButton"
+                Width="160"
+                Height="30"
+                Margin="102,586,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="SidebarAdminButton_Click"
+                Cursor="Hand"
+                Style="{StaticResource NavigationButtonStyle}"
+                Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                    <Image
+                        x:Name="HomePage_iAdmin"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="/Views/Images/admin_panel.png" />
+                    <Label
+                        x:Name="HomePage_lbAdmin"
+                        Width="108"
+                        Height="30"
+                        Margin="30,0,0,0"
+                        Padding="0,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Admin"
+                        FontFamily="Segoe UI"
+                        FontSize="20"
+                        FontWeight="Bold" />
+                </StackPanel>
+            </Button>
+            <!--  Admin submenu  -->
+            <StackPanel
+                x:Name="AdminSubmenu"
+                Margin="132,621,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Button
+                    x:Name="AdminTaskButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminTaskButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý công việc" />
+                </Button>
+                <Button
+                    x:Name="AdminMembersButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminMembersButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý thành viên" />
+                </Button>
+                <Button
+                    x:Name="AdminChatButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminChatButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý chat" />
+                </Button>
+                <Button
+                    x:Name="AdminActivitiesButton"
+                    Margin="0,5,0,5"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AdminActivitiesButton_Click"
+                    Cursor="Hand">
+                    <TextBlock
+                        FontSize="15"
+                        Foreground="#042354"
+                        Text="Quản lý hoạt động" />
+                </Button>
+            </StackPanel>
             <Image
                 x:Name="HomePage_iFacebook"
                 Width="24"

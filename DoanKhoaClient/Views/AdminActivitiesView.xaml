@@ -600,7 +600,7 @@
 
             <!--  Phần thẻ thống kê  -->
             <Grid
-                Height="220"
+                Height="174"
                 Margin="370,120,42,0"
                 VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
@@ -615,26 +615,27 @@
                     Grid.Column="0"
                     Margin="0,0,10,0"
                     Padding="20"
-                    Background="#FFDBF3FF"
+                    Background="#FFEDF9FF"
                     CornerRadius="10">
                     <StackPanel>
                         <TextBlock
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            FontSize="28"
+                            FontSize="26"
                             Foreground="#FF12305E"
                             Text="📅" />
                         <TextBlock
-                            FontSize="26"
+                            Margin="0,6,0,5"
+                            FontSize="22"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
                             Text="Events" />
                         <TextBlock
-                            Margin="0,15,0,5"
-                            FontSize="30"
+                            Margin="0,7,0,5"
+                            FontSize="25"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
-                            Text="{Binding ActivitiesCount50Days}" />
+                            Text="{Binding ActivitiesCount90Days}" />
                         <TextBlock
                             FontSize="12"
                             Foreground="#FF12305E"
@@ -647,26 +648,26 @@
                     Grid.Column="1"
                     Margin="10,0,10,0"
                     Padding="20"
-                    Background="#FFDBF3FF"
+                    Background="#FFEDF9FF"
                     CornerRadius="10">
                     <StackPanel>
                         <TextBlock
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            FontSize="30"
+                            FontSize="28"
                             Foreground="#FF12305E"
                             Text="👥" />
                         <TextBlock
-                            FontSize="26"
+                            FontSize="22"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
                             Text="People Reached" />
                         <TextBlock
-                            Margin="0,15,0,5"
-                            FontSize="30"
+                            Margin="0,7,0,5"
+                            FontSize="25"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
-                            Text="{Binding ParticipantsCount50Days}" />
+                            Text="{Binding ParticipantsCount90Days}" />
                         <TextBlock
                             FontSize="12"
                             Foreground="#FF12305E"
@@ -679,26 +680,26 @@
                     Grid.Column="2"
                     Margin="10,0,10,0"
                     Padding="20,5,20,20"
-                    Background="#FFDBF3FF"
+                    Background="#FFEDF9FF"
                     CornerRadius="10">
                     <StackPanel>
                         <TextBlock
                             Height="51"
                             HorizontalAlignment="Left"
-                            FontSize="50"
+                            FontSize="49"
                             Foreground="#FF12305E"
                             Text="⭐️" />
                         <TextBlock
-                            FontSize="26"
+                            FontSize="22"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
                             Text="Reacts" />
                         <TextBlock
-                            Margin="0,15,0,5"
-                            FontSize="30"
+                            Margin="0,7,0,5"
+                            FontSize="25"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
-                            Text="{Binding LikesCount50Days}" />
+                            Text="{Binding LikesCount90Days}" />
                         <TextBlock
                             FontSize="12"
                             Foreground="#FF12305E"
@@ -711,26 +712,27 @@
                     Grid.Column="3"
                     Margin="10,0,0,0"
                     Padding="20"
-                    Background="#FFDBF3FF"
+                    Background="#FFEDF9FF"
                     CornerRadius="10">
                     <StackPanel>
                         <TextBlock
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            FontSize="28"
+                            FontSize="23"
                             Foreground="#FF12305E"
                             Text="💬" />
                         <TextBlock
-                            FontSize="26"
+                            Margin="0,2,0,0"
+                            FontSize="22"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
                             Text="Comments" />
                         <TextBlock
-                            Margin="0,15,0,5"
-                            FontSize="30"
+                            Margin="0,0,0,5"
+                            FontSize="25"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
-                            Text="0" />
+                            Text="{Binding CommentsCount90Days}" />
                         <TextBlock
                             FontSize="12"
                             Foreground="#FF12305E"
@@ -741,12 +743,16 @@
 
             <!--  Main Content Border  -->
             <Border
-                Margin="370,372,42,40"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="#FFDBF3FF"
+                Margin="370,312,42,40"
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -763,6 +769,8 @@
 
                         <TextBlock
                             Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="10,0,863,0"
                             FontSize="26"
                             FontWeight="Bold"
                             Foreground="#FF12305E"
@@ -812,15 +820,7 @@
                                 Content="Tạo sự kiện"
                                 Style="{StaticResource PrimaryButtonStyle}" />
 
-                            <Button
-                                x:Name="timeFilterButton"
-                                Margin="0,0,20,0"
-                                Content="90 ngày qua"
-                                Style="{StaticResource SecondaryButtonStyle}" />
-                            <Button
-                                x:Name="sortByButton"
-                                Content="Sắp xếp theo: Ngày"
-                                Style="{StaticResource SecondaryButtonStyle}" />
+
                         </StackPanel>
                     </Grid>
 

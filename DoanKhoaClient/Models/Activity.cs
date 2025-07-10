@@ -39,6 +39,16 @@ namespace DoanKhoaClient.Models
                 OnPropertyChanged();
             }
         }
+        private int _commentCount;
+        public int CommentCount
+        {
+            get => _commentCount;
+            set
+            {
+                _commentCount = value;
+                OnPropertyChanged();
+            }
+        }
 
         private bool _isParticipated;
         public bool IsParticipated
