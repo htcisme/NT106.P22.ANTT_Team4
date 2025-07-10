@@ -49,7 +49,7 @@ namespace DoanKhoaServer.Services
 
             _commentsCollection = mongoDatabase.GetCollection<Comment>(
                 mongoDBSettings.Value.CommentsCollectionName);
-    
+
             _userCommentStatusesCollection = mongoDatabase.GetCollection<UserCommentStatus>(
                 mongoDBSettings.Value.UserCommentStatusesCollectionName);
 
@@ -290,6 +290,33 @@ namespace DoanKhoaServer.Services
         {
             activity.Id = id;
             await _activitiesCollection.ReplaceOneAsync(x => x.Id == id, activity);
+        }
+        public async Task<bool> UpdateMessageAsync(Message message)
+        {
+            try
+            {
+                var result = await _messagesCollection.ReplaceOneAsync(x => x.Id == message.Id, message);
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating message: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteMessageAsync(string messageId)
+        {
+            try
+            {
+                var result = await _messagesCollection.DeleteOneAsync(x => x.Id == messageId);
+                return result.DeletedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting message: {ex.Message}");
+                return false;
+            }
         }
 
 

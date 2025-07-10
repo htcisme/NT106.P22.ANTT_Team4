@@ -16,10 +16,16 @@ namespace DoanKhoaServer.Models
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
         public bool IsRead { get; set; }
+        public bool IsEdited { get; set; } = false; // Thêm thuộc tính này
+
         public MessageType Type { get; set; } = MessageType.Text;
         public List<Attachment> Attachments { get; set; } = new List<Attachment>();
     }
-
+    public class UpdateMessageRequest
+    {
+        public string Content { get; set; }
+        public string UserId { get; set; }
+    }
     public enum MessageType
     {
         Text,
