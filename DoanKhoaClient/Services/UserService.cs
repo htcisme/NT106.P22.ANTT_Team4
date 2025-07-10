@@ -304,7 +304,7 @@ namespace DoanKhoaClient.Services
             try
             {
                 var commentService = new CommentService();
-                var statuses = await commentService.GetUserCommentStatusAsync(_currentUser.Id);
+                var statuses = await commentService.GetUserCommentStatusesAsync(_currentUser.Id);
                 _likedComments.Clear();
 
                 foreach (var status in statuses)
@@ -324,6 +324,7 @@ namespace DoanKhoaClient.Services
                 Debug.WriteLine($"Failed to load user comment statuses: {ex.Message}");
             }
         }
+
 
         public async Task RefreshUserActivityStatusesAsync()
         {

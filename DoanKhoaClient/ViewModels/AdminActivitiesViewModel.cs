@@ -17,10 +17,12 @@ namespace DoanKhoaClient.ViewModels
     public class AdminActivitiesViewModel : INotifyPropertyChanged
     {
         private readonly ActivityService _activityService;
+        private readonly CommentService _commentService;
         private ObservableCollection<Activity> _activities;
         private Activity _selectedActivity;
         private bool _isLoading;
         private string _errorMessage;
+        private int _commentsCount90Days;
 
         // Thuộc tính mới cho chọn hàng loạt
         private bool _isAllSelected;
@@ -54,7 +56,6 @@ namespace DoanKhoaClient.ViewModels
             {
                 _isLoading = value;
                 OnPropertyChanged();
-                // Đảm bảo các command được cập nhật trạng thái khi IsLoading thay đổi
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -69,7 +70,6 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Thuộc tính mới cho chọn hàng loạt
         public bool IsAllSelected
         {
             get => _isAllSelected;
@@ -78,7 +78,6 @@ namespace DoanKhoaClient.ViewModels
                 _isAllSelected = value;
                 OnPropertyChanged();
 
-                // Cập nhật trạng thái IsSelected của tất cả các mục
                 if (Activities != null)
                 {
                     foreach (var activity in Activities)
@@ -87,7 +86,6 @@ namespace DoanKhoaClient.ViewModels
                     }
                 }
 
-                // Cập nhật trạng thái của HasSelectedItems
                 UpdateHasSelectedItems();
             }
         }
@@ -106,13 +104,21 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Command hiện có
+        public int CommentsCount90Days
+        {
+            get => _commentsCount90Days;
+            set
+            {
+                _commentsCount90Days = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // Commands
         public ICommand CreateActivityCommand { get; }
         public ICommand EditActivityCommand { get; }
         public ICommand DeleteActivityCommand { get; }
         public ICommand RefreshCommand { get; }
-
-        // Command mới cho thao tác hàng loạt
         public ICommand BatchEditCommand { get; }
         public ICommand BatchDeleteCommand { get; }
         public ICommand ViewDetailCommand { get; }
@@ -129,17 +135,18 @@ namespace DoanKhoaClient.ViewModels
         public ICommand RemoveFilterTagCommand { get; }
         public ICommand ApplyFilterCommand { get; }
 
-        // Thống kê 50 ngày qua
-        public int ActivitiesCount50Days => Activities?.Count(a => a.Date >= DateTime.Now.AddDays(-50)) ?? 0;
-        public int ParticipantsCount50Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-50)).Sum(a => a.ParticipantCount) ?? 0;
-        public int LikesCount50Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-50)).Sum(a => a.LikeCount) ?? 0;
+        // Thống kê 90 ngày qua
+        public int ActivitiesCount90Days => Activities?.Count(a => a.Date >= DateTime.Now.AddDays(-90)) ?? 0;
+        public int ParticipantsCount90Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-90)).Sum(a => a.ParticipantCount) ?? 0;
+        public int LikesCount90Days => Activities?.Where(a => a.Date >= DateTime.Now.AddDays(-90)).Sum(a => a.LikeCount) ?? 0;
 
-        public AdminActivitiesViewModel(ActivityService activityService = null)
+        public AdminActivitiesViewModel(ActivityService activityService = null, CommentService commentService = null)
         {
             _activityService = activityService ?? new ActivityService();
+            _commentService = commentService ?? new CommentService();
             Activities = new ObservableCollection<Activity>();
 
-            // Command hiện có
+            // Initialize commands
             CreateActivityCommand = new RelayCommand(async param => await ExecuteCreateActivityAsync(),
                 param => !IsLoading);
 
@@ -152,7 +159,6 @@ namespace DoanKhoaClient.ViewModels
             RefreshCommand = new RelayCommand(async _ => await LoadActivitiesAsync(),
                 _ => !IsLoading);
 
-            // Command mới cho thao tác hàng loạt
             BatchEditCommand = new RelayCommand(param => ExecuteBatchEdit(),
                 param => HasSelectedItems && !IsLoading);
 
@@ -162,21 +168,21 @@ namespace DoanKhoaClient.ViewModels
             ViewDetailCommand = new RelayCommand(param => ExecuteViewDetail(param as Activity),
                 param => !IsLoading && param is Activity);
 
-            // Fire and forget pattern - không chờ đợi
-            _ = LoadActivitiesAsync();
-
+            // Initialize filter options
             ActivityTypeOptions = new ObservableCollection<FilterOption>
             {
                 new FilterOption { Display = "Hoạt động học thuật", Value = ActivityType.Academic },
                 new FilterOption { Display = "Hoạt động tình nguyện", Value = ActivityType.Volunteer },
                 new FilterOption { Display = "Hoạt động ngoại khóa", Value = ActivityType.Entertainment }
             };
+
             ActivityStatusOptions = new ObservableCollection<FilterOption>
             {
                 new FilterOption { Display = "Sắp diễn ra", Value = ActivityStatus.Upcoming },
                 new FilterOption { Display = "Đang diễn ra", Value = ActivityStatus.Ongoing },
                 new FilterOption { Display = "Đã diễn ra", Value = ActivityStatus.Completed }
             };
+
             RemoveFilterTagCommand = new RelayCommand(tag =>
             {
                 foreach (var opt in ActivityTypeOptions.Concat(ActivityStatusOptions))
@@ -184,13 +190,18 @@ namespace DoanKhoaClient.ViewModels
                 UpdateSelectedTags();
                 FilterActivities();
             });
+
             ApplyFilterCommand = new RelayCommand(_ =>
             {
                 UpdateSelectedTags();
                 FilterActivities();
                 IsFilterDropdownOpen = false;
             });
+
+            // Load data
+            _ = LoadActivitiesAsync();
         }
+
 
         private async Task LoadActivitiesAsync()
         {
@@ -198,24 +209,75 @@ namespace DoanKhoaClient.ViewModels
             {
                 var activities = await _activityService.GetActivitiesAsync();
 
-                // Sắp xếp hoạt động theo thời gian gần nhất
-                var sortedActivities = activities
-                    .OrderByDescending(a => a.Date)
-                    .ToList();
+                // Load comment count for each activity
+                foreach (var activity in activities)
+                {
+                    try
+                    {
+                        var comments = await _commentService.GetCommentsByActivityIdAsync(activity.Id);
+                        activity.CommentCount = comments?.Count ?? 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error loading comments for activity {activity.Id}: {ex.Message}");
+                        activity.CommentCount = 0;
+                    }
+                }
+
+                // Sort activities by date
+                var sortedActivities = activities.OrderByDescending(a => a.Date).ToList();
 
                 Activities = new ObservableCollection<Activity>(sortedActivities);
                 UpdateHasSelectedItems();
                 UpdateIsAllSelected();
-                // Notify các property thống kê
-                OnPropertyChanged(nameof(ActivitiesCount50Days));
-                OnPropertyChanged(nameof(ParticipantsCount50Days));
-                OnPropertyChanged(nameof(LikesCount50Days));
+
+                // Update statistics
+                OnPropertyChanged(nameof(ActivitiesCount90Days));
+                OnPropertyChanged(nameof(ParticipantsCount90Days));
+                OnPropertyChanged(nameof(LikesCount90Days));
+
+                // Load comments count for 90 days
+                await LoadCommentsCount90DaysAsync();
+
             }, "Không thể tải danh sách hoạt động");
         }
 
-        private bool CanExecuteEditDelete()
+        private async Task LoadCommentsCount90DaysAsync()
         {
-            return SelectedActivity != null && !IsLoading;
+            try
+            {
+                var date90DaysAgo = DateTime.Now.AddDays(-90);
+                var totalCommentsCount = 0;
+
+                // Get activities from 90 days ago
+                var activities90Days = Activities?.Where(a => a.Date >= date90DaysAgo).ToList() ?? new List<Activity>();
+
+                foreach (var activity in activities90Days)
+                {
+                    try
+                    {
+                        // Get comments for each activity
+                        var comments = await _commentService.GetCommentsByActivityIdAsync(activity.Id);
+                        if (comments != null)
+                        {
+                            // Count comments created in the last 90 days
+                            var commentsIn90Days = comments.Count(c => c.CreatedAt >= date90DaysAgo);
+                            totalCommentsCount += commentsIn90Days;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error loading comments for activity {activity.Id}: {ex.Message}");
+                    }
+                }
+
+                CommentsCount90Days = totalCommentsCount;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calculating comments count: {ex.Message}");
+                CommentsCount90Days = 0;
+            }
         }
 
         private async Task ExecuteCreateActivityAsync()
@@ -226,13 +288,14 @@ namespace DoanKhoaClient.ViewModels
                 await ExecuteWithErrorHandlingAsync(async () =>
                 {
                     createDialog.Activity.Id = null;
-
                     var newActivity = await _activityService.CreateActivityAsync(createDialog.Activity);
+
+                    // Initialize comment count for new activity
+                    newActivity.CommentCount = 0;
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Activities.Add(newActivity);
-                        // Sắp xếp lại collection sau khi thêm
                         Activities = new ObservableCollection<Activity>(
                             Activities.OrderByDescending(a => a.Date)
                         );
@@ -246,7 +309,6 @@ namespace DoanKhoaClient.ViewModels
         {
             if (activity == null) return;
 
-            // Tạo bản sao để tránh thay đổi trực tiếp đối tượng gốc khi chưa lưu
             var activityToEdit = CloneActivity(activity);
             var editDialog = new EditActivityDialog(activityToEdit);
 
@@ -257,13 +319,15 @@ namespace DoanKhoaClient.ViewModels
                     var updatedActivity = await _activityService.UpdateActivityAsync(
                         activity.Id, editDialog.Activity);
 
+                    // Preserve comment count
+                    updatedActivity.CommentCount = activity.CommentCount;
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         var index = Activities.IndexOf(activity);
                         if (index >= 0)
                         {
                             Activities[index] = updatedActivity;
-                            // Sắp xếp lại collection sau khi cập nhật
                             Activities = new ObservableCollection<Activity>(
                                 Activities.OrderByDescending(a => a.Date)
                             );
@@ -283,8 +347,7 @@ namespace DoanKhoaClient.ViewModels
             {
                 await ExecuteWithErrorHandlingAsync(async () =>
                 {
-                    var idToDelete = activity.Id;
-                    await _activityService.DeleteActivityAsync(idToDelete);
+                    await _activityService.DeleteActivityAsync(activity.Id);
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -296,22 +359,18 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Phương thức mới cho thao tác hàng loạt
         private void ExecuteBatchEdit()
         {
             var selectedActivities = Activities.Where(a => a.IsSelected).ToList();
             if (!selectedActivities.Any()) return;
 
-            // Hiển thị màn hình chỉnh sửa hàng loạt
             var batchEditDialog = new BatchEditDialog(selectedActivities);
             if (batchEditDialog.ShowDialog() == true)
             {
-                // Áp dụng các thay đổi hàng loạt
                 var updatedFields = batchEditDialog.UpdatedFields;
 
                 foreach (var activity in selectedActivities)
                 {
-                    // Áp dụng các thay đổi tùy theo các trường được chọn để cập nhật
                     if (updatedFields.ContainsKey("Type") && updatedFields["Type"] != null)
                     {
                         activity.Type = (ActivityType)updatedFields["Type"];
@@ -327,11 +386,9 @@ namespace DoanKhoaClient.ViewModels
                         activity.Date = (DateTime)updatedFields["Date"];
                     }
 
-                    // Cập nhật hoạt động thông qua service
                     _activityService.UpdateActivityAsync(activity.Id, activity);
                 }
 
-                // Sắp xếp lại danh sách
                 Activities = new ObservableCollection<Activity>(
                     Activities.OrderByDescending(a => a.Date)
                 );
@@ -374,17 +431,15 @@ namespace DoanKhoaClient.ViewModels
             if (activity == null) return;
 
             // Mở màn hình chi tiết hoạt động
-            var detailView = new AdminActivitiesPostView(activity);
+            var detailView = new AdminActivityDetailView(activity);
             detailView.Show();
         }
 
-        // Phương thức để cập nhật trạng thái HasSelectedItems
         public void UpdateHasSelectedItems()
         {
             HasSelectedItems = Activities != null && Activities.Any(a => a.IsSelected);
         }
 
-        // Phương thức để cập nhật trạng thái IsAllSelected dựa trên các mục đã chọn
         public void UpdateIsAllSelected()
         {
             bool allSelected = Activities != null && Activities.Count > 0 && Activities.All(a => a.IsSelected);
@@ -395,7 +450,6 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Helper method để xử lý lỗi một cách nhất quán
         private async Task ExecuteWithErrorHandlingAsync(Func<Task> action, string defaultErrorMessage)
         {
             try
@@ -418,13 +472,11 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Helper method để hiển thị thông báo thành công
         private void ShowSuccessMessage(string message)
         {
             MessageBox.Show(message, "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // Helper method để tạo bản sao của Activity
         private Activity CloneActivity(Activity source)
         {
             return new Activity
@@ -436,16 +488,11 @@ namespace DoanKhoaClient.ViewModels
                 Date = source.Date,
                 ImgUrl = source.ImgUrl,
                 CreatedAt = source.CreatedAt,
-                Status = source.Status
+                Status = source.Status,
+                ParticipantCount = source.ParticipantCount,
+                LikeCount = source.LikeCount,
+                CommentCount = source.CommentCount
             };
-        }
-
-        // INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private void UpdateSelectedTags()
@@ -465,10 +512,16 @@ namespace DoanKhoaClient.ViewModels
             var filtered = Activities.Where(a =>
                 (selectedTypes.Count == 0 || selectedTypes.Contains(a.Type)) &&
                 (selectedStatuses.Count == 0 || selectedStatuses.Contains(a.Status))
-                // ... các điều kiện khác như search text ...
             ).ToList();
 
             Activities = new ObservableCollection<Activity>(filtered);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 

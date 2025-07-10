@@ -1024,5 +1024,305 @@ namespace DoanKhoaServer.Services
             }
         }
 
+        // Participant Management Methods
+        public async Task<List<UserActivityStatus>> GetParticipantsByActivityIdAsync(string activityId)
+        {
+            try
+            {
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.IsJoined, true)
+                );
+
+                return await _userActivityStatusesCollection.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetParticipantsByActivityIdAsync: {ex.Message}");
+                return new List<UserActivityStatus>();
+            }
+        }
+
+        public async Task<List<UserActivityStatus>> GetLikesByActivityIdAsync(string activityId)
+        {
+            try
+            {
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.IsFavorite, true)
+                );
+
+                return await _userActivityStatusesCollection.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetLikesByActivityIdAsync: {ex.Message}");
+                return new List<UserActivityStatus>();
+            }
+        }
+
+        public async Task<List<User>> GetUsersByIdsAsync(List<string> userIds)
+        {
+            try
+            {
+                if (userIds == null || !userIds.Any())
+                    return new List<User>();
+
+                var filter = Builders<User>.Filter.In(u => u.Id, userIds);
+                return await _usersCollection.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUsersByIdsAsync: {ex.Message}");
+                return new List<User>();
+            }
+        }
+
+        // Method để lấy thông tin chi tiết người tham gia
+        public async Task<List<dynamic>> GetDetailedParticipantsByActivityIdAsync(string activityId)
+        {
+            try
+            {
+                // Lấy danh sách UserActivityStatus của những người tham gia
+                var participants = await GetParticipantsByActivityIdAsync(activityId);
+                var userIds = participants.Select(p => p.UserId).ToList();
+
+                if (!userIds.Any())
+                    return new List<dynamic>();
+
+                // Lấy thông tin chi tiết của users
+                var users = await GetUsersByIdsAsync(userIds);
+
+                // Kết hợp thông tin
+                var result = new List<dynamic>();
+                foreach (var participant in participants)
+                {
+                    var user = users.FirstOrDefault(u => u.Id == participant.UserId);
+                    if (user != null)
+                    {
+                        result.Add(new
+                        {
+                            user.Id,
+                            user.Username,
+                            user.DisplayName,
+                            user.Email,
+                            user.AvatarUrl,
+                            user.Position,
+                            JoinedAt = participant.CreatedAt,
+                            ActivityId = participant.ActivityId
+                        });
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetDetailedParticipantsByActivityIdAsync: {ex.Message}");
+                return new List<dynamic>();
+            }
+        }
+
+        // Method để lấy thông tin chi tiết người thích
+        public async Task<List<dynamic>> GetDetailedLikesByActivityIdAsync(string activityId)
+        {
+            try
+            {
+                // Lấy danh sách UserActivityStatus của những người thích
+                var likes = await GetLikesByActivityIdAsync(activityId);
+                var userIds = likes.Select(l => l.UserId).ToList();
+
+                if (!userIds.Any())
+                    return new List<dynamic>();
+
+                // Lấy thông tin chi tiết của users
+                var users = await GetUsersByIdsAsync(userIds);
+
+                // Kết hợp thông tin
+                var result = new List<dynamic>();
+                foreach (var like in likes)
+                {
+                    var user = users.FirstOrDefault(u => u.Id == like.UserId);
+                    if (user != null)
+                    {
+                        result.Add(new
+                        {
+                            user.Id,
+                            user.Username,
+                            user.DisplayName,
+                            user.Email,
+                            user.AvatarUrl,
+                            user.Position,
+                            LikedAt = like.UpdatedAt,
+                            ActivityId = like.ActivityId
+                        });
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetDetailedLikesByActivityIdAsync: {ex.Message}");
+                return new List<dynamic>();
+            }
+        }
+
+        // Method để xóa người tham gia khỏi hoạt động
+        public async Task<bool> RemoveParticipantFromActivityAsync(string activityId, string userId)
+        {
+            try
+            {
+                // Tìm và xóa trạng thái tham gia
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.UserId, userId)
+                );
+
+                var status = await _userActivityStatusesCollection.Find(filter).FirstOrDefaultAsync();
+                if (status != null && status.IsJoined)
+                {
+                    // Cập nhật trạng thái thành không tham gia
+                    var update = Builders<UserActivityStatus>.Update
+                        .Set(s => s.IsJoined, false)
+                        .Set(s => s.UpdatedAt, DateTime.UtcNow);
+
+                    await _userActivityStatusesCollection.UpdateOneAsync(filter, update);
+
+                    // Giảm số người tham gia trong activity
+                    var activityUpdate = Builders<Activity>.Update.Inc(a => a.ParticipantCount, -1);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, activityUpdate);
+
+                    // Giảm ActivitiesCount cho user
+                    var user = await _usersCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
+                    if (user != null)
+                    {
+                        user.ActivitiesCount = Math.Max(0, user.ActivitiesCount - 1);
+                        await UpdateUserAsync(user);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in RemoveParticipantFromActivityAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Method để xóa lượt thích khỏi hoạt động
+        public async Task<bool> RemoveLikeFromActivityAsync(string activityId, string userId)
+        {
+            try
+            {
+                // Tìm và cập nhật trạng thái thích
+                var filter = Builders<UserActivityStatus>.Filter.And(
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.ActivityId, activityId),
+                    Builders<UserActivityStatus>.Filter.Eq(s => s.UserId, userId)
+                );
+
+                var status = await _userActivityStatusesCollection.Find(filter).FirstOrDefaultAsync();
+                if (status != null && status.IsFavorite)
+                {
+                    // Cập nhật trạng thái thành không thích
+                    var update = Builders<UserActivityStatus>.Update
+                        .Set(s => s.IsFavorite, false)
+                        .Set(s => s.UpdatedAt, DateTime.UtcNow);
+
+                    await _userActivityStatusesCollection.UpdateOneAsync(filter, update);
+
+                    // Giảm số lượt thích trong activity
+                    var activityUpdate = Builders<Activity>.Update.Inc(a => a.LikeCount, -1);
+                    await _activitiesCollection.UpdateOneAsync(a => a.Id == activityId, activityUpdate);
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in RemoveLikeFromActivityAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Method để lấy thống kê chi tiết hoạt động
+        public async Task<dynamic> GetActivityStatisticsAsync(string activityId)
+        {
+            try
+            {
+                var activity = await GetActivityByIdAsync(activityId);
+                if (activity == null)
+                    return null;
+
+                var participantsCount = await _userActivityStatusesCollection
+                    .CountDocumentsAsync(s => s.ActivityId == activityId && s.IsJoined);
+
+                var likesCount = await _userActivityStatusesCollection
+                    .CountDocumentsAsync(s => s.ActivityId == activityId && s.IsFavorite);
+
+                var commentsCount = await _commentsCollection
+                    .CountDocumentsAsync(c => c.ActivityId == activityId);
+
+                return new
+                {
+                    ActivityId = activityId,
+                    Title = activity.Title,
+                    ParticipantsCount = participantsCount,
+                    LikesCount = likesCount,
+                    CommentsCount = commentsCount,
+                    CreatedAt = activity.CreatedAt,
+                    Status = activity.Status,
+                    Type = activity.Type
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetActivityStatisticsAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Method để bulk delete các hoạt động và dọn dẹp dữ liệu liên quan
+        public async Task<bool> BulkDeleteActivitiesAsync(List<string> activityIds)
+        {
+            try
+            {
+                foreach (var activityId in activityIds)
+                {
+                    // Xóa tất cả user activity statuses
+                    await _userActivityStatusesCollection.DeleteManyAsync(s => s.ActivityId == activityId);
+
+                    // Xóa tất cả user comment statuses liên quan
+                    var comments = await _commentsCollection.Find(c => c.ActivityId == activityId).ToListAsync();
+                    var commentIds = comments.Select(c => c.Id).ToList();
+
+                    if (commentIds.Any())
+                    {
+                        await _userCommentStatusesCollection.DeleteManyAsync(s => commentIds.Contains(s.CommentId));
+                    }
+
+                    // Xóa tất cả comments
+                    await _commentsCollection.DeleteManyAsync(c => c.ActivityId == activityId);
+
+                    // Xóa activity
+                    await _activitiesCollection.DeleteOneAsync(a => a.Id == activityId);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in BulkDeleteActivitiesAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
     }
 }

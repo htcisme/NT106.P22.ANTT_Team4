@@ -24,6 +24,10 @@ namespace DoanKhoaClient.Views
             _viewModel = new AdminActivitiesViewModel();
             DataContext = _viewModel;
             HomePage_iUsers.SetupAsUserAvatar();
+
+            ThemeManager.ApplyTheme(Admin_Activities_Background);
+
+
             // Check window size
             if (AccessControl.IsAdmin())
             {
@@ -166,12 +170,54 @@ namespace DoanKhoaClient.Views
 
         private void ViewDetailButton_Click(object sender, RoutedEventArgs e)
         {
-            // Lấy hoạt động từ Tag của Button
-            var button = sender as Button;
-            if (button != null && button.Tag is Activity activity)
+            try
             {
-                // Mở trang chi tiết hoạt động
-                _viewModel.ViewDetailCommand.Execute(activity);
+                // Lấy hoạt động từ Tag của Button
+                var button = sender as Button;
+                if (button?.Tag is Activity activity)
+                {
+                    // Kiểm tra quyền admin
+                    var currentUser = App.Current.Properties.Contains("CurrentUser") ?
+                        App.Current.Properties["CurrentUser"] as User : null;
+
+                    if (currentUser == null)
+                    {
+                        MessageBox.Show("Vui lòng đăng nhập để xem chi tiết hoạt động.",
+                            "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Mở trang chi tiết hoạt động dành cho admin
+                    if (currentUser.Role == UserRole.Admin)
+                    {
+                        var adminDetailView = new AdminActivityDetailView(activity);
+                        adminDetailView.Show();
+
+                        // Đóng trang hiện tại nếu cần
+                        var currentWindow = Window.GetWindow(this);
+                        currentWindow?.Close();
+                    }
+                    else
+                    {
+                        // Mở trang chi tiết hoạt động dành cho user thường
+                        var userDetailView = new AdminActivityDetailView(activity);
+                        userDetailView.Show();
+
+                        // Đóng trang hiện tại nếu cần
+                        var currentWindow = Window.GetWindow(this);
+                        currentWindow?.Close();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không thể lấy thông tin hoạt động.",
+                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở chi tiết hoạt động: {ex.Message}",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
