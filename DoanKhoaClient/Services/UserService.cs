@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Runtime.ConstrainedExecution;
+using System.Linq;
+using System.Windows;
 
 namespace DoanKhoaClient.Services
 {
@@ -16,10 +18,12 @@ namespace DoanKhoaClient.Services
         private static User _currentUser;
         private static Dictionary<string, bool> _participatedActivities = new Dictionary<string, bool>();
         private static Dictionary<string, bool> _likedActivities = new Dictionary<string, bool>();
+        private static Dictionary<string, bool> _likedComments = new Dictionary<string, bool>();
         private readonly ActivityService _activityService;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public event EventHandler<UserActivityStatusChangedEventArgs> ActivityStatusChanged;
+        public event EventHandler<UserCommentStatusChangedEventArgs> CommentStatusChanged;
 
         public UserService(ActivityService activityService = null)
         {
@@ -43,15 +47,106 @@ namespace DoanKhoaClient.Services
         public void SetCurrentUser(User user)
         {
             _currentUser = user;
-            // Load user's activity statuses when user is set
+
+            // Store in App properties for global access
+            App.Current.Properties["CurrentUser"] = user;
+
+            // Save to settings for persistence
+            try
+            {
+                Properties.Settings.Default.CurrentUserId = user?.Id ?? "";
+                Properties.Settings.Default.CurrentUserDisplayName = user?.DisplayName ?? "";
+                Properties.Settings.Default.CurrentUserAvatar = user?.AvatarUrl ?? "";
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error saving user settings: {ex.Message}");
+            }
+
+            // Load user's activity and comment statuses when user is set
             _ = LoadUserActivityStatusesAsync();
+            _ = LoadUserCommentStatusesAsync();
         }
 
         public string GetCurrentUserId()
         {
-            return _currentUser?.Id ?? "guest-user";
+            if (_currentUser != null)
+                return _currentUser.Id;
+
+            // Fallback to settings
+            try
+            {
+                var savedUserId = Properties.Settings.Default.CurrentUserId;
+                return !string.IsNullOrEmpty(savedUserId) ? savedUserId : "guest-user";
+            }
+            catch
+            {
+                return "guest-user";
+            }
         }
 
+        public string GetCurrentUserDisplayName()
+        {
+            if (_currentUser != null)
+                return _currentUser.DisplayName ?? _currentUser.Username ?? "Unknown User";
+
+            // Fallback to settings
+            try
+            {
+                var savedDisplayName = Properties.Settings.Default.CurrentUserDisplayName;
+                return !string.IsNullOrEmpty(savedDisplayName) ? savedDisplayName : "Unknown User";
+            }
+            catch
+            {
+                return "Unknown User";
+            }
+        }
+
+        public string GetCurrentUserAvatar()
+        {
+            if (_currentUser != null)
+                return _currentUser.AvatarUrl ?? "";
+
+            // Fallback to settings
+            try
+            {
+                return Properties.Settings.Default.CurrentUserAvatar ?? "";
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        public void ClearCurrentUser()
+        {
+            _currentUser = null;
+            _participatedActivities.Clear();
+            _likedActivities.Clear();
+            _likedComments.Clear();
+
+            // Clear from App properties
+            if (App.Current.Properties.Contains("CurrentUser"))
+            {
+                App.Current.Properties.Remove("CurrentUser");
+            }
+
+            // Clear from settings
+            try
+            {
+                Properties.Settings.Default.CurrentUserId = "";
+                Properties.Settings.Default.CurrentUserDisplayName = "";
+                Properties.Settings.Default.CurrentUserAvatar = "";
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error clearing user settings: {ex.Message}");
+            }
+        }
+
+        // Activity-related methods
         public bool IsActivityParticipated(string activityId)
         {
             return _participatedActivities.ContainsKey(activityId) && _participatedActivities[activityId];
@@ -60,6 +155,12 @@ namespace DoanKhoaClient.Services
         public bool IsActivityLiked(string activityId)
         {
             return _likedActivities.ContainsKey(activityId) && _likedActivities[activityId];
+        }
+
+        // Comment-related methods
+        public bool IsCommentLiked(string commentId)
+        {
+            return _likedComments.ContainsKey(commentId) && _likedComments[commentId];
         }
 
         public async Task<bool> ToggleActivityParticipationAsync(string activityId)
@@ -126,6 +227,41 @@ namespace DoanKhoaClient.Services
                 return false;
             }
         }
+
+        public async Task<bool> ToggleCommentLikeAsync(string commentId)
+        {
+            if (string.IsNullOrEmpty(commentId) || _currentUser == null)
+                return false;
+
+            try
+            {
+                var commentService = new CommentService();
+                var result = await commentService.ToggleCommentLikeAsync(commentId);
+
+                if (result)
+                {
+                    // Update local cache
+                    bool newStatus = !IsCommentLiked(commentId);
+                    _likedComments[commentId] = newStatus;
+
+                    // Notify listeners
+                    CommentStatusChanged?.Invoke(this, new UserCommentStatusChangedEventArgs
+                    {
+                        CommentId = commentId,
+                        IsLiked = newStatus
+                    });
+
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error toggling comment like: {ex.Message}");
+                return false;
+            }
+        }
+
         private async Task LoadUserActivityStatusesAsync()
         {
             if (_currentUser == null)
@@ -160,12 +296,46 @@ namespace DoanKhoaClient.Services
             }
         }
 
+        private async Task LoadUserCommentStatusesAsync()
+        {
+            if (_currentUser == null)
+                return;
+
+            try
+            {
+                var commentService = new CommentService();
+                var statuses = await commentService.GetUserCommentStatusAsync(_currentUser.Id);
+                _likedComments.Clear();
+
+                foreach (var status in statuses)
+                {
+                    // Format from API is expected to be "commentId:like"
+                    if (status.Key.EndsWith(":like"))
+                    {
+                        string commentId = status.Key.Split(':')[0];
+                        _likedComments[commentId] = status.Value;
+                    }
+                }
+
+                Debug.WriteLine($"Loaded {_likedComments.Count} comment like statuses");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to load user comment statuses: {ex.Message}");
+            }
+        }
+
         public async Task RefreshUserActivityStatusesAsync()
         {
             await LoadUserActivityStatusesAsync();
         }
 
-        // Existing methods
+        public async Task RefreshUserCommentStatusesAsync()
+        {
+            await LoadUserCommentStatusesAsync();
+        }
+
+        // Existing methods for user management
         public async Task<User> GetCurrentUserAsync(string token)
         {
             try
@@ -375,5 +545,11 @@ namespace DoanKhoaClient.Services
         public bool IsParticipated { get; set; }
         public bool IsLiked { get; set; }
         public ActivityStatusType StatusType { get; set; }
+    }
+
+    public class UserCommentStatusChangedEventArgs : EventArgs
+    {
+        public string CommentId { get; set; }
+        public bool IsLiked { get; set; }
     }
 }

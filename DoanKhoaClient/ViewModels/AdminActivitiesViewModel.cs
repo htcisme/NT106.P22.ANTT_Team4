@@ -225,6 +225,8 @@ namespace DoanKhoaClient.ViewModels
             {
                 await ExecuteWithErrorHandlingAsync(async () =>
                 {
+                    createDialog.Activity.Id = null;
+
                     var newActivity = await _activityService.CreateActivityAsync(createDialog.Activity);
 
                     Application.Current.Dispatcher.Invoke(() =>

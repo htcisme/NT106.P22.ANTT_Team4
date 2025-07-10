@@ -18,6 +18,8 @@ namespace DoanKhoaServer.Services
         private readonly IMongoCollection<Attachment> _attachmentsCollection;
         private readonly IMongoCollection<Activity> _activitiesCollection;
         private readonly IMongoCollection<UserActivityStatus> _userActivityStatusesCollection;
+        private readonly IMongoCollection<Comment> _commentsCollection;
+        private readonly IMongoCollection<UserCommentStatus> _userCommentStatusesCollection;
 
         public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
         {
@@ -41,8 +43,15 @@ namespace DoanKhoaServer.Services
 
             _activitiesCollection = mongoDatabase.GetCollection<Activity>(
                 mongoDBSettings.Value.ActivitiesCollectionName);
+
             _userActivityStatusesCollection = mongoDatabase.GetCollection<UserActivityStatus>(
                 mongoDBSettings.Value.UserActivityStatusesCollectionName);
+
+            _commentsCollection = mongoDatabase.GetCollection<Comment>(
+                mongoDBSettings.Value.CommentsCollectionName);
+    
+            _userCommentStatusesCollection = mongoDatabase.GetCollection<UserCommentStatus>(
+                mongoDBSettings.Value.UserCommentStatusesCollectionName);
 
 
             // Các dòng code hiện tại
@@ -750,6 +759,242 @@ namespace DoanKhoaServer.Services
                 IsParticipated = status?.IsJoined ?? false,
                 IsLiked = status?.IsFavorite ?? false
             };
+        }
+
+        // Comment method
+        public async Task<List<dynamic>> GetCommentsByActivityIdAsync(string activityId, string userId = null)
+        {
+            try
+            {
+                // Lấy tất cả comments của activity này, sắp xếp theo thời gian tạo
+                var comments = await _commentsCollection
+                    .Find(c => c.ActivityId == activityId)
+                    .SortBy(c => c.CreatedAt)
+                    .ToListAsync();
+
+                var result = new List<dynamic>();
+
+                foreach (var comment in comments)
+                {
+                    // Lấy thông tin user
+                    var user = await _usersCollection.Find(u => u.Id == comment.UserId).FirstOrDefaultAsync();
+
+                    bool isLiked = false;
+                    bool isOwner = false;
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        // Kiểm tra xem user hiện tại có thích comment này không
+                        var commentStatus = await _userCommentStatusesCollection
+                            .Find(s => s.CommentId == comment.Id && s.UserId == userId)
+                            .FirstOrDefaultAsync();
+
+                        isLiked = commentStatus?.IsLiked ?? false;
+                        isOwner = comment.UserId == userId;
+                    }
+
+                    result.Add(new
+                    {
+                        comment.Id,
+                        comment.ActivityId,
+                        comment.UserId,
+                        UserDisplayName = user?.DisplayName ?? "Unknown User",
+                        UserAvatar = user?.AvatarUrl ?? "",
+                        comment.Content,
+                        comment.CreatedAt,
+                        comment.UpdatedAt,
+                        comment.ParentCommentId,
+                        comment.LikeCount,
+                        IsLiked = isLiked,
+                        IsOwner = isOwner
+                    });
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetCommentsByActivityIdAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<Comment> CreateCommentAsync(Comment comment)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(comment.Id))
+                {
+                    comment.Id = ObjectId.GenerateNewId().ToString();
+                }
+
+                comment.CreatedAt = DateTime.UtcNow;
+                comment.UpdatedAt = DateTime.UtcNow;
+                comment.LikeCount = 0;
+
+                await _commentsCollection.InsertOneAsync(comment);
+                return comment;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in CreateCommentAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<Comment> UpdateCommentAsync(string commentId, string newContent)
+        {
+            try
+            {
+                var filter = Builders<Comment>.Filter.Eq(c => c.Id, commentId);
+                var update = Builders<Comment>.Update
+                    .Set(c => c.Content, newContent)
+                    .Set(c => c.UpdatedAt, DateTime.UtcNow);
+
+                var result = await _commentsCollection.UpdateOneAsync(filter, update);
+
+                if (result.ModifiedCount > 0)
+                {
+                    return await _commentsCollection.Find(filter).FirstOrDefaultAsync();
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in UpdateCommentAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteCommentAsync(string commentId)
+        {
+            try
+            {
+                // Xóa comment
+                var commentResult = await _commentsCollection.DeleteOneAsync(c => c.Id == commentId);
+
+                // Xóa tất cả trạng thái like của comment này
+                await _userCommentStatusesCollection.DeleteManyAsync(s => s.CommentId == commentId);
+
+                // Xóa tất cả replies của comment này (nếu comment này là parent)
+                await _commentsCollection.DeleteManyAsync(c => c.ParentCommentId == commentId);
+
+                return commentResult.DeletedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in DeleteCommentAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> ToggleCommentLikeAsync(string commentId, string userId)
+        {
+            try
+            {
+                // Tìm comment
+                var comment = await _commentsCollection.Find(c => c.Id == commentId).FirstOrDefaultAsync();
+                if (comment == null)
+                    return false;
+
+                // Tìm trạng thái hiện tại
+                var filter = Builders<UserCommentStatus>.Filter.And(
+                    Builders<UserCommentStatus>.Filter.Eq(s => s.CommentId, commentId),
+                    Builders<UserCommentStatus>.Filter.Eq(s => s.UserId, userId)
+                );
+                var status = await _userCommentStatusesCollection.Find(filter).FirstOrDefaultAsync();
+
+                if (status == null)
+                {
+                    // Tạo mới trạng thái like
+                    status = new UserCommentStatus
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        UserId = userId,
+                        CommentId = commentId,
+                        IsLiked = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _userCommentStatusesCollection.InsertOneAsync(status);
+
+                    // Tăng like count
+                    var update = Builders<Comment>.Update.Inc(c => c.LikeCount, 1);
+                    await _commentsCollection.UpdateOneAsync(c => c.Id == commentId, update);
+                }
+                else
+                {
+                    // Toggle trạng thái like
+                    bool newStatus = !status.IsLiked;
+                    var update = Builders<UserCommentStatus>.Update
+                        .Set(s => s.IsLiked, newStatus)
+                        .Set(s => s.UpdatedAt, DateTime.UtcNow);
+                    await _userCommentStatusesCollection.UpdateOneAsync(filter, update);
+
+                    // Cập nhật like count
+                    int increment = newStatus ? 1 : -1;
+                    var commentUpdate = Builders<Comment>.Update.Inc(c => c.LikeCount, increment);
+                    await _commentsCollection.UpdateOneAsync(c => c.Id == commentId, commentUpdate);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in ToggleCommentLikeAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<Dictionary<string, bool>> GetUserCommentStatusesAsync(string userId)
+        {
+            try
+            {
+                var result = new Dictionary<string, bool>();
+
+                var statuses = await _userCommentStatusesCollection
+                    .Find(s => s.UserId == userId)
+                    .ToListAsync();
+
+                foreach (var status in statuses)
+                {
+                    result[$"{status.CommentId}:like"] = status.IsLiked;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetUserCommentStatusesAsync: {ex.Message}");
+                return new Dictionary<string, bool>();
+            }
+        }
+
+        public async Task<Comment> GetCommentByIdAsync(string commentId)
+        {
+            try
+            {
+                return await _commentsCollection.Find(c => c.Id == commentId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetCommentByIdAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<int> GetCommentCountByActivityIdAsync(string activityId)
+        {
+            try
+            {
+                return (int)await _commentsCollection.CountDocumentsAsync(c => c.ActivityId == activityId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetCommentCountByActivityIdAsync: {ex.Message}");
+                return 0;
+            }
         }
 
     }

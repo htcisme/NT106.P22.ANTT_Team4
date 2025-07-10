@@ -10,16 +10,15 @@ using DoanKhoaClient.Services;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using DoanKhoaClient.Models;
+using DoanKhoaClient.Extensions;
 
 namespace DoanKhoaClient.Views
 {
     public partial class ActivitiesPostView : Window
     {
         private readonly ActivitiesPostViewModel _viewModel;
-
         private readonly UserService _userService;
         private readonly ActivityService _activityService;
-
 
         public ActivitiesPostView(Activity activity)
         {
@@ -36,14 +35,56 @@ namespace DoanKhoaClient.Views
             // Gán ViewModel làm DataContext
             this.DataContext = _viewModel;
 
+            // Setup user avatar
+            HomePage_iUsers.SetupAsUserAvatar();
+
             // Áp dụng theme
             ThemeManager.ApplyTheme(ActivitiesPost_Background);
+
+            // Setup comment input events
+            SetupCommentInput();
+        }
+
+        private void SetupCommentInput()
+        {
+            // Handle Enter key for posting comments
+            if (FindName("CommentTextBox") is TextBox commentTextBox)
+            {
+                commentTextBox.KeyDown += (sender, e) =>
+                {
+                    // Ctrl+Enter to post comment
+                    if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.Control)
+                    {
+                        if (_viewModel.PostCommentCommand.CanExecute(null))
+                        {
+                            _viewModel.PostCommentCommand.Execute(null);
+                        }
+                        e.Handled = true;
+                    }
+                };
+
+                // Focus when replying to a comment
+                _viewModel.PropertyChanged += (sender, e) =>
+                {
+                    if (e.PropertyName == nameof(_viewModel.ReplyingToComment) &&
+                        _viewModel.ReplyingToComment != null)
+                    {
+                        // Focus the comment input when replying
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            commentTextBox.Focus();
+                            commentTextBox.CaretIndex = commentTextBox.Text.Length;
+                        }));
+                    }
+                };
+            }
         }
 
         private void ThemeToggleButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             ThemeManager.ToggleTheme(ActivitiesPost_Background);
         }
+
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             // Kiểm tra xem người dùng có click bên ngoài search box không
@@ -66,6 +107,7 @@ namespace DoanKhoaClient.Views
                 }
             }
         }
+
         private bool IsMouseOverSearchElements(DependencyObject element)
         {
             // Kiểm tra xem click có phải trên search box hoặc search results không
@@ -211,6 +253,24 @@ namespace DoanKhoaClient.Views
             // Giải phóng tài nguyên của ViewModel
             _viewModel.Cleanup();
             base.OnClosed(e);
+        }
+
+        // Event handlers for comment interactions
+        private void CommentTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // Optional: Handle when comment input gets focus
+        }
+
+        private void CommentTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Optional: Handle when comment input loses focus
+        }
+
+        // Handle comment text changes for real-time validation
+        private void CommentTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Update the ViewModel's NewCommentText property is handled by binding
+            // This can be used for additional real-time validation if needed
         }
     }
 }

@@ -157,6 +157,12 @@
             </LinearGradientBrush>
             <!--  Converters  -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <converters:GreaterThanZeroToVisibilityConverter x:Key="GreaterThanZeroToVisibilityConverter" />
+            <converters:IndentToWidthConverter x:Key="IndentToWidthConverter" />
+            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
             <!--  Thêm converter với key là 'BoolToVisibility'  -->
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
