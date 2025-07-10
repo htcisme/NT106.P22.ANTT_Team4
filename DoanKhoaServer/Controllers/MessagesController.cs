@@ -117,6 +117,89 @@ namespace DoanKhoaServer.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMessage(string id, [FromBody] UpdateMessageRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.UserId) || string.IsNullOrEmpty(request.Content))
+                {
+                    return BadRequest("UserId and Content are required");
+                }
+
+                var message = await _mongoDBService.GetMessageByIdAsync(id);
+                if (message == null)
+                {
+                    return NotFound("Message not found");
+                }
+
+                // Kiểm tra quyền sở hữu
+                if (message.SenderId != request.UserId)
+                {
+                    return Forbid("You can only edit your own messages");
+                }
+
+                // Cập nhật nội dung
+                message.Content = request.Content;
+                message.IsEdited = true;
+
+                var success = await _mongoDBService.UpdateMessageAsync(message);
+                if (success)
+                {
+                    return Ok(message);
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to update message");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating message: {ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMessage(string id, [FromQuery] string userId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest("UserId is required");
+                }
+
+                var message = await _mongoDBService.GetMessageByIdAsync(id);
+                if (message == null)
+                {
+                    return NotFound("Message not found");
+                }
+
+                // Kiểm tra quyền sở hữu
+                if (message.SenderId != userId)
+                {
+                    return Forbid("You can only delete your own messages");
+                }
+
+                var success = await _mongoDBService.DeleteMessageAsync(id);
+                if (success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to delete message");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting message: {ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         // Thêm vào MessagesController.cs
         [HttpPost("{id}/markSpam")]
         public async Task<IActionResult> MarkAsSpam(string id)
