@@ -17,25 +17,32 @@
 
     <!--  Khai báo Converters  -->
     <Window.Resources>
-        <converters:TimeZoneConverter x:Key="TimeZoneConverter" />
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
-        <converters:CurrentUserConverter x:Key="CurrentUserConverter" />
-        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter" />
-        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter" />
-        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter" />
-        <converters:FileIconConverter x:Key="FileIconConverter" />
-        <converters:FileSizeConverter x:Key="FileSizeConverter" />
-        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter" />
-        <converters:StringToImageConverter x:Key="StringToImageConverter" />
+        <converters:TimeZoneConverter x:Key="TimeZoneConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
+        <converters:CurrentUserConverter x:Key="CurrentUserConverter"/>
+        <converters:NotCurrentUserConverter x:Key="NotCurrentUserConverter"/>
+        <converters:AttachmentTypeToVisibilityConverter x:Key="AttachmentTypeToVisibilityConverter"/>
+        <converters:MessageTypeToVisibilityConverter x:Key="MessageTypeToVisibilityConverter"/>
+        <converters:FileIconConverter x:Key="FileIconConverter"/>
+        <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+        <converters:ConversationTitleConverter x:Key="ConversationTitleConverter"/>
+        <converters:StringToImageConverter x:Key="StringToImageConverter"/>
 
-        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#FFE3F6FF" />
-            <Setter Property="Foreground" Value="#FF12305E" />
-            <Setter Property="FontSize" Value="17" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="15,0" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style x:Key="SearchBoxStyle"
+                TargetType="TextBox">
+            <Setter Property="Background"
+                    Value="#FFE3F6FF"/>
+            <Setter Property="Foreground"
+                    Value="#FF12305E"/>
+            <Setter Property="FontSize"
+                    Value="17"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="15,0"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -49,29 +56,48 @@
                                 x:Name="PART_ContentHost"
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Hidden" />
+                                VerticalScrollBarVisibility="Hidden"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                    <Condition Property="IsFocused" Value="False" />
+                                    <Condition Property="IsMouseOver"
+                                            Value="True"/>
+                                    <Condition Property="IsFocused"
+                                            Value="False"/>
                                 </MultiTrigger.Conditions>
-                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
-                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFE3F6FF"/>
+                                <Setter TargetName="border"
+                                        Property="BorderThickness"
+                                        Value="0"/>
                             </MultiTrigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
-                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
-                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            <Trigger Property="IsFocused"
+                                    Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFE3F6FF"/>
+                                <Setter TargetName="border"
+                                        Property="BorderBrush"
+                                        Value="#FF12305E"/>
+                                <Setter TargetName="border"
+                                        Property="BorderThickness"
+                                        Value="1"/>
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="IsFocused" Value="False" />
-                                    <Condition Property="IsMouseOver" Value="False" />
+                                    <Condition Property="IsFocused"
+                                            Value="False"/>
+                                    <Condition Property="IsMouseOver"
+                                            Value="False"/>
                                 </MultiTrigger.Conditions>
-                                <Setter TargetName="border" Property="Background" Value="#FFE3F6FF" />
-                                <Setter TargetName="border" Property="BorderThickness" Value="0" />
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFE3F6FF"/>
+                                <Setter TargetName="border"
+                                        Property="BorderThickness"
+                                        Value="0"/>
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -80,14 +106,18 @@
         </Style>
 
         <!--  Thêm Style này vào Window.Resources  -->
-        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Style x:Key="MenuItemStyle"
+                TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1" ScaleY="1" />
-                        <TranslateTransform />
+                        <ScaleTransform ScaleX="1"
+                                ScaleY="1"/>
+                        <TranslateTransform/>
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -98,15 +128,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -116,39 +146,48 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
+        <Style x:Key="NavigationButtonStyle"
+                TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Padding"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter />
+                        <ContentPresenter/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="SearchResultButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Padding" Value="10,5" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Style x:Key="SearchResultButtonStyle"
+                TargetType="Button">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="Foreground"
+                    Value="Black"/>
+            <Setter Property="Padding"
+                    Value="10,5"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -157,18 +196,29 @@
                             Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            <Trigger Property="IsMouseOver"
+                                    Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="{x:Null}"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            <Trigger Property="IsPressed"
+                                    Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="{x:Null}"/>
                             </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="Gray" />
-                                <Setter TargetName="border" Property="Background" Value="{x:Null}" />
+                            <Trigger Property="IsEnabled"
+                                    Value="False">
+                                <Setter Property="Foreground"
+                                        Value="Gray"/>
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="{x:Null}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -198,14 +248,20 @@
             <Separator/>
         </ContextMenu>-->
 
-        <Style x:Key="SendButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Style x:Key="SendButtonStyle"
+                TargetType="{x:Type Button}">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                    <ScaleTransform ScaleX="1"
+                            ScaleY="1"/>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
@@ -215,11 +271,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1.2"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1.2"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -229,11 +285,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1" />
+                                Duration="0:0:0.1"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -243,11 +299,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="0.9"
-                                Duration="0:0:0.05" />
+                                Duration="0:0:0.05"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="0.9"
-                                Duration="0:0:0.05" />
+                                Duration="0:0:0.05"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -257,11 +313,11 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                 To="1.2"
-                                Duration="0:0:0.05" />
+                                Duration="0:0:0.05"/>
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
                                 To="1.2"
-                                Duration="0:0:0.05" />
+                                Duration="0:0:0.05"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -282,7 +338,7 @@
                         VerticalAlignment="Center"
                         Foreground="Gray"
                         Text="{Binding FileName}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"/>
 
                     <Image
                         MaxWidth="200"
@@ -290,7 +346,7 @@
                         Loaded="AttachmentImage_Loaded"
                         MouseLeftButtonDown="Image_MouseLeftButtonDown"
                         Source="{Binding FileUrl}"
-                        Stretch="Uniform" />
+                        Stretch="Uniform"/>
 
                     <TextBlock
                         Padding="3"
@@ -298,7 +354,7 @@
                         VerticalAlignment="Bottom"
                         Background="#80000000"
                         Foreground="White"
-                        Text="{Binding FileName}" />
+                        Text="{Binding FileName}"/>
                 </Grid>
             </Border>
         </DataTemplate>
@@ -313,9 +369,9 @@
                 CornerRadius="4">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <Image
@@ -323,17 +379,17 @@
                         Width="24"
                         Height="24"
                         Margin="0,0,8,0"
-                        Source="{Binding ContentType, Converter={StaticResource FileIconConverter}}" />
+                        Source="{Binding ContentType, Converter={StaticResource FileIconConverter}}"/>
 
                     <StackPanel Grid.Column="1">
                         <TextBlock
                             FontWeight="SemiBold"
                             Text="{Binding FileName}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"/>
                         <TextBlock
                             FontSize="11"
                             Foreground="Gray"
-                            Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}" />
+                            Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}}"/>
                     </StackPanel>
 
                     <!--  Replace InputBindings with actual Button  -->
@@ -347,49 +403,65 @@
                         Command="{Binding DataContext.DownloadFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                         CommandParameter="{Binding}"
                         Content="Tải xuống"
-                        Foreground="White" />
+                        Foreground="White"/>
                 </Grid>
             </Border>
         </DataTemplate>
         <selectors:AttachmentTemplateSelector
             x:Key="AttachmentTemplateSelector"
             FileTemplate="{StaticResource FileAttachmentTemplate}"
-            ImageTemplate="{StaticResource ImageAttachmentTemplate}" />
+            ImageTemplate="{StaticResource ImageAttachmentTemplate}"/>
         <!--  Thêm vào phần Window.Resources trong UserChatView.xaml  -->
-        <Style x:Key="CurrentUserMessageStyle" TargetType="Border">
-            <Setter Property="Background" Value="#E3F2FD" />
-            <Setter Property="BorderBrush" Value="#BBDEFB" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="10,0,10,10" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="50,5,10,5" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
+        <Style x:Key="CurrentUserMessageStyle"
+                TargetType="Border">
+            <Setter Property="Background"
+                    Value="#E3F2FD"/>
+            <Setter Property="BorderBrush"
+                    Value="#BBDEFB"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="10,0,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="50,5,10,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Right"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect
                         BlurRadius="4"
                         Opacity="0.2"
                         ShadowDepth="1"
-                        Color="#000000" />
+                        Color="#000000"/>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="OtherUserMessageStyle" TargetType="Border">
-            <Setter Property="Background" Value="#F5F5F5" />
-            <Setter Property="BorderBrush" Value="#E0E0E0" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="0,10,10,10" />
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="10,5,50,5" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
+        <Style x:Key="OtherUserMessageStyle"
+                TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F5F5F5"/>
+            <Setter Property="BorderBrush"
+                    Value="#E0E0E0"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="CornerRadius"
+                    Value="0,10,10,10"/>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="10,5,50,5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Left"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect
                         BlurRadius="4"
                         Opacity="0.2"
                         ShadowDepth="1"
-                        Color="#000000" />
+                        Color="#000000"/>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -399,16 +471,21 @@
 
 
 
-    <Grid x:Name="Chat_Background" Opacity="1">
+    <Grid x:Name="Chat_Background"
+            Opacity="1">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                    EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                        Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                        Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
 
 
-        <Grid Width="1440" Height="1024">
+        <Grid Width="1440"
+                Height="1024">
 
             <!--  Search Box  -->
             <TextBox
@@ -421,7 +498,7 @@
                 VerticalAlignment="Top"
                 KeyDown="Activities_tbSearch_KeyDown"
                 Style="{StaticResource SearchBoxStyle}"
-                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Popup
                 IsOpen="{Binding IsSearchResultOpen, Mode=TwoWay}"
@@ -450,7 +527,7 @@
                                     Command="{Binding DataContext.OpenActivityDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding Title}"
-                                    Style="{StaticResource SearchResultButtonStyle}" />
+                                    Style="{StaticResource SearchResultButtonStyle}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -467,10 +544,14 @@
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    <LinearGradientBrush StartPoint="0.5,0"
+                            EndPoint="0.5,1">
+                        <GradientStop Offset="0.04"
+                                Color="#FFF6FCFF"/>
+                        <GradientStop Offset="0.46"
+                                Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0.937"
+                                Color="#FF87ACCD"/>
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -481,12 +562,13 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Style="{StaticResource MenuItemStyle}">
-                <Button Command="{Binding NavigateToHomeCommand}" Style="{StaticResource NavigationButtonStyle}">
+                <Button Command="{Binding NavigateToHomeCommand}"
+                        Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
-                            Source="/Views/Images/home.png" />
+                            Source="/Views/Images/home.png"/>
                         <Label
                             Width="108"
                             Height="30"
@@ -495,7 +577,7 @@
                             Content="Home"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -507,13 +589,14 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Style="{StaticResource MenuItemStyle}">
-                <Button Command="{Binding NavigateToChatCommand}" Style="{StaticResource NavigationButtonStyle}">
+                <Button Command="{Binding NavigateToChatCommand}"
+                        Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
                             OpacityMask="Black"
-                            Source="/Views/Images/active-chat_bubble.png" />
+                            Source="/Views/Images/active-chat_bubble.png"/>
                         <Label
                             Width="108"
                             Height="30"
@@ -523,7 +606,7 @@
                             FontFamily="Segoe UI"
                             FontSize="20"
                             FontWeight="Bold"
-                            Foreground="#597CA2" />
+                            Foreground="#597CA2"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -535,12 +618,13 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Style="{StaticResource MenuItemStyle}">
-                <Button Command="{Binding NavigateToActivitiesCommand}" Style="{StaticResource NavigationButtonStyle}">
+                <Button Command="{Binding NavigateToActivitiesCommand}"
+                        Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
-                            Source="/Views/Images/activities.png" />
+                            Source="/Views/Images/activities.png"/>
                         <Label
                             Width="108"
                             Height="30"
@@ -549,7 +633,7 @@
                             Content="Activities"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -561,12 +645,13 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Style="{StaticResource MenuItemStyle}">
-                <Button Command="{Binding NavigateToMembersCommand}" Style="{StaticResource NavigationButtonStyle}">
+                <Button Command="{Binding NavigateToMembersCommand}"
+                        Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
-                            Source="/Views/Images/members.png" />
+                            Source="/Views/Images/members.png"/>
                         <Label
                             Width="108"
                             Height="30"
@@ -575,7 +660,7 @@
                             Content="Members"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -587,12 +672,13 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Style="{StaticResource MenuItemStyle}">
-                <Button Command="{Binding NavigateToTasksCommand}" Style="{StaticResource NavigationButtonStyle}">
+                <Button Command="{Binding NavigateToTasksCommand}"
+                        Style="{StaticResource NavigationButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
-                            Source="/Views/Images/tasks.png" />
+                            Source="/Views/Images/tasks.png"/>
                         <Label
                             Width="108"
                             Height="30"
@@ -601,7 +687,7 @@
                             Content="Tasks"
                             FontFamily="Segoe UI"
                             FontSize="20"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -620,14 +706,15 @@
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}"
                 Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal"
+                        Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iAdmin"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/admin_panel.png" />
+                        Source="/Views/Images/admin_panel.png"/>
                     <Label
                         x:Name="HomePage_lbAdmin"
                         Width="108"
@@ -639,7 +726,7 @@
                         Content="Admin"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold" />
+                        FontWeight="Bold"/>
                 </StackPanel>
             </Button>
 
@@ -660,7 +747,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý công việc" />
+                        Text="Quản lý công việc"/>
                 </Button>
                 <Button
                     x:Name="AdminMembersButton"
@@ -672,20 +759,9 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý thành viên" />
+                        Text="Quản lý thành viên"/>
                 </Button>
-                <Button
-                    x:Name="AdminChatButton"
-                    Margin="0,5,0,5"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Click="AdminChatButton_Click"
-                    Cursor="Hand">
-                    <TextBlock
-                        FontSize="15"
-                        Foreground="#042354"
-                        Text="Quản lý chat" />
-                </Button>
+
                 <Button
                     x:Name="AdminActivitiesButton"
                     Margin="0,5,0,5"
@@ -696,7 +772,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý hoạt động" />
+                        Text="Quản lý hoạt động"/>
                 </Button>
             </StackPanel>
 
@@ -707,7 +783,7 @@
                 Margin="131,71,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/header.png" />
+                Source="/Views/Images/header.png"/>
 
             <!--  Social Media Icons  -->
             <Image
@@ -717,7 +793,7 @@
                 Margin="175,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/facebook.png" />
+                Source="/Views/Images/facebook.png"/>
             <Image
                 x:Name="GroupTask_Design_iInstagram"
                 Width="24"
@@ -725,7 +801,7 @@
                 Margin="135,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/instagram.png" />
+                Source="/Views/Images/instagram.png"/>
             <Image
                 x:Name="GroupTask_Design_iYoutube"
                 Width="24"
@@ -733,7 +809,7 @@
                 Margin="215,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/youtube.png" />
+                Source="/Views/Images/youtube.png"/>
 
             <!--  Top Icons  -->
             <StackPanel
@@ -747,17 +823,17 @@
                     Height="40"
                     Margin="0,0,20,0"
                     MouseDown="ThemeToggleButton_MouseDown"
-                    Source="/Views/Images/dark.png" />
+                    Source="/Views/Images/dark.png"/>
                 <Image
                     Width="40"
                     Height="40"
                     Margin="0,0,20,0"
-                    Source="/Views/Images/light-notifications.png" />
+                    Source="/Views/Images/light-notifications.png"/>
                 <Image
                     x:Name="UserAvatar"
                     Width="40"
                     Height="40"
-                    Source="/Views/Images/generic avatar.png" />
+                    Source="/Views/Images/generic avatar.png"/>
             </StackPanel>
 
             <Image
@@ -767,7 +843,7 @@
                 Margin="368,51,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/search.png" />
+                Source="/Views/Images/search.png"/>
 
             <Border
                 Width="366"
@@ -777,16 +853,21 @@
                 VerticalAlignment="Top"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
-                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    <LinearGradientBrush StartPoint="0.5,0"
+                            EndPoint="0.5,1">
+                        <GradientStop Offset="0.04"
+                                Color="#FFF6FCFF"/>
+                        <GradientStop Offset="0.46"
+                                Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0.937"
+                                Color="#FF87ACCD"/>
                     </LinearGradientBrush>
                 </Border.Background>
 
                 <Grid>
                     <!--  Header với nút tạo nhóm và tìm bạn  -->
-                    <Grid Height="60" VerticalAlignment="Top">
+                    <Grid Height="60"
+                            VerticalAlignment="Top">
                         <Button
                             Margin="0,0,10,0"
                             Padding="8,5"
@@ -796,7 +877,7 @@
                             BorderThickness="0"
                             Command="{Binding CreateGroupCommand}"
                             Content="Tạo nhóm mới"
-                            Foreground="White" />
+                            Foreground="White"/>
 
                         <Button
                             Margin="15,0,0,0"
@@ -808,11 +889,12 @@
                             Command="{Binding SearchFriendsCommand}"
                             Content="Tìm bạn bè"
                             Foreground="White"
-                            ToolTip="Tìm bạn bè" />
+                            ToolTip="Tìm bạn bè"/>
                     </Grid>
 
                     <!--  Danh sách cuộc trò chuyện  -->
-                    <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Margin="0,60,0,0"
+                            VerticalScrollBarVisibility="Auto">
                         <ListView
                             Width="340"
                             Margin="15,0"
@@ -824,8 +906,10 @@
                             <!--  Thêm style ở đây  -->
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0" />
-                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Padding"
+                                            Value="0"/>
+                                    <Setter Property="Background"
+                                            Value="Transparent"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -836,31 +920,39 @@
                                                     CornerRadius="10"
                                                     SnapsToDevicePixels="True">
                                                     <Grid>
-                                                        <ContentPresenter />
+                                                        <ContentPresenter/>
                                                     </Grid>
                                                 </Border>
                                                 <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Border" Property="Background" Value="#E5F1FF" />
-                                                        <Setter TargetName="Border" Property="Effect">
+                                                    <Trigger Property="IsMouseOver"
+                                                            Value="True">
+                                                        <Setter TargetName="Border"
+                                                                Property="Background"
+                                                                Value="#E5F1FF"/>
+                                                        <Setter TargetName="Border"
+                                                                Property="Effect">
                                                             <Setter.Value>
                                                                 <DropShadowEffect
                                                                     BlurRadius="5"
                                                                     Opacity="0.2"
                                                                     ShadowDepth="1"
-                                                                    Color="#000000" />
+                                                                    Color="#000000"/>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </Trigger>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="Border" Property="Background" Value="#D2E5FF" />
-                                                        <Setter TargetName="Border" Property="Effect">
+                                                    <Trigger Property="IsSelected"
+                                                            Value="True">
+                                                        <Setter TargetName="Border"
+                                                                Property="Background"
+                                                                Value="#D2E5FF"/>
+                                                        <Setter TargetName="Border"
+                                                                Property="Effect">
                                                             <Setter.Value>
                                                                 <DropShadowEffect
                                                                     BlurRadius="5"
                                                                     Opacity="0.2"
                                                                     ShadowDepth="1"
-                                                                    Color="#000000" />
+                                                                    Color="#000000"/>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </Trigger>
@@ -886,18 +978,18 @@
                                                 Margin="10,0,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Center"
-                                                Source="/Views/Images/account_circle.png" />
+                                                Source="/Views/Images/account_circle.png"/>
                                             <Label
                                                 Margin="60,10,0,0"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Top"
-                                                Content="{Binding Converter={StaticResource ConversationTitleConverter}}" />
+                                                Content="{Binding Converter={StaticResource ConversationTitleConverter}}"/>
                                             <Label
                                                 Margin="0,10,10,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
                                                 Content="{Binding LastActivity, Converter={StaticResource TimeZoneConverter}, ConverterParameter='HH:mm'}"
-                                                FontSize="10" />
+                                                FontSize="10"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -916,11 +1008,16 @@
                 VerticalAlignment="Top"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                        <GradientStop Offset="1" Color="#FF87ACCD" />
-                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
-                        <GradientStop Offset="0.54" Color="#FFDBF3FF" />
-                        <GradientStop Offset="0" Color="#FF87ACCD" />
+                    <LinearGradientBrush StartPoint="0.5,0"
+                            EndPoint="0.5,1">
+                        <GradientStop Offset="1"
+                                Color="#FF87ACCD"/>
+                        <GradientStop Offset="0.46"
+                                Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0.54"
+                                Color="#FFDBF3FF"/>
+                        <GradientStop Offset="0"
+                                Color="#FF87ACCD"/>
                     </LinearGradientBrush>
                 </Border.Background>
 
@@ -933,9 +1030,9 @@
                         CornerRadius="20,20,20,20">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!--  Header - Simplified  -->
@@ -953,11 +1050,11 @@
                                         <Image
                                             Width="30"
                                             Height="30"
-                                            Source="/Views/Images/account_circle.png" />
+                                            Source="/Views/Images/account_circle.png"/>
                                         <Label
                                             Margin="13,0,0,0"
                                             Content="{Binding SelectedConversation, Converter={StaticResource ConversationTitleConverter}}"
-                                            FontSize="15" />
+                                            FontSize="15"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -971,10 +1068,12 @@
                                 <ItemsControl ItemsSource="{Binding Messages}">
                                     <ItemsControl.ItemContainerStyle>
                                         <Style TargetType="ContentPresenter">
-                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="Opacity"
+                                                    Value="1"/>
                                             <Setter Property="RenderTransform">
                                                 <Setter.Value>
-                                                    <TranslateTransform X="0" Y="0" />
+                                                    <TranslateTransform X="0"
+                                                            Y="0"/>
                                                 </Setter.Value>
                                             </Setter>
                                             <Style.Triggers>
@@ -984,13 +1083,13 @@
                                                             <DoubleAnimation
                                                                 Storyboard.TargetProperty="Opacity"
                                                                 To="1"
-                                                                Duration="0:0:0.3" />
+                                                                Duration="0:0:0.3"/>
                                                             <DoubleAnimation
                                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                                                 To="0"
                                                                 Duration="0:0:0.3">
                                                                 <DoubleAnimation.EasingFunction>
-                                                                    <QuadraticEase EasingMode="EaseOut" />
+                                                                    <QuadraticEase EasingMode="EaseOut"/>
                                                                 </DoubleAnimation.EasingFunction>
                                                             </DoubleAnimation>
                                                         </Storyboard>
@@ -1005,18 +1104,20 @@
                                         <DataTemplate>
                                             <Grid Margin="10,5">
                                                 <!--  Current user messages (right-aligned)  -->
-                                                <Border Style="{StaticResource CurrentUserMessageStyle}" Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
+                                                <Border Style="{StaticResource CurrentUserMessageStyle}"
+                                                        Visibility="{Binding SenderId, Converter={StaticResource CurrentUserConverter}}">
                                                     <StackPanel>
                                                         <TextBlock
                                                             Text="{Binding Content}"
                                                             TextWrapping="Wrap"
-                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}" />
+                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
 
                                                         <!--  Image attachments  -->
-                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                        <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
                                                             <ItemsControl.ItemsPanel>
                                                                 <ItemsPanelTemplate>
-                                                                    <WrapPanel />
+                                                                    <WrapPanel/>
                                                                 </ItemsPanelTemplate>
                                                             </ItemsControl.ItemsPanel>
                                                             <ItemsControl.ItemTemplate>
@@ -1024,19 +1125,20 @@
                                                                     <ContentControl
                                                                         Margin="2"
                                                                         Content="{Binding}"
-                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}" />
+                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"/>
                                                                 </DataTemplate>
                                                             </ItemsControl.ItemTemplate>
                                                         </ItemsControl>
 
                                                         <!--  File attachments  -->
-                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                        <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
                                                                     <ContentControl
                                                                         Margin="2,2,2,0"
                                                                         Content="{Binding}"
-                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}" />
+                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"/>
                                                                 </DataTemplate>
                                                             </ItemsControl.ItemTemplate>
                                                         </ItemsControl>
@@ -1045,12 +1147,12 @@
                                                             HorizontalAlignment="Right"
                                                             FontSize="10"
                                                             Foreground="Gray"
-                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}" />
+                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"/>
                                                         <TextBlock
                                                             FontSize="10"
                                                             Foreground="Gray"
                                                             Text=" (đã chỉnh sửa)"
-                                                            Visibility="{Binding IsEdited, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                            Visibility="{Binding IsEdited, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                                                     </StackPanel>
 
@@ -1065,7 +1167,7 @@
                                                                     <Image
                                                                         Width="16"
                                                                         Height="16"
-                                                                        Source="/Views/Images/edit.png" />
+                                                                        Source="/Views/Images/edit.png"/>
                                                                 </MenuItem.Icon>
                                                             </MenuItem>
                                                             <MenuItem
@@ -1076,10 +1178,10 @@
                                                                     <Image
                                                                         Width="16"
                                                                         Height="16"
-                                                                        Source="/Views/Images/delete.png" />
+                                                                        Source="/Views/Images/delete.png"/>
                                                                 </MenuItem.Icon>
                                                             </MenuItem>
-                                                            <Separator />
+                                                            <Separator/>
                                                             <MenuItem
                                                                 Click="CopyMessage_Click"
                                                                 Header="Sao chép"
@@ -1088,7 +1190,7 @@
                                                                     <Image
                                                                         Width="16"
                                                                         Height="16"
-                                                                        Source="/Views/Images/copy.png" />
+                                                                        Source="/Views/Images/copy.png"/>
                                                                 </MenuItem.Icon>
                                                             </MenuItem>
                                                         </ContextMenu>
@@ -1096,22 +1198,24 @@
                                                 </Border>
 
                                                 <!--  Other user messages (left-aligned)  -->
-                                                <Border Style="{StaticResource OtherUserMessageStyle}" Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
+                                                <Border Style="{StaticResource OtherUserMessageStyle}"
+                                                        Visibility="{Binding SenderId, Converter={StaticResource NotCurrentUserConverter}}">
                                                     <StackPanel>
                                                         <TextBlock
                                                             FontSize="12"
                                                             FontWeight="Bold"
-                                                            Text="{Binding SenderName}" />
+                                                            Text="{Binding SenderName}"/>
                                                         <TextBlock
                                                             Text="{Binding Content}"
                                                             TextWrapping="Wrap"
-                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}" />
+                                                            Visibility="{Binding Type, Converter={StaticResource MessageTypeToVisibilityConverter}, ConverterParameter=Text}"/>
 
                                                         <!--  Image attachments  -->
-                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
+                                                        <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=Image}">
                                                             <ItemsControl.ItemsPanel>
                                                                 <ItemsPanelTemplate>
-                                                                    <WrapPanel />
+                                                                    <WrapPanel/>
                                                                 </ItemsPanelTemplate>
                                                             </ItemsControl.ItemsPanel>
                                                             <ItemsControl.ItemTemplate>
@@ -1119,19 +1223,20 @@
                                                                     <ContentControl
                                                                         Margin="2"
                                                                         Content="{Binding}"
-                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}" />
+                                                                        ContentTemplate="{StaticResource ImageAttachmentTemplate}"/>
                                                                 </DataTemplate>
                                                             </ItemsControl.ItemTemplate>
                                                         </ItemsControl>
 
                                                         <!--  File attachments  -->
-                                                        <ItemsControl ItemsSource="{Binding Attachments}" Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
+                                                        <ItemsControl ItemsSource="{Binding Attachments}"
+                                                                Visibility="{Binding Type, Converter={StaticResource AttachmentTypeToVisibilityConverter}, ConverterParameter=File}">
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
                                                                     <ContentControl
                                                                         Margin="2,2,2,0"
                                                                         Content="{Binding}"
-                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}" />
+                                                                        ContentTemplate="{StaticResource FileAttachmentTemplate}"/>
                                                                 </DataTemplate>
                                                             </ItemsControl.ItemTemplate>
                                                         </ItemsControl>
@@ -1139,7 +1244,7 @@
                                                         <TextBlock
                                                             FontSize="10"
                                                             Foreground="Gray"
-                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}" />
+                                                            Text="{Binding Timestamp, Converter={StaticResource TimeZoneConverter}}"/>
                                                     </StackPanel>
                                                 </Border>
                                             </Grid>
@@ -1149,10 +1254,11 @@
                             </ScrollViewer>
 
                             <!--  Input Area  -->
-                            <Grid Grid.Row="2" Margin="0,5,0,0">
+                            <Grid Grid.Row="2"
+                                    Margin="0,5,0,0">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <!--  Panel hiển thị file đính kèm  -->
@@ -1166,10 +1272,11 @@
                                         MaxHeight="100"
                                         HorizontalScrollBarVisibility="Auto"
                                         VerticalScrollBarVisibility="Disabled">
-                                        <ItemsControl Margin="10" ItemsSource="{Binding SelectedAttachments}">
+                                        <ItemsControl Margin="10"
+                                                ItemsSource="{Binding SelectedAttachments}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel />
+                                                    <WrapPanel/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1181,9 +1288,9 @@
                                                         CornerRadius="5">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
                                                             </Grid.ColumnDefinitions>
 
                                                             <TextBlock
@@ -1191,19 +1298,19 @@
                                                                 Width="16"
                                                                 Height="16"
                                                                 Margin="0,0,5,0"
-                                                                Text="📁" />
+                                                                Text="📁"/>
                                                             <TextBlock
                                                                 Grid.Column="1"
                                                                 MaxWidth="100"
                                                                 Text="{Binding FileName}"
-                                                                TextTrimming="CharacterEllipsis" />
+                                                                TextTrimming="CharacterEllipsis"/>
                                                             <Button
                                                                 Grid.Column="2"
                                                                 Margin="5,0,0,0"
                                                                 Padding="3,0"
                                                                 Command="{Binding DataContext.RemoveAttachmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                 CommandParameter="{Binding}"
-                                                                Content="×" />
+                                                                Content="×"/>
                                                         </Grid>
                                                     </Border>
                                                 </DataTemplate>
@@ -1233,7 +1340,7 @@
                                                 <Image
                                                     Width="18"
                                                     Height="18"
-                                                    Source="/Views/Images/add_circle.png" />
+                                                    Source="/Views/Images/add_circle.png"/>
                                             </Button>
 
                                             <StackPanel
@@ -1249,7 +1356,7 @@
                                                     <Image
                                                         Width="18"
                                                         Height="18"
-                                                        Source="/Views/Images/image.png" />
+                                                        Source="/Views/Images/image.png"/>
                                                 </Button>
                                                 <Button
                                                     Background="Transparent"
@@ -1259,7 +1366,7 @@
                                                     <Image
                                                         Width="18"
                                                         Height="18"
-                                                        Source="/Views/Images/document.png" />
+                                                        Source="/Views/Images/document.png"/>
                                                 </Button>
                                             </StackPanel>
                                         </StackPanel>
@@ -1268,7 +1375,7 @@
                                             VerticalAlignment="Center"
                                             Background="Transparent"
                                             BorderThickness="0"
-                                            Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}" />
+                                            Text="{Binding CurrentMessage, UpdateSourceTrigger=PropertyChanged}"/>
 
                                         <Button
                                             Width="40"
@@ -1280,7 +1387,7 @@
                                             <Image
                                                 Width="19"
                                                 Height="24"
-                                                Source="/Views/Images/send.png" />
+                                                Source="/Views/Images/send.png"/>
                                         </Button>
                                     </Grid>
                                 </Border>
