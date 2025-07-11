@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging; // Cho BitmapImage, BitmapCacheOption, Bitma
 using System.Windows.Controls; // Cho Image
 using System.Windows.Media; // Cho các lớp đồ họa khác
 using System.Collections.Generic; // Add this for Dictionary and List
+using System.Net.Http.Headers; // Cho MediaTypeHeaderValue
 namespace DoanKhoaClient.ViewModels
 {
     public class UserChatViewModel : INotifyPropertyChanged
@@ -879,6 +880,62 @@ namespace DoanKhoaClient.ViewModels
                     {
                         System.Diagnostics.Debug.WriteLine($"[REALTIME] Received message from {message.SenderName}: {message.Content}");
 
+                        // XỬ LÝ ATTACHMENTS GIỐNG NHU KHI LOAD TỪ DATABASE
+                        if (message.Attachments != null && message.Attachments.Count > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[REALTIME] Processing {message.Attachments.Count} attachments");
+
+                            var processedAttachments = new List<Attachment>();
+
+                            foreach (var attachment in message.Attachments)
+                            {
+                                var processedAttachment = new Attachment
+                                {
+                                    Id = attachment.Id,
+                                    MessageId = string.IsNullOrEmpty(attachment.MessageId) ? message.Id : attachment.MessageId,
+                                    FileName = attachment.FileName,
+                                    ContentType = attachment.ContentType,
+                                    FilePath = attachment.FilePath,
+                                    FileSize = attachment.FileSize,
+                                    IsImage = attachment.ContentType?.StartsWith("image/") ?? false,
+                                    UploadDate = attachment.UploadDate,
+                                    UploaderId = attachment.UploaderId,
+                                    ThumbnailUrl = attachment.ThumbnailUrl
+                                };
+
+                                // XỬ LÝ FileUrl GIỐNG NHU TRONG LoadMessages
+                                if (!string.IsNullOrEmpty(attachment.FileUrl))
+                                {
+                                    if (Uri.IsWellFormedUriString(attachment.FileUrl, UriKind.Absolute))
+                                    {
+                                        processedAttachment.FileUrl = attachment.FileUrl;
+                                        System.Diagnostics.Debug.WriteLine($"[REALTIME] Using absolute URL: {processedAttachment.FileUrl}");
+                                    }
+                                    else if (attachment.FileUrl.StartsWith("/Uploads/"))
+                                    {
+                                        processedAttachment.FileUrl = $"http://localhost:5299{attachment.FileUrl}";
+                                        System.Diagnostics.Debug.WriteLine($"[REALTIME] Fixed relative URL: {processedAttachment.FileUrl}");
+                                    }
+                                    else
+                                    {
+                                        string fileName = Path.GetFileName(attachment.FileUrl);
+                                        processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{fileName}";
+                                        System.Diagnostics.Debug.WriteLine($"[REALTIME] Constructed URL: {processedAttachment.FileUrl}");
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(attachment.FileName))
+                                {
+                                    processedAttachment.FileUrl = $"http://localhost:5299/Uploads/{attachment.FileName}";
+                                    System.Diagnostics.Debug.WriteLine($"[REALTIME] Created URL from filename: {processedAttachment.FileUrl}");
+                                }
+
+                                processedAttachments.Add(processedAttachment);
+                            }
+
+                            // Gán lại attachments đã xử lý
+                            message.Attachments = processedAttachments;
+                        }
+
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             // CHỈ HIỂN THỊ NẾU ĐANG Ở TRONG CONVERSATION ĐÓ
@@ -896,7 +953,7 @@ namespace DoanKhoaClient.ViewModels
                                     }
 
                                     ScrollToLastMessage();
-                                    System.Diagnostics.Debug.WriteLine($"[REALTIME] Added message to UI: {message.Content}");
+                                    System.Diagnostics.Debug.WriteLine($"[REALTIME] Added message to UI with {message.Attachments?.Count ?? 0} attachments");
                                 }
                             }
                             else
@@ -905,6 +962,10 @@ namespace DoanKhoaClient.ViewModels
                                 if (_conversationMessagesCache.ContainsKey(message.ConversationId))
                                 {
                                     _conversationMessagesCache[message.ConversationId].Add(message);
+                                }
+                                else
+                                {
+                                    _conversationMessagesCache[message.ConversationId] = new List<Message> { message };
                                 }
                                 System.Diagnostics.Debug.WriteLine($"[REALTIME] Added message to cache for conversation {message.ConversationId}");
                             }
@@ -1498,18 +1559,20 @@ namespace DoanKhoaClient.ViewModels
         private async void SendMessage(object parameter)
         {
             if ((string.IsNullOrWhiteSpace(CurrentMessage) && SelectedAttachments.Count == 0) ||
-                SelectedConversation == null || CurrentUser == null)
+        SelectedConversation == null || CurrentUser == null)
                 return;
 
             try
             {
                 var messageContent = CurrentMessage.Trim();
                 var conversationId = SelectedConversation.Id;
+                var messageId = ObjectId.GenerateNewId().ToString(); // Tạo ID trước
+
 
                 // Tạo message object
                 var newMessage = new Message
                 {
-                    Id = ObjectId.GenerateNewId().ToString(),
+                    Id = messageId,
                     ConversationId = conversationId,
                     SenderId = CurrentUser.Id,
                     SenderName = CurrentUser.DisplayName ?? CurrentUser.Username,
@@ -1521,19 +1584,49 @@ namespace DoanKhoaClient.ViewModels
                     Attachments = new List<Attachment>()
                 };
 
-                // Xử lý attachments nếu có
+                // UPLOAD FILES TRƯỚC KHI GỬI MESSAGE
                 if (SelectedAttachments.Count > 0)
                 {
-                    // Code xử lý upload file giữ nguyên...
+                    System.Diagnostics.Debug.WriteLine($"[SEND] Uploading {SelectedAttachments.Count} files");
+
                     foreach (var attachment in SelectedAttachments)
                     {
-                        // Upload file logic...
+                        try
+                        {
+                            attachment.MessageId = messageId;
+
+                            // Upload file lên server
+                            var uploadedAttachment = await UploadFileAsync(attachment);
+                            if (uploadedAttachment != null)
+                            {
+                                // Gán MessageId cho attachment
+
+                                uploadedAttachment.MessageId = newMessage.Id;
+                                newMessage.Attachments.Add(uploadedAttachment);
+                                System.Diagnostics.Debug.WriteLine($"[SEND] Uploaded: {uploadedAttachment.FileName}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[SEND] Error uploading {attachment.FileName}: {ex.Message}");
+                            MessageBox.Show($"Lỗi upload file {attachment.FileName}: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+
+                    // Cập nhật message type
+                    if (newMessage.Attachments.Any(a => a.IsImage))
+                    {
+                        newMessage.Type = MessageType.Image;
+                    }
+                    else if (newMessage.Attachments.Any())
+                    {
+                        newMessage.Type = MessageType.File;
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"[SEND] Sending message: {messageContent}");
+                System.Diagnostics.Debug.WriteLine($"[SEND] Sending message with {newMessage.Attachments.Count} attachments");
 
-                // 1. LƯU VÀO DATABASE TRƯỚC
+                // Gửi message đến server
                 var saveResponse = await _httpClient.PostAsJsonAsync("messages", newMessage);
                 if (!saveResponse.IsSuccessStatusCode)
                 {
@@ -1635,6 +1728,51 @@ namespace DoanKhoaClient.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tạo cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private async Task<Attachment> UploadFileAsync(Attachment tempAttachment)
+        {
+            try
+            {
+                // Đọc file từ đường dẫn local
+                if (!File.Exists(tempAttachment.FileUrl))
+                {
+                    throw new FileNotFoundException($"File không tồn tại: {tempAttachment.FileUrl}");
+                }
+
+                using (var content = new MultipartFormDataContent())
+                {
+                    var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(tempAttachment.FileUrl));
+                    fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(tempAttachment.ContentType);
+                    content.Add(fileContent, "file", tempAttachment.FileName);
+                    content.Add(new StringContent(tempAttachment.MessageId ?? ""), "MessageId");
+                    content.Add(new StringContent(CurrentUser.Id), "UploaderId");
+                    content.Add(new StringContent(tempAttachment.FileName), "FileName");
+                    content.Add(new StringContent(tempAttachment.ContentType), "ContentType");
+
+                    System.Diagnostics.Debug.WriteLine($"[UPLOAD] Uploading file: {tempAttachment.FileName}");
+                    System.Diagnostics.Debug.WriteLine($"[UPLOAD] MessageId: {tempAttachment.MessageId}");
+                    System.Diagnostics.Debug.WriteLine($"[UPLOAD] UploaderId: {CurrentUser.Id}");
+
+                    // Gửi file lên server
+                    var response = await _httpClient.PostAsync("attachments/upload", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var uploadedAttachment = await response.Content.ReadFromJsonAsync<Attachment>();
+                        return uploadedAttachment;
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"Upload failed: {error}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Upload error: {ex.Message}");
+                throw;
             }
         }
         private async void CreateGroup(object parameter)
