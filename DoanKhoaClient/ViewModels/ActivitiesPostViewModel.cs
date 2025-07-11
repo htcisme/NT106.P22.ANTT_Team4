@@ -64,6 +64,35 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
+        public string CurrentUserAvatar
+        {
+            get
+            {
+                try
+                {
+                    // Lấy từ current user service
+                    var avatar = _userService?.GetCurrentUserAvatar();
+                    if (!string.IsNullOrEmpty(avatar))
+                        return avatar;
+
+                    // Fallback từ App properties
+                    if (Application.Current?.Properties.Contains("CurrentUser") == true &&
+                        Application.Current.Properties["CurrentUser"] is User currentUser &&
+                        !string.IsNullOrEmpty(currentUser.AvatarUrl))
+                    {
+                        return currentUser.AvatarUrl;
+                    }
+
+                    // Avatar mặc định
+                    return "/Views/Images/User-icon.png";
+                }
+                catch
+                {
+                    return "/Views/Images/User-icon.png";
+                }
+            }
+        }
+
         public ObservableCollection<Activity> SearchResults
         {
             get => _searchResults;
@@ -309,17 +338,93 @@ namespace DoanKhoaClient.ViewModels
                 IsLoadingComments = true;
                 ErrorMessage = null;
 
+                System.Diagnostics.Debug.WriteLine($"=== LOADING COMMENTS FOR ACTIVITY: {Activity.Id} ===");
+
                 var comments = await _commentService.GetCommentsByActivityIdAsync(Activity.Id, _cts.Token);
-                Comments = new ObservableCollection<Comment>(comments ?? new List<Comment>());
+
+                System.Diagnostics.Debug.WriteLine($"Loaded {comments?.Count ?? 0} comments from server");
+
+                if (comments != null)
+                {
+                    // Process comments để đảm bảo data đầy đủ
+                    foreach (var comment in comments)
+                    {
+                        // Đảm bảo avatar
+                        if (string.IsNullOrEmpty(comment.UserAvatar))
+                        {
+                            comment.UserAvatar = "/Views/Images/User-icon.png";
+                        }
+
+                        // Đảm bảo user display name
+                        if (string.IsNullOrEmpty(comment.UserDisplayName))
+                        {
+                            comment.UserDisplayName = "Unknown User";
+                        }
+
+                        // Set IsOwner cho comments
+                        var currentUserId = _userService?.GetCurrentUserId();
+                        if (!string.IsNullOrEmpty(currentUserId))
+                        {
+                            comment.IsOwner = comment.UserId == currentUserId;
+                        }
+
+                        System.Diagnostics.Debug.WriteLine($"Comment: {comment.Id}, User: {comment.UserDisplayName}, IsReply: {comment.IsReply}, ParentId: {comment.ParentCommentId ?? "null"}");
+                    }
+
+                    // Đảm bảo reply information được populate đúng cách
+                    PopulateReplyInformationLocally(comments);
+                }
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Comments = new ObservableCollection<Comment>(comments ?? new List<Comment>());
+                    System.Diagnostics.Debug.WriteLine($"UI updated with {Comments.Count} comments");
+                    OnPropertyChanged(nameof(Comments));
+                });
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error loading comments: {ex.Message}");
                 ErrorMessage = $"Lỗi khi tải bình luận: {ex.Message}";
                 Comments = new ObservableCollection<Comment>();
             }
             finally
             {
                 IsLoadingComments = false;
+            }
+        }
+
+        private void PopulateReplyInformationLocally(List<Comment> comments)
+        {
+            var commentDict = comments.ToDictionary(c => c.Id, c => c);
+
+            foreach (var comment in comments.Where(c => !string.IsNullOrEmpty(c.ParentCommentId)))
+            {
+                if (commentDict.TryGetValue(comment.ParentCommentId, out var parentComment))
+                {
+                    // Chỉ set nếu chưa có thông tin
+                    if (string.IsNullOrEmpty(comment.ReplyToUserName))
+                    {
+                        comment.ReplyToUserName = parentComment.UserDisplayName;
+                    }
+
+                    if (string.IsNullOrEmpty(comment.ReplyToUserId))
+                    {
+                        comment.ReplyToUserId = parentComment.UserId;
+                    }
+
+                    if (string.IsNullOrEmpty(comment.ReplyToContent))
+                    {
+                        comment.ReplyToContent = parentComment.Content;
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Populated reply info locally for comment {comment.Id}:");
+                    System.Diagnostics.Debug.WriteLine($"  - ReplyToUserName: {comment.ReplyToUserName}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Warning: Parent comment {comment.ParentCommentId} not found for comment {comment.Id}");
+                }
             }
         }
 
@@ -391,6 +496,9 @@ namespace DoanKhoaClient.ViewModels
                     return;
                 }
 
+                // Lấy thông tin user hiện tại để hiển thị ngay lập tức
+                var currentUserDisplayName = GetCurrentUserDisplayName();
+
                 var request = new CreateCommentRequest
                 {
                     ActivityId = Activity.Id,
@@ -399,24 +507,85 @@ namespace DoanKhoaClient.ViewModels
                     ParentCommentId = ReplyingToComment?.Id
                 };
 
-                // Log thông tin debug
-                System.Diagnostics.Debug.WriteLine($"=== DEBUG COMMENT REQUEST ===");
+                // Log debug chi tiết
+                System.Diagnostics.Debug.WriteLine($"=== POST COMMENT DEBUG ===");
                 System.Diagnostics.Debug.WriteLine($"ActivityId: {request.ActivityId}");
                 System.Diagnostics.Debug.WriteLine($"UserId: {request.UserId}");
                 System.Diagnostics.Debug.WriteLine($"Content: {request.Content}");
                 System.Diagnostics.Debug.WriteLine($"ParentCommentId: {request.ParentCommentId ?? "null"}");
-                System.Diagnostics.Debug.WriteLine($"IsReply: {ReplyingToComment != null}");
+                System.Diagnostics.Debug.WriteLine($"Current User Display Name: {currentUserDisplayName}");
 
                 var newComment = await _commentService.CreateCommentAsync(request, _cts.Token);
 
                 if (newComment != null)
                 {
-                    Comments.Add(newComment);
+                    System.Diagnostics.Debug.WriteLine($"=== NEW COMMENT CREATED ===");
+                    System.Diagnostics.Debug.WriteLine($"Comment ID: {newComment.Id}");
+
+                    // Đảm bảo thông tin user được set ngay lập tức
+                    newComment.UserDisplayName = currentUserDisplayName;
+                    newComment.UserId = currentUserId;
+                    newComment.IsOwner = true;
+
+                    // Nếu là phản hồi, đảm bảo thông tin reply được set đúng ngay lập tức
+                    if (ReplyingToComment != null)
+                    {
+                        newComment.ReplyToUserName = ReplyingToComment.UserDisplayName;
+                        newComment.ReplyToUserId = ReplyingToComment.UserId;
+                        newComment.ReplyToContent = ReplyingToComment.Content;
+                        newComment.ParentCommentId = ReplyingToComment.Id;
+
+                        System.Diagnostics.Debug.WriteLine($"Reply info set immediately - To: {newComment.ReplyToUserName}");
+                    }
+
+                    // Đảm bảo avatar được set đúng
+                    if (string.IsNullOrEmpty(newComment.UserAvatar))
+                    {
+                        newComment.UserAvatar = CurrentUserAvatar;
+                    }
+
+                    // Set thời gian nếu thiếu
+                    if (newComment.CreatedAt == default(DateTime))
+                    {
+                        newComment.CreatedAt = DateTime.Now;
+                    }
+
+                    // Thêm comment vào đúng vị trí trong danh sách
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (string.IsNullOrEmpty(newComment.ParentCommentId))
+                        {
+                            // Comment gốc - thêm vào cuối
+                            Comments.Add(newComment);
+                            System.Diagnostics.Debug.WriteLine("Added as root comment");
+                        }
+                        else
+                        {
+                            // Reply - tìm vị trí đúng để insert
+                            var insertIndex = FindReplyInsertIndex(newComment.ParentCommentId);
+                            if (insertIndex >= 0 && insertIndex <= Comments.Count)
+                            {
+                                Comments.Insert(insertIndex, newComment);
+                                System.Diagnostics.Debug.WriteLine($"Inserted reply at index: {insertIndex}");
+                            }
+                            else
+                            {
+                                Comments.Add(newComment);
+                                System.Diagnostics.Debug.WriteLine("Added reply at end (fallback)");
+                            }
+                        }
+
+                        // Trigger UI update
+                        OnPropertyChanged(nameof(Comments));
+                    });
+
+                    // Clear input và reply state
                     NewCommentText = string.Empty;
+                    var oldReplyingTo = ReplyingToComment;
                     ReplyingToComment = null;
 
                     var successMessage = request.ParentCommentId != null ?
-                        "Phản hồi đã được gửi thành công!" :
+                        $"Phản hồi đến {oldReplyingTo?.UserDisplayName} đã được gửi thành công!" :
                         "Bình luận đã được đăng thành công!";
 
                     MessageBox.Show(successMessage, "Thành công",
@@ -429,50 +598,11 @@ namespace DoanKhoaClient.ViewModels
             }
             catch (Exception ex)
             {
-                // Log lỗi chi tiết
-                System.Diagnostics.Debug.WriteLine($"=== ERROR DETAILS ===");
-                System.Diagnostics.Debug.WriteLine($"Exception Type: {ex.GetType().Name}");
-                System.Diagnostics.Debug.WriteLine($"Message: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
-                if (ex.InnerException != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                }
+                System.Diagnostics.Debug.WriteLine($"=== ERROR IN POST COMMENT ===");
+                System.Diagnostics.Debug.WriteLine($"Exception: {ex.Message}");
 
                 ErrorMessage = $"Lỗi khi đăng bình luận: {ex.Message}";
-
-                // Hiển thị lỗi THẬT SỰ thay vì thông báo chung chung
-                string userMessage;
-
-                if (ex.Message.Contains("kết nối") || ex.Message.Contains("connection") || ex.Message.Contains("No connection"))
-                {
-                    userMessage = "Không thể kết nối đến server. Vui lòng kiểm tra:\n" +
-                                 "- Server có đang chạy không?\n" +
-                                 "- Kết nối mạng có ổn định không?";
-                }
-                else if (ex.Message.Contains("timeout") || ex.Message.Contains("hết thời gian"))
-                {
-                    userMessage = "Yêu cầu hết thời gian chờ. Vui lòng thử lại.";
-                }
-                else if (ex.Message.Contains("validation") || ex.Message.Contains("required") || ex.Message.Contains("Invalid"))
-                {
-                    userMessage = $"Dữ liệu không hợp lệ:\n{ex.Message}";
-                }
-                else if (ex.Message.Contains("404") || ex.Message.Contains("Not Found"))
-                {
-                    userMessage = "API comment không tồn tại trên server. Vui lòng kiểm tra server có implement comment API không.";
-                }
-                else if (ex.Message.Contains("500") || ex.Message.Contains("Internal Server Error"))
-                {
-                    userMessage = "Server gặp lỗi nội bộ. Vui lòng kiểm tra server logs.";
-                }
-                else
-                {
-                    // Hiển thị lỗi gốc để có thể debug
-                    userMessage = $"Lỗi: {ex.Message}";
-                }
-
-                MessageBox.Show(userMessage, "Lỗi đăng bình luận",
+                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi đăng bình luận",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -481,10 +611,108 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
+        private string GetCurrentUserDisplayName()
+        {
+            try
+            {
+                // Thử lấy từ UserService trước
+                var displayName = _userService?.GetCurrentUserDisplayName();
+                if (!string.IsNullOrEmpty(displayName))
+                {
+                    return displayName;
+                }
 
+                // Thử lấy từ App properties
+                if (Application.Current?.Properties.Contains("CurrentUser") == true &&
+                    Application.Current.Properties["CurrentUser"] is User currentUser &&
+                    !string.IsNullOrEmpty(currentUser.DisplayName))
+                {
+                    return currentUser.DisplayName;
+                }
+
+                // Thử lấy từ Settings (nếu có lưu)
+                var settingsDisplayName = DoanKhoaClient.Properties.Settings.Default.CurrentUserDisplayName;
+                if (!string.IsNullOrEmpty(settingsDisplayName))
+                {
+                    return settingsDisplayName;
+                }
+
+                // Fallback
+                return "Người dùng hiện tại";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting current user display name: {ex.Message}");
+                return "Người dùng hiện tại";
+            }
+        }
+
+        // Cập nhật phương thức này để tìm vị trí insert cho reply đệ quy
+        private int FindReplyInsertIndex(string parentCommentId)
+        {
+            if (string.IsNullOrEmpty(parentCommentId))
+                return Comments.Count;
+
+            // Tìm comment cha và tất cả các replies trong thread đó
+            var parentIndex = -1;
+            var lastReplyInThreadIndex = -1;
+
+            for (int i = 0; i < Comments.Count; i++)
+            {
+                if (Comments[i].Id == parentCommentId)
+                {
+                    parentIndex = i;
+                    lastReplyInThreadIndex = i; // Bắt đầu từ comment cha
+                }
+                else if (parentIndex >= 0 && !string.IsNullOrEmpty(Comments[i].ParentCommentId))
+                {
+                    // Kiểm tra xem comment này có phải là reply trong cùng thread không
+                    if (IsInSameThread(Comments[i].ParentCommentId, parentCommentId))
+                    {
+                        lastReplyInThreadIndex = i;
+                    }
+                    else if (string.IsNullOrEmpty(Comments[i].ParentCommentId))
+                    {
+                        // Gặp comment gốc mới, dừng tìm kiếm
+                        break;
+                    }
+                }
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Parent index: {parentIndex}, Last reply in thread index: {lastReplyInThreadIndex}");
+
+            if (lastReplyInThreadIndex >= 0)
+            {
+                // Thêm sau reply cuối cùng trong thread
+                return lastReplyInThreadIndex + 1;
+            }
+            else
+            {
+                // Không tìm thấy, thêm vào cuối
+                return Comments.Count;
+            }
+        }
+
+        // Phương thức helper để kiểm tra xem comment có trong cùng thread không
+        private bool IsInSameThread(string commentParentId, string targetParentId)
+        {
+            if (commentParentId == targetParentId)
+                return true;
+
+            // Tìm comment có ID = commentParentId
+            var comment = Comments.FirstOrDefault(c => c.Id == commentParentId);
+            if (comment != null && !string.IsNullOrEmpty(comment.ParentCommentId))
+            {
+                // Đệ quy kiểm tra parent của parent
+                return IsInSameThread(comment.ParentCommentId, targetParentId);
+            }
+
+            return false;
+        }
 
         private bool CanExecuteReplyToComment(object parameter)
         {
+            // Cho phép reply trên tất cả comments (bao gồm cả replies)
             return !IsLoading && parameter is Comment;
         }
 
@@ -493,7 +721,10 @@ namespace DoanKhoaClient.ViewModels
             if (parameter is Comment comment)
             {
                 ReplyingToComment = comment;
+
                 // Focus on comment input (this would need to be handled in the view)
+                // Trigger property changed để UI cập nhật
+                OnPropertyChanged(nameof(ReplyingToComment));
             }
         }
 
@@ -560,13 +791,46 @@ namespace DoanKhoaClient.ViewModels
                 IsLoading = true;
                 ErrorMessage = null;
 
-                await _commentService.DeleteCommentAsync(comment.Id, _cts.Token);
+                // Tìm tất cả comments con (replies) của comment này trước khi xóa
+                var commentToDelete = comment;
+                var commentsToRemove = new List<Comment>();
 
-                // Remove from local collection
-                Comments.Remove(comment);
+                // Thêm comment gốc vào danh sách xóa
+                commentsToRemove.Add(commentToDelete);
 
-                MessageBox.Show("Bình luận đã được xóa thành công!", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                // Tìm tất cả replies của comment này (đệ quy)
+                FindAllRepliesRecursively(commentToDelete.Id, commentsToRemove);
+
+                System.Diagnostics.Debug.WriteLine($"=== DELETING COMMENT AND REPLIES ===");
+                System.Diagnostics.Debug.WriteLine($"Deleting comment: {commentToDelete.Id}");
+                System.Diagnostics.Debug.WriteLine($"Total comments to remove: {commentsToRemove.Count}");
+
+                // Xóa trên server
+                var deleteSuccess = await _commentService.DeleteCommentAsync(commentToDelete.Id, _cts.Token);
+
+                if (deleteSuccess)
+                {
+                    // Xóa khỏi UI ngay lập tức (bao gồm tất cả replies)
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        foreach (var commentToRemove in commentsToRemove)
+                        {
+                            Comments.Remove(commentToRemove);
+                            System.Diagnostics.Debug.WriteLine($"Removed comment from UI: {commentToRemove.Id}");
+                        }
+
+                        // Trigger UI update
+                        OnPropertyChanged(nameof(Comments));
+                    });
+
+                    MessageBox.Show($"Đã xóa bình luận và {commentsToRemove.Count - 1} phản hồi!", "Thông báo",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Không thể xóa bình luận. Vui lòng thử lại.", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -577,6 +841,21 @@ namespace DoanKhoaClient.ViewModels
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        private void FindAllRepliesRecursively(string parentCommentId, List<Comment> commentsToRemove)
+        {
+            var directReplies = Comments.Where(c => c.ParentCommentId == parentCommentId).ToList();
+
+            foreach (var reply in directReplies)
+            {
+                // Thêm reply vào danh sách xóa
+                commentsToRemove.Add(reply);
+                System.Diagnostics.Debug.WriteLine($"Found reply to delete: {reply.Id}");
+
+                // Tìm replies của reply này (đệ quy)
+                FindAllRepliesRecursively(reply.Id, commentsToRemove);
             }
         }
 
@@ -649,6 +928,7 @@ namespace DoanKhoaClient.ViewModels
         {
             ToggleLike();
         }
+
 
         private async void ToggleLike()
         {

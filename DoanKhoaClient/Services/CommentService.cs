@@ -71,13 +71,97 @@ namespace DoanKhoaClient.Services
                                               .Where(c => c != null)
                                               .ToList() ?? new List<Comment>();
 
-                LogInfo($"Successfully loaded {comments.Count} comments");
-                return comments;
+                // Populate reply information cho tất cả comments
+                PopulateReplyInformation(comments);
+
+                // Sắp xếp comments: comments gốc trước, theo thời gian tăng dần
+                // Replies sẽ được hiển thị ngay sau comment gốc tương ứng
+                var sortedComments = OrganizeCommentsWithReplies(comments);
+
+                LogInfo($"Successfully loaded and organized {sortedComments.Count} comments");
+                return sortedComments;
             }
             catch (Exception ex)
             {
                 LogError($"Error getting comments for activity {activityId}: {ex.Message}");
                 throw new Exception($"Không thể lấy danh sách bình luận: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Populate reply information cho tất cả comments dựa trên ParentCommentId
+        /// </summary>
+        private void PopulateReplyInformation(List<Comment> comments)
+        {
+            // Tạo dictionary để tra cứu nhanh comment theo ID
+            var commentDict = comments.ToDictionary(c => c.Id, c => c);
+
+            foreach (var comment in comments.Where(c => !string.IsNullOrEmpty(c.ParentCommentId)))
+            {
+                if (commentDict.TryGetValue(comment.ParentCommentId, out var parentComment))
+                {
+                    comment.ReplyToUserName = parentComment.UserDisplayName;
+                    comment.ReplyToUserId = parentComment.UserId;
+                    comment.ReplyToContent = parentComment.Content;
+
+                    System.Diagnostics.Debug.WriteLine($"Populated reply info for comment {comment.Id}:");
+                    System.Diagnostics.Debug.WriteLine($"  - ReplyToUserName: {comment.ReplyToUserName}");
+                    System.Diagnostics.Debug.WriteLine($"  - ReplyToContent: {comment.ReplyToContent?.Substring(0, Math.Min(50, comment.ReplyToContent.Length))}...");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Warning: Parent comment {comment.ParentCommentId} not found for comment {comment.Id}");
+                }
+            }
+        }
+
+        private List<Comment> OrganizeCommentsWithReplies(List<Comment> comments)
+        {
+            var result = new List<Comment>();
+
+            System.Diagnostics.Debug.WriteLine($"=== ORGANIZING {comments.Count} COMMENTS ===");
+
+            // Tách comments gốc và replies
+            var rootComments = comments.Where(c => string.IsNullOrEmpty(c.ParentCommentId))
+                                      .OrderBy(c => c.CreatedAt)
+                                      .ToList();
+
+            var replies = comments.Where(c => !string.IsNullOrEmpty(c.ParentCommentId))
+                                 .OrderBy(c => c.CreatedAt)
+                                 .ToList();
+
+            System.Diagnostics.Debug.WriteLine($"Root comments: {rootComments.Count}, Replies: {replies.Count}");
+
+            // Thêm từng comment gốc và replies của nó (bao gồm replies của replies)
+            foreach (var rootComment in rootComments)
+            {
+                result.Add(rootComment);
+                System.Diagnostics.Debug.WriteLine($"Added root comment: {rootComment.Id}");
+
+                // Thêm tất cả replies của comment này một cách đệ quy
+                AddRepliesRecursively(rootComment.Id, replies, result);
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Final organized list has {result.Count} comments");
+            return result;
+        }
+
+        /// <summary>
+        /// Thêm replies một cách đệ quy nhưng giữ cùng mức indent
+        /// </summary>
+        private void AddRepliesRecursively(string parentId, List<Comment> allReplies, List<Comment> result)
+        {
+            var directReplies = allReplies.Where(r => r.ParentCommentId == parentId)
+                                         .OrderBy(r => r.CreatedAt)
+                                         .ToList();
+
+            foreach (var reply in directReplies)
+            {
+                result.Add(reply);
+                System.Diagnostics.Debug.WriteLine($"Added reply: {reply.Id} to parent: {reply.ParentCommentId}");
+
+                // Thêm replies của reply này (cùng mức indent)
+                AddRepliesRecursively(reply.Id, allReplies, result);
             }
         }
 
@@ -91,6 +175,13 @@ namespace DoanKhoaClient.Services
                 ValidateCreateCommentRequest(request);
 
                 LogRequest($"Creating comment for activity: {request.ActivityId}");
+
+                // Log request details
+                System.Diagnostics.Debug.WriteLine($"=== CREATE COMMENT REQUEST ===");
+                System.Diagnostics.Debug.WriteLine($"ActivityId: {request.ActivityId}");
+                System.Diagnostics.Debug.WriteLine($"UserId: {request.UserId}");
+                System.Diagnostics.Debug.WriteLine($"Content: {request.Content}");
+                System.Diagnostics.Debug.WriteLine($"ParentCommentId: {request.ParentCommentId ?? "null"}");
 
                 var json = JsonSerializer.Serialize(request, _jsonOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -109,7 +200,14 @@ namespace DoanKhoaClient.Services
                     throw new Exception("Không thể tạo bình luận - phản hồi từ server không hợp lệ");
                 }
 
-                LogInfo($"Successfully created comment with ID: {comment.Id}");
+                // Đảm bảo ParentCommentId được preserve
+                if (!string.IsNullOrEmpty(request.ParentCommentId))
+                {
+                    comment.ParentCommentId = request.ParentCommentId;
+                    System.Diagnostics.Debug.WriteLine($"Ensured ParentCommentId: {comment.ParentCommentId}");
+                }
+
+                LogInfo($"Successfully created comment with ID: {comment.Id}, IsReply: {comment.IsReply}");
                 return comment;
             }
             catch (Exception ex)
@@ -485,21 +583,42 @@ namespace DoanKhoaClient.Services
 
             try
             {
-                return new Comment
+                var comment = new Comment
                 {
                     Id = response.Id ?? "",
                     ActivityId = response.ActivityId ?? "",
                     UserId = response.UserId ?? "",
                     UserDisplayName = response.UserDisplayName ?? "Unknown User",
-                    UserAvatar = response.UserAvatar ?? "",
+                    UserAvatar = !string.IsNullOrEmpty(response.UserAvatar) ? response.UserAvatar : "/Views/Images/User-icon.png",
                     Content = response.Content ?? "",
                     CreatedAt = response.CreatedAt,
                     UpdatedAt = response.UpdatedAt,
-                    ParentCommentId = response.ParentCommentId,
+                    ParentCommentId = response.ParentCommentId, // Quan trọng: đảm bảo ParentCommentId được set
                     LikeCount = response.LikeCount,
                     IsLiked = response.IsLiked,
-                    IsOwner = response.IsOwner
+                    IsOwner = response.IsOwner,
+                    // Thông tin về comment được phản hồi - sẽ được populate sau
+                    ReplyToUserName = response.ReplyToUserName,
+                    ReplyToUserId = response.ReplyToUserId,
+                    ReplyToContent = response.ReplyToContent
                 };
+
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"=== MAPPING COMMENT ===");
+                System.Diagnostics.Debug.WriteLine($"ID: {comment.Id}");
+                System.Diagnostics.Debug.WriteLine($"Content: {comment.Content}");
+                System.Diagnostics.Debug.WriteLine($"ParentCommentId: {comment.ParentCommentId ?? "null"}");
+                System.Diagnostics.Debug.WriteLine($"IsReply: {comment.IsReply}");
+                System.Diagnostics.Debug.WriteLine($"ReplyToUserName: {comment.ReplyToUserName ?? "null"}");
+
+                // Đặt IsOwner dựa trên user hiện tại nếu chưa có
+                if (!comment.IsOwner)
+                {
+                    var currentUserId = GetCurrentUserId();
+                    comment.IsOwner = !string.IsNullOrEmpty(currentUserId) && comment.UserId == currentUserId;
+                }
+
+                return comment;
             }
             catch (Exception ex)
             {

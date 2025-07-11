@@ -5,6 +5,7 @@ using System.Windows.Data;
 
 namespace DoanKhoaClient.Converters
 {
+
     // Converter to handle indentation for reply comments
     public class IndentToWidthConverter : IValueConverter
     {
