@@ -10,6 +10,12 @@ public class VerifyEmailRequest
     public string Code { get; set; }
 }
 
+public class ResetPasswordRequest
+{
+    public string UserId { get; set; }
+    public string NewPassword { get; set; }
+}
+
 namespace DoanKhoaServer.Controllers
 {
     [ApiController]
@@ -335,29 +341,205 @@ namespace DoanKhoaServer.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] User updatedUser)
+        [HttpPost("{id}/reset-password")]
+        public async Task<IActionResult> ResetPassword(string id, [FromBody] ResetPasswordRequest request)
         {
             try
             {
+                // Validation
+                if (string.IsNullOrWhiteSpace(request.NewPassword))
+                {
+                    return BadRequest("Mật khẩu mới không được để trống.");
+                }
+
+                if (request.NewPassword.Length < 6)
+                {
+                    return BadRequest("Mật khẩu phải có ít nhất 6 ký tự.");
+                }
+
+                // Kiểm tra user tồn tại
                 var user = await _mongoDBService.GetUserByIdAsync(id);
                 if (user == null)
                 {
-                    return NotFound("User not found");
+                    return NotFound("Không tìm thấy người dùng.");
                 }
-                // Cập nhật các trường cho phép chỉnh sửa
-                user.DisplayName = updatedUser.DisplayName;
-                user.Email = updatedUser.Email;
-                user.Role = updatedUser.Role;
-                user.Position = updatedUser.Position;
+
+                // Tạo mật khẩu mới
+                var (hashedPassword, salt) = _authService.CreatePasswordHash(request.NewPassword);
+
+                // Cập nhật mật khẩu
+                user.PasswordHash = hashedPassword;
+                user.PasswordSalt = salt;
 
                 await _mongoDBService.UpdateUserAsync(user);
 
-                return Ok(user);
+                return Ok(new { message = "Đặt lại mật khẩu thành công." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Server error: {ex.Message}");
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+        [HttpPut("batch-update")]
+        public async Task<IActionResult> BatchUpdateUsers([FromBody] BatchUpdateUserRequest request)
+        {
+            try
+            {
+                if (request.UserIds == null || !request.UserIds.Any())
+                {
+                    return BadRequest("Danh sách người dùng không được để trống.");
+                }
+
+                if (request.Updates == null)
+                {
+                    return BadRequest("Dữ liệu cập nhật không được để trống.");
+                }
+
+                var results = new List<object>();
+                var errors = new List<string>();
+
+                foreach (var userId in request.UserIds)
+                {
+                    try
+                    {
+                        var user = await _mongoDBService.GetUserByIdAsync(userId);
+                        if (user == null)
+                        {
+                            errors.Add($"Không tìm thấy người dùng với ID: {userId}");
+                            continue;
+                        }
+
+                        // Kiểm tra Admin Code nếu đang nâng cấp lên Admin
+                        if (request.Updates.Role == UserRole.Admin && user.Role != UserRole.Admin)
+                        {
+                            const string ADMIN_SECRET_CODE = "DoanKhoaMMT";
+                            if (string.IsNullOrEmpty(request.AdminCode) || request.AdminCode != ADMIN_SECRET_CODE)
+                            {
+                                errors.Add($"Mã xác thực Admin không hợp lệ cho người dùng: {user.DisplayName}");
+                                continue;
+                            }
+                        }
+
+                        // Cập nhật các trường
+                        if (request.Updates.Role.HasValue)
+                        {
+                            user.Role = request.Updates.Role.Value;
+                        }
+
+                        if (request.Updates.Position.HasValue)
+                        {
+                            user.Position = request.Updates.Position.Value;
+                        }
+
+                        if (request.Updates.EmailVerified.HasValue)
+                        {
+                            user.EmailVerified = request.Updates.EmailVerified.Value;
+                        }
+
+                        // Lưu thay đổi
+                        await _mongoDBService.UpdateUserAsync(user);
+
+                        results.Add(new
+                        {
+                            userId = user.Id,
+                            username = user.Username,
+                            displayName = user.DisplayName,
+                            success = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add($"Lỗi cập nhật người dùng {userId}: {ex.Message}");
+                    }
+                }
+
+                return Ok(new
+                {
+                    success = results.Count,
+                    total = request.UserIds.Count,
+                    errors = errors,
+                    updatedUsers = results
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserDto updatedUser)
+        {
+            try
+            {
+                // Kiểm tra xem user có tồn tại không
+                var user = await _mongoDBService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng.");
+                }
+
+                // Validation cơ bản
+                if (string.IsNullOrWhiteSpace(updatedUser.DisplayName))
+                {
+                    return BadRequest("Họ tên không được để trống.");
+                }
+
+                if (string.IsNullOrWhiteSpace(updatedUser.Email))
+                {
+                    return BadRequest("Email không được để trống.");
+                }
+
+                // Kiểm tra email format
+                var emailRegex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                if (!emailRegex.IsMatch(updatedUser.Email))
+                {
+                    return BadRequest("Email không hợp lệ.");
+                }
+
+                // Kiểm tra email đã tồn tại chưa (trừ email của chính user này)
+                var existingUserWithEmail = await _mongoDBService.GetUserByEmailAsync(updatedUser.Email);
+                if (existingUserWithEmail != null && existingUserWithEmail.Id != id)
+                {
+                    return BadRequest("Email này đã được sử dụng bởi người dùng khác.");
+                }
+
+                // Cập nhật các trường cho phép chỉnh sửa
+                user.DisplayName = updatedUser.DisplayName.Trim();
+                user.Email = updatedUser.Email.Trim();
+                user.Role = updatedUser.Role;
+                user.Position = updatedUser.Position;
+
+                // Các trường khác có thể cập nhật
+                if (!string.IsNullOrEmpty(updatedUser.AvatarUrl))
+                {
+                    user.AvatarUrl = updatedUser.AvatarUrl;
+                }
+
+                // Lưu thay đổi
+                await _mongoDBService.UpdateUserAsync(user);
+
+                // Trả về user đã được cập nhật (loại bỏ thông tin nhạy cảm)
+                var result = new
+                {
+                    user.Id,
+                    user.Username,
+                    user.DisplayName,
+                    user.Email,
+                    user.AvatarUrl,
+                    user.LastSeen,
+                    user.Role,
+                    user.Position,
+                    user.ActivitiesCount,
+                    user.EmailVerified,
+                    user.TwoFactorEnabled
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
             }
         }
 

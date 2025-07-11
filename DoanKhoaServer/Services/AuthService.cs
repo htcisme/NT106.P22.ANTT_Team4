@@ -93,6 +93,16 @@ namespace DoanKhoaServer.Services
             return (newUser, "registration_success_verification_required");
         }
 
+        public (string hashedPassword, string salt) CreatePasswordHash(string password)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                var salt = Convert.ToBase64String(hmac.Key);
+                var hashedPassword = Convert.ToBase64String(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
+                return (hashedPassword, salt);
+            }
+        }
+
         public async Task<(User user, string message)> VerifyEmail(string userId, string code)
         {
             var user = await _mongoDBService.GetUserByIdAsync(userId);

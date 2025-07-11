@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DoanKhoaServer.Models
 {
@@ -20,34 +21,87 @@ namespace DoanKhoaServer.Models
         UyVienBTV = 4
     }
 
+    public class UpdateUserDto
+    {
+        [Required]
+        public string DisplayName { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        public string AvatarUrl { get; set; }
+
+        [Required]
+        public UserRole Role { get; set; }
+
+        [Required]
+        public Position Position { get; set; }
+    }
+
+    public class BatchUpdateUserDto
+    {
+        public UserRole? Role { get; set; }
+        public Position? Position { get; set; }
+        public bool? EmailVerified { get; set; }
+    }
+
+    public class BatchUpdateUserRequest
+    {
+        public List<string> UserIds { get; set; } = new List<string>();
+        public BatchUpdateUserDto Updates { get; set; }
+        public string AdminCode { get; set; } // Cho việc nâng cấp lên Admin
+    }
+
+
     public class User
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
+        [Required]
         public string Username { get; set; }
+
+        [Required]
         public string DisplayName { get; set; }
+
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
-        public string AvatarUrl { get; set; }
-        public DateTime LastSeen { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; } = string.Empty;
+
+        [Required]
+        public string PasswordSalt { get; set; } = string.Empty;
+
+        public string AvatarUrl { get; set; } = string.Empty; 
+
+        public DateTime LastSeen { get; set; } = DateTime.UtcNow;
+
         public List<string> Conversations { get; set; } = new List<string>();
-        public UserRole Role { get; set; } // Default to regular user
-                                           // Add these properties to the User clas
+
+        public UserRole Role { get; set; } = UserRole.User; 
+
         public Position Position { get; set; } = Position.DoanVien;
+
         public int ActivitiesCount { get; set; } = 0;
 
-        // Existing two-factor auth properties
-        public bool TwoFactorEnabled { get; set; }
-        public string TwoFactorSecret { get; set; }
-        public DateTime? TwoFactorCodeExpiry { get; set; }
-        public string CurrentTwoFactorCode { get; set; }
+        // Two-factor auth properties với default values
+        public bool TwoFactorEnabled { get; set; } = false;
 
-        // Email verification properties
+        public string TwoFactorSecret { get; set; } = string.Empty;
+
+        public DateTime? TwoFactorCodeExpiry { get; set; }
+
+        public string CurrentTwoFactorCode { get; set; } = string.Empty;
+
+        // Email verification properties với default values
         public bool EmailVerified { get; set; } = false;
-        public string EmailVerificationCode { get; set; }
+
+        public string EmailVerificationCode { get; set; } = string.Empty;
+
         public DateTime? EmailVerificationCodeExpiry { get; set; }
     }
 }

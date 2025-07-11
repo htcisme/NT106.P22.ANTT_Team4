@@ -18,45 +18,31 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <vm:AdminMembersViewModel x:Key="ViewModel"/>
-        <convert:RoleToTextConverter x:Key="RoleToTextConverter"/>
+        <vm:AdminMembersViewModel x:Key="ViewModel" />
+        <convert:RoleToTextConverter x:Key="RoleToTextConverter" />
         <!--  Phong cách tiêu đề cột  -->
-        <Style x:Key="GridViewColumnHeaderStyle"
-                TargetType="GridViewColumnHeader">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="Padding"
-                    Value="10,15"/>
-            <Setter Property="FontWeight"
-                    Value="SemiBold"/>
-            <Setter Property="FontSize"
-                    Value="12"/>
-            <Setter Property="Foreground"
-                    Value="#555555"/>
-            <Setter Property="BorderBrush"
-                    Value="#E0E0E0"/>
-            <Setter Property="BorderThickness"
-                    Value="0,0,0,1"/>
+        <Style x:Key="GridViewColumnHeaderStyle" TargetType="GridViewColumnHeader">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="10,15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#555555" />
+            <Setter Property="BorderBrush" Value="#E0E0E0" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
             <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                        Value="True">
-                    <Setter Property="Foreground"
-                            Value="#042354"/>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#042354" />
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="MenuItemStyle"
-                TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="RenderTransformOrigin"
-                    Value="0.5,0.5"/>
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1"
-                                ScaleY="1"/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -67,15 +53,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -85,55 +71,213 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="FilterComboBoxStyle"
-                TargetType="ComboBox">
-            <Setter Property="Background"
-                    Value="#FF042354"/>
-            <Setter Property="Foreground"
-                    Value="#F6FCFF"/>
-            <Setter Property="FontSize"
-                    Value="16"/>
-            <Setter Property="FontWeight"
-                    Value="Bold"/>
-            <Setter Property="HorizontalAlignment"
-                    Value="Left"/>
-            <Setter Property="VerticalAlignment"
-                    Value="Top"/>
-            <Setter Property="Margin"
-                    Value="0,0,0,0"/>
-            <Setter Property="VerticalContentAlignment"
-                    Value="Center"/>
-            <Setter Property="BorderBrush"
-                    Value="#FF042354"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Padding"
-                    Value="0"/>
-            <Setter Property="Height"
-                    Value="40"/>
-            <Setter Property="Width"
-                    Value="147"/>
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Center"/>
-
+        <Style x:Key="HoverBorderComboBox" TargetType="ComboBox">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="MinWidth" Value="120" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border
+                                x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <DockPanel Margin="4,0,4,0">
+                                    <ContentPresenter
+                                        Margin="4,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Content="{TemplateBinding SelectionBoxItem}" />
+                                    <ToggleButton
+                                        ClickMode="Press"
+                                        DockPanel.Dock="Right"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <Path
+                                            Margin="4"
+                                            Data="M 0 0 L 4 4 L 8 0 Z"
+                                            Fill="Black" />
+                                    </ToggleButton>
+                                </DockPanel>
+                            </Border>
+                            <Popup
+                                Name="Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Border
+                                    Background="White"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1">
+                                    <ScrollViewer Margin="4" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="DodgerBlue" />
+                                <Setter TargetName="Border" Property="Background" Value="#FFEFF9FF" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="DodgerBlue" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="Gray" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="LightGray" />
+                                <Setter TargetName="Border" Property="Background" Value="#FFF0F0F0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
-        <Style x:Key="CustomCheckBoxStyle"
-                TargetType="CheckBox">
+
+        <Style x:Key="ActivityButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.7" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="2" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="Black" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E3F2FD" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ActivityComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border
+                                x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="8">
+                                <DockPanel Margin="4,0,4,0">
+                                    <ContentPresenter
+                                        Margin="6,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Content="{TemplateBinding SelectionBoxItem}" />
+                                    <ToggleButton
+                                        ClickMode="Press"
+                                        DockPanel.Dock="Right"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <Path
+                                            Margin="6,0,6,0"
+                                            Data="M 0 0 L 4 4 L 8 0 Z"
+                                            Fill="Black" />
+                                    </ToggleButton>
+                                </DockPanel>
+                            </Border>
+                            <Popup
+                                Name="Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Border
+                                    Background="White"
+                                    BorderBrush="#FF12305E"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <ScrollViewer Margin="4" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE2F5FF" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#FFF0F0F0" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="LightGray" />
+                                <Setter Property="Foreground" Value="Gray" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="FilterComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#FF042354" />
+            <Setter Property="Foreground" Value="#F6FCFF" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="0,0,0,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="#FF042354" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Width" Value="147" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="CustomCheckBoxStyle" TargetType="CheckBox">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
@@ -153,70 +297,88 @@
                                     Data="M1,5 L4,9 L9,1"
                                     Stroke="#597CA2"
                                     StrokeThickness="2"
-                                    Visibility="Collapsed"/>
+                                    Visibility="Collapsed" />
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked"
-                                    Value="True">
-                                <Setter TargetName="checkMark"
-                                        Property="Visibility"
-                                        Value="Visible"/>
-                                <Setter TargetName="checkBoxBorder"
-                                        Property="Background"
-                                        Value="#E3F2FD"/>
-                                <Setter TargetName="checkBoxBorder"
-                                        Property="BorderBrush"
-                                        Value="#1565C0"/>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="checkMark" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="checkBoxBorder" Property="Background" Value="#E3F2FD" />
+                                <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#1565C0" />
                             </Trigger>
-                            <Trigger Property="IsMouseOver"
-                                    Value="True">
-                                <Setter TargetName="checkBoxBorder"
-                                        Property="BorderBrush"
-                                        Value="#1565C0"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#1565C0" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="NavigationButtonStyle"
-                TargetType="{x:Type Button}">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Padding"
-                    Value="0"/>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter/>
+                        <ContentPresenter />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="HoverBorderButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="DodgerBlue" />
+                                <Setter TargetName="border" Property="Background" Value="#FFEFF9FF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFD0EDFF" />
+                                <Setter Property="Foreground" Value="DarkBlue" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
     <Window.DataContext>
-        <StaticResource ResourceKey="ViewModel"/>
+        <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
 
-    <Grid x:Name="Admin_Members_Background"
-            Opacity="1">
+    <Grid x:Name="Admin_Members_Background" Opacity="1">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0"
-                    EndPoint="0.5,1">
-                <GradientStop Offset="0.596"
-                        Color="#FFF6FCFF"/>
-                <GradientStop Offset="1"
-                        Color="#FFDBF3FF"/>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                <GradientStop Offset="1" Color="#FFDBF3FF" />
             </LinearGradientBrush>
         </Grid.Background>
-        <Grid Width="1440"
-                Height="1024">
-
-
+        <Grid Width="1440" Height="1024">
 
             <!--  Left Navigation Panel  -->
             <Border
@@ -229,14 +391,10 @@
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                            EndPoint="0.5,1">
-                        <GradientStop Offset="0.04"
-                                Color="#FFF6FCFF"/>
-                        <GradientStop Offset="0.46"
-                                Color="#FFDBF3FF"/>
-                        <GradientStop Offset="0.937"
-                                Color="#FF87ACCD"/>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -249,7 +407,7 @@
                 Margin="1358,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/generic avatar.png"/>
+                Source="/Views/Images/generic avatar.png" />
             <Image
                 x:Name="Admin_Members_iNotifications"
                 Width="40"
@@ -257,7 +415,7 @@
                 Margin="1297,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/light-notifications.png"/>
+                Source="/Views/Images/light-notifications.png" />
             <Image
                 x:Name="ThemeToggleButton"
                 Width="40"
@@ -266,7 +424,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 MouseDown="ThemeToggleButton_MouseDown"
-                Source="/Views/Images/dark.png"/>
+                Source="/Views/Images/dark.png" />
 
             <!--  Logo  -->
             <Image
@@ -276,7 +434,7 @@
                 Margin="131,71,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/header.png"/>
+                Source="/Views/Images/header.png" />
 
             <!--  Navigation Menu Items  -->
             <StackPanel>
@@ -292,15 +450,14 @@
                     Click="SidebarHomeButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                    <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                         <Image
                             x:Name="HomePage_iHome"
                             Width="30"
                             Height="30"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Source="/Views/Images/active-home.png"/>
+                            Source="/Views/Images/active-home.png" />
                         <Label
                             x:Name="HomePage_lbHome"
                             Width="108"
@@ -313,7 +470,7 @@
                             FontFamily="Segoe UI"
                             FontSize="20"
                             FontWeight="Bold"
-                            Foreground="#597CA2"/>
+                            Foreground="#597CA2" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -329,15 +486,14 @@
                 Click="SidebarChatButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iChat"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/chat_bubble.png"/>
+                        Source="/Views/Images/chat_bubble.png" />
                     <Label
                         x:Name="HomePage_lbChat"
                         Width="108"
@@ -349,7 +505,7 @@
                         Content="Chat"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
             <Button
@@ -364,15 +520,14 @@
                 Click="SidebarActivitiesButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Activities"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/activities.png"/>
+                        Source="/Views/Images/activities.png" />
                     <Label
                         x:Name="HomePage_lbActivities"
                         Width="108"
@@ -384,7 +539,7 @@
                         Content="Activities"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
             <Button
@@ -399,15 +554,14 @@
                 Click="SidebarMembersButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Task_iMembers"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/members.png"/>
+                        Source="/Views/Images/members.png" />
                     <Label
                         x:Name="HomePage_lbMembers"
                         Width="108"
@@ -419,7 +573,7 @@
                         Content="Members"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
             <Button
@@ -434,15 +588,14 @@
                 Click="SidebarTasksButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iTasks"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/tasks.png"/>
+                        Source="/Views/Images/tasks.png" />
                     <Label
                         x:Name="HomePage_lbTasks"
                         Width="108"
@@ -454,7 +607,7 @@
                         Content="Tasks"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
             <Button
@@ -470,15 +623,14 @@
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}"
                 Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iAdmin"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/admin_panel.png"/>
+                        Source="/Views/Images/admin_panel.png" />
                     <Label
                         x:Name="HomePage_lbAdmin"
                         Width="108"
@@ -490,7 +642,7 @@
                         Content="Admin"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
 
@@ -511,7 +663,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý công việc"/>
+                        Text="Quản lý công việc" />
                 </Button>
                 <Button
                     x:Name="AdminMembersButton"
@@ -523,9 +675,8 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý thành viên"/>
+                        Text="Quản lý thành viên" />
                 </Button>
-
                 <Button
                     x:Name="AdminActivitiesButton"
                     Margin="0,5,0,5"
@@ -536,7 +687,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý hoạt động"/>
+                        Text="Quản lý hoạt động" />
                 </Button>
             </StackPanel>
             <!--  Social Media Icons  -->
@@ -547,7 +698,7 @@
                 Margin="175,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/facebook.png"/>
+                Source="/Views/Images/facebook.png" />
             <Image
                 x:Name="Admin_Members_iInstagram"
                 Width="24"
@@ -555,7 +706,7 @@
                 Margin="135,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/instagram.png"/>
+                Source="/Views/Images/instagram.png" />
             <Image
                 x:Name="Admin_Members_iYoutube"
                 Width="24"
@@ -563,24 +714,20 @@
                 Margin="215,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/youtube.png"/>
+                Source="/Views/Images/youtube.png" />
             <Border
                 Width="1042"
-                Height="864"
+                Height="876"
                 Margin="356,0,0,40"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Panel.ZIndex="-1"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                            EndPoint="0.5,1">
-                        <GradientStop Offset="0.04"
-                                Color="#FFF6FCFF"/>
-                        <GradientStop Offset="0.46"
-                                Color="#FFDBF3FF"/>
-                        <GradientStop Offset="0.937"
-                                Color="#FF87ACCD"/>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -589,7 +736,7 @@
                 x:Name="Admin_Members_lbInformation"
                 Width="386"
                 Height="40"
-                Margin="387,151,0,0"
+                Margin="387,134,0,0"
                 Padding="0,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
@@ -597,23 +744,23 @@
                 Content="QUẢN LÝ THÀNH VIÊN"
                 FontSize="32"
                 FontWeight="Bold"
-                Foreground="#042354"/>
+                Foreground="#042354" />
 
             <!--  Separator Line  -->
             <Rectangle
                 Width="980"
                 Height="2"
-                Margin="387,293,0,0"
+                Margin="387,253,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 RenderTransformOrigin="0.5,0.5"
                 Stroke="#FF042354">
                 <Rectangle.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform ScaleY="-1"/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="0"/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleY="-1" />
+                        <SkewTransform />
+                        <RotateTransform Angle="0" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Rectangle.RenderTransform>
             </Rectangle>
@@ -621,78 +768,77 @@
             <!--  Action Buttons  -->
             <Button
                 x:Name="AddMemberButton"
-                Width="147"
-                Height="40"
-                Margin="397,219,0,0"
+                Width="140"
+                Height="35"
+                Margin="386,196,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Background="#FF042354"
+                HorizontalContentAlignment="Center"
+                Background="#FF25477D"
                 Command="{Binding AddUserCommand}"
                 Content="Thêm thành viên"
                 FontSize="16"
-                FontWeight="Bold"
-                Foreground="#F6FCFF"/>
+                Foreground="#F6FCFF"
+                Style="{StaticResource ActivityButtonStyle}" />
 
             <Button
                 x:Name="RefreshButton"
-                Width="147"
-                Height="40"
-                Margin="562,219,0,0"
+                Width="110"
+                Height="35"
+                Margin="547,196,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Background="#FF466CA7"
+                Background="#FF3962A0"
                 Command="{Binding RefreshCommand}"
                 Content="Làm mới"
                 FontSize="16"
-                FontWeight="Bold"
-                Foreground="#F6FCFF"/>
+                Foreground="#F6FCFF"
+                Style="{StaticResource ActivityButtonStyle}" />
 
             <!--  Batch Action Buttons  -->
             <Button
                 x:Name="BatchEditButton"
-                Width="147"
-                Height="40"
-                Margin="725,219,0,0"
+                Width="120"
+                Height="35"
+                Margin="678,196,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Background="#3498db"
+                Background="#FF1971AB"
                 Command="{Binding BatchEditCommand}"
                 Content="Sửa hàng loạt"
                 FontSize="16"
-                FontWeight="Bold"
-                Foreground="White"/>
+                Foreground="White"
+                Style="{StaticResource ActivityButtonStyle}" />
 
             <Button
                 x:Name="BatchDeleteButton"
-                Width="147"
-                Height="40"
-                Margin="884,219,0,0"
+                Width="120"
+                Height="35"
+                Margin="818,196,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Background="#e74c3c"
+                Background="#FFD24A3C"
                 Command="{Binding BatchDeleteCommand}"
                 Content="Xóa hàng loạt"
                 FontSize="16"
-                FontWeight="Bold"
-                Foreground="White"/>
+                Foreground="White"
+                Style="{StaticResource ActivityButtonStyle}" />
             <!--  Filter Dropdown  -->
             <ComboBox
-                Width="147"
-                Height="40"
-                Margin="1044,219,0,0"
+                Width="120"
+                Height="35"
+                Margin="961,196,0,0"
                 DisplayMemberPath="DisplayName"
-                FontSize="17"
-                FontWeight="Bold"
+                FontSize="16"
                 Foreground="#FF042354"
                 ItemsSource="{Binding Roles}"
                 SelectedItem="{Binding SelectedRole}"
-                Style="{StaticResource FilterComboBoxStyle}"/>
+                Style="{StaticResource FilterComboBoxStyle}" />
 
             <!--  Member List  -->
-            <!--  Member List Cải Tiến  -->
             <ListView
                 x:Name="MembersListView"
-                Margin="386,334,69,70"
+                Margin="386,283,69,74"
                 Background="White"
                 BorderBrush="#E0E0E0"
                 BorderThickness="1"
@@ -701,16 +847,11 @@
                 SelectedItem="{Binding SelectedUser}">
                 <ListView.Resources>
                     <!--  Style cho các button thao tác  -->
-                    <Style x:Key="ActionButtonStyle"
-                            TargetType="Button">
-                        <Setter Property="Margin"
-                                Value="0,0,0,0"/>
-                        <Setter Property="Padding"
-                                Value="10,5"/>
-                        <Setter Property="BorderThickness"
-                                Value="0"/>
-                        <Setter Property="Cursor"
-                                Value="Hand"/>
+                    <Style x:Key="ActionButtonStyle" TargetType="Button">
+                        <Setter Property="Margin" Value="0,0,0,0" />
+                        <Setter Property="Padding" Value="10,5" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Cursor" Value="Hand" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
@@ -718,17 +859,15 @@
                                         Padding="{TemplateBinding Padding}"
                                         Background="{TemplateBinding Background}"
                                         CornerRadius="4">
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                    Value="True">
-                                <Setter Property="Opacity"
-                                        Value="0.8"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF042354" />
+                                <Setter Property="BorderThickness" Value="2" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -739,13 +878,11 @@
                         <!--  Checkbox chọn nhiều  -->
                         <GridViewColumn Width="40">
                             <GridViewColumn.Header>
-                                <CheckBox IsChecked="{Binding DataContext.IsAllSelected, RelativeSource={RelativeSource AncestorType=ListView}, Mode=TwoWay}"
-                                        Style="{StaticResource CustomCheckBoxStyle}"/>
+                                <CheckBox IsChecked="{Binding DataContext.IsAllSelected, RelativeSource={RelativeSource AncestorType=ListView}, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                            Style="{StaticResource CustomCheckBoxStyle}"/>
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Style="{StaticResource CustomCheckBoxStyle}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -758,51 +895,45 @@
                                         Height="40"
                                         Background="#EEEEEE"
                                         CornerRadius="20">
-                                        <Image Source="/Views/Images/generic avatar.png"
-                                                Stretch="UniformToFill"/>
+                                        <Image Source="/Views/Images/generic avatar.png" Stretch="UniformToFill" />
                                     </Border>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="110"
-                                Header="TÊN ĐĂNG NHẬP">
+                        <GridViewColumn Width="110" Header="TÊN ĐĂNG NHẬP">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         FontWeight="SemiBold"
-                                        Text="{Binding Username}"/>
+                                        Text="{Binding Username}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="180"
-                                Header="HỌ TÊN">
+                        <GridViewColumn Width="130" Header="HỌ TÊN">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock VerticalAlignment="Center"
-                                            Text="{Binding DisplayName}"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="200"
-                                Header="EMAIL">
+                        <GridViewColumn Width="150" Header="EMAIL">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Text="{Binding Email}"
                                         TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Email}"/>
+                                        ToolTip="{Binding Email}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="75"
-                                Header="VAI TRÒ">
+                        <GridViewColumn Width="75" Header="VAI TRÒ">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border
@@ -815,32 +946,27 @@
                                             VerticalAlignment="Center"
                                             FontWeight="Medium"
                                             Foreground="#042354"
-                                            Text="{Binding Role, Converter={StaticResource RoleToTextConverter}}"/>
+                                            Text="{Binding Role, Converter={StaticResource RoleToTextConverter}}" />
                                     </Border>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="80"
-                                Header="TRẠNG THÁI">
+                        <GridViewColumn Width="80" Header="TRẠNG THÁI">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel VerticalAlignment="Center"
-                                            Orientation="Horizontal">
+                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                         <Ellipse
                                             Width="10"
                                             Height="10"
                                             Margin="0,0,8,0">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
-                                                    <Setter Property="Fill"
-                                                            Value="#4CAF50"/>
+                                                    <Setter Property="Fill" Value="#4CAF50" />
                                                     <!--  Green for online  -->
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsOnline}"
-                                                                Value="False">
-                                                            <Setter Property="Fill"
-                                                                    Value="#9E9E9E"/>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                            <Setter Property="Fill" Value="#9E9E9E" />
                                                             <!--  Gray for offline  -->
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -850,17 +976,12 @@
                                         <TextBlock VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
-                                                    <Setter Property="Text"
-                                                            Value="Online"/>
-                                                    <Setter Property="Foreground"
-                                                            Value="#4CAF50"/>
+                                                    <Setter Property="Text" Value="Online" />
+                                                    <Setter Property="Foreground" Value="#4CAF50" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsOnline}"
-                                                                Value="False">
-                                                            <Setter Property="Text"
-                                                                    Value="Offline"/>
-                                                            <Setter Property="Foreground"
-                                                                    Value="#9E9E9E"/>
+                                                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                                            <Setter Property="Text" Value="Offline" />
+                                                            <Setter Property="Foreground" Value="#9E9E9E" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -871,55 +992,52 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="110"
-                                Header="SỐ HOẠT ĐỘNG">
+                        <GridViewColumn Width="80" Header="HOẠT ĐỘNG">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Text="{Binding ActivitiesCount}"/>
+                                        Text="{Binding ActivitiesCount}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="280"
-                                Header="THAO TÁC">
+                        <GridViewColumn Width="250" Header="THAO TÁC">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel HorizontalAlignment="Center"
-                                            Orientation="Horizontal">
+                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                         <Button
                                             Width="50"
                                             Height="29"
                                             Margin="0,0,20,0"
-                                            Background="#2196F3"
+                                            Background="#FF1971AB"
                                             Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                             CommandParameter="{Binding}"
                                             Content="Sửa"
                                             Foreground="White"
-                                            Style="{StaticResource ActionButtonStyle}"/>
+                                            Style="{StaticResource ActivityButtonStyle}" />
 
                                         <Button
                                             Width="50"
                                             Height="29"
                                             Margin="0,0,20,0"
-                                            Background="#F44336"
+                                            Background="#FFD24A3C"
                                             Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                             CommandParameter="{Binding}"
                                             Content="Xóa"
                                             Foreground="White"
-                                            Style="{StaticResource ActionButtonStyle}"/>
+                                            Style="{StaticResource ActivityButtonStyle}" />
 
                                         <Button
                                             Width="63"
                                             Height="29"
-                                            Background="#FF042354"
+                                            Background="#FF25477D"
                                             Command="{Binding DataContext.ViewUserDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                             CommandParameter="{Binding}"
                                             Content="Chi tiết"
                                             Foreground="White"
-                                            Style="{StaticResource ActionButtonStyle}"/>
+                                            Style="{StaticResource ActivityButtonStyle}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -929,28 +1047,18 @@
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment"
-                                Value="Center"/>
-                        <Setter Property="Padding"
-                                Value="12,10"/>
-                        <Setter Property="BorderThickness"
-                                Value="0,0,0,1"/>
-                        <Setter Property="BorderBrush"
-                                Value="#EEEEEE"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="12,10" />
+                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                        <Setter Property="BorderBrush" Value="#EEEEEE" />
+                        <EventSetter Event="MouseLeftButtonDown" Handler="ListViewItem_MouseLeftButtonDown" />
                         <Style.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                    Value="True">
-                                <Setter Property="Background"
-                                        Value="#F5F9FF"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F9FF" />
                             </Trigger>
-                            <Trigger Property="IsSelected"
-                                    Value="True">
-                                <Setter Property="Background"
-                                        Value="#E3F2FD"/>
-                                <Setter Property="BorderBrush"
-                                        Value="#BBDEFB"/>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
