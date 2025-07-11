@@ -49,23 +49,34 @@ namespace DoanKhoaServer.Hubs
             {
                 Console.WriteLine($"Broadcasting message to group {conversationId} from {senderName}: {content}");
 
-                // Tạo message object để broadcast
-                var message = new Message
+                // THAY ĐỔI: Lấy tin nhắn mới nhất từ database (bao gồm attachments)
+                var latestMessage = await _mongoDBService.GetLatestMessageForConversation(conversationId);
+
+                if (latestMessage != null)
                 {
-                    Id = ObjectId.GenerateNewId().ToString(),
-                    ConversationId = conversationId,
-                    SenderId = senderId,
-                    Content = content,
-                    Timestamp = DateTime.UtcNow,
-                    IsRead = false,
-                    Type = MessageType.Text,
-                    IsEdited = false
-                };
+                    // Gửi full message object (bao gồm attachments) thay vì chỉ gửi text
+                    await Clients.OthersInGroup(conversationId).SendAsync("ReceiveMessage", latestMessage);
+                    Console.WriteLine($"Broadcasted full message with {latestMessage.Attachments?.Count ?? 0} attachments");
+                }
+                else
+                {
+                    // Fallback: tạo message object cơ bản nếu không tìm thấy trong DB
+                    var basicMessage = new Message
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        ConversationId = conversationId,
+                        SenderId = senderId,
+                        Content = content,
+                        Timestamp = DateTime.UtcNow,
+                        Type = MessageType.Text,
+                        IsRead = false,
+                        IsEdited = false,
+                        Attachments = new List<Attachment>()
+                    };
 
-                // CHỈ GỬI ĐẾN CÁC CLIENT KHÁC, KHÔNG GỬI LẠI CHO NGƯỜI GỬI
-                await Clients.OthersInGroup(conversationId).SendAsync("ReceiveMessage", message);
-
-                Console.WriteLine($"Message broadcasted to others in group {conversationId}");
+                    await Clients.OthersInGroup(conversationId).SendAsync("ReceiveMessage", basicMessage);
+                    Console.WriteLine("Broadcasted basic message (no attachments found)");
+                }
             }
             catch (Exception ex)
             {

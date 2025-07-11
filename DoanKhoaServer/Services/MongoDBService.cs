@@ -86,7 +86,24 @@ namespace DoanKhoaServer.Services
             await _messagesCollection.Find(x => x.ConversationId == conversationId)
                 .SortBy(m => m.Timestamp)
                 .ToListAsync();
+        public async Task<Message> GetLatestMessageForConversation(string conversationId)
+        {
+            try
+            {
+                var messages = await _messagesCollection
+                    .Find(m => m.ConversationId == conversationId)
+                    .SortByDescending(m => m.Timestamp)
+                    .Limit(1)
+                    .ToListAsync();
 
+                return messages.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting latest message: {ex.Message}");
+                return null;
+            }
+        }
         public async Task<Message> CreateMessageAsync(Message message)
         {
             await _messagesCollection.InsertOneAsync(message);
