@@ -152,6 +152,39 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--  Style cho reply indicator  -->
+        <Style x:Key="ReplyIndicatorStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFE8F5E8" />
+            <Setter Property="BorderBrush" Value="#FF4CAF50" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <!--  Style cho user avatar  -->
+        <Style x:Key="UserAvatarStyle" TargetType="Border">
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Background" Value="#E6E6E6" />
+            <Setter Property="CornerRadius" Value="20" />
+        </Style>
+
+        <!--  Style cho comment container được cải thiện  -->
+        <Style x:Key="CommentContainerStyle" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Padding" Value="15,10" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="#EAF6FF" />
+            <Style.Triggers>
+                <!--  Different style for replies  -->
+                <DataTrigger Binding="{Binding IsReply}" Value="True">
+                    <Setter Property="Background" Value="#F0F8FF" />
+                    <Setter Property="BorderBrush" Value="#E3F2FD" />
+                    <Setter Property="BorderThickness" Value="2,0,0,0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="SortButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#7FFFFFFF" />
             <Setter Property="Foreground" Value="#FF12305E" />
@@ -198,20 +231,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="CommentContainerStyle" TargetType="Border">
-            <Setter Property="Margin" Value="0,0,0,15" />
-            <Setter Property="Padding" Value="15,10" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Background" Value="#EAF6FF" />
-            <Style.Triggers>
-                <!--  Different style for replies  -->
-                <DataTrigger Binding="{Binding IsReply}" Value="True">
-                    <Setter Property="Background" Value="#F0F8FF" />
-                    <Setter Property="BorderBrush" Value="#E3F2FD" />
-                    <Setter Property="BorderThickness" Value="2,0,0,0" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
+
         <Style x:Key="CommentActionButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -240,13 +260,7 @@
             </Setter>
         </Style>
 
-        <!--  Reply indicator style  -->
-        <Style x:Key="ReplyIndicatorStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="#FF888888" />
-            <Setter Property="FontStyle" Value="Italic" />
-            <Setter Property="Margin" Value="0,0,0,5" />
-        </Style>
+
 
         <!--  Time display style  -->
         <Style x:Key="TimeDisplayStyle" TargetType="TextBlock">
@@ -1032,8 +1046,6 @@
                             VerticalAlignment="Top"
                             Fill="#FF042354" />
 
-                        <!--  Thay thế phần Comment section trong ActivitiesPostView.xaml  -->
-
                         <!--  Comment section  -->
                         <StackPanel Margin="50,30,50,30" VerticalAlignment="Bottom">
                             <TextBlock
@@ -1051,10 +1063,7 @@
                                 Text="Đang tải bình luận..."
                                 Visibility="{Binding IsLoadingComments, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <!--  Comments list  -->
-                            <!--  Replace the Comments ItemsControl in ActivitiesPostView.xaml  -->
-
-                            <!--  Comments list with improved reply visualization  -->
+                            <!--  Comments list với hiển thị phản hồi được cải thiện  -->
                             <ItemsControl ItemsSource="{Binding Comments}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -1067,13 +1076,13 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!--  Reply indicator line  -->
+                                            <!--  Reply connector line  -->
                                             <Border
                                                 Grid.Column="0"
                                                 Width="2"
                                                 Margin="0,0,10,0"
                                                 HorizontalAlignment="Right"
-                                                Background="#FFE0E0E0"
+                                                Background="#FFB0BEC5"
                                                 Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                             <!--  User avatar  -->
@@ -1083,10 +1092,7 @@
                                                 Height="40"
                                                 Background="#E6E6E6"
                                                 CornerRadius="20">
-                                                <Image
-                                                    Source="{Binding UserAvatar}"
-                                                    Stretch="UniformToFill"
-                                                    Visibility="{Binding UserAvatar, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                <Image Source="{Binding UserAvatar, FallbackValue=/Views/Images/User-icon.png, TargetNullValue=/Views/Images/User-icon.png}" Stretch="UniformToFill" />
                                             </Border>
 
                                             <!--  Comment content  -->
@@ -1102,23 +1108,40 @@
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsReply}" Value="True">
                                                                 <Setter Property="Background" Value="#F0F8FF" />
+                                                                <Setter Property="BorderBrush" Value="#E3F2FD" />
+                                                                <Setter Property="BorderThickness" Value="2,0,0,0" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
 
                                                 <StackPanel>
-                                                    <!--  Reply indicator header  -->
-                                                    <StackPanel
-                                                        Margin="0,0,0,5"
-                                                        Orientation="Horizontal"
+                                                    <!--  Reply indicator với thông tin chi tiết  -->
+                                                    <Border
+                                                        Margin="0,0,0,8"
+                                                        Padding="8,4"
+                                                        Background="#FFE8F5E8"
+                                                        BorderBrush="#FF4CAF50"
+                                                        BorderThickness="1"
+                                                        CornerRadius="4"
                                                         Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                        <TextBlock
-                                                            FontSize="12"
-                                                            FontStyle="Italic"
-                                                            Foreground="#FF888888"
-                                                            Text="↳ Phản hồi" />
-                                                    </StackPanel>
+                                                        <StackPanel>
+                                                            <TextBlock
+                                                                FontSize="11"
+                                                                FontWeight="Medium"
+                                                                Foreground="#FF2E7D32"
+                                                                Text="{Binding ReplyIndicatorText}" />
+                                                            <!--  Preview của comment được phản hồi  -->
+                                                            <TextBlock
+                                                                Margin="0,2,0,0"
+                                                                FontSize="10"
+                                                                FontStyle="Italic"
+                                                                Foreground="#FF666666"
+                                                                Text="{Binding ReplyToPreview}"
+                                                                TextWrapping="Wrap"
+                                                                Visibility="{Binding ReplyToPreview, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                        </StackPanel>
+                                                    </Border>
 
                                                     <!--  User name and time  -->
                                                     <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
@@ -1199,15 +1222,14 @@
                                                             </StackPanel>
                                                         </Button>
 
-                                                        <!--  Reply button - Hide for replies to prevent nested replies  -->
+                                                        <!--  Reply button - Cho phép reply trên tất cả comments  -->
                                                         <Button
                                                             Margin="0,0,15,0"
                                                             Background="Transparent"
                                                             BorderThickness="0"
                                                             Command="{Binding DataContext.ReplyToCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
-                                                            Cursor="Hand"
-                                                            Visibility="{Binding IsReply, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                                            Cursor="Hand">
                                                             <TextBlock
                                                                 FontSize="12"
                                                                 Foreground="#0E4C92"
@@ -1249,35 +1271,51 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <!--  Reply indicator  -->
+                            <!--  Reply indicator - Cập nhật để hiển thị thông tin rõ ràng hơn  -->
                             <Border
                                 Margin="0,10,0,10"
-                                Padding="10,5"
-                                Background="#FFE3F2FD"
+                                Padding="12,8"
+                                Background="#FFE8F5E8"
+                                BorderBrush="#FF4CAF50"
+                                BorderThickness="1"
                                 CornerRadius="5"
                                 Visibility="{Binding ReplyingToComment, Converter={StaticResource NullToVisibilityConverter}}">
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock
+                                            FontSize="13"
+                                            FontWeight="Medium"
+                                            Foreground="#FF2E7D32"
+                                            Text="Đang phản hồi: " />
+                                        <TextBlock
+                                            FontSize="13"
+                                            FontWeight="Bold"
+                                            Foreground="#FF2E7D32"
+                                            Text="{Binding ReplyingToComment.UserDisplayName}" />
+                                    </StackPanel>
+                                    <!--  Preview content của comment được phản hồi  -->
                                     <TextBlock
-                                        FontSize="12"
-                                        Foreground="#FF12305E"
-                                        Text="Đang phản hồi: " />
-                                    <TextBlock
-                                        FontSize="12"
-                                        FontWeight="Bold"
-                                        Foreground="#FF12305E"
-                                        Text="{Binding ReplyingToComment.UserDisplayName}" />
+                                        MaxHeight="40"
+                                        Margin="0,4,0,0"
+                                        FontSize="11"
+                                        FontStyle="Italic"
+                                        Foreground="#FF666666"
+                                        Text="{Binding ReplyingToComment.Content}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap" />
                                     <Button
-                                        Margin="10,0,0,0"
+                                        Margin="0,8,0,0"
+                                        HorizontalAlignment="Left"
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Command="{Binding CancelReplyCommand}"
-                                        Content="Hủy"
-                                        FontSize="12"
+                                        Content="✕ Hủy phản hồi"
+                                        FontSize="11"
                                         Foreground="#E53935" />
                                 </StackPanel>
                             </Border>
 
-                            <!--  Comment input  -->
+                            <!--  Comment input với avatar mặc định mới  -->
                             <Grid Margin="0,20,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -1285,14 +1323,14 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  Current user avatar  -->
+                                <!--  Current user avatar với fallback  -->
                                 <Border
                                     Grid.Column="0"
                                     Width="40"
                                     Height="40"
                                     Background="#E6E6E6"
                                     CornerRadius="20">
-                                    <!--  You can bind this to current user's avatar  -->
+                                    <Image Source="{Binding CurrentUserAvatar, FallbackValue=/Views/Images/User-icon.png, TargetNullValue=/Views/Images/User-icon.png}" Stretch="UniformToFill" />
                                 </Border>
 
                                 <!--  Comment input box  -->
