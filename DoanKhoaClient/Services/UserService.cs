@@ -415,6 +415,81 @@ namespace DoanKhoaClient.Services
                 throw new Exception($"User search failed: {ex.Message}", ex);
             }
         }
+        public async Task<dynamic> BatchUpdateUsersAsync(List<string> userIds, object updates, string adminCode = null)
+        {
+            try
+            {
+                var request = new
+                {
+                    UserIds = userIds,
+                    Updates = updates,
+                    AdminCode = adminCode
+                };
+
+                Debug.WriteLine($"Batch updating users: {JsonSerializer.Serialize(request)}");
+
+                var response = await _httpClient.PutAsJsonAsync("user/batch-update", request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"Batch update response: {response.StatusCode} - {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = JsonSerializer.Deserialize<dynamic>(responseContent);
+                    return result;
+                }
+                else
+                {
+                    throw new Exception($"Lỗi cập nhật hàng loạt: {responseContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Network error: {ex.Message}");
+                throw new Exception("Lỗi kết nối tới server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Batch update error: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> ResetPasswordAsync(string userId, string newPassword)
+        {
+            try
+            {
+                var request = new
+                {
+                    UserId = userId,
+                    NewPassword = newPassword
+                };
+
+                var response = await _httpClient.PostAsJsonAsync($"user/{userId}/reset-password", request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"Password reset successfully for user {userId}");
+                    return true;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Failed to reset password for user {userId}: {errorContent}");
+                    throw new Exception($"Lỗi đặt lại mật khẩu: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Network error when resetting password: {ex.Message}");
+                throw new Exception("Lỗi kết nối tới server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error resetting password: {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<List<User>> GetUsersAsync()
         {
@@ -445,11 +520,37 @@ namespace DoanKhoaClient.Services
 
         public async Task<User> UpdateUserAsync(string userId, User updatedUser)
         {
-            var response = await _httpClient.PutAsJsonAsync($"user/{userId}", updatedUser);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<User>();
-            else
-                throw new Exception(await response.Content.ReadAsStringAsync());
+            try
+            {
+                Debug.WriteLine($"Updating user {userId} with data: {JsonSerializer.Serialize(updatedUser)}");
+
+                var response = await _httpClient.PutAsJsonAsync($"user/{userId}", updatedUser);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"Update response: {response.StatusCode} - {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<User>();
+                    Debug.WriteLine($"Updated user successfully: {JsonSerializer.Serialize(result)}");
+                    return result;
+                }
+                else
+                {
+                    Debug.WriteLine($"Update failed: {response.StatusCode} - {responseContent}");
+                    throw new Exception($"Lỗi cập nhật người dùng: {responseContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Network error: {ex.Message}");
+                throw new Exception("Lỗi kết nối tới server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected error: {ex.Message}");
+                throw new Exception($"Lỗi không mong muốn: {ex.Message}");
+            }
         }
 
         public async Task<User> UpdateUserToAdminAsync(string userId, object updatedUserWithAdminCode)

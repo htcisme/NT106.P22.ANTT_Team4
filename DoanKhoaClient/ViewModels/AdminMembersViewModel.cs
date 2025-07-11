@@ -8,9 +8,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Text.Json;
+using System.Linq;
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -255,6 +258,9 @@ namespace DoanKhoaClient.ViewModels
             return !IsLoading && (parameter as User != null || SelectedUser != null);
         }
 
+        // Phần sửa lỗi cho AdminMembersViewModel.cs
+
+        // Thay thế phương thức ExecuteEditUser cũ bằng phiên bản này:
         private async void ExecuteEditUser(object parameter)
         {
             var user = parameter as User ?? SelectedUser;
@@ -317,6 +323,7 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
+
         private void UpdateUserInCollection(User updatedUser)
         {
             if (updatedUser == null) return;
@@ -325,12 +332,25 @@ namespace DoanKhoaClient.ViewModels
             var existingUser = Users.FirstOrDefault(u => u.Id == updatedUser.Id);
             if (existingUser != null)
             {
-                int index = Users.IndexOf(existingUser);
-                Users[index] = updatedUser;
-            }
+                // Cập nhật từng thuộc tính thay vì thay thế toàn bộ object
+                existingUser.DisplayName = updatedUser.DisplayName;
+                existingUser.Email = updatedUser.Email;
+                existingUser.Role = updatedUser.Role;
+                existingUser.Position = updatedUser.Position;
+                existingUser.ActivitiesCount = updatedUser.ActivitiesCount;
+                existingUser.LastSeen = updatedUser.LastSeen;
+                existingUser.AvatarUrl = updatedUser.AvatarUrl;
+                existingUser.EmailVerified = updatedUser.EmailVerified;
+                existingUser.TwoFactorEnabled = updatedUser.TwoFactorEnabled;
 
-            // Cập nhật UI
-            OnPropertyChanged(nameof(FilteredUsers));
+                // Trigger refresh cho filtered view
+                OnPropertyChanged(nameof(FilteredUsers));
+            }
+            else
+            {
+                // Nếu không tìm thấy, thêm user mới vào danh sách
+                Users.Add(updatedUser);
+            }
         }
 
         private async void ExecuteDeleteUser(object parameter)
@@ -379,8 +399,11 @@ namespace DoanKhoaClient.ViewModels
                 $"Số hoạt động: {user.ActivitiesCount}\n" +
                 $"Trạng thái: {(user.EmailVerified ? "Đã xác thực" : "Chưa xác thực")}\n" +
                 $"Thời gian xác thực: {user.EmailVerificationCodeExpiry?.ToString("g") ?? "Chưa xác thực"}\n" +
-                $"Vai trò: {user.Role}",
+                $"Vai trò: {user.Role}\n" +
+                $"Trạng thái 2FA: {(user.TwoFactorEnabled ? "Đã bật" : "Chưa bật")}\n" +
+                $"Chức vụ: {user.Position}",
                 "Thông tin người dùng", MessageBoxButton.OK, MessageBoxImage.Information);
+                
         }
 
         private async void ExecuteAddUser(object parameter)
@@ -423,28 +446,167 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        private void ExecuteBatchEdit()
+        private async void ExecuteBatchEdit()
         {
-           
             var selectedUsers = Users.Where(u => u.IsSelected).ToList();
             if (selectedUsers.Count < 2)
             {
-                MessageBox.Show("Vui lòng chọn ít nhất 2 thành viên để sửa hàng loạt.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Vui lòng chọn ít nhất 2 thành viên để sửa hàng loạt.",
+                    "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            // Kiểm tra không được sửa chính mình
             if (selectedUsers.Any(u => u.Id == _userService.CurrentUser?.Id))
             {
-                MessageBox.Show("Bạn không thể xóa chính mình!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Bạn không thể chỉnh sửa chính mình trong chế độ sửa hàng loạt!",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if (MessageBox.Show($"Bạn có chắc muốn sửa {selectedUsers.Count} thành viên đã chọn?", "Xác nhận", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+
+            var dialog = new BatchEditUserDialog();
+            if (dialog.ShowDialog() == true)
             {
-                var dialog = new BatchEditUserDialog();
-                if (dialog.ShowDialog() == true)
+                try
                 {
-                    // TODO: Áp dụng các thay đổi cho selectedUsers dựa trên dialog.EditOptions
-                    MessageBox.Show("Đã cập nhật thông tin cho các thành viên đã chọn!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    IsLoading = true;
+                    var editOptions = dialog.EditOptions;
+                    var userIds = selectedUsers.Select(u => u.Id).ToList();
+
+                    // Tạo object updates chỉ với các trường được chọn (sử dụng DTO)
+                    var updates = new
+                    {
+                        Role = editOptions.UpdateRole ? editOptions.Role : null,
+                        Position = editOptions.UpdatePosition ? editOptions.Position : null,
+                        EmailVerified = editOptions.UpdateStatus ? editOptions.EmailVerified : null
+                    };
+
+                    // Gọi API batch update mới
+                    dynamic result = await _userService.BatchUpdateUsersAsync(userIds, updates, dialog.AdminCode);
+
+                    // Parse kết quả từ JSON - SỬA LỖI KIỂU DỮ LIỆU
+                    string jsonString = result.ToString();
+                    JsonElement jsonResult = JsonSerializer.Deserialize<JsonElement>(jsonString);
+
+                    int successCount = jsonResult.GetProperty("success").GetInt32();
+                    int totalCount = jsonResult.GetProperty("total").GetInt32();
+
+                    var errors = new List<string>();
+                    if (jsonResult.TryGetProperty("errors", out JsonElement errorsProperty))
+                    {
+                        foreach (JsonElement error in errorsProperty.EnumerateArray())
+                        {
+                            errors.Add(error.GetString());
+                        }
+                    }
+
+                    // Cập nhật UI cho các user đã được cập nhật thành công
+                    if (jsonResult.TryGetProperty("updatedUsers", out JsonElement updatedUsersProperty))
+                    {
+                        foreach (JsonElement updatedUserJson in updatedUsersProperty.EnumerateArray())
+                        {
+                            string userId = updatedUserJson.GetProperty("userId").GetString();
+                            User user = Users.FirstOrDefault(u => u.Id == userId);
+                            if (user != null)
+                            {
+                                // Cập nhật các trường đã thay đổi trong UI
+                                if (editOptions.UpdateRole && editOptions.Role.HasValue)
+                                    user.Role = editOptions.Role.Value;
+
+                                if (editOptions.UpdatePosition && editOptions.Position.HasValue)
+                                    user.Position = editOptions.Position.Value;
+
+                                if (editOptions.UpdateStatus && editOptions.EmailVerified.HasValue)
+                                    user.EmailVerified = editOptions.EmailVerified.Value;
+                            }
+                        }
+                    }
+
+                    // Xử lý đặt lại mật khẩu riêng (nếu có)
+                    if (editOptions.UpdatePassword && !string.IsNullOrEmpty(dialog.NewPassword))
+                    {
+                        var passwordErrors = new List<string>();
+                        int passwordSuccessCount = 0;
+
+                        foreach (User user in selectedUsers)
+                        {
+                            try
+                            {
+                                await ResetUserPasswordAsync(user.Id, dialog.NewPassword);
+                                passwordSuccessCount++;
+                            }
+                            catch (Exception passwordEx)
+                            {
+                                passwordErrors.Add($"Không thể đặt lại mật khẩu cho {user.DisplayName}: {passwordEx.Message}");
+                            }
+                        }
+
+                        // Thêm kết quả đặt lại mật khẩu vào thông báo
+                        if (passwordErrors.Count > 0)
+                        {
+                            errors.AddRange(passwordErrors);
+                        }
+
+                        if (passwordSuccessCount > 0)
+                        {
+                            // Thêm thông tin về việc đặt lại mật khẩu thành công
+                            successCount = Math.Max(successCount, passwordSuccessCount);
+                        }
+                    }
+
+                    // Hiển thị kết quả
+                    string message = $"Đã cập nhật thành công {successCount}/{totalCount} thành viên.";
+
+                    if (editOptions.UpdatePassword && !string.IsNullOrEmpty(dialog.NewPassword))
+                    {
+                        int passwordSuccessfulUsers = selectedUsers.Count(u => !errors.Any(e => e.Contains(u.DisplayName)));
+                        message += $"\nĐã đặt lại mật khẩu cho {passwordSuccessfulUsers} thành viên.";
+                    }
+
+                    if (errors.Count > 0)
+                    {
+                        message += $"\n\nCác lỗi đã xảy ra:\n• {string.Join("\n• ", errors)}";
+                        MessageBox.Show(message, "Kết quả cập nhật hàng loạt",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show(message, "Thành công",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
+                    // Refresh FilteredUsers để cập nhật UI
+                    OnPropertyChanged(nameof(FilteredUsers));
+
+                    // Bỏ chọn tất cả sau khi hoàn thành
+                    foreach (User user in selectedUsers)
+                    {
+                        user.IsSelected = false;
+                    }
+                    OnPropertyChanged(nameof(HasSelectedItems));
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi trong quá trình cập nhật hàng loạt: {ex.Message}",
+                        "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    IsLoading = false;
+                }
+            }
+        }
+
+        // Phương thức hỗ trợ đặt lại mật khẩu
+        private async Task ResetUserPasswordAsync(string userId, string newPassword)
+        {
+            try
+            {
+                await _userService.ResetPasswordAsync(userId, newPassword);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Không thể đặt lại mật khẩu: {ex.Message}");
             }
         }
 

@@ -3,170 +3,173 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:DoanKhoaClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Chỉnh sửa hàng loạt"
     Width="550"
-    Height="500"
-    ResizeMode="NoResize"
-    WindowStartupLocation="CenterOwner"
+    Height="700"
     Background="#F5F5F5"
-    mc:Ignorable="d">
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <!-- Base styles to maintain consistency with other dialogs -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
         <Style TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
 
         <Style TargetType="ComboBox">
-            <Setter Property="Padding" Value="8,5"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,0,0,10" />
-            <Setter Property="Foreground" Value="#2C3E50" />
-        </Style>
-
-        <Style x:Key="OptionCheckBoxStyle" TargetType="CheckBox">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Margin" Value="0,5,0,5" />
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,10,0" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
 
-        <Style x:Key="DialogButtonStyle" TargetType="Button">
-            <Setter Property="MinWidth" Value="120" />
-            <Setter Property="Height" Value="38" />
-            <Setter Property="Margin" Value="10,0" />
+        <Style TargetType="Button">
             <Setter Property="Padding" Value="15,8" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#3498DB" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Opacity" Value="0.9"/>
+                    <Setter Property="Background" Value="#2980B9" />
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="PanelStyle" TargetType="Border">
-            <Setter Property="Margin" Value="0,0,0,15"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Color="#20000000" Opacity="0.2"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
-    <Border Background="White" Margin="15" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1">
-        <Grid Margin="0">
+    <Border
+        Margin="15"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Grid Margin="25">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- Tiêu đề -->
-            <TextBlock
-                Margin="25,25,25,15"
-                HorizontalAlignment="Left"
-                FontSize="18"
-                FontWeight="Bold"
-                Foreground="#2C3E50"
-                Text="CHỈNH SỬA HÀNG LOẠT THÀNH VIÊN" />
+            <!--  Header  -->
+            <StackPanel Grid.Row="0" Orientation="Vertical">
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="#2C3E50"
+                    Text="CHỈNH SỬA HÀNG LOẠT THÀNH VIÊN" />
+                <TextBlock
+                    Margin="0,0,0,15"
+                    FontSize="12"
+                    FontStyle="Italic"
+                    Foreground="#7F8C8D"
+                    Text="Chọn các trường muốn cập nhật và thiết lập giá trị mới. Chỉ các trường được chọn sẽ được thay đổi." />
+            </StackPanel>
 
-            <!-- Nội dung -->
-            <ScrollViewer Grid.Row="1" Margin="25,0,25,0" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <TextBlock
+            <!--  Form Content  -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,10,0,10">
+
+
+
+                    <!--  Role Section  -->
+                    <Border
                         Margin="0,0,0,15"
-                        FontSize="14"
-                        Text="Chọn thông tin bạn muốn cập nhật cho các thành viên đã chọn:" />
-
-                    <!-- Phần Vai trò -->
-                    <Border Style="{StaticResource PanelStyle}">
+                        Padding="15"
+                        Background="#F8F9FA"
+                        BorderBrush="#E9ECEF"
+                        BorderThickness="1"
+                        CornerRadius="5">
                         <StackPanel>
                             <CheckBox
-                                Content="Cập nhật vai trò"
+                                x:Name="UpdateRoleCheckBox"
+                                Content="Cập nhật Vai trò"
+                                FontWeight="Bold"
                                 IsChecked="{Binding EditOptions.UpdateRole}"
-                                Style="{StaticResource OptionCheckBoxStyle}" />
-
-                            <Grid Margin="25,12,0,0" IsEnabled="{Binding EditOptions.UpdateRole}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Margin="0,0,10,0"
-                                    VerticalAlignment="Center"
-                                    Text="Vai trò:" />
+                                Style="{StaticResource CheckBoxStyle}" />
+                            <StackPanel IsEnabled="{Binding ElementName=UpdateRoleCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=UpdateRoleCheckBox, Path=IsChecked, Converter={StaticResource BoolToVis}}">
                                 <ComboBox
-                                    Grid.Column="1"
-                                    SelectedValue="{Binding EditOptions.Role}"
-                                    SelectedValuePath="Content">
-                                    <ComboBoxItem Content="Người dùng" />
-                                    <ComboBoxItem Content="Người quản trị" />
+                                    x:Name="RoleBox"
+                                    Margin="0,5,0,0"
+                                    SelectedValuePath="Tag"
+                                    SelectionChanged="RoleBox_SelectionChanged">
+                                    <ComboBoxItem Content="Người dùng" Tag="User" />
+                                    <ComboBoxItem Content="Người quản trị" Tag="Admin" />
                                 </ComboBox>
-                            </Grid>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <!-- Phần Trạng thái -->
-                    <Border Style="{StaticResource PanelStyle}">
+                    <!--  Admin Code Section (only visible when Admin is selected)  -->
+                    <Border
+                        x:Name="AdminCodeSection"
+                        Margin="0,0,0,15"
+                        Padding="15"
+                        Background="#FFE6E6"
+                        BorderBrush="#FF9999"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        Visibility="Collapsed">
                         <StackPanel>
-                            <CheckBox
-                                Content="Cập nhật trạng thái hoạt động"
-                                IsChecked="{Binding EditOptions.UpdateStatus}"
-                                Style="{StaticResource OptionCheckBoxStyle}" />
-
-                            <Grid Margin="25,12,0,0" IsEnabled="{Binding EditOptions.UpdateStatus}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Margin="0,0,10,0"
-                                    VerticalAlignment="Center"
-                                    Text="Trạng thái:" />
-                                <ComboBox
-                                    Grid.Column="1"
-                                    SelectedValue="{Binding EditOptions.IsActive}"
-                                    SelectedValuePath="Tag">
-                                    <ComboBoxItem Content="Hoạt động" Tag="True" />
-                                    <ComboBoxItem Content="Vô hiệu hóa" Tag="False" />
-                                </ComboBox>
-                            </Grid>
+                            <TextBlock
+                                FontWeight="Bold"
+                                Foreground="#D32F2F"
+                                Text="⚠️ Mã xác thực Admin:" />
+                            <PasswordBox
+                                x:Name="AdminCodeBox"
+                                Margin="0,5,0,5"
+                                PasswordChanged="AdminCodeBox_PasswordChanged" />
+                            <TextBlock
+                                FontSize="11"
+                                FontStyle="Italic"
+                                Foreground="#D32F2F"
+                                Text="Nhập mã xác thực để nâng cấp thành viên lên Admin" />
                         </StackPanel>
                     </Border>
 
-                    <!-- Phần Chức vụ -->
-                    <Border Style="{StaticResource PanelStyle}">
+                    <!--  Position Section  -->
+                    <Border
+                        Margin="0,0,0,15"
+                        Padding="15"
+                        Background="#F8F9FA"
+                        BorderBrush="#E9ECEF"
+                        BorderThickness="1"
+                        CornerRadius="5">
                         <StackPanel>
                             <CheckBox
-                                Content="Cập nhật chức vụ"
+                                x:Name="UpdatePositionCheckBox"
+                                Content="Cập nhật Chức vụ"
+                                FontWeight="Bold"
                                 IsChecked="{Binding EditOptions.UpdatePosition}"
-                                Style="{StaticResource OptionCheckBoxStyle}" />
-                            <Grid Margin="25,12,0,0" IsEnabled="{Binding EditOptions.UpdatePosition}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" Text="Chức vụ:" />
-                                <ComboBox Grid.Column="1" SelectedValue="{Binding EditOptions.Position}" SelectedValuePath="Tag">
+                                Style="{StaticResource CheckBoxStyle}" />
+                            <StackPanel IsEnabled="{Binding ElementName=UpdatePositionCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=UpdatePositionCheckBox, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                                <ComboBox
+                                    x:Name="PositionBox"
+                                    Margin="0,5,0,0"
+                                    SelectedValuePath="Tag">
                                     <ComboBoxItem Content="Không chọn" Tag="None" />
                                     <ComboBoxItem Content="Đoàn viên" Tag="DoanVien" />
                                     <ComboBoxItem Content="Cộng tác viên Đoàn khoa" Tag="CongTacVien" />
@@ -174,68 +177,109 @@
                                     <ComboBoxItem Content="Ủy viên Ban Chấp hành Đoàn khoa" Tag="UyVienBCH" />
                                     <ComboBoxItem Content="Ủy viên Ban Thường vụ Đoàn khoa" Tag="UyVienBTV" />
                                 </ComboBox>
-                            </Grid>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <!-- Lưu ý -->
+                    <!--  Password Section  -->
                     <Border
-                        Margin="0,5,0,10"
+                        Margin="0,0,0,15"
                         Padding="15"
-                        Background="#FFF8E3"
-                        BorderBrush="#FFEEBA"
+                        Background="#FFF3CD"
+                        BorderBrush="#FFC107"
                         BorderThickness="1"
-                        CornerRadius="6">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="16"
-                                Text="&#xE7BA;"
-                                Foreground="#856404"
-                                VerticalAlignment="Top"
-                                Margin="0,0,10,0"/>
-                            <TextBlock
-                                FontStyle="Normal"
-                                Foreground="#856404"
-                                TextWrapping="Wrap"
-                                LineHeight="20"
-                                Text="Lưu ý: Thay đổi sẽ được áp dụng cho tất cả thành viên đã chọn. Hành động này không thể hoàn tác sau khi đã lưu." />
+                        CornerRadius="5">
+                        <StackPanel>
+                            <CheckBox
+                                x:Name="UpdatePasswordCheckBox"
+                                Content="Đặt lại mật khẩu"
+                                FontWeight="Bold"
+                                IsChecked="{Binding EditOptions.UpdatePassword}"
+                                Style="{StaticResource CheckBoxStyle}" />
+                            <StackPanel IsEnabled="{Binding ElementName=UpdatePasswordCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=UpdatePasswordCheckBox, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                                <PasswordBox
+                                    x:Name="NewPasswordBox"
+                                    Margin="0,5,0,5"
+                                    PasswordChanged="NewPasswordBox_PasswordChanged" />
+                                <TextBlock
+                                    FontSize="11"
+                                    FontStyle="Italic"
+                                    Foreground="#856404"
+                                    Text="Mật khẩu mới sẽ được áp dụng cho tất cả thành viên được chọn" />
+                            </StackPanel>
                         </StackPanel>
                     </Border>
+
+                    <!--  Status Section  -->
+                    <Border
+                        Margin="0,0,0,15"
+                        Padding="15"
+                        Background="#F8F9FA"
+                        BorderBrush="#E9ECEF"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <CheckBox
+                                x:Name="UpdateStatusCheckBox"
+                                Content="Cập nhật Trạng thái"
+                                FontWeight="Bold"
+                                IsChecked="{Binding EditOptions.UpdateStatus}"
+                                Style="{StaticResource CheckBoxStyle}" />
+                            <StackPanel IsEnabled="{Binding ElementName=UpdateStatusCheckBox, Path=IsChecked}" Visibility="{Binding ElementName=UpdateStatusCheckBox, Path=IsChecked, Converter={StaticResource BoolToVis}}">
+                                <ComboBox
+                                    x:Name="StatusBox"
+                                    Margin="0,5,0,0"
+                                    SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="Đã xác thực email" Tag="true" />
+                                    <ComboBoxItem Content="Chưa xác thực email" Tag="false" />
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- Separator -->
-            <Border Grid.Row="1" VerticalAlignment="Bottom" BorderBrush="#EEEEEE" BorderThickness="0,1,0,0" Margin="25,0"/>
-
-            <!-- Nút hành động -->
-            <Grid Grid.Row="2" Margin="25,15,25,20">
+            <!--  Buttons  -->
+            <Grid Grid.Row="2" Margin="0,15,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Button
                     Grid.Column="0"
+                    Width="100"
                     HorizontalAlignment="Left"
                     Background="Transparent"
+                    BorderBrush="#BDBDBD"
+                    BorderThickness="1"
                     Click="CancelButton_Click"
                     Content="Hủy"
-                    Style="{StaticResource DialogButtonStyle}"
-                    Foreground="#7F8C8D"
-                    BorderThickness="1"
-                    BorderBrush="#BDBDBD"/>
+                    Foreground="#7F8C8D">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="#7F8C8D" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="#BDBDBD" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#EEEEEE" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <Button
                     Grid.Column="1"
-                    Background="#3498DB"
+                    Width="180"
                     Click="SaveButton_Click"
-                    Content="Áp dụng thay đổi"
-                    Foreground="White"
-                    Style="{StaticResource DialogButtonStyle}">
+                    Content="Áp dụng thay đổi">
                     <Button.Resources>
                         <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
+                            <Setter Property="CornerRadius" Value="4" />
                         </Style>
                     </Button.Resources>
                 </Button>
