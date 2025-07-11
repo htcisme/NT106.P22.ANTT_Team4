@@ -2,103 +2,160 @@
     x:Class="DoanKhoaClient.Views.EmailVerificationView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:DoanKhoaClient.ViewModels"
-    xmlns:converters="clr-namespace:DoanKhoaClient.Converters"
     Title="Xác thực Email"
-    WindowStartupLocation="CenterScreen"
     Width="500"
     Height="400"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
     <Window.Resources>
-        <vm:EmailVerificationViewModel x:Key="ViewModel"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <vm:EmailVerificationViewModel x:Key="ViewModel" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#7FFFFFFF" />
+            <Setter Property="Foreground" Value="#FF12305E" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF12305E" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.7" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF12305E" />
+                                <Setter Property="Foreground" Value="#FF12305E" />
+
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFB3E0F7" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF0A1D4A" />
+                                <Setter Property="Foreground" Value="#FF0A1D4A" />
+                                <Setter TargetName="border" Property="Effect" Value="{x:Null}" />
+                                <Setter TargetName="contentPresenter" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
-        <StaticResource ResourceKey="ViewModel"/>
+        <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
 
     <Grid Background="#FFF6FCFF">
-        <StackPanel Margin="40" VerticalAlignment="Center">
-            <TextBlock 
-                Text="Xác thực Email"
+        <StackPanel
+            Height="auto"
+            Margin="40,0,40,0"
+            VerticalAlignment="Center">
+            <TextBlock
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
                 FontSize="24"
                 FontWeight="Bold"
-                HorizontalAlignment="Center"
                 Foreground="#FF042354"
-                Margin="0,0,0,20"/>
-
-            <TextBlock 
-                Text="Vui lòng nhập mã xác thực đã được gửi đến email của bạn:"
-                TextWrapping="Wrap"
-                HorizontalAlignment="Center"
-                Margin="0,0,0,20"/>
+                Text="Xác thực Email" />
 
             <TextBlock
-                Text="{Binding Email}"
-                FontWeight="Bold"
+                Margin="0,0,0,20"
                 HorizontalAlignment="Center"
-                Margin="0,0,0,20"/>
+                Text="Vui lòng nhập mã xác thực đã được gửi đến email của bạn:"
+                TextWrapping="Wrap" />
 
-            <TextBlock 
-                Text="Mã xác thực:"
+            <TextBlock
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                FontWeight="Bold"
+                Text="{Binding Email}" />
+
+            <TextBlock
                 Margin="0,0,0,5"
                 FontWeight="Bold"
-                Foreground="#FF042354"/>
+                Foreground="#FF042354"
+                Text="Mã xác thực:" />
 
-            <TextBox 
-                Text="{Binding VerificationCode, UpdateSourceTrigger=PropertyChanged}" 
+            <TextBox
                 Height="40"
-                FontSize="18"
+                Margin="0,0,0,10"
                 Padding="10,5"
-                Margin="0,0,0,10"/>
+                FontSize="18"
+                Text="{Binding VerificationCode, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock 
-                Text="{Binding ErrorMessage}"
+            <TextBlock
+                Margin="0,0,0,10"
                 Foreground="Red"
+                Text="{Binding ErrorMessage}"
                 TextWrapping="Wrap"
-                Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"
-                Margin="0,0,0,10"/>
+                Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button 
-                    Content="Xác thực" 
-                    Command="{Binding VerifyEmailCommand}"
+            <StackPanel
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
                     Width="120"
                     Height="40"
+                    Margin="0,0,10,0"
                     Background="#FF042354"
+                    Command="{Binding VerifyEmailCommand}"
+                    Content="Xác thực"
                     Foreground="White"
-                    FontWeight="Bold"
-                    Margin="0,0,10,0"/>
+                    Style="{StaticResource ButtonStyle}" />
 
-                <Button 
-                    Content="Gửi lại mã" 
-                    Command="{Binding ResendCodeCommand}"
+                <Button
                     Width="120"
                     Height="40"
                     Background="#FF607D99"
+                    Command="{Binding ResendCodeCommand}"
+                    Content="Gửi lại mã"
                     Foreground="White"
-                    FontWeight="Bold"/>
+                    Style="{StaticResource ButtonStyle}" />
             </StackPanel>
 
-            <TextBlock 
-                Margin="0,20,0,0"
-                HorizontalAlignment="Center">
+            <TextBlock Margin="0,20,0,0" HorizontalAlignment="Center">
                 <Hyperlink Command="{Binding BackToLoginCommand}">
-                    <TextBlock Text="Quay lại trang đăng nhập" FontStyle="Italic"/>
+                    <TextBlock FontStyle="Italic" Text="Quay lại trang đăng nhập" />
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
 
-        <!-- Loading overlay -->
+        <!--  Loading overlay  -->
         <Grid Background="#80000000" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="Đang xử lý..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
-                <ProgressBar IsIndeterminate="True" Width="200" Height="5" Margin="0,10,0,0"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Foreground="White"
+                    Text="Đang xử lý..." />
+                <ProgressBar
+                    Width="200"
+                    Height="5"
+                    Margin="0,10,0,0"
+                    IsIndeterminate="True" />
             </StackPanel>
         </Grid>
     </Grid>

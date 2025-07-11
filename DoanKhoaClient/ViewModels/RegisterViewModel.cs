@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
+using System.Linq;
 namespace DoanKhoaClient.ViewModels
 {
     public class RegisterViewModel : INotifyPropertyChanged
@@ -448,6 +449,7 @@ namespace DoanKhoaClient.ViewModels
                 AdminCode = passwordBox.Password;
             }
         }
+
         private async void ExecuteRegister(object parameter)
         {
             try
@@ -539,32 +541,40 @@ namespace DoanKhoaClient.ViewModels
 
                 System.Diagnostics.Debug.WriteLine($"Nhận phản hồi từ server: {response?.Message ?? "null"}");
 
-
                 if (response != null && !string.IsNullOrEmpty(response.Id))
                 {
                     if (response.RequiresEmailVerification)
                     {
-                        // Open email verification view
-                        var verificationView = new EmailVerificationView();
-                        var viewModel = verificationView.DataContext as EmailVerificationViewModel;
-                        if (viewModel != null)
-                        {
-                            viewModel.UserId = response.Id;
-                            viewModel.Email = response.Email;
-                            viewModel.Username = response.Username;
-                        }
+                        // Show success message first
+                        MessageBox.Show("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.", "Đăng ký thành công",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        verificationView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                        verificationView.Show();
-
-                        // Close registration window
-                        foreach (Window window in Application.Current.Windows)
+                        // Try to open email verification view if it exists
+                        try
                         {
-                            if (window is RegisterView)
+                            var verificationView = new EmailVerificationView();
+                            var viewModel = verificationView.DataContext as EmailVerificationViewModel;
+                            if (viewModel != null)
                             {
-                                window.Close();
-                                break;
+                                viewModel.UserId = response.Id;
+                                viewModel.Email = response.Email;
+                                viewModel.Username = response.Username;
                             }
+
+                            verificationView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                            verificationView.Owner = Application.Current.Windows.OfType<RegisterView>().FirstOrDefault();
+
+                            // Show as modal dialog - this will block until user closes the dialog
+                            bool? dialogResult = verificationView.ShowDialog();
+
+                            // After dialog is closed, navigate to login
+                            OpenLoginWindowAndCloseRegister();
+                        }
+                        catch (Exception)
+                        {
+                            // If EmailVerificationView doesn't exist or fails to load, navigate to login
+                            System.Diagnostics.Debug.WriteLine("EmailVerificationView không tồn tại, chuyển về login");
+                            OpenLoginWindowAndCloseRegister();
                         }
                     }
                     else
@@ -626,6 +636,18 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
+        private void CloseCurrentRegisterWindow()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is RegisterView)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        }
+
         private void OpenLoginWindowAndCloseRegister()
         {
             try
@@ -634,17 +656,14 @@ namespace DoanKhoaClient.ViewModels
 
                 // Tạo trang đăng nhập mới
                 var loginWindow = new LoginView();
+                loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 loginWindow.Show();
 
+                // Set as main window
+                Application.Current.MainWindow = loginWindow;
+
                 // Tìm và đóng trang đăng ký hiện tại
-                foreach (Window window in Application.Current.Windows)
-                {
-                    if (window is RegisterView)
-                    {
-                        window.Close();
-                        break;
-                    }
-                }
+                CloseCurrentRegisterWindow();
 
                 System.Diagnostics.Debug.WriteLine("Đã chuyển đến trang đăng nhập thành công!");
             }
@@ -674,15 +693,7 @@ namespace DoanKhoaClient.ViewModels
                 Application.Current.MainWindow = loginWindow;
 
                 // Tìm và đóng cửa sổ đăng ký hiện tại
-                foreach (Window window in Application.Current.Windows)
-                {
-                    if (window != loginWindow && window is RegisterView)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Đóng cửa sổ đăng ký");
-                        window.Close();
-                        break;
-                    }
-                }
+                CloseCurrentRegisterWindow();
             }
             catch (Exception ex)
             {
