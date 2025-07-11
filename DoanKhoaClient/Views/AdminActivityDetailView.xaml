@@ -124,509 +124,695 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <!--  Header  -->
-        <Border
-            Height="80"
-            Margin="20,20,20,0"
-            VerticalAlignment="Top"
-            Style="{StaticResource CardStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
 
-                <!--  Back Button  -->
-                <Button
-                    Grid.Column="0"
-                    Width="100"
-                    Height="36"
-                    Click="BackButton_Click"
-                    Content="← Quay lại"
-                    Style="{StaticResource PrimaryButtonStyle}" />
+        <Grid Width="1200">
 
-                <!--  Title  -->
-                <StackPanel
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <TextBlock
-                        FontSize="24"
-                        FontWeight="Bold"
-                        Foreground="#FF12305E"
-                        Text="{Binding Activity.Title}"
-                        TextAlignment="Center" />
-                    <TextBlock
-                        FontSize="14"
-                        Foreground="#6c757d"
-                        Text="{Binding Activity.Date, StringFormat='Ngày: {0:dd/MM/yyyy}'}"
-                        TextAlignment="Center" />
-                </StackPanel>
+            <!--  Header  -->
+            <Border
+                Height="90"
+                Margin="50,30,50,0"
+                VerticalAlignment="Top"
+                Background="#FFF2FBFF"
+                BorderBrush="#FF8BAFCF"
+                Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <!--  Action Buttons  -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <!--  Back Button  -->
                     <Button
-                        Margin="0,0,10,0"
-                        Command="{Binding EditActivityCommand}"
-                        Content="Chỉnh sửa"
+                        Grid.Column="0"
+                        Width="100"
+                        Height="36"
+                        Click="BackButton_Click"
+                        Content="← Quay lại"
                         Style="{StaticResource PrimaryButtonStyle}" />
-                    <Button
-                        Command="{Binding DeleteActivityCommand}"
-                        Content="Xóa"
-                        Style="{StaticResource DangerButtonStyle}" />
-                </StackPanel>
-            </Grid>
-        </Border>
 
-        <!--  Tab Navigation  -->
-        <Border
-            Height="50"
-            Margin="20,120,20,0"
-            VerticalAlignment="Top"
-            Background="White"
-            BorderBrush="#E0E0E0"
-            BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal">
-                <Button
-                    x:Name="OverviewTab"
-                    Click="OverviewTab_Click"
-                    Content="Tổng quan"
-                    Style="{StaticResource TabButtonStyle}"
-                    Tag="Active" />
-                <Button
-                    x:Name="ParticipantsTab"
-                    Click="ParticipantsTab_Click"
-                    Content="Người tham gia"
-                    Style="{StaticResource TabButtonStyle}" />
-                <Button
-                    x:Name="LikesTab"
-                    Click="LikesTab_Click"
-                    Content="Lượt thích"
-                    Style="{StaticResource TabButtonStyle}" />
-                <Button
-                    x:Name="CommentsTab"
-                    Click="CommentsTab_Click"
-                    Content="Bình luận"
-                    Style="{StaticResource TabButtonStyle}" />
-            </StackPanel>
-        </Border>
+                    <!--  Title  -->
+                    <StackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="#FF12305E"
+                            Text="{Binding Activity.Title}"
+                            TextAlignment="Center" />
+                        <TextBlock
+                            FontSize="14"
+                            Foreground="#6c757d"
+                            Text="{Binding Activity.Date, StringFormat='Ngày: {0:dd/MM/yyyy}'}"
+                            TextAlignment="Center" />
+                    </StackPanel>
 
-        <!--  Tab Content  -->
-        <ScrollViewer Margin="20,190,20,20" VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <!--  Overview Tab  -->
-                <StackPanel x:Name="OverviewContent" Visibility="Visible">
-                    <!--  Statistics Cards  -->
-                    <Grid Margin="0,0,0,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <!--  Action Buttons  -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
 
-                        <!--  Participants Card  -->
-                        <Border
-                            Grid.Column="0"
-                            Margin="0,0,10,0"
-                            Style="{StaticResource CardStyle}">
-                            <StackPanel HorizontalAlignment="Center">
-                                <TextBlock FontSize="28" Text="👥" />
-                                <TextBlock
-                                    FontSize="32"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="{Binding Activity.ParticipantCount}" />
-                                <TextBlock
-                                    FontSize="16"
-                                    Foreground="#6c757d"
-                                    Text="Người tham gia" />
-                            </StackPanel>
-                        </Border>
+                        <Button
+                            Command="{Binding DeleteActivityCommand}"
+                            Content="Xóa"
+                            Style="{StaticResource DangerButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-                        <!--  Likes Card  -->
-                        <Border
-                            Grid.Column="1"
-                            Margin="5,0,5,0"
-                            Style="{StaticResource CardStyle}">
-                            <StackPanel HorizontalAlignment="Center">
-                                <TextBlock FontSize="28" Text="❤️" />
-                                <TextBlock
-                                    FontSize="32"
-                                    FontWeight="Bold"
-                                    Foreground="#e74c3c"
-                                    Text="{Binding Activity.LikeCount}" />
-                                <TextBlock
-                                    FontSize="16"
-                                    Foreground="#6c757d"
-                                    Text="Lượt thích" />
-                            </StackPanel>
-                        </Border>
 
-                        <!--  Comments Card  -->
-                        <Border
-                            Grid.Column="2"
-                            Margin="10,0,0,0"
-                            Style="{StaticResource CardStyle}">
-                            <StackPanel HorizontalAlignment="Center">
-                                <TextBlock FontSize="28" Text="💬" />
-                                <TextBlock
-                                    FontSize="32"
-                                    FontWeight="Bold"
-                                    Foreground="#3498db"
-                                    Text="{Binding CommentsCount}" />
-                                <TextBlock
-                                    FontSize="16"
-                                    Foreground="#6c757d"
-                                    Text="Bình luận" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+            <Border Margin="50,140,50,30" CornerRadius="10,10,10,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
 
-                    <!--  Activity Details  -->
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock
-                                FontSize="18"
-                                FontWeight="Bold"
-                                Foreground="#FF12305E"
-                                Text="Chi tiết hoạt động" />
-
-                            <!--  Activity Image  -->
-                            <Image
-                                MaxWidth="500"
-                                Margin="0,15,0,15"
-                                HorizontalAlignment="Center"
-                                Source="{Binding Activity.ImgUrl}"
-                                Stretch="Uniform" />
-
-                            <!--  Activity Info  -->
-                            <Grid Margin="0,0,0,15">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Margin="0,0,20,10"
-                                    FontWeight="Bold"
-                                    Text="Loại:" />
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Margin="0,0,0,10"
-                                    Text="{Binding Activity.Type}" />
-
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Margin="0,0,20,10"
-                                    FontWeight="Bold"
-                                    Text="Trạng thái:" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Margin="0,0,0,10"
-                                    Text="{Binding Activity.Status}" />
-
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Margin="0,0,20,10"
-                                    FontWeight="Bold"
-                                    Text="Ngày tạo:" />
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Margin="0,0,0,10"
-                                    Text="{Binding Activity.CreatedAt, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" />
-
-                                <TextBlock
-                                    Grid.Row="3"
-                                    Grid.Column="0"
-                                    Margin="0,0,20,10"
-                                    FontWeight="Bold"
-                                    Text="Mô tả:" />
-                                <TextBlock
-                                    Grid.Row="3"
-                                    Grid.Column="1"
-                                    Margin="0,0,0,10"
-                                    Text="{Binding Activity.Description}"
-                                    TextWrapping="Wrap" />
-                            </Grid>
+                    <!--  Tab Navigation  -->
+                    <Border
+                        Height="50"
+                        Margin="100,25,100,0"
+                        VerticalAlignment="Top"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                x:Name="OverviewTab"
+                                Click="OverviewTab_Click"
+                                Content="Tổng quan"
+                                Style="{StaticResource TabButtonStyle}"
+                                Tag="Active" />
+                            <Button
+                                x:Name="ParticipantsTab"
+                                Click="ParticipantsTab_Click"
+                                Content="Người tham gia"
+                                Style="{StaticResource TabButtonStyle}" />
+                            <Button
+                                x:Name="LikesTab"
+                                Click="LikesTab_Click"
+                                Content="Lượt thích"
+                                Style="{StaticResource TabButtonStyle}" />
+                            <Button
+                                x:Name="CommentsTab"
+                                Click="CommentsTab_Click"
+                                Content="Bình luận"
+                                Style="{StaticResource TabButtonStyle}" />
                         </StackPanel>
                     </Border>
-                </StackPanel>
 
-                <!--  Participants Tab  -->
-                <StackPanel x:Name="ParticipantsContent" Visibility="Collapsed">
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,20">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="Danh sách người tham gia" />
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding RefreshParticipantsCommand}"
-                                    Content="Làm mới"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
-                            </Grid>
+                    <!--  Tab Content  -->
+                    <ScrollViewer
+                        Margin="100,75,100,20"
+                        Padding="25"
+                        VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <!--  Overview Tab  -->
+                            <StackPanel x:Name="OverviewContent" Visibility="Visible">
+                                <!--  Statistics Cards  -->
+                                <Grid Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                            <ListView ItemsSource="{Binding Participants}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
+                                    <!--  Participants Card  -->
+                                    <Border
+                                        Grid.Column="0"
+                                        Margin="50,0,50,0"
+                                        Style="{StaticResource CardStyle}">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock FontSize="28" Text="👥" />
+                                            <TextBlock
+                                                FontSize="28"
+                                                FontWeight="Bold"
+                                                Foreground="#FF12305E"
+                                                Text="{Binding Activity.ParticipantCount}" />
+                                            <TextBlock
+                                                FontSize="16"
+                                                Foreground="#6c757d"
+                                                Text="Người tham gia" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!--  Likes Card  -->
+                                    <Border
+                                        Grid.Column="1"
+                                        Margin="50,0,50,0"
+                                        Style="{StaticResource CardStyle}">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock FontSize="28" Text="❤️" />
+                                            <TextBlock
+                                                FontSize="28"
+                                                FontWeight="Bold"
+                                                Foreground="#e74c3c"
+                                                Text="{Binding Activity.LikeCount}" />
+                                            <TextBlock
+                                                FontSize="16"
+                                                Foreground="#6c757d"
+                                                Text="Lượt thích" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!--  Comments Card  -->
+                                    <Border
+                                        Grid.Column="2"
+                                        Margin="50,0,50,0"
+                                        Style="{StaticResource CardStyle}">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock FontSize="28" Text="💬" />
+                                            <TextBlock
+                                                FontSize="28"
+                                                FontWeight="Bold"
+                                                Foreground="#3498db"
+                                                Text="{Binding CommentsCount}" />
+                                            <TextBlock
+                                                FontSize="16"
+                                                Foreground="#6c757d"
+                                                Text="Bình luận" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <!--  Activity Details  -->
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <TextBlock
+                                            FontSize="18"
+                                            FontWeight="Bold"
+                                            Foreground="#FF12305E"
+                                            Text="Chi tiết hoạt động" />
+
+                                        <!--  Activity Image  -->
+                                        <Image
+                                            MaxWidth="500"
+                                            Margin="0,15,0,15"
+                                            HorizontalAlignment="Center"
+                                            Source="{Binding Activity.ImgUrl}"
+                                            Stretch="Uniform" />
+
+                                        <!--  Activity Info  -->
+                                        <Grid Margin="0,0,0,15">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Margin="0,0,20,10"
+                                                FontWeight="Bold"
+                                                Text="Loại:" />
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="0,0,0,10"
+                                                Text="{Binding Activity.Type}" />
+
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Margin="0,0,20,10"
+                                                FontWeight="Bold"
+                                                Text="Trạng thái:" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Margin="0,0,0,10"
+                                                Text="{Binding Activity.Status}" />
+
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                Margin="0,0,20,10"
+                                                FontWeight="Bold"
+                                                Text="Ngày tạo:" />
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Margin="0,0,0,10"
+                                                Text="{Binding Activity.CreatedAt, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" />
+
+                                            <TextBlock
+                                                Grid.Row="3"
+                                                Grid.Column="0"
+                                                Margin="0,0,20,10"
+                                                FontWeight="Bold"
+                                                Text="Mô tả:" />
+                                            <TextBlock
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                Margin="0,0,0,10"
+                                                Text="{Binding Activity.Description}"
+                                                TextWrapping="Wrap" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!--  Participants Tab  -->
+                            <StackPanel x:Name="ParticipantsContent" Visibility="Collapsed">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,20">
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Foreground="#FF12305E"
+                                                Text="Danh sách người tham gia" />
+                                            <Button
+                                                HorizontalAlignment="Right"
+                                                Command="{Binding RefreshParticipantsCommand}"
+                                                Content="Làm mới"
+                                                Style="{StaticResource PrimaryButtonStyle}" />
+                                        </Grid>
+
+                                        <ListView ItemsSource="{Binding Participants}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Margin="0,5"
+                                                        Padding="15,10"
+                                                        Background="#F8F9FA"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!--  Avatar  -->
+                                                            <Border
+                                                                Grid.Column="0"
+                                                                Width="40"
+                                                                Height="40"
+                                                                Background="#E0E0E0"
+                                                                CornerRadius="20">
+                                                                <Image Source="{Binding UserAvatar, FallbackValue=/Views/Images/User-icon.png}" Stretch="UniformToFill" />
+                                                            </Border>
+
+                                                            <!--  User Info  -->
+                                                            <StackPanel
+                                                                Grid.Column="1"
+                                                                Margin="15,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                                                <TextBlock
+                                                                    FontSize="12"
+                                                                    Foreground="#6c757d"
+                                                                    Text="{Binding Email}" />
+                                                            </StackPanel>
+
+                                                            <!--  Join Date  -->
+                                                            <TextBlock
+                                                                Grid.Column="2"
+                                                                Margin="10,0"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="12"
+                                                                Foreground="#6c757d"
+                                                                Text="{Binding JoinedAt, StringFormat='Tham gia: {0:dd/MM/yyyy}'}" />
+
+                                                            <!--  Remove Button  -->
+                                                            <Button
+                                                                Grid.Column="3"
+                                                                Command="{Binding DataContext.RemoveParticipantCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="Xóa"
+                                                                Style="{StaticResource DangerButtonStyle}" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!--  Likes Tab  -->
+                            <StackPanel x:Name="LikesContent" Visibility="Collapsed">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,20">
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Foreground="#FF12305E"
+                                                Text="Danh sách người thích" />
+                                            <Button
+                                                HorizontalAlignment="Right"
+                                                Command="{Binding RefreshLikesCommand}"
+                                                Content="Làm mới"
+                                                Style="{StaticResource PrimaryButtonStyle}" />
+                                        </Grid>
+
+                                        <ListView ItemsSource="{Binding LikedUsers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Margin="0,5"
+                                                        Padding="15,10"
+                                                        Background="#FFF5F5"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!--  Avatar  -->
+                                                            <Border
+                                                                Grid.Column="0"
+                                                                Width="40"
+                                                                Height="40"
+                                                                Background="#E0E0E0"
+                                                                CornerRadius="20">
+                                                                <Image Source="{Binding UserAvatar, FallbackValue=/Views/Images/User-icon.png}" Stretch="UniformToFill" />
+                                                            </Border>
+
+                                                            <!--  User Info  -->
+                                                            <StackPanel
+                                                                Grid.Column="1"
+                                                                Margin="15,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                                                <TextBlock
+                                                                    FontSize="12"
+                                                                    Foreground="#6c757d"
+                                                                    Text="{Binding Email}" />
+                                                            </StackPanel>
+
+                                                            <!--  Like Date  -->
+                                                            <TextBlock
+                                                                Grid.Column="2"
+                                                                Margin="10,0"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="12"
+                                                                Foreground="#6c757d"
+                                                                Text="{Binding LikedAt, StringFormat='Thích: {0:dd/MM/yyyy}'}" />
+
+                                                            <!--  Remove Like Button  -->
+                                                            <Button
+                                                                Grid.Column="3"
+                                                                Command="{Binding DataContext.RemoveLikeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="Xóa"
+                                                                Style="{StaticResource DangerButtonStyle}" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!--  Comments Tab  -->
+                            <StackPanel x:Name="CommentsContent" Visibility="Collapsed">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,20">
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Foreground="#FF12305E"
+                                                Text="Quản lý bình luận" />
+                                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                                <CheckBox
+                                                    x:Name="AutoRefreshCheckBox"
+                                                    Margin="0,0,15,0"
+                                                    VerticalAlignment="Center"
+                                                    Checked="AutoRefreshCheckBox_Checked"
+                                                    Content="Tự động làm mới"
+                                                    IsChecked="True"
+                                                    Unchecked="AutoRefreshCheckBox_Unchecked" />
+                                                <Button
+                                                    Command="{Binding RefreshCommentsCommand}"
+                                                    Content="Làm mới"
+                                                    Style="{StaticResource PrimaryButtonStyle}" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!--  Comments Statistics  -->
                                         <Border
-                                            Margin="0,5"
+                                            Margin="0,0,0,15"
                                             Padding="15,10"
                                             Background="#F8F9FA"
                                             CornerRadius="5">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <!--  Avatar  -->
-                                                <Border
-                                                    Grid.Column="0"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Background="#E0E0E0"
-                                                    CornerRadius="20">
-                                                    <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill" />
-                                                </Border>
-
-                                                <!--  User Info  -->
-                                                <StackPanel
-                                                    Grid.Column="1"
-                                                    Margin="15,0,0,0"
-                                                    VerticalAlignment="Center">
-                                                    <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                                    <TextBlock
+                                                        FontSize="20"
+                                                        FontWeight="Bold"
+                                                        Foreground="#3498db"
+                                                        Text="{Binding CommentsCount}" />
                                                     <TextBlock
                                                         FontSize="12"
                                                         Foreground="#6c757d"
-                                                        Text="{Binding Email}" />
+                                                        Text="Tổng bình luận" />
                                                 </StackPanel>
 
-                                                <!--  Join Date  -->
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    Margin="10,0"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="12"
-                                                    Foreground="#6c757d"
-                                                    Text="{Binding JoinedAt, StringFormat='Tham gia: {0:dd/MM/yyyy}'}" />
-
-                                                <!--  Remove Button  -->
-                                                <Button
-                                                    Grid.Column="3"
-                                                    Command="{Binding DataContext.RemoveParticipantCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    CommandParameter="{Binding}"
-                                                    Content="Xóa"
-                                                    Style="{StaticResource DangerButtonStyle}" />
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!--  Likes Tab  -->
-                <StackPanel x:Name="LikesContent" Visibility="Collapsed">
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,20">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="Danh sách người thích" />
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding RefreshLikesCommand}"
-                                    Content="Làm mới"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
-                            </Grid>
-
-                            <ListView ItemsSource="{Binding LikedUsers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border
-                                            Margin="0,5"
-                                            Padding="15,10"
-                                            Background="#FFF5F5"
-                                            CornerRadius="5">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <!--  Avatar  -->
-                                                <Border
-                                                    Grid.Column="0"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Background="#E0E0E0"
-                                                    CornerRadius="20">
-                                                    <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill" />
-                                                </Border>
-
-                                                <!--  User Info  -->
-                                                <StackPanel
-                                                    Grid.Column="1"
-                                                    Margin="15,0,0,0"
-                                                    VerticalAlignment="Center">
-                                                    <TextBlock FontWeight="Bold" Text="{Binding DisplayName}" />
+                                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                                    <TextBlock
+                                                        FontSize="20"
+                                                        FontWeight="Bold"
+                                                        Foreground="#27ae60"
+                                                        Text="{Binding RootCommentsCount}" />
                                                     <TextBlock
                                                         FontSize="12"
                                                         Foreground="#6c757d"
-                                                        Text="{Binding Email}" />
+                                                        Text="Bình luận gốc" />
                                                 </StackPanel>
 
-                                                <!--  Like Date  -->
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    Margin="10,0"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="12"
-                                                    Foreground="#6c757d"
-                                                    Text="{Binding LikedAt, StringFormat='Thích: {0:dd/MM/yyyy}'}" />
-
-                                                <!--  Remove Like Button  -->
-                                                <Button
-                                                    Grid.Column="3"
-                                                    Command="{Binding DataContext.RemoveLikeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    CommandParameter="{Binding}"
-                                                    Content="Xóa"
-                                                    Style="{StaticResource DangerButtonStyle}" />
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!--  Comments Tab  -->
-                <StackPanel x:Name="CommentsContent" Visibility="Collapsed">
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,20">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="Bold"
-                                    Foreground="#FF12305E"
-                                    Text="Quản lý bình luận" />
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding RefreshCommentsCommand}"
-                                    Content="Làm mới"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
-                            </Grid>
-
-                            <ListView ItemsSource="{Binding Comments}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border
-                                            Margin="0,5"
-                                            Padding="15,10"
-                                            Background="#F0F8FF"
-                                            CornerRadius="5">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <!--  Avatar  -->
-                                                <Border
-                                                    Grid.Column="0"
-                                                    Width="40"
-                                                    Height="40"
-                                                    Background="#E0E0E0"
-                                                    CornerRadius="20">
-                                                    <Image Source="{Binding UserAvatar}" Stretch="UniformToFill" />
-                                                </Border>
-
-                                                <!--  Comment Info  -->
-                                                <StackPanel Grid.Column="1" Margin="15,0,0,0">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <TextBlock FontWeight="Bold" Text="{Binding UserDisplayName}" />
-                                                        <TextBlock
-                                                            Margin="10,0,0,0"
-                                                            FontSize="12"
-                                                            Foreground="#6c757d"
-                                                            Text="{Binding TimeAgo}" />
-                                                        <TextBlock
-                                                            Margin="10,0,0,0"
-                                                            FontSize="12"
-                                                            Foreground="#e74c3c"
-                                                            Text="{Binding LikeCount, StringFormat='❤️ {0}'}"
-                                                            Visibility="{Binding LikeCount, Converter={StaticResource GreaterThanZeroToVisibilityConverter}}" />
-                                                    </StackPanel>
+                                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
                                                     <TextBlock
-                                                        Margin="0,5,0,0"
-                                                        Text="{Binding Content}"
-                                                        TextWrapping="Wrap" />
+                                                        FontSize="20"
+                                                        FontWeight="Bold"
+                                                        Foreground="#e67e22"
+                                                        Text="{Binding RepliesCount}" />
                                                     <TextBlock
-                                                        Margin="0,2,0,0"
-                                                        FontSize="10"
-                                                        FontStyle="Italic"
+                                                        FontSize="12"
                                                         Foreground="#6c757d"
-                                                        Text="Phản hồi"
-                                                        Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                        Text="Phản hồi" />
                                                 </StackPanel>
-
-                                                <!--  Comment Actions  -->
-                                                <StackPanel
-                                                    Grid.Column="2"
-                                                    Margin="10,0"
-                                                    Orientation="Horizontal">
-                                                    <Button
-                                                        Margin="0,0,5,0"
-                                                        Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                        CommandParameter="{Binding}"
-                                                        Content="Sửa"
-                                                        Style="{StaticResource PrimaryButtonStyle}" />
-                                                </StackPanel>
-
-                                                <!--  Delete Button  -->
-                                                <Button
-                                                    Grid.Column="3"
-                                                    Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    CommandParameter="{Binding}"
-                                                    Content="Xóa"
-                                                    Style="{StaticResource DangerButtonStyle}" />
                                             </Grid>
                                         </Border>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Grid>
-        </ScrollViewer>
+
+                                        <!--  Loading Indicator  -->
+                                        <TextBlock
+                                            Margin="0,10"
+                                            HorizontalAlignment="Center"
+                                            FontStyle="Italic"
+                                            Foreground="#6c757d"
+                                            Text="Đang tải bình luận..."
+                                            Visibility="{Binding IsLoadingComments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                        <!--  Comments List với hiển thị improved  -->
+                                        <ListView ItemsSource="{Binding Comments}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Margin="0,5"
+                                                        Padding="15,10"
+                                                        CornerRadius="8">
+                                                        <!--  Different background for replies  -->
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="#F0F8FF" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsReply}" Value="True">
+                                                                        <Setter Property="Background" Value="#FFF8E1" />
+                                                                        <Setter Property="BorderBrush" Value="#FFB74D" />
+                                                                        <Setter Property="BorderThickness" Value="2,0,0,0" />
+                                                                        <Setter Property="Margin" Value="30,5,0,5" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!--  Avatar  -->
+                                                            <Border
+                                                                Grid.Column="0"
+                                                                Width="40"
+                                                                Height="40"
+                                                                Background="#E0E0E0"
+                                                                CornerRadius="20">
+                                                                <Image Source="{Binding UserAvatar, FallbackValue=/Views/Images/User-icon.png}" Stretch="UniformToFill" />
+                                                            </Border>
+
+                                                            <!--  Comment Info  -->
+                                                            <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                                                                <!--  Reply indicator với thông tin chi tiết  -->
+                                                                <Border
+                                                                    Margin="0,0,0,5"
+                                                                    Padding="6,3"
+                                                                    Background="#E8F5E8"
+                                                                    BorderBrush="#4CAF50"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="3"
+                                                                    Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                    <StackPanel>
+                                                                        <TextBlock
+                                                                            FontSize="10"
+                                                                            FontWeight="Medium"
+                                                                            Foreground="#2E7D32">
+                                                                            <Run Text="📝 Phản hồi: " />
+                                                                            <Run FontWeight="Bold" Text="{Binding ReplyToUserName}" />
+                                                                        </TextBlock>
+                                                                        <!--  Preview của comment được phản hồi  -->
+                                                                        <TextBlock
+                                                                            Margin="0,2,0,0"
+                                                                            FontSize="9"
+                                                                            FontStyle="Italic"
+                                                                            Foreground="#666666"
+                                                                            Text="{Binding ReplyToPreview}"
+                                                                            TextTrimming="CharacterEllipsis"
+                                                                            TextWrapping="NoWrap"
+                                                                            Visibility="{Binding ReplyToPreview, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                                    </StackPanel>
+                                                                </Border>
+
+                                                                <!--  User info và time  -->
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock FontWeight="Bold" Text="{Binding UserDisplayName}" />
+                                                                    <TextBlock
+                                                                        Margin="10,0,0,0"
+                                                                        FontSize="12"
+                                                                        Foreground="#6c757d"
+                                                                        Text="{Binding TimeAgo}" />
+                                                                    <TextBlock
+                                                                        Margin="10,0,0,0"
+                                                                        FontSize="12"
+                                                                        Foreground="#e74c3c"
+                                                                        Text="{Binding LikeCount, StringFormat='❤️ {0}'}"
+                                                                        Visibility="{Binding LikeCount, Converter={StaticResource GreaterThanZeroToVisibilityConverter}}" />
+                                                                    <!--  Comment type indicator  -->
+                                                                    <Border
+                                                                        Margin="10,0,0,0"
+                                                                        Padding="4,1"
+                                                                        Background="#E3F2FD"
+                                                                        CornerRadius="3"
+                                                                        Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                        <TextBlock
+                                                                            FontSize="9"
+                                                                            FontWeight="Medium"
+                                                                            Foreground="#1976D2"
+                                                                            Text="REPLY" />
+                                                                    </Border>
+                                                                </StackPanel>
+
+                                                                <!--  Comment content  -->
+                                                                <TextBlock
+                                                                    Margin="0,5,0,0"
+                                                                    Text="{Binding Content}"
+                                                                    TextWrapping="Wrap" />
+
+                                                                <!--  Additional info for admin  -->
+                                                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                                                    <TextBlock FontSize="10" Foreground="#6c757d">
+                                                                        <Run Text="ID: " />
+                                                                        <Run Text="{Binding Id}" />
+                                                                    </TextBlock>
+                                                                    <TextBlock
+                                                                        Margin="15,0,0,0"
+                                                                        FontSize="10"
+                                                                        Foreground="#6c757d"
+                                                                        Visibility="{Binding IsReply, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                        <Run Text="Parent ID: " />
+                                                                        <Run Text="{Binding ParentCommentId}" />
+                                                                    </TextBlock>
+                                                                    <TextBlock
+                                                                        Margin="15,0,0,0"
+                                                                        FontSize="10"
+                                                                        Foreground="#6c757d"
+                                                                        Text="{Binding DetailedTime}"
+                                                                        ToolTip="Thời gian chi tiết" />
+                                                                </StackPanel>
+                                                            </StackPanel>
+
+                                                            <!--  Comment Actions  -->
+
+                                                            <Button
+                                                                Height="36"
+                                                                Margin="0,0,0,5"
+                                                                Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="✏️ Sửa"
+                                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                                ToolTip="Chỉnh sửa bình luận" />
+
+
+                                                            <!--  Delete Button  -->
+                                                            <Button
+                                                                Grid.Column="3"
+                                                                Height="36"
+                                                                Margin="15,0,0,0"
+                                                                Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="🗑️ Xóa"
+                                                                Style="{StaticResource DangerButtonStyle}"
+                                                                ToolTip="Xóa bình luận (và tất cả phản hồi nếu là comment gốc)" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+
+                                        <!--  Empty state  -->
+                                        <StackPanel
+                                            Margin="0,50"
+                                            HorizontalAlignment="Center"
+                                            Visibility="{Binding HasNoComments, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <TextBlock
+                                                FontSize="48"
+                                                Text="💬"
+                                                TextAlignment="Center" />
+                                            <TextBlock
+                                                Margin="0,10"
+                                                FontSize="16"
+                                                Foreground="#6c757d"
+                                                Text="Chưa có bình luận nào"
+                                                TextAlignment="Center" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="#6c757d"
+                                                Text="Các bình luận sẽ hiển thị ở đây khi có người dùng bình luận"
+                                                TextAlignment="Center" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

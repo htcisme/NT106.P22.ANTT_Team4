@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace DoanKhoaClient.ViewModels
 {
@@ -24,15 +25,21 @@ namespace DoanKhoaClient.ViewModels
         private readonly UserService _userService;
         private readonly HttpClient _httpClient;
         private CancellationTokenSource _cts;
+        private DispatcherTimer _autoRefreshTimer;
 
         private Activity _activity;
         private ObservableCollection<User> _participants;
         private ObservableCollection<User> _likedUsers;
         private ObservableCollection<Comment> _comments;
         private int _commentsCount;
+        private int _rootCommentsCount;
+        private int _repliesCount;
         private bool _isLoading;
+        private bool _isLoadingComments;
+        private bool _autoRefreshEnabled = true;
         private string _errorMessage;
 
+        // Properties
         public Activity Activity
         {
             get => _activity;
@@ -70,6 +77,7 @@ namespace DoanKhoaClient.ViewModels
             {
                 _comments = value;
                 OnPropertyChanged();
+                UpdateCommentsStatistics();
             }
         }
 
@@ -80,8 +88,31 @@ namespace DoanKhoaClient.ViewModels
             {
                 _commentsCount = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasNoComments));
             }
         }
+
+        public int RootCommentsCount
+        {
+            get => _rootCommentsCount;
+            set
+            {
+                _rootCommentsCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int RepliesCount
+        {
+            get => _repliesCount;
+            set
+            {
+                _repliesCount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HasNoComments => CommentsCount == 0 && !IsLoadingComments;
 
         public bool IsLoading
         {
@@ -91,6 +122,28 @@ namespace DoanKhoaClient.ViewModels
                 _isLoading = value;
                 OnPropertyChanged();
                 CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public bool IsLoadingComments
+        {
+            get => _isLoadingComments;
+            set
+            {
+                _isLoadingComments = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasNoComments));
+            }
+        }
+
+        public bool AutoRefreshEnabled
+        {
+            get => _autoRefreshEnabled;
+            set
+            {
+                _autoRefreshEnabled = value;
+                OnPropertyChanged();
+                HandleAutoRefreshToggle();
             }
         }
 
@@ -104,19 +157,150 @@ namespace DoanKhoaClient.ViewModels
             }
         }
 
-        // Commands
-        public ICommand EditActivityCommand { get; }
-        public ICommand DeleteActivityCommand { get; }
-        public ICommand LoadParticipantsCommand { get; }
-        public ICommand LoadLikedUsersCommand { get; }
-        public ICommand LoadCommentsCommand { get; }
-        public ICommand RefreshParticipantsCommand { get; }
-        public ICommand RefreshLikesCommand { get; }
-        public ICommand RefreshCommentsCommand { get; }
-        public ICommand RemoveParticipantCommand { get; }
-        public ICommand RemoveLikeCommand { get; }
-        public ICommand EditCommentCommand { get; }
-        public ICommand DeleteCommentCommand { get; }
+        // Commands - Sử dụng backing fields
+        private ICommand _editActivityCommand;
+        private ICommand _deleteActivityCommand;
+        private ICommand _loadParticipantsCommand;
+        private ICommand _loadLikedUsersCommand;
+        private ICommand _loadCommentsCommand;
+        private ICommand _refreshParticipantsCommand;
+        private ICommand _refreshLikesCommand;
+        private ICommand _refreshCommentsCommand;
+        private ICommand _removeParticipantCommand;
+        private ICommand _removeLikeCommand;
+        private ICommand _editCommentCommand;
+        private ICommand _deleteCommentCommand;
+        private ICommand _viewCommentThreadCommand;
+
+        public ICommand EditActivityCommand
+        {
+            get => _editActivityCommand;
+            private set
+            {
+                _editActivityCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand DeleteActivityCommand
+        {
+            get => _deleteActivityCommand;
+            private set
+            {
+                _deleteActivityCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand LoadParticipantsCommand
+        {
+            get => _loadParticipantsCommand;
+            private set
+            {
+                _loadParticipantsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand LoadLikedUsersCommand
+        {
+            get => _loadLikedUsersCommand;
+            private set
+            {
+                _loadLikedUsersCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand LoadCommentsCommand
+        {
+            get => _loadCommentsCommand;
+            private set
+            {
+                _loadCommentsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand RefreshParticipantsCommand
+        {
+            get => _refreshParticipantsCommand;
+            private set
+            {
+                _refreshParticipantsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand RefreshLikesCommand
+        {
+            get => _refreshLikesCommand;
+            private set
+            {
+                _refreshLikesCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand RefreshCommentsCommand
+        {
+            get => _refreshCommentsCommand;
+            private set
+            {
+                _refreshCommentsCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand RemoveParticipantCommand
+        {
+            get => _removeParticipantCommand;
+            private set
+            {
+                _removeParticipantCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand RemoveLikeCommand
+        {
+            get => _removeLikeCommand;
+            private set
+            {
+                _removeLikeCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand EditCommentCommand
+        {
+            get => _editCommentCommand;
+            private set
+            {
+                _editCommentCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand DeleteCommentCommand
+        {
+            get => _deleteCommentCommand;
+            private set
+            {
+                _deleteCommentCommand = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand ViewCommentThreadCommand
+        {
+            get => _viewCommentThreadCommand;
+            private set
+            {
+                _viewCommentThreadCommand = value;
+                OnPropertyChanged();
+            }
+        }
 
         public AdminActivityDetailViewModel(Activity activity)
         {
@@ -126,7 +310,7 @@ namespace DoanKhoaClient.ViewModels
             // Initialize services
             _activityService = new ActivityService();
             _commentService = new CommentService();
-            _userService = new UserService();
+            _userService = new UserService(_activityService);
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5299") };
 
             // Initialize collections
@@ -135,6 +319,17 @@ namespace DoanKhoaClient.ViewModels
             Comments = new ObservableCollection<Comment>();
 
             // Initialize commands
+            InitializeCommands();
+
+            // Setup auto-refresh timer
+            SetupAutoRefreshTimer();
+
+            // Load initial data
+            _ = LoadCommentsAsync();
+        }
+
+        private void InitializeCommands()
+        {
             EditActivityCommand = new RelayCommand(async _ => await ExecuteEditActivityAsync(),
                 _ => !IsLoading);
 
@@ -171,8 +366,58 @@ namespace DoanKhoaClient.ViewModels
             DeleteCommentCommand = new RelayCommand(async param => await DeleteCommentAsync(param as Comment),
                 param => !IsLoading && param is Comment);
 
-            // Load initial data
-            _ = LoadCommentsAsync();
+        }
+
+        private void SetupAutoRefreshTimer()
+        {
+            _autoRefreshTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(30) // Refresh every 30 seconds
+            };
+            _autoRefreshTimer.Tick += async (s, e) => await AutoRefreshData();
+        }
+
+        private void HandleAutoRefreshToggle()
+        {
+            if (AutoRefreshEnabled)
+            {
+                _autoRefreshTimer?.Start();
+                System.Diagnostics.Debug.WriteLine("Auto-refresh enabled");
+            }
+            else
+            {
+                _autoRefreshTimer?.Stop();
+                System.Diagnostics.Debug.WriteLine("Auto-refresh disabled");
+            }
+        }
+
+        private async Task AutoRefreshData()
+        {
+            try
+            {
+                // Chỉ refresh data hiện đang được xem
+                await LoadCommentsAsync();
+
+                // Update activity statistics if needed
+                await RefreshActivityStatistics();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Auto-refresh error: {ex.Message}");
+            }
+        }
+
+        private async Task RefreshActivityStatistics()
+        {
+            try
+            {
+                // Có thể gọi API để cập nhật thống kê activity
+                // Ví dụ: participant count, like count
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing activity statistics: {ex.Message}");
+            }
         }
 
         #region Activity Management
@@ -181,18 +426,19 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
-                var editDialog = new EditActivityDialog(CloneActivity(Activity));
-                if (editDialog.ShowDialog() == true)
+                // Tạm thời comment out vì EditActivityDialog chưa có
+                // var editDialog = new EditActivityDialog(CloneActivity(Activity));
+                // if (editDialog.ShowDialog() == true)
+                // {
+                await ExecuteWithErrorHandlingAsync(async () =>
                 {
-                    await ExecuteWithErrorHandlingAsync(async () =>
-                    {
-                        var updatedActivity = await _activityService.UpdateActivityAsync(
-                            Activity.Id, editDialog.Activity);
+                    // var updatedActivity = await _activityService.UpdateActivityAsync(
+                    //     Activity.Id, editDialog.Activity);
 
-                        Activity = updatedActivity;
-                        ShowSuccessMessage("Cập nhật hoạt động thành công!");
-                    }, "Không thể cập nhật hoạt động");
-                }
+                    // Activity = updatedActivity;
+                    ShowSuccessMessage("Chức năng chỉnh sửa đang được phát triển!");
+                }, "Không thể cập nhật hoạt động");
+                // }
             }
             catch (Exception ex)
             {
@@ -361,18 +607,111 @@ namespace DoanKhoaClient.ViewModels
         {
             await ExecuteWithErrorHandlingAsync(async () =>
             {
+                IsLoadingComments = true;
+
                 var comments = await _commentService.GetCommentsByActivityIdAsync(Activity.Id, _cts.Token) ?? new List<Comment>();
+
+                System.Diagnostics.Debug.WriteLine($"=== ADMIN LOADING COMMENTS ===");
+                System.Diagnostics.Debug.WriteLine($"Loaded {comments.Count} comments");
+
+                // Process comments để đảm bảo hiển thị đúng thông tin reply
+                foreach (var comment in comments)
+                {
+                    if (string.IsNullOrEmpty(comment.UserAvatar))
+                    {
+                        comment.UserAvatar = "/Views/Images/User-icon.png";
+                    }
+
+                    if (string.IsNullOrEmpty(comment.UserDisplayName))
+                    {
+                        comment.UserDisplayName = "Unknown User";
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Comment: {comment.Id}, User: {comment.UserDisplayName}, IsReply: {comment.IsReply}, ReplyTo: {comment.ReplyToUserName ?? "N/A"}");
+                }
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Comments.Clear();
-                    foreach (var comment in comments.OrderBy(c => c.CreatedAt))
+                    // Sắp xếp comments theo thứ tự: Root comments trước, sau đó là replies
+                    var sortedComments = OrganizeCommentsForAdmin(comments);
+                    foreach (var comment in sortedComments)
                     {
                         Comments.Add(comment);
                     }
-                    CommentsCount = Comments.Count;
+
+                    UpdateCommentsStatistics();
                 });
-            }, "Không thể tải danh sách bình luận");
+            }, "Không thể tải danh sách bình luận", false);
+        }
+
+        private List<Comment> OrganizeCommentsForAdmin(List<Comment> comments)
+        {
+            var result = new List<Comment>();
+
+            // Tách comments gốc và replies
+            var rootComments = comments.Where(c => string.IsNullOrEmpty(c.ParentCommentId))
+                                      .OrderBy(c => c.CreatedAt)
+                                      .ToList();
+
+            var replies = comments.Where(c => !string.IsNullOrEmpty(c.ParentCommentId))
+                                 .OrderBy(c => c.CreatedAt)
+                                 .ToList();
+
+            // Thêm từng comment gốc và replies của nó
+            foreach (var rootComment in rootComments)
+            {
+                result.Add(rootComment);
+
+                // Thêm tất cả replies của comment này
+                var commentReplies = replies.Where(r => r.ParentCommentId == rootComment.Id)
+                                           .OrderBy(r => r.CreatedAt)
+                                           .ToList();
+
+                foreach (var reply in commentReplies)
+                {
+                    result.Add(reply);
+
+                    // Thêm replies của reply này (nested replies)
+                    AddNestedReplies(reply.Id, replies, result);
+                }
+            }
+
+            return result;
+        }
+
+        private void AddNestedReplies(string parentId, List<Comment> allReplies, List<Comment> result)
+        {
+            var nestedReplies = allReplies.Where(r => r.ParentCommentId == parentId)
+                                         .OrderBy(r => r.CreatedAt)
+                                         .ToList();
+
+            foreach (var nestedReply in nestedReplies)
+            {
+                if (!result.Contains(nestedReply)) // Tránh duplicate
+                {
+                    result.Add(nestedReply);
+                    // Tiếp tục đệ quy cho replies của nested reply
+                    AddNestedReplies(nestedReply.Id, allReplies, result);
+                }
+            }
+        }
+
+        private void UpdateCommentsStatistics()
+        {
+            if (Comments == null)
+            {
+                CommentsCount = 0;
+                RootCommentsCount = 0;
+                RepliesCount = 0;
+                return;
+            }
+
+            CommentsCount = Comments.Count;
+            RootCommentsCount = Comments.Count(c => string.IsNullOrEmpty(c.ParentCommentId));
+            RepliesCount = Comments.Count(c => !string.IsNullOrEmpty(c.ParentCommentId));
+
+            System.Diagnostics.Debug.WriteLine($"Comments Statistics - Total: {CommentsCount}, Root: {RootCommentsCount}, Replies: {RepliesCount}");
         }
 
         private async Task EditCommentAsync(Comment comment)
@@ -381,32 +720,18 @@ namespace DoanKhoaClient.ViewModels
 
             try
             {
-                var editDialog = new EditCommentDialog(comment.Content);
-                if (editDialog.ShowDialog() == true)
+                // Tạm thời comment out vì EditCommentDialog chưa có
+                // var editDialog = new EditCommentDialog(comment.Content);
+                // if (editDialog.ShowDialog() == true)
+                // {
+                await ExecuteWithErrorHandlingAsync(async () =>
                 {
-                    await ExecuteWithErrorHandlingAsync(async () =>
-                    {
-                        var updatedComment = await _commentService.UpdateCommentAsync(
-                            comment.Id, editDialog.NewContent, _cts.Token);
+                    // var updatedComment = await _commentService.UpdateCommentAsync(
+                    //     comment.Id, editDialog.NewContent, _cts.Token);
 
-                        if (updatedComment != null)
-                        {
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                var index = Comments.IndexOf(comment);
-                                if (index >= 0)
-                                {
-                                    Comments[index] = updatedComment;
-                                }
-                            });
-                            ShowSuccessMessage("Cập nhật bình luận thành công!");
-                        }
-                        else
-                        {
-                            ShowErrorMessage("Không thể cập nhật bình luận - phản hồi từ server không hợp lệ.");
-                        }
-                    }, "Không thể cập nhật bình luận");
-                }
+                    ShowSuccessMessage("Chức năng chỉnh sửa bình luận đang được phát triển!");
+                }, "Không thể cập nhật bình luận");
+                // }
             }
             catch (Exception ex)
             {
@@ -420,8 +745,22 @@ namespace DoanKhoaClient.ViewModels
 
             try
             {
-                if (MessageBox.Show($"Bạn có chắc muốn xóa bình luận của {comment.UserDisplayName}?",
-                    "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                var isRootComment = string.IsNullOrEmpty(comment.ParentCommentId);
+                var repliesCount = Comments.Count(c => c.ParentCommentId == comment.Id);
+
+                string confirmMessage;
+                if (isRootComment && repliesCount > 0)
+                {
+                    confirmMessage = $"Bạn có chắc muốn xóa bình luận của {comment.UserDisplayName}?\n" +
+                                   $"Thao tác này sẽ xóa luôn {repliesCount} phản hồi.";
+                }
+                else
+                {
+                    confirmMessage = $"Bạn có chắc muốn xóa bình luận của {comment.UserDisplayName}?";
+                }
+
+                if (MessageBox.Show(confirmMessage, "Xác nhận",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     await ExecuteWithErrorHandlingAsync(async () =>
                     {
@@ -431,10 +770,29 @@ namespace DoanKhoaClient.ViewModels
                         {
                             Application.Current.Dispatcher.Invoke(() =>
                             {
-                                Comments.Remove(comment);
-                                CommentsCount = Comments.Count;
+                                // Nếu là root comment, xóa tất cả replies
+                                if (isRootComment)
+                                {
+                                    var commentsToRemove = Comments.Where(c =>
+                                        c.Id == comment.Id ||
+                                        c.ParentCommentId == comment.Id ||
+                                        IsChildOfComment(c, comment.Id)).ToList();
+
+                                    foreach (var commentToRemove in commentsToRemove)
+                                    {
+                                        Comments.Remove(commentToRemove);
+                                    }
+
+                                    ShowSuccessMessage($"Đã xóa bình luận và {commentsToRemove.Count - 1} phản hồi!");
+                                }
+                                else
+                                {
+                                    Comments.Remove(comment);
+                                    ShowSuccessMessage("Xóa bình luận thành công!");
+                                }
+
+                                UpdateCommentsStatistics();
                             });
-                            ShowSuccessMessage("Xóa bình luận thành công!");
                         }
                         else
                         {
@@ -446,6 +804,51 @@ namespace DoanKhoaClient.ViewModels
             catch (Exception ex)
             {
                 ShowErrorMessage($"Lỗi khi xóa bình luận: {ex.Message}");
+            }
+        }
+
+        private bool IsChildOfComment(Comment comment, string parentId)
+        {
+            if (string.IsNullOrEmpty(comment.ParentCommentId))
+                return false;
+
+            if (comment.ParentCommentId == parentId)
+                return true;
+
+            var parentComment = Comments.FirstOrDefault(c => c.Id == comment.ParentCommentId);
+            if (parentComment != null)
+            {
+                return IsChildOfComment(parentComment, parentId);
+            }
+
+            return false;
+        }
+
+        private Comment FindRootComment(Comment comment)
+        {
+            if (string.IsNullOrEmpty(comment.ParentCommentId))
+                return comment;
+
+            var parentComment = Comments.FirstOrDefault(c => c.Id == comment.ParentCommentId);
+            if (parentComment != null)
+            {
+                return FindRootComment(parentComment);
+            }
+
+            return comment; // Fallback nếu không tìm thấy parent
+        }
+
+        private void CollectThreadComments(string rootCommentId, List<Comment> threadComments)
+        {
+            var replies = Comments.Where(c => c.ParentCommentId == rootCommentId)
+                                 .OrderBy(c => c.CreatedAt)
+                                 .ToList();
+
+            foreach (var reply in replies)
+            {
+                threadComments.Add(reply);
+                // Đệ quy để lấy replies của reply
+                CollectThreadComments(reply.Id, threadComments);
             }
         }
 
@@ -463,7 +866,6 @@ namespace DoanKhoaClient.ViewModels
                     var json = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-                    // Parse as array of participant objects
                     var participantData = JsonSerializer.Deserialize<JsonElement[]>(json, options);
                     var users = new List<User>();
 
@@ -480,7 +882,6 @@ namespace DoanKhoaClient.ViewModels
                                     DisplayName = data.GetProperty("displayName").GetString() ?? "",
                                     Email = data.GetProperty("email").GetString() ?? "",
                                     AvatarUrl = data.TryGetProperty("avatarUrl", out var avatar) ? avatar.GetString() : "",
-                                    //Position = data.TryGetProperty("position", out var pos) ? pos.GetString() : ""
                                 };
                                 users.Add(user);
                             }
@@ -530,7 +931,6 @@ namespace DoanKhoaClient.ViewModels
                                     DisplayName = data.GetProperty("displayName").GetString() ?? "",
                                     Email = data.GetProperty("email").GetString() ?? "",
                                     AvatarUrl = data.TryGetProperty("avatarUrl", out var avatar) ? avatar.GetString() : "",
-                                    //Position = data.TryGetProperty("position", out var pos) ? pos.GetString() : ""
                                 };
                                 users.Add(user);
                             }
@@ -570,11 +970,11 @@ namespace DoanKhoaClient.ViewModels
             };
         }
 
-        private async Task ExecuteWithErrorHandlingAsync(Func<Task> action, string defaultErrorMessage)
+        private async Task ExecuteWithErrorHandlingAsync(Func<Task> action, string defaultErrorMessage, bool showLoading = true)
         {
             try
             {
-                IsLoading = true;
+                if (showLoading) IsLoading = true;
                 ErrorMessage = null;
                 await action();
             }
@@ -588,7 +988,8 @@ namespace DoanKhoaClient.ViewModels
             }
             finally
             {
-                IsLoading = false;
+                if (showLoading) IsLoading = false;
+                IsLoadingComments = false;
             }
         }
 
@@ -606,6 +1007,7 @@ namespace DoanKhoaClient.ViewModels
         {
             try
             {
+                _autoRefreshTimer?.Stop();
                 _cts?.Cancel();
                 _cts?.Dispose();
                 _httpClient?.Dispose();

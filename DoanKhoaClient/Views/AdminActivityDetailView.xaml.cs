@@ -22,8 +22,11 @@ namespace DoanKhoaClient.Views
             _viewModel = new AdminActivityDetailViewModel(activity);
             DataContext = _viewModel;
 
+            // Setup auto-refresh checkbox
+            AutoRefreshCheckBox.IsChecked = _viewModel.AutoRefreshEnabled;
+
             // Áp dụng theme
-            //ThemeManager.ApplyTheme(Admin_ActivityDetail_Background);
+            ThemeManager.ApplyTheme(Admin_ActivityDetail_Background);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -36,6 +39,26 @@ namespace DoanKhoaClient.Views
             adminActivitiesView.Show();
             this.Close();
         }
+
+        #region Auto-refresh Handlers
+
+        private void AutoRefreshCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                _viewModel.AutoRefreshEnabled = true;
+            }
+        }
+
+        private void AutoRefreshCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                _viewModel.AutoRefreshEnabled = false;
+            }
+        }
+
+        #endregion
 
         #region Tab Navigation
 
