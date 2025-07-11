@@ -77,10 +77,8 @@ namespace DoanKhoaClient.Views
             var taskCard = new Border
             {
                 Style = (Style)this.FindResource("TaskCardStyle"),
-                Width = 1240,
-                Height = 150,
-                Margin = new Thickness(0, 10, 0, 10),
-                Cursor = Cursors.Hand
+                Width = 1190,
+                Height = 160,
             };
 
             var grid = new Grid
@@ -193,7 +191,7 @@ namespace DoanKhoaClient.Views
                     Width = 100,
                     Height = 35,
                     Margin = new Thickness(0, 5, 0, 5),
-                    Style = (Style)this.FindResource("ActionButtonStyle")
+                    Style = (Style)this.FindResource("ButtonStyle")
                 };
                 completeButton.Click += (s, e) => CompleteTask(task);
                 buttonPanel.Children.Add(completeButton);
@@ -206,10 +204,10 @@ namespace DoanKhoaClient.Views
                 Width = 100,
                 Height = 35,
                 Margin = new Thickness(0, 5, 0, 5),
+                Style = (Style)this.FindResource("ButtonStyle"),
                 Background = new SolidColorBrush(Color.FromRgb(108, 117, 125)),
                 Foreground = Brushes.White,
                 BorderThickness = new Thickness(0),
-                FontWeight = FontWeights.Bold,
                 Cursor = Cursors.Hand
             };
             detailButton.Click += (s, e) => ShowTaskDetail(task);

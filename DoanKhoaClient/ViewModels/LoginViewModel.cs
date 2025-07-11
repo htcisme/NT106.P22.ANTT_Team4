@@ -243,15 +243,14 @@ namespace DoanKhoaClient.ViewModels
                     };
                     App.Current.Properties["CurrentUser"] = currentUser;
 
-                    MessageBox.Show($"Chào mừng, {response.Role}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Hiển thị thông báo chào mừng kết hợp với role
+                    MessageBox.Show($"Chào mừng {response.Role} {response.DisplayName ?? response.Username}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
                     AccessControl.SetCurrentUser(response);
-
 
                     // Mở trang cho người dùng thông thường
                     var userDashboard = new HomePageView();
                     userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                     userDashboard.Show();
-
 
                     // Đóng cửa sổ đăng nhập hiện tại
                     foreach (Window window in Application.Current.Windows)

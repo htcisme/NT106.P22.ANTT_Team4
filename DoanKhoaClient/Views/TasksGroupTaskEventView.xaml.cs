@@ -16,12 +16,22 @@ namespace DoanKhoaClient.Views
     {
         private readonly TaskService _taskService;
         private List<TaskSession> _sessions;
+        private bool isAdminSubmenuOpen = false;
 
         public TasksGroupTaskEventView()
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(GroupTask_Event_Background);
             _taskService = new TaskService();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
             LoadEventSessions();
         }
 
@@ -134,11 +144,9 @@ namespace DoanKhoaClient.Views
             var sessionBorder = new Border
             {
                 Style = (Style)this.FindResource("SessionCardStyle"),
-                Width = 1000,
-                Height = 120,
-                Margin = new Thickness(10, 10, 10, 10),
-                Cursor = Cursors.Hand,
-                HorizontalAlignment = HorizontalAlignment.Left
+                Width = 940,
+                Height = 130,
+                
             };
             sessionBorder.MouseDown += (s, e) => OpenSessionContent(session);
 
@@ -153,7 +161,7 @@ namespace DoanKhoaClient.Views
             // Icon Container
             var iconBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(4, 35, 84)),
+                Background = new SolidColorBrush(Color.FromRgb(244, 248, 255)),
                 CornerRadius = new CornerRadius(10),
                 Width = 70,
                 Height = 70,
@@ -164,7 +172,7 @@ namespace DoanKhoaClient.Views
 
             var icon = new Image
             {
-                Source = new BitmapImage(new Uri("/Views/Images/active-activities.png", UriKind.Relative)),
+                Source = new BitmapImage(new Uri("/Views/Images/activities.png", UriKind.Relative)),
                 Width = 35,
                 Height = 35,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -267,5 +275,74 @@ namespace DoanKhoaClient.Views
         {
             this.Close();
         }
+
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new HomePageView();
+            win.Show();
+            this.Close();
+        }
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new UserChatView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new MembersView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new TasksView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
+
+
     }
 }

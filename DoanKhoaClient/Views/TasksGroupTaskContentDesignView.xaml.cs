@@ -19,6 +19,7 @@ namespace DoanKhoaClient.Views
         private List<TaskProgram> _programs; // THAY ĐỔI: Hiển thị TaskProgram thay vì TaskItem
         private int _currentPage = 1;
         private const int ProgramsPerPage = 5; // THAY ĐỔI: từ TasksPerPage thành ProgramsPerPage
+        private bool isAdminSubmenuOpen = false;
 
         public TasksGroupTaskContentDesignView(TaskSession session)
         {
@@ -26,6 +27,15 @@ namespace DoanKhoaClient.Views
             ThemeManager.ApplyTheme(GroupTask_Content_Design_Background);
             _session = session;
             _taskService = new TaskService();
+            if (AccessControl.IsAdmin())
+            {
+                SidebarAdminButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SidebarAdminButton.Visibility = Visibility.Collapsed;
+                AdminSubmenu.Visibility = Visibility.Collapsed;
+            }
             LoadSessionPrograms(); // THAY ĐỔI: method name
         }
 
@@ -80,10 +90,8 @@ namespace DoanKhoaClient.Views
             var programCard = new Border
             {
                 Style = (Style)this.FindResource("TaskCardStyle"),
-                Width = 980,
-                Height = 140, // THAY ĐỔI: tăng height cho program info
-                Margin = new Thickness(0, 10, 0, 10),
-                Cursor = Cursors.Hand
+                Width = 940,
+                Height = 130,
             };
 
             var grid = new Grid
@@ -98,7 +106,7 @@ namespace DoanKhoaClient.Views
             // Icon Container
             var iconBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(4, 35, 84)),
+                Background = new SolidColorBrush(Color.FromRgb(244, 248, 255)),
                 CornerRadius = new CornerRadius(10),
                 Width = 60,
                 Height = 60,
@@ -111,7 +119,7 @@ namespace DoanKhoaClient.Views
             {
                 var icon = new Image
                 {
-                    Source = new BitmapImage(new Uri("/Views/Images/active-tasks.png", UriKind.Relative)),
+                    Source = new BitmapImage(new Uri("/Views/Images/tasks.png", UriKind.Relative)),
                     Width = 30,
                     Height = 30,
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -334,5 +342,80 @@ namespace DoanKhoaClient.Views
         {
             ThemeManager.ToggleTheme(GroupTask_Content_Design_Background);
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void SidebarHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new HomePageView();
+            win.Show();
+            this.Close();
+        }
+        private void SidebarChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new UserChatView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new MembersView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarTasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new TasksView();
+            win.Show();
+            this.Close();
+        }
+
+        private void SidebarActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActivitiesView();
+            win.Show();
+            this.Close();
+        }
+
+        private void AdminTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminTaskView = new AdminTasksView();
+            adminTaskView.Show();
+            this.Close();
+        }
+
+        private void AdminMembersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminMembersView = new AdminMembersView();
+            adminMembersView.Show();
+            this.Close();
+        }
+
+        private void AdminChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminChatView = new AdminChatView();
+            adminChatView.Show();
+            this.Close();
+        }
+        private void SidebarAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle hiển thị submenu admin
+            isAdminSubmenuOpen = !isAdminSubmenuOpen;
+            AdminSubmenu.Visibility = isAdminSubmenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void AdminActivitiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var adminActivitiesView = new AdminActivitiesView();
+            adminActivitiesView.Show();
+            this.Close();
+        }
+
+
+
     }
 }

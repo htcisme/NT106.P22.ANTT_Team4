@@ -13,7 +13,7 @@ namespace DoanKhoaClient.Helpers
             if (user != null)
             {
                 // Debug để kiểm tra giá trị role
-                MessageBox.Show($"Setting user role: {user.Role}, Is Admin: {user.Role == UserRole.Admin}");
+                //System.Diagnostics.Debug.WriteLine($"Setting current user: {user.Username}, Role: {user.Role}");
 
                 _isAdmin = user.Role == UserRole.Admin;
                 _userId = user.Id;

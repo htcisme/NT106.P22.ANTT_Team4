@@ -106,14 +106,37 @@ namespace DoanKhoaClient.ViewModels
         public ICommand VerifyEmailCommand { get; private set; }
         public ICommand ResendCodeCommand { get; private set; }
         public ICommand BackToLoginCommand { get; private set; }
+        public ICommand NavigateToLoginCommand { get; private set; }
 
         public EmailVerificationViewModel()
         {
             _authService = new AuthService();
+            NavigateToLoginCommand = new RelayCommand(ExecuteNavigateToLogin);
+
 
             VerifyEmailCommand = new RelayCommand(ExecuteVerifyEmail, CanExecuteVerifyEmail);
             ResendCodeCommand = new RelayCommand(ExecuteResendCode, CanExecuteResendCode);
             BackToLoginCommand = new RelayCommand(ExecuteBackToLogin);
+        }
+        private void ExecuteNavigateToLogin(object parameter)
+        {
+            try
+            {
+                // Đóng cửa sổ verification hiện tại
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window is EmailVerificationView)
+                    {
+                        window.DialogResult = false; // Set dialog result
+                        window.Close();
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error closing verification window: {ex.Message}");
+            }
         }
 
         private bool CanExecuteVerifyEmail(object parameter)
