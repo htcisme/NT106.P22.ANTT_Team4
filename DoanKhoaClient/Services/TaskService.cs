@@ -923,8 +923,8 @@ namespace DoanKhoaClient.Services
         {
             try
             {
-                Debug.WriteLine($"Completing TaskItem: {taskItemId}");
-                var response = await _httpClient.PostAsync($"taskitem/{taskItemId}/complete", null);
+                MessageBox.Show($"Completing TaskItem: {taskItemId}");
+                var response = await _httpClient.PutAsync($"taskitem/{taskItemId}/complete", null);
 
                 if (response.IsSuccessStatusCode)
                 {
