@@ -642,7 +642,8 @@
                         Content="Admin"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold" />
+                        FontWeight="Bold"
+                        Foreground="#597CA2" />
                 </StackPanel>
             </Button>
 
