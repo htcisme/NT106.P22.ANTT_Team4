@@ -15,23 +15,27 @@
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
 
-        <vm:LoginViewModel x:Key="ViewModel" />
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <vm:LoginViewModel x:Key="ViewModel"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <DropShadowEffect
             x:Key="StandardShadow"
             BlurRadius="10"
             Direction="270"
             Opacity="0.2"
             ShadowDepth="3"
-            Color="#000000" />
-        <Style x:Key="LoginButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            Color="#000000"/>
+        <Style x:Key="LoginButtonStyle"
+               TargetType="{x:Type Button}">
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
                 <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                    <ScaleTransform ScaleX="1"
+                                    ScaleY="1"/>
                 </Setter.Value>
             </Setter>
             <Setter Property="Template">
@@ -44,16 +48,22 @@
                             <ContentPresenter
                                 Margin="5"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
                                 <!--  Giữ màu không đổi hoặc thay đổi nhẹ  -->
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#1A3C78" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="#1A3C78"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
+                            <Trigger Property="IsPressed"
+                                     Value="True">
                                 <!--  Giữ màu không đổi hoặc thay đổi nhẹ  -->
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#1A3C78" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="#1A3C78"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -63,12 +73,13 @@
     </Window.Resources>
 
     <Window.DataContext>
-        <StaticResource ResourceKey="ViewModel" />
+        <StaticResource ResourceKey="ViewModel"/>
     </Window.DataContext>
 
     <!--  Add KeyDown event handler for Enter key  -->
     <Window.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
+        <KeyBinding Key="Enter"
+                    Command="{Binding LoginCommand}"/>
     </Window.InputBindings>
 
     <Window.Triggers>
@@ -80,7 +91,7 @@
                         Storyboard.TargetProperty="Opacity"
                         From="0"
                         To="1"
-                        Duration="0:0:0.5" />
+                        Duration="0:0:0.5"/>
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
@@ -88,9 +99,12 @@
 
     <Grid x:Name="Login_Background">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0.67" Color="#FFF6FCFF" />
-                <GradientStop Offset="1" Color="#FFDBF3FF" />
+            <LinearGradientBrush StartPoint="0.5,0"
+                                 EndPoint="0.5,1">
+                <GradientStop Offset="0.67"
+                              Color="#FFF6FCFF"/>
+                <GradientStop Offset="1"
+                              Color="#FFDBF3FF"/>
             </LinearGradientBrush>
         </Grid.Background>
 
@@ -102,15 +116,17 @@
             Opacity="0"
             Stretch="Uniform">
 
-            <Grid Width="1440" Height="1024">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Width="1440"
+                  Height="1024">
+                <Grid HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="35*" />
-                        <RowDefinition Height="279*" />
+                        <RowDefinition Height="35*"/>
+                        <RowDefinition Height="279*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <!--  Form đăng nhập  -->
@@ -127,8 +143,8 @@
                         <!--  Use a single container (Grid) to hold all content  -->
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackPanel
                                 Grid.Row="0"
@@ -140,7 +156,7 @@
                                     FontSize="16"
                                     FontWeight="Bold"
                                     Foreground="#FF042354"
-                                    Text="Tên đăng nhập:" />
+                                    Text="Tên đăng nhập:"/>
                                 <Grid Margin="5,10,5,10">
                                     <Border
                                         x:Name="UsernameBorder"
@@ -159,7 +175,8 @@
                                             Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}">
                                             <!--  Add KeyDown event for Enter key  -->
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
+                                                <KeyBinding Key="Enter"
+                                                            Command="{Binding LoginCommand}"/>
                                             </TextBox.InputBindings>
                                             <TextBox.Triggers>
                                                 <EventTrigger RoutedEvent="TextBox.GotFocus">
@@ -169,7 +186,7 @@
                                                                 Storyboard.TargetName="UsernameBorder"
                                                                 Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                                                                 To="#597CA2"
-                                                                Duration="0:0:0.2" />
+                                                                Duration="0:0:0.2"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -180,7 +197,7 @@
                                                                 Storyboard.TargetName="UsernameBorder"
                                                                 Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                                                                 To="#FFCBCDD2"
-                                                                Duration="0:0:0.2" />
+                                                                Duration="0:0:0.2"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -196,7 +213,7 @@
                                         Foreground="Gray"
                                         IsHitTestVisible="False"
                                         Text="Nhập tên đăng nhập"
-                                        Visibility="{Binding UsernamePlaceholderVisibility}" />
+                                        Visibility="{Binding UsernamePlaceholderVisibility}"/>
                                 </Grid>
 
                                 <!--  Mật khẩu  -->
@@ -205,7 +222,7 @@
                                     FontSize="16"
                                     FontWeight="Bold"
                                     Foreground="#FF042354"
-                                    Text="Mật khẩu:" />
+                                    Text="Mật khẩu:"/>
                                 <Grid Margin="5,10,5,10">
                                     <Border
                                         x:Name="PasswordBorder"
@@ -223,11 +240,13 @@
                                             FontSize="16">
                                             <!--  Add KeyDown event for Enter key on PasswordBox  -->
                                             <PasswordBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding LoginCommand}" />
+                                                <KeyBinding Key="Enter"
+                                                            Command="{Binding LoginCommand}"/>
                                             </PasswordBox.InputBindings>
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="PasswordChanged">
-                                                    <i:InvokeCommandAction Command="{Binding PasswordChangedCommand}" CommandParameter="{Binding ElementName=PasswordBox}" />
+                                                    <i:InvokeCommandAction Command="{Binding PasswordChangedCommand}"
+                                                                           CommandParameter="{Binding ElementName=PasswordBox}"/>
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                             <PasswordBox.Triggers>
@@ -238,7 +257,7 @@
                                                                 Storyboard.TargetName="PasswordBorder"
                                                                 Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                                                                 To="#597CA2"
-                                                                Duration="0:0:0.2" />
+                                                                Duration="0:0:0.2"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -249,7 +268,7 @@
                                                                 Storyboard.TargetName="PasswordBorder"
                                                                 Storyboard.TargetProperty="BorderBrush.(SolidColorBrush.Color)"
                                                                 To="#FFCBCDD2"
-                                                                Duration="0:0:0.2" />
+                                                                Duration="0:0:0.2"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -265,8 +284,64 @@
                                         Foreground="Gray"
                                         IsHitTestVisible="False"
                                         Text="Nhập mật khẩu"
-                                        Visibility="{Binding PasswordPlaceholderVisibility}" />
+                                        Visibility="{Binding PasswordPlaceholderVisibility}"/>
                                 </Grid>
+
+                                <!--  Ghi nhớ mật khẩu - Di chuyển ra ngoài và sửa lại styling  -->
+                                <CheckBox
+                                    Name="RememberMeCheckBox"
+                                    Content="Ghi nhớ mật khẩu"
+                                    IsChecked="{Binding RememberMe}"
+                                    Margin="5,5,5,15"
+                                    HorizontalAlignment="Left"
+                                    FontSize="14"
+                                    Foreground="#FF042354">
+                                    <CheckBox.Template>
+                                        <ControlTemplate TargetType="CheckBox">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border
+                                                    Name="CheckBorder"
+                                                    Width="16"
+                                                    Height="16"
+                                                    Background="White"
+                                                    BorderBrush="#FFCBCDD2"
+                                                    BorderThickness="1"
+                                                    CornerRadius="3">
+                                                    <Path
+                                                        Name="CheckMark"
+                                                        Width="10"
+                                                        Height="8"
+                                                        Data="M 0 4 L 3 7 L 8 0"
+                                                        Stroke="#1A3C78"
+                                                        StrokeThickness="2"
+                                                        Visibility="Collapsed"/>
+                                                </Border>
+                                                <ContentPresenter
+                                                    Margin="5,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Content="{TemplateBinding Content}"
+                                                    TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                            </StackPanel>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked"
+                                                        Value="True">
+                                                    <Setter TargetName="CheckMark"
+                                                            Property="Visibility"
+                                                            Value="Visible"/>
+                                                    <Setter TargetName="CheckBorder"
+                                                            Property="Background"
+                                                            Value="#E3F2FD"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver"
+                                                        Value="True">
+                                                    <Setter TargetName="CheckBorder"
+                                                            Property="BorderBrush"
+                                                            Value="#597CA2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </CheckBox.Template>
+                                </CheckBox>
 
                                 <!--  Error Message  -->
                                 <TextBlock
@@ -274,7 +349,7 @@
                                     Foreground="Red"
                                     Text="{Binding ErrorMessage}"
                                     TextWrapping="Wrap"
-                                    Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
+                                    Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
 
                                 <!--  NÚT ĐĂNG NHẬP  -->
                                 <Button
@@ -286,14 +361,14 @@
                                     FontWeight="Bold"
                                     Foreground="White"
                                     IsDefault="True"
-                                    Style="{StaticResource LoginButtonStyle}" />
+                                    Style="{StaticResource LoginButtonStyle}"/>
 
                                 <!--  PHẦN OTP  -->
                                 <Grid Visibility="{Binding ShowOtpInput, Converter={StaticResource BoolToVis}}">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
                                     <!--  Tiêu đề OTP  -->
@@ -303,7 +378,7 @@
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="#FF042354"
-                                        Text="Mã xác thực:" />
+                                        Text="Mã xác thực:"/>
 
                                     <!--  Trường nhập OTP  -->
                                     <Border
@@ -324,7 +399,8 @@
                                             Text="{Binding OtpCode, UpdateSourceTrigger=PropertyChanged}">
                                             <!--  Add KeyDown event for Enter key on OTP TextBox  -->
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding VerifyOtpCommand}" />
+                                                <KeyBinding Key="Enter"
+                                                            Command="{Binding VerifyOtpCommand}"/>
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Border>
@@ -340,16 +416,19 @@
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="White"
-                                        IsDefault="True" />
+                                        IsDefault="True"/>
                                 </Grid>
+
+                                <!--  Ghi nhớ mật khẩu  -->
+
 
                             </StackPanel>
 
                             <!--  Links  -->
                             <Grid Margin="10,397,10,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!--  Forgot Password link  -->
@@ -363,7 +442,7 @@
                                     Text="Quên mật khẩu?">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDown">
-                                            <i:InvokeCommandAction Command="{Binding ForgotPasswordCommand}" />
+                                            <i:InvokeCommandAction Command="{Binding ForgotPasswordCommand}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </TextBlock>
@@ -379,7 +458,7 @@
                                     Text="Đăng ký tài khoản">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDown">
-                                            <i:InvokeCommandAction Command="{Binding NavigateToRegisterCommand}" />
+                                            <i:InvokeCommandAction Command="{Binding NavigateToRegisterCommand}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </TextBlock>
@@ -402,7 +481,7 @@
                                 Height="942"
                                 RenderOptions.BitmapScalingMode="HighQuality"
                                 Source="/Views/Images/user-hero.png"
-                                Stretch="UniformToFill" />
+                                Stretch="UniformToFill"/>
                             <!--  Logo - Sử dụng đường dẫn trực tiếp  -->
                             <Image
                                 Width="272"
@@ -418,7 +497,7 @@
                                         BlurRadius="3"
                                         Opacity="0.5"
                                         ShadowDepth="2"
-                                        Color="#66000000" />
+                                        Color="#66000000"/>
                                 </Image.Effect>
                             </Image>
                         </Grid>
