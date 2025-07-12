@@ -704,10 +704,10 @@ namespace DoanKhoaClient.ViewModels
                 try
                 {
                     IsLoading = true;
-                    MessageBox.Show($"Marking task as complete: {taskItem.Id}, Title: {taskItem.Title}");
+                    Debug.WriteLine($"Marking task as complete: {taskItem.Id}, Title: {taskItem.Title}");
 
                     var result = await _taskService.CompleteTaskItemAsync(taskItem.Id);
-                    MessageBox.Show($"Task completion result: {result.Id}, Status: {result.Status}");
+                    Debug.WriteLine($"Task completion result: {result.Id}, Status: {result.Status}");
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
