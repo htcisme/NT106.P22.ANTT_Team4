@@ -24,6 +24,7 @@ namespace DoanKhoaClient.ViewModels
         private Visibility _usernamePlaceholderVisibility = Visibility.Visible;
         private Visibility _passwordPlaceholderVisibility = Visibility.Visible;
         private Visibility _otpPlaceholderVisibility = Visibility.Visible;
+        private bool _rememberMe = false;
         #endregion
 
         #region Properties
@@ -157,6 +158,16 @@ namespace DoanKhoaClient.ViewModels
                 }
             }
         }
+
+        public bool RememberMe
+        {
+            get => _rememberMe;
+            set
+            {
+                _rememberMe = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region Commands
@@ -179,6 +190,12 @@ namespace DoanKhoaClient.ViewModels
             NavigateToRegisterCommand = new RelayCommand(ExecuteNavigateToRegister);
             ForgotPasswordCommand = new RelayCommand(ExecuteForgotPassword);
             PasswordChangedCommand = new RelayCommand(ExecutePasswordChanged);
+
+            // Kiểm tra session tồn tại
+            CheckExistingSession();
+
+            // Kiểm tra remember credentials
+            LoadRememberCredentials();
         }
         #endregion
 
@@ -205,6 +222,67 @@ namespace DoanKhoaClient.ViewModels
         private void ValidateCanVerifyOtp()
         {
             (VerifyOtpCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+
+        private void CheckExistingSession()
+        {
+            try
+            {
+                var session = SessionService.GetSession();
+                if (session != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Valid session found, auto-login...");
+
+                    // Tự động đăng nhập với session
+                    var user = new User
+                    {
+                        Id = session.UserId,
+                        Username = session.Username,
+                        DisplayName = session.DisplayName,
+                        Email = session.Email,
+                        Role = session.Role,
+                        AvatarUrl = session.AvatarUrl
+                    };
+
+                    // Lưu user vào Application Properties
+                    App.Current.Properties["CurrentUser"] = user;
+                    AccessControl.SetCurrentUser(new AuthResponse
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        DisplayName = user.DisplayName,
+                        Email = user.Email,
+                        Role = user.Role,
+                        AvatarUrl = user.AvatarUrl
+                    });
+
+                    // Chuyển đến trang chính
+                    NavigateToMainPage(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking existing session: {ex.Message}");
+            }
+        }
+
+        private void LoadRememberCredentials()
+        {
+            try
+            {
+                var rememberData = SessionService.GetRememberCredentials();
+                if (rememberData != null)
+                {
+                    Username = rememberData.Username;
+                    Password = rememberData.Password;
+                    RememberMe = true;
+                    System.Diagnostics.Debug.WriteLine($"Loaded remember credentials for: {Username}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading remember credentials: {ex.Message}");
+            }
         }
 
         private async void ExecuteLogin(object parameter)
@@ -241,26 +319,28 @@ namespace DoanKhoaClient.ViewModels
                         AvatarUrl = response.AvatarUrl,
                         Role = response.Role
                     };
+
+                    // Lưu session
+                    SessionService.SaveSession(currentUser);
+
+                    // Lưu remember credentials nếu được chọn
+                    if (RememberMe)
+                    {
+                        SessionService.SaveRememberCredentials(Username, Password);
+                    }
+                    else
+                    {
+                        SessionService.DeleteRememberCredentials();
+                    }
+
                     App.Current.Properties["CurrentUser"] = currentUser;
+                    AccessControl.SetCurrentUser(response);
 
                     // Hiển thị thông báo chào mừng kết hợp với role
                     MessageBox.Show($"Chào mừng {response.Role} {response.DisplayName ?? response.Username}!", "Đăng nhập thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                    AccessControl.SetCurrentUser(response);
 
                     // Mở trang cho người dùng thông thường
-                    var userDashboard = new HomePageView();
-                    userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    userDashboard.Show();
-
-                    // Đóng cửa sổ đăng nhập hiện tại
-                    foreach (Window window in Application.Current.Windows)
-                    {
-                        if (window is LoginView)
-                        {
-                            window.Close();
-                            break;
-                        }
-                    }
+                    NavigateToMainPage(currentUser);
                 }
                 else
                 {
@@ -388,6 +468,30 @@ namespace DoanKhoaClient.ViewModels
                 PasswordPlaceholderVisibility = string.IsNullOrWhiteSpace(passwordBox.Password)
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+            }
+        }
+
+        private void NavigateToMainPage(User user)
+        {
+            try
+            {
+                var userDashboard = new HomePageView();
+                userDashboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                userDashboard.Show();
+
+                // Đóng cửa sổ đăng nhập hiện tại
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window is LoginView)
+                    {
+                        window.Close();
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error navigating to main page: {ex.Message}");
             }
         }
         #endregion

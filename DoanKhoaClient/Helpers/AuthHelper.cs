@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Windows;
+using DoanKhoaClient.Services;
+using DoanKhoaClient.Views;
 
 namespace DoanKhoaClient.Helpers
 {
@@ -16,19 +18,13 @@ namespace DoanKhoaClient.Helpers
                     Application.Current.Properties.Remove("CurrentUser");
                 }
 
-                // Xóa token hoặc dữ liệu session nếu có
-                string appDataPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "DoanKhoaClient");
-                string sessionFilePath = Path.Combine(appDataPath, "session.dat");
+                // Xóa session
+                SessionService.DeleteSession();
 
-                if (File.Exists(sessionFilePath))
-                {
-                    File.Delete(sessionFilePath);
-                }
+                System.Diagnostics.Debug.WriteLine("User logged out, session deleted");
 
                 // Chuyển về trang đăng nhập
-                var loginView = new Views.LoginView();
+                var loginView = new LoginView();
                 loginView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 loginView.Show();
 
@@ -44,6 +40,29 @@ namespace DoanKhoaClient.Helpers
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi đăng xuất: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public static void CheckSessionTimeout()
+        {
+            try
+            {
+                if (!SessionService.IsSessionValid())
+                {
+                    System.Diagnostics.Debug.WriteLine("Session expired, logging out...");
+                    MessageBox.Show("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                        "Hết phiên", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Logout();
+                }
+                else
+                {
+                    // Cập nhật hoạt động
+                    SessionService.UpdateSessionActivity();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking session timeout: {ex.Message}");
             }
         }
     }

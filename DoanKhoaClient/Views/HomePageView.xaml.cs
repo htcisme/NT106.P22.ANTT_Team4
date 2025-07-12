@@ -5,6 +5,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media;
 using DoanKhoaClient.Helpers;
 using DoanKhoaClient.ViewModels;
+using DoanKhoaClient.Services;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,7 +25,7 @@ namespace DoanKhoaClient.Views
     {
         private ActivitiesViewModel _viewModel;
         private bool _isDarkMode;
-        private bool isAdminSubmenuOpen; 
+        private bool isAdminSubmenuOpen;
 
         public bool IsDarkMode
         {
@@ -42,7 +43,7 @@ namespace DoanKhoaClient.Views
             InitializeComponent();
             this.PreviewMouseDown += Window_PreviewMouseDown;
             // Khởi tạo ViewModel và gán DataContext
-            
+
 
             if (AccessControl.IsAdmin())
             {
@@ -272,6 +273,17 @@ namespace DoanKhoaClient.Views
             // Cleanup ViewModel timer
             _viewModel?.Cleanup();
             base.OnClosed(e);
+        }
+
+        // Thêm vào các event handler
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            SessionService.UpdateSessionActivity();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            SessionService.UpdateSessionActivity();
         }
     }
 }
