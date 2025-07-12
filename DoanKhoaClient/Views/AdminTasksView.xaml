@@ -14,34 +14,26 @@
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <Style x:Key="NavigationButtonStyle"
-                TargetType="{x:Type Button}">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Padding"
-                    Value="0"/>
+        <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter/>
+                        <ContentPresenter />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="MenuItemStyle"
-                TargetType="{x:Type StackPanel}">
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="RenderTransformOrigin"
-                    Value="0.5,0.5"/>
+        <Style x:Key="MenuItemStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
                 <Setter.Value>
                     <TransformGroup>
-                        <ScaleTransform ScaleX="1"
-                                ScaleY="1"/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -52,15 +44,15 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1.05"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="3"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -70,37 +62,32 @@
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                             <DoubleAnimation
                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
                                 To="0"
-                                Duration="0:0:0.1"/>
+                                Duration="0:0:0.1" />
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
             </Style.Triggers>
         </Style>
 
-        <local:TaskSessionTypeToStringConverter x:Key="TaskSessionTypeToStringConverter"/>
+        <local:TaskSessionTypeToStringConverter x:Key="TaskSessionTypeToStringConverter" />
     </Window.Resources>
 
-    <Grid x:Name="Admin_Task_Background"
-            Opacity="1">
+    <Grid x:Name="Admin_Task_Background" Opacity="1">
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0.5,0"
-                    EndPoint="0.5,1">
-                <GradientStop Offset="0.596"
-                        Color="#FFF6FCFF"/>
-                <GradientStop Offset="1"
-                        Color="#FFDBF3FF"/>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0.596" Color="#FFF6FCFF" />
+                <GradientStop Offset="1" Color="#FFDBF3FF" />
             </LinearGradientBrush>
         </Grid.Background>
-        <Grid Width="1440"
-                Height="1024">
+        <Grid Width="1440" Height="1024">
 
             <Border
                 x:Name="Admin_Task_Dashboard"
@@ -112,14 +99,10 @@
                 BorderBrush="Black"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                            EndPoint="0.5,1">
-                        <GradientStop Offset="0.04"
-                                Color="#FFF6FCFF"/>
-                        <GradientStop Offset="0.46"
-                                Color="#FFDBF3FF"/>
-                        <GradientStop Offset="0.937"
-                                Color="#FF87ACCD"/>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -133,7 +116,7 @@
                 Margin="1358,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/generic avatar.png"/>
+                Source="/Views/Images/generic avatar.png" />
             <Image
                 x:Name="Admin_Task_iNotifications"
                 Width="40"
@@ -141,7 +124,7 @@
                 Margin="1297,46,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/light-notifications.png"/>
+                Source="/Views/Images/light-notifications.png" />
             <Image
                 x:Name="ThemeToggleButton"
                 Width="40"
@@ -150,7 +133,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 MouseDown="ThemeToggleButton_MouseDown"
-                Source="/Views/Images/dark.png"/>
+                Source="/Views/Images/dark.png" />
             <Image
                 x:Name="Admin_Task_iLogo"
                 Width="112.38"
@@ -158,7 +141,7 @@
                 Margin="131,71,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/header.png"/>
+                Source="/Views/Images/header.png" />
 
             <!--  Navigation Buttons  -->
             <StackPanel>
@@ -174,15 +157,14 @@
                     Click="SidebarHomeButton_Click"
                     Cursor="Hand"
                     Style="{StaticResource NavigationButtonStyle}">
-                    <StackPanel Orientation="Horizontal"
-                            Style="{StaticResource MenuItemStyle}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                         <Image
                             x:Name="HomePage_iHome"
                             Width="30"
                             Height="30"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Source="/Views/Images/home.png"/>
+                            Source="/Views/Images/home.png" />
                         <Label
                             x:Name="HomePage_lbHome"
                             Width="108"
@@ -195,7 +177,7 @@
                             FontFamily="Segoe UI"
                             FontSize="20"
                             FontWeight="Bold"
-                            Foreground="Black"/>
+                            Foreground="Black" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -212,15 +194,14 @@
                 Click="SidebarChatButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iChat"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/chat_bubble.png"/>
+                        Source="/Views/Images/chat_bubble.png" />
                     <Label
                         x:Name="HomePage_lbChat"
                         Width="108"
@@ -232,7 +213,7 @@
                         Content="Chat"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
 
@@ -248,15 +229,14 @@
                 Click="SidebarActivitiesButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Activities"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/activities.png"/>
+                        Source="/Views/Images/activities.png" />
                     <Label
                         x:Name="HomePage_lbActivities"
                         Width="108"
@@ -268,7 +248,7 @@
                         Content="Activities"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
 
@@ -284,15 +264,14 @@
                 Click="SidebarMembersButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_Task_iMembers"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/members.png"/>
+                        Source="/Views/Images/members.png" />
                     <Label
                         x:Name="HomePage_lbMembers"
                         Width="108"
@@ -304,7 +283,7 @@
                         Content="Members"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
 
@@ -320,15 +299,14 @@
                 Click="SidebarTasksButton_Click"
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iTasks"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/tasks.png"/>
+                        Source="/Views/Images/tasks.png" />
                     <Label
                         x:Name="HomePage_lbTasks"
                         Width="108"
@@ -340,7 +318,7 @@
                         Content="Tasks"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" />
                 </StackPanel>
             </Button>
 
@@ -357,15 +335,14 @@
                 Cursor="Hand"
                 Style="{StaticResource NavigationButtonStyle}"
                 Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal"
-                        Style="{StaticResource MenuItemStyle}">
+                <StackPanel Orientation="Horizontal" Style="{StaticResource MenuItemStyle}">
                     <Image
                         x:Name="HomePage_iAdmin"
                         Width="30"
                         Height="30"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Source="/Views/Images/admin_panel.png"/>
+                        Source="/Views/Images/admin_panel.png" />
                     <Label
                         x:Name="HomePage_lbAdmin"
                         Width="108"
@@ -377,7 +354,8 @@
                         Content="Admin"
                         FontFamily="Segoe UI"
                         FontSize="20"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold"
+                        Foreground="#597CA2" />
                 </StackPanel>
             </Button>
 
@@ -398,7 +376,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý công việc"/>
+                        Text="Quản lý công việc" />
                 </Button>
                 <Button
                     x:Name="AdminMembersButton"
@@ -410,7 +388,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý thành viên"/>
+                        Text="Quản lý thành viên" />
                 </Button>
 
                 <Button
@@ -423,7 +401,7 @@
                     <TextBlock
                         FontSize="15"
                         Foreground="#042354"
-                        Text="Quản lý hoạt động"/>
+                        Text="Quản lý hoạt động" />
                 </Button>
             </StackPanel>
 
@@ -435,7 +413,7 @@
                 Margin="175,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/facebook.png"/>
+                Source="/Views/Images/facebook.png" />
             <Image
                 x:Name="Admin_Task_iInstagram"
                 Width="24"
@@ -443,7 +421,7 @@
                 Margin="135,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/instagram.png"/>
+                Source="/Views/Images/instagram.png" />
             <Image
                 x:Name="Admin_Task_iYoutube"
                 Width="24"
@@ -451,7 +429,7 @@
                 Margin="215,926,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="/Views/Images/youtube.png"/>
+                Source="/Views/Images/youtube.png" />
 
             <!--  Main Content Background  -->
             <Border
@@ -463,14 +441,10 @@
                 Panel.ZIndex="-1"
                 CornerRadius="10,10,10,10">
                 <Border.Background>
-                    <LinearGradientBrush StartPoint="0.5,0"
-                            EndPoint="0.5,1">
-                        <GradientStop Offset="0.04"
-                                Color="#FFF6FCFF"/>
-                        <GradientStop Offset="0.46"
-                                Color="#FFDBF3FF"/>
-                        <GradientStop Offset="0.937"
-                                Color="#FF87ACCD"/>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.04" Color="#FFF6FCFF" />
+                        <GradientStop Offset="0.46" Color="#FFDBF3FF" />
+                        <GradientStop Offset="0.937" Color="#FF87ACCD" />
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
@@ -488,7 +462,7 @@
                 Content="THÔNG TIN CÔNG VIỆC"
                 FontSize="32"
                 FontWeight="Bold"
-                Foreground="#042354"/>
+                Foreground="#042354" />
 
             <Rectangle
                 Width="970"
@@ -500,10 +474,10 @@
                 Stroke="#FF042354">
                 <Rectangle.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform ScaleY="-1"/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
+                        <ScaleTransform ScaleY="-1" />
+                        <SkewTransform />
+                        <RotateTransform />
+                        <TranslateTransform />
                     </TransformGroup>
                 </Rectangle.RenderTransform>
             </Rectangle>
@@ -522,7 +496,7 @@
                 Content="Tạo mới"
                 FontSize="16"
                 FontWeight="Bold"
-                Foreground="#F6FCFF"/>
+                Foreground="#F6FCFF" />
 
             <Button
                 x:Name="EditSessionButton"
@@ -539,7 +513,7 @@
                 FontSize="16"
                 FontWeight="Bold"
                 Foreground="#F6FCFF"
-                IsEnabled="{Binding SelectedSession, Converter={StaticResource NullToBooleanConverter}}"/>
+                IsEnabled="{Binding SelectedSession, Converter={StaticResource NullToBooleanConverter}}" />
 
             <!--  Main ListView  -->
             <ListView
@@ -554,24 +528,21 @@
                 SelectionChanged="SessionsListView_SelectionChanged">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="300"
-                                Header="Tên phiên làm việc">
+                        <GridViewColumn Width="300" Header="Tên phiên làm việc">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontWeight="SemiBold"
-                                            Text="{Binding Name}"/>
+                                    <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="120"
-                                Header="Loại">
+                        <GridViewColumn Width="120" Header="Loại">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock>
                                         <TextBlock.Text>
                                             <Binding Path="Type">
                                                 <Binding.Converter>
-                                                    <local:TaskSessionTypeToStringConverter/>
+                                                    <local:TaskSessionTypeToStringConverter />
                                                 </Binding.Converter>
                                             </Binding>
                                         </TextBlock.Text>
@@ -579,19 +550,17 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200"
-                                Header="Người quản lý">
+                        <GridViewColumn Width="200" Header="Người quản lý">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding ManagerName}"/>
+                                    <TextBlock Text="{Binding ManagerName}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="150"
-                                Header="Ngày tạo">
+                        <GridViewColumn Width="150" Header="Ngày tạo">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding CreatedAt, StringFormat=dd/MM/yyyy HH:mm}"/>
+                                    <TextBlock Text="{Binding CreatedAt, StringFormat=dd/MM/yyyy HH:mm}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -599,22 +568,18 @@
                 </ListView.View>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch"/>
-                        <Setter Property="Padding"
-                                Value="8,6"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="8,6" />
                         <Style.Triggers>
-                            <Trigger Property="IsSelected"
-                                    Value="True">
-                                <Setter Property="Background"
-                                        Value="#E3F2FD"/>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#E3F2FD" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ToolTip>
                     <ToolTip>
-                        <TextBlock Text="Nhấp đúp để xem chi tiết phiên làm việc"/>
+                        <TextBlock Text="Nhấp đúp để xem chi tiết phiên làm việc" />
                     </ToolTip>
                 </ListView.ToolTip>
             </ListView>
@@ -645,9 +610,8 @@
                         <TextBlock
                             Margin="0,0,8,0"
                             FontSize="20"
-                            Text="📧"/>
-                        <TextBlock VerticalAlignment="Center"
-                                Text="Gửi nhắc nhở"/>
+                            Text="📧" />
+                        <TextBlock VerticalAlignment="Center" Text="Gửi nhắc nhở" />
                     </StackPanel>
                 </Button>
             </Border>
@@ -663,19 +627,18 @@
                 Background="#28a745"
                 CornerRadius="25"
                 Visibility="Collapsed">
-                <StackPanel HorizontalAlignment="Center"
-                        Orientation="Horizontal">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <TextBlock
                         Margin="0,0,8,0"
                         FontSize="16"
                         Foreground="White"
-                        Text="⏳"/>
+                        Text="⏳" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="14"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="Đang gửi..."/>
+                        Text="Đang gửi..." />
                 </StackPanel>
             </Border>
 
@@ -705,9 +668,8 @@
                         <TextBlock
                             Margin="0,0,5,0"
                             FontSize="16"
-                            Text="📅"/>
-                        <TextBlock VerticalAlignment="Center"
-                                Text="Sync Google Calendar"/>
+                            Text="📅" />
+                        <TextBlock VerticalAlignment="Center" Text="Sync Google Calendar" />
                     </StackPanel>
                 </Button>
             </Border>
@@ -733,7 +695,7 @@
                         Foreground="White"
                         Text="🔄">
                         <TextBlock.RenderTransform>
-                            <RotateTransform x:Name="CalendarLoadingRotation"/>
+                            <RotateTransform x:Name="CalendarLoadingRotation" />
                         </TextBlock.RenderTransform>
                         <TextBlock.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
@@ -744,7 +706,7 @@
                                             Storyboard.TargetProperty="Angle"
                                             From="0"
                                             To="360"
-                                            Duration="0:0:2"/>
+                                            Duration="0:0:2" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -754,7 +716,7 @@
                         FontSize="12"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="Đồng bộ..."/>
+                        Text="Đồng bộ..." />
                 </StackPanel>
             </Border>
 
@@ -766,7 +728,7 @@
                 VerticalAlignment="Top"
                 FontSize="14"
                 FontWeight="Bold"
-                Visibility="Collapsed"/>
+                Visibility="Collapsed" />
         </Grid>
     </Grid>
 </Window>
